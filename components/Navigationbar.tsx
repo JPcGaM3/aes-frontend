@@ -64,6 +64,25 @@ export const Navbar = () => {
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <p className="font-bold text-inherit">Home</p>
           </NextLink>
+
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href="/table"
+          >
+            <p className="font-bold text-inherit">Table</p>
+          </NextLink>
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href="/card"
+          >
+            <p className="font-bold text-inherit">Card</p>
+          </NextLink>
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href="/form"
+          >
+            <p className="font-bold text-inherit">Form</p>
+          </NextLink>
           <NextLink
             className="flex justify-start items-center gap-1"
             href="/login"

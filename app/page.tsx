@@ -1,4 +1,4 @@
-import FormComponent from "@/components/FormComponent";
+import React from "react";
 
 export default function Home() {
   return (
@@ -46,12 +46,7 @@ export default function Home() {
     //   </div>
     // </section>
     <section className="flex flex-col justify-center items-center gap-4 py-8 md:py-10">
-      {/* <>HomePage</> */}
-      {/* <TableComponent users={mock_users} columns={mock_columns} statusOptions={mock_statusOptions}/> */}
-      {/* <CardComponent
-        users={mock_users}
-      /> */}
-      
+      <>HomePage</>
     </section>
   );
 }

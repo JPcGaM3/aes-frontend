@@ -2,7 +2,7 @@
 import { Button } from "@heroui/react";
 import React, { useState } from "react";
 
-import { UserIcon } from "@/utils/icon";
+import { UserIcon } from "@/utils/icons";
 
 function Login() {
   const [isClick, setClick] = useState(0);

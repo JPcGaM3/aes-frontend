@@ -5,8 +5,6 @@ import {
 } from "@heroui/navbar";
 import NextLink from "next/link";
 
-import { ThemeSwitch } from "@/components/ThemeSwitch";
-
 export const Navbar = () => {
   // const searchInput = (
   //   <Input
@@ -99,7 +97,7 @@ export const Navbar = () => {
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
           </Link> */}
-          <ThemeSwitch />
+          {/* <ThemeSwitch /> */}
         </NavbarItem>
         {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
         {/* <NavbarItem className="hidden md:flex">

@@ -1,52 +1,77 @@
 "use client";
-import React from "react";
-import { Chip } from "@heroui/react";
+import React, { useCallback } from "react";
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/react";
 
-import { INF_User } from "@/interfaces";
-import { ColorType, UserStatus } from "@/types";
+import { VerticalDotsIcon } from "./TableComponent";
 
-function CardComponent({ users }: { users: INF_User[] }) {
-  const statusColorMap: Record<UserStatus, ColorType> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
+import { User } from "@/interfaces/interfaces";
+import { ColorType } from "@/types";
+import { UserStatus } from "@/utils/enum";
+import { UserRoleTranslation, UserStatusTranslation } from "@/utils/constants";
+import { translateEnumValue } from "@/utils/functions";
+
+function CardComponent({ users }: { users: User[] }) {
+  const userStatusColorMap: Record<UserStatus, ColorType> = {
+    working: "danger",
+    inactive: "primary",
+    on_leave: "warning",
   };
 
-  return (
-    <div className="gap-4 grid grid-cols-4">
-      {users.map((user) => (
-        <div key={user.id} className="bg-white shadow-md p-4 rounded-lg">
-          <h3 className="font-semibold text-lg">{user.name}</h3>
-          <p className="text-gray-600">{user.role}</p>
-          <p className="text-gray-500">{user.email}</p>
-          <p className="text-gray-400 text-sm">Age: {user.age}</p>
-          {
-            <Chip
-              className="capitalize"
-              color={
-                statusColorMap[
-                  (user.status.toLowerCase() as UserStatus) || "default"
-                ]
-              }
-              size="sm"
-              variant="flat"
-            >
-              {user.status}
-            </Chip>
-          }
-          <div className="mt-4">
-            <button className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white">
-              View Profile
-            </button>
-            <button className="bg-gray-200 hover:bg-gray-300 ml-2 px-3 py-1 rounded text-gray-800">
-              Edit
-            </button>
-            <button className="bg-red-500 hover:bg-red-600 ml-2 px-3 py-1 rounded text-white">
-              Delete
-            </button>
-          </div>
+  const renderCell = useCallback(
+    ({ user }: { user: User }) => (
+      <div
+        key={user.id}
+        className="flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg w-64 h-full"
+      >
+        <Chip
+          className="w-fit capitalize"
+          color={userStatusColorMap[(user.status || "inactive") as UserStatus]}
+          size="sm"
+          variant="flat"
+        >
+          {translateEnumValue(user.status || "inactive", UserStatusTranslation)}
+        </Chip>
+        <div className="flex flex-col">
+          <h3 className="font-semibold text-lg capitalize">{user.fullname}</h3>
+          <p className="text-gray-600 capitalize">
+            {translateEnumValue(user.role, UserRoleTranslation)}
+          </p>
+          <p className="text-gray-600 capitalize">{user.phone}</p>
+          <p className="text-gray-500">{user.unit}</p>
+          <p className="text-gray-400 text-sm">{user.zone}</p>
         </div>
-      ))}
+
+        <div className="flex justify-end gap-2 mt-2">
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" variant="light">
+                <div className="text-default-300">
+                  <VerticalDotsIcon />
+                </div>
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem key="view">View</DropdownItem>
+              <DropdownItem key="edit">Edit</DropdownItem>
+              <DropdownItem key="delete">Delete</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+    ),
+    [userStatusColorMap],
+  );
+
+  return (
+    <div className="flex flex-wrap justify-start items-center gap-8 w-full h-full">
+      {users.map((user) => renderCell({ user }))}
     </div>
   );
 }

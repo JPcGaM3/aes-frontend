@@ -20,12 +20,11 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
   SortDescriptor,
 } from "@heroui/react";
 
-import { INF_Status, INF_TableColumn, INF_User } from "@/interfaces";
+import { INF_Status, INF_TableColumn, INF_User } from "@/interfaces/interfaces";
 import { ColorType, UserStatus } from "@/types";
 
 export function capitalize(s: string) {
@@ -240,13 +239,19 @@ function TableComponent({
       switch (columnKey) {
         case "name":
           return (
-            <User
-              avatarProps={{ radius: "lg", src: user.avatar }}
-              description={user.email}
-              name={cellValue}
-            >
-              {user.email}
-            </User>
+            // <User
+            //   avatarProps={{ radius: "lg", src: user.avatar }}
+            //   description={user.email}
+            //   name={cellValue}
+            // >
+            //   {user.email}
+            // </User>
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">{cellValue}</p>
+              <p className="text-bold text-default-400 text-tiny capitalize">
+                {user.email}
+              </p>
+            </div>
           );
         case "role":
           return (

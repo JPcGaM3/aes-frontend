@@ -1,7 +1,5 @@
 import React from "react";
 
-import TableComponent from "@/components/TableComponent";
-
 function Table() {
   return (
     <div className="flex flex-col gap-8">

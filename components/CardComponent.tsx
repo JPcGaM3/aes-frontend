@@ -11,67 +11,148 @@ import {
 
 import { VerticalDotsIcon } from "./TableComponent";
 
-import { User } from "@/interfaces/interfaces";
 import { ColorType } from "@/types";
-import { UserStatus } from "@/utils/enum";
-import { UserRoleTranslation, UserStatusTranslation } from "@/utils/constants";
 import { translateEnumValue } from "@/utils/functions";
 
-function CardComponent({ users }: { users: User[] }) {
-  const userStatusColorMap: Record<UserStatus, ColorType> = {
-    working: "danger",
-    inactive: "primary",
-    on_leave: "warning",
-  };
+interface StatusConfig {
+  key: string;
+  defaultValue?: string;
+  colorMap: Record<string, ColorType>;
+  translation?: Record<string, string>;
+}
 
+interface FieldConfig {
+  key: string;
+  label?: string;
+  formatter?: (value: any) => string;
+  className?: string;
+  translation?: Record<string, string>;
+}
+
+interface ActionConfig {
+  key: string;
+  label: string;
+  onClick?: (item: any) => void;
+}
+
+interface CardComponentProps<T> {
+  items: T[];
+  statusConfig?: StatusConfig;
+  headerFields?: FieldConfig[];
+  bodyFields: FieldConfig[];
+  actions?: ActionConfig[];
+  cardClassName?: string;
+}
+
+function CardComponent<T extends { id: number | string }>({
+  items,
+  statusConfig,
+  headerFields,
+  bodyFields,
+  actions,
+  cardClassName = "flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg w-64 h-full",
+}: CardComponentProps<T>) {
   const renderCell = useCallback(
-    ({ user }: { user: User }) => (
-      <div
-        key={user.id}
-        className="flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg w-64 h-full"
-      >
-        <Chip
-          className="w-fit capitalize"
-          color={userStatusColorMap[(user.status || "inactive") as UserStatus]}
-          size="sm"
-          variant="flat"
-        >
-          {translateEnumValue(user.status || "inactive", UserStatusTranslation)}
-        </Chip>
+    (item: T) => (
+      <div key={item.id} className={cardClassName}>
+        {/* header */}
+        {statusConfig && (item as any)[statusConfig.key] && (
+          <Chip
+            className="w-fit capitalize"
+            color={
+              statusConfig.colorMap[
+                ((item as any)[statusConfig.key] ||
+                  statusConfig.defaultValue) as string
+              ]
+            }
+            size="sm"
+            variant="flat"
+          >
+            {statusConfig.translation
+              ? translateEnumValue(
+                  (item as any)[statusConfig.key] ||
+                    statusConfig.defaultValue ||
+                    "",
+                  statusConfig.translation,
+                )
+              : (item as any)[statusConfig.key] || statusConfig.defaultValue}
+          </Chip>
+        )}
+
+        {headerFields?.map((field) => (
+          <div key={field.key} className={field.className || "w-fit"}>
+            {field.formatter
+              ? field.formatter((item as any)[field.key])
+              : field.translation
+                ? translateEnumValue(
+                    (item as any)[field.key],
+                    field.translation,
+                  )
+                : (item as any)[field.key]}
+          </div>
+        ))}
+
+        {/* body */}
         <div className="flex flex-col">
-          <h3 className="font-semibold text-lg capitalize">{user.fullname}</h3>
-          <p className="text-gray-600 capitalize">
-            {translateEnumValue(user.role, UserRoleTranslation)}
-          </p>
-          <p className="text-gray-600 capitalize">{user.phone}</p>
-          <p className="text-gray-500">{user.unit}</p>
-          <p className="text-gray-400 text-sm">{user.zone}</p>
+          {bodyFields.map((field) => {
+            const value = (item as any)[field.key];
+
+            if (value === undefined || value === null) return null;
+
+            return (
+              <div
+                key={field.key}
+                className={field.className || "text-gray-600"}
+              >
+                {field.label && (
+                  <span className="font-medium">{field.label}: </span>
+                )}
+                {field.formatter
+                  ? field.formatter(value)
+                  : field.translation
+                    ? translateEnumValue(value, field.translation)
+                    : value}
+              </div>
+            );
+          })}
         </div>
 
-        <div className="flex justify-end gap-2 mt-2">
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly size="sm" variant="light">
-                <div className="text-default-300">
-                  <VerticalDotsIcon />
-                </div>
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem key="view">View</DropdownItem>
-              <DropdownItem key="edit">Edit</DropdownItem>
-              <DropdownItem key="delete">Delete</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </div>
+        {/* footer */}
+        {actions && actions.length > 0 && (
+          <div className="flex justify-end gap-2 mt-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <div className="text-default-300">
+                    <VerticalDotsIcon />
+                  </div>
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {actions.map((action) => (
+                  <DropdownItem
+                    key={action.key}
+                    onClick={() => action.onClick && action.onClick(item)}
+                  >
+                    {action.label}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        )}
       </div>
     ),
-    [userStatusColorMap],
+    [statusConfig, headerFields, bodyFields, actions, cardClassName],
   );
 
   return (
     <div className="flex flex-wrap justify-start items-center gap-8 w-full h-full">
-      {users.map((user) => renderCell({ user }))}
+      {items && items.length > 0 ? (
+        items.map((item) => renderCell(item))
+      ) : (
+        <div className="text-gray-500">No items to display</div>
+      )}
     </div>
   );
 }

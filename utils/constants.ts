@@ -5,6 +5,8 @@ import {
   TaskOrderStatus,
 } from "./enum";
 
+import { ColorType } from "@/types";
+
 export const UserRoleTranslation = {
   [UserRole.Admin]: "แอดมิน",
   [UserRole.DepartmentHead]: "หัวหน้าแผนก",
@@ -39,4 +41,31 @@ export const TaskOrderStatusTranslation = {
   [TaskOrderStatus.InProgress]: "กำลังดำเนินการ",
   [TaskOrderStatus.OnHold]: "รอการดำเนินการ",
   [TaskOrderStatus.Completed]: "เสร็จสิ้น",
+};
+
+export const UserStatusColorMap: Record<UserStatus, ColorType> = {
+  working: "danger",
+  inactive: "primary",
+  on_leave: "warning",
+};
+
+export const RequestOrderStatusColorMap: Record<RequestOrderStatus, ColorType> =
+  {
+    created: "default",
+    pending_approval: "default",
+    pending_edit: "default",
+    pending: "default",
+    in_progress: "primary",
+    pending_review: "default",
+    pending_confirm: "default",
+    completed: "success",
+    rejected: "danger",
+  };
+
+export const TaskOrderStatusColorMap: Record<TaskOrderStatus, ColorType> = {
+  created: "default",
+  pending: "default",
+  in_progress: "primary",
+  on_hold: "warning",
+  completed: "success",
 };

@@ -50,7 +50,7 @@ function CardComponent<T extends { id: number | string }>({
   headerFields,
   bodyFields,
   actions,
-  cardClassName = "flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg w-64 h-full",
+  cardClassName = "flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg min-w-64 h-full",
 }: CardComponentProps<T>) {
   const renderCell = useCallback(
     (item: T) => (
@@ -147,7 +147,8 @@ function CardComponent<T extends { id: number | string }>({
   );
 
   return (
-    <div className="flex flex-wrap justify-start items-center gap-8 w-full h-full">
+    // <div className="flex flex-wrap justify-between items-center gap-8 w-full h-full">
+    <div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full h-full">
       {items && items.length > 0 ? (
         items.map((item) => renderCell(item))
       ) : (

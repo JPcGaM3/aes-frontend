@@ -44,14 +44,14 @@ interface CardComponentProps<T> {
   cardClassName?: string;
 }
 
-function CardComponent<T extends { id: number | string }>({
+export const CardComponent = <T extends { id: number | string }>({
   items,
   statusConfig,
   headerFields,
   bodyFields,
   actions,
   cardClassName = "flex flex-col gap-2 bg-white shadow-md p-4 rounded-lg min-w-64 h-full",
-}: CardComponentProps<T>) {
+}: CardComponentProps<T>) => {
   const renderCell = useCallback(
     (item: T) => (
       <div key={item.id} className={cardClassName}>
@@ -156,6 +156,4 @@ function CardComponent<T extends { id: number | string }>({
       )}
     </div>
   );
-}
-
-export default CardComponent;
+};

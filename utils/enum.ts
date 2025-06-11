@@ -1,4 +1,4 @@
-export enum UserRole {
+export enum USERROLE {
   Admin = "admin",
   DepartmentHead = "department_head",
   UnitHead = "unit_head",
@@ -8,13 +8,13 @@ export enum UserRole {
   SongSirm = "song_sirm",
 }
 
-export enum UserStatus {
+export enum USERSTATUS {
   Working = "working",
   Inactive = "inactive",
   OnLeave = "on_leave",
 }
 
-export enum RequestOrderStatus {
+export enum REQUESTORDERSTATUS {
   Created = "created",
   PendingApproval = "pending_approval",
   PendingEdit = "pending_edit",
@@ -26,7 +26,7 @@ export enum RequestOrderStatus {
   Rejected = "rejected",
 }
 
-export enum TaskOrderStatus {
+export enum TASKORDERSTATUS {
   Created = "created",
   Pending = "pending",
   InProgress = "in_progress",

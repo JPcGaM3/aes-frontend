@@ -152,7 +152,7 @@ export const CardComponent = <T extends { id: number | string }>({
       {items && items.length > 0 ? (
         items.map((item) => renderCell(item))
       ) : (
-        <div className="text-gray-500">No items to display</div>
+        <></>
       )}
     </div>
   );

@@ -1,55 +1,55 @@
 import {
-  UserRole,
-  UserStatus,
-  RequestOrderStatus,
-  TaskOrderStatus,
+  REQUESTORDERSTATUS,
+  TASKORDERSTATUS,
+  USERROLE,
+  USERSTATUS,
 } from "./enum";
 
 import { ColorType } from "@/types";
 
 export const UserRoleTranslation = {
-  [UserRole.Admin]: "แอดมิน",
-  [UserRole.DepartmentHead]: "หัวหน้าแผนก",
-  [UserRole.UnitHead]: "หัวหน้าหน่วย",
-  [UserRole.Driver]: "พนักขับรถ",
-  [UserRole.Farmpro]: "farmpro",
-  [UserRole.CaneMIS]: "canemis",
-  [UserRole.SongSirm]: "เขตส่งเสริม",
+  [USERROLE.Admin]: "แอดมิน",
+  [USERROLE.DepartmentHead]: "หัวหน้าแผนก",
+  [USERROLE.UnitHead]: "หัวหน้าหน่วย",
+  [USERROLE.Driver]: "พนักขับรถ",
+  [USERROLE.Farmpro]: "farmpro",
+  [USERROLE.CaneMIS]: "canemis",
+  [USERROLE.SongSirm]: "เขตส่งเสริม",
 };
 
 export const UserStatusTranslation = {
-  [UserStatus.Working]: "กำลังทำงาน",
-  [UserStatus.Inactive]: "ว่างงาน",
-  [UserStatus.OnLeave]: "ลาหยุด",
+  [USERSTATUS.Working]: "กำลังทำงาน",
+  [USERSTATUS.Inactive]: "ว่างงาน",
+  [USERSTATUS.OnLeave]: "ลาหยุด",
 };
 
 export const RequestOrderStatusTranslation = {
-  [RequestOrderStatus.Created]: "สร้างคำสั่งงาน",
-  [RequestOrderStatus.PendingApproval]: "รออนุมัติ",
-  [RequestOrderStatus.PendingEdit]: "รอแก้ไข",
-  [RequestOrderStatus.Pending]: "รอการดำเนินการ",
-  [RequestOrderStatus.InProgress]: "กำลังดำเนินการ",
-  [RequestOrderStatus.PendingReview]: "รอการตรวจสอบ",
-  [RequestOrderStatus.PendingConfirm]: "รอการยืนยัน",
-  [RequestOrderStatus.Completed]: "เสร็จสิ้น",
-  [RequestOrderStatus.Rejected]: "ถูกปฏิเสธ",
+  [REQUESTORDERSTATUS.Created]: "สร้างคำสั่งงาน",
+  [REQUESTORDERSTATUS.PendingApproval]: "รออนุมัติ",
+  [REQUESTORDERSTATUS.PendingEdit]: "รอแก้ไข",
+  [REQUESTORDERSTATUS.Pending]: "รอการดำเนินการ",
+  [REQUESTORDERSTATUS.InProgress]: "กำลังดำเนินการ",
+  [REQUESTORDERSTATUS.PendingReview]: "รอการตรวจสอบ",
+  [REQUESTORDERSTATUS.PendingConfirm]: "รอการยืนยัน",
+  [REQUESTORDERSTATUS.Completed]: "เสร็จสิ้น",
+  [REQUESTORDERSTATUS.Rejected]: "ถูกปฏิเสธ",
 };
 
 export const TaskOrderStatusTranslation = {
-  [TaskOrderStatus.Created]: "สร้างคำสั่งงาน",
-  [TaskOrderStatus.Pending]: "รอการดำเนินการ",
-  [TaskOrderStatus.InProgress]: "กำลังดำเนินการ",
-  [TaskOrderStatus.OnHold]: "รอการดำเนินการ",
-  [TaskOrderStatus.Completed]: "เสร็จสิ้น",
+  [TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
+  [TASKORDERSTATUS.Pending]: "รอการดำเนินการ",
+  [TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
+  [TASKORDERSTATUS.OnHold]: "รอการดำเนินการ",
+  [TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
 };
 
-export const UserStatusColorMap: Record<UserStatus, ColorType> = {
+export const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
   working: "danger",
   inactive: "primary",
   on_leave: "warning",
 };
 
-export const RequestOrderStatusColorMap: Record<RequestOrderStatus, ColorType> =
+export const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> =
   {
     created: "default",
     pending_approval: "default",
@@ -62,7 +62,7 @@ export const RequestOrderStatusColorMap: Record<RequestOrderStatus, ColorType> =
     rejected: "danger",
   };
 
-export const TaskOrderStatusColorMap: Record<TaskOrderStatus, ColorType> = {
+export const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
   created: "default",
   pending: "default",
   in_progress: "primary",

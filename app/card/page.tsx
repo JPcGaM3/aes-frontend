@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDisclosure } from "@heroui/react";
 
 import { User } from "@/interfaces/interfaces";
@@ -11,15 +11,33 @@ import {
   UserStatusColorMap,
   UserStatusTranslation,
 } from "@/utils/constants";
+import { useLoading } from "@/providers/LoadingContext";
 
 function Card() {
+  // const [isLoading, setIsLoading] = useState(true);
+  const { setIsLoading } = useLoading();
   const [users, setUsers] = useState<User[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
-  useMemo(() => {
-    setUsers(mock_users);
-  }, []);
+  useEffect(() => {
+    setIsLoading(true);
+
+    const fetchData = () => {
+      setTimeout(() => {
+        setUsers(mock_users);
+        setIsLoading(false);
+      }, 3000);
+    };
+
+    fetchData();
+
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [setIsLoading]);
 
   const handleView = (user: User) => {
     console.log(`Viewing user: ${user.fullname}`);

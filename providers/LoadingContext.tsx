@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { CircularProgress } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 
 import { ColorType } from "@/types";
 
@@ -38,11 +38,12 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
       {isLoading && (
         <div className="z-50 fixed inset-0 flex flex-col justify-center items-center gap-2 max-w-full">
-          <CircularProgress
-            className=""
+          <Spinner
+            classNames={{ label: "text-foreground mt-4" }}
             color={colors[colorIndex as number] as ColorType}
             label="Loading..."
             size="lg"
+            variant="wave"
           />
         </div>
       )}

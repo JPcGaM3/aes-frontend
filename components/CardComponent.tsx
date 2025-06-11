@@ -9,10 +9,9 @@ import {
   DropdownTrigger,
 } from "@heroui/react";
 
-import { VerticalDotsIcon } from "./TableComponent";
-
 import { ColorType } from "@/types";
 import { translateEnumValue } from "@/utils/functions";
+import { VerticalDotsIcon } from "@/utils/icons";
 
 interface StatusConfig {
   key: string;

@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import React from "react";
+
 import FormComponent from "@/components/FormComponent";
 import { FormField } from "@/interfaces/interfaces";
 
@@ -28,9 +29,9 @@ function LoginPage() {
   return (
     <div className="min-w-[400px]">
       <FormComponent
-        title="Login"
-        subtitle="Please enter your credentials."
         fields={fields}
+        subtitle="Please enter your credentials."
+        title="Login"
         onSubmit={handleSubmit}
       />
     </div>

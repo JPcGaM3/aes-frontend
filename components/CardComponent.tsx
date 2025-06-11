@@ -9,10 +9,9 @@ import {
   DropdownTrigger,
 } from "@heroui/react";
 
-import { VerticalDotsIcon } from "./TableComponent";
-
 import { ColorType } from "@/types";
 import { translateEnumValue } from "@/utils/functions";
+import { VerticalDotsIcon } from "@/utils/icons";
 
 interface StatusConfig {
   key: string;
@@ -152,7 +151,7 @@ export const CardComponent = <T extends { id: number | string }>({
       {items && items.length > 0 ? (
         items.map((item) => renderCell(item))
       ) : (
-        <div className="text-gray-500">No items to display</div>
+        <></>
       )}
     </div>
   );

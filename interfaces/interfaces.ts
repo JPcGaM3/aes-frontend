@@ -1,8 +1,8 @@
 import {
-  UserRole,
-  RequestOrderStatus,
-  TaskOrderStatus,
-  UserStatus,
+  REQUESTORDERSTATUS,
+  TASKORDERSTATUS,
+  USERROLE,
+  USERSTATUS,
 } from "@/utils/enum";
 
 interface User {
@@ -14,9 +14,9 @@ interface User {
   unit: number;
   zone: string;
   ae: string;
-  role: UserRole;
+  role: USERROLE;
   leader_id?: number;
-  status?: UserStatus | string;
+  status?: USERSTATUS | string;
   active: boolean;
   created_at: Date;
   updated_at: Date;
@@ -43,9 +43,10 @@ interface RequestOrder {
   on_live: boolean;
   evidence?: string;
   sale?: number;
-  status?: RequestOrderStatus | string;
+  status?: REQUESTORDERSTATUS | string;
   supervisor_id?: number;
   location_id?: number;
+  comment?: string;
   created_at: Date;
   updated_at: Date;
   created_by: number;
@@ -70,7 +71,7 @@ interface TaskOrder {
   car_end_hour: string;
   start_timer: string;
   end_timer: string;
-  status?: TaskOrderStatus | string;
+  status?: TASKORDERSTATUS | string;
   request_order_id: number;
   car_id: number;
   tool_id: number;

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import FormComponent from "@/components/FormComponent";
 import { RequestOrderInputFieldTranslation } from "@/utils/constants";
 import { RequestOrderInputField } from "@/utils/enum";
@@ -89,9 +90,9 @@ function FormPage() {
   return (
     <div className="min-w-[400px]">
       <FormComponent
-        title="Request Order Form"
-        subtitle="Please fill out the form below."
         fields={fields}
+        subtitle="Please fill out the form below."
+        title="Request Order Form"
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />

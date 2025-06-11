@@ -112,7 +112,7 @@ interface BaseInputConfig {
   isInvalid?: boolean;
   errorMessage?: React.ReactNode;
   className?: string;
-  // Share props
+  // Share input props
 }
 
 interface TextInputConfig extends BaseInputConfig {
@@ -144,6 +144,7 @@ type FormField = InputConfig | InputConfig[];
 
 
 function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
+  // Props for ipnut components
   const commonProp = {
     name: inputConfig.name,
     label: inputConfig.label,

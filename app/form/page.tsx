@@ -26,66 +26,75 @@
 
 import React from "react";
 import FormComponent, { FormField } from "@/components/FormComponent";
+import { RequestOrderInputFieldTranslation } from "@/utils/constants";
 
 const fields: FormField[] = [
   [
     {
+      type: "dropdown",
+      name: "customer_type",
+      label: RequestOrderInputFieldTranslation.customer_type,
+      options: [
+        { label: "Option 1", value: "option1" },
+        { label: "Option 2", value: "option2" },
+      ],
+    },
+    {
+      type: "dropdown",
+      name: "affiliation",
+      label: RequestOrderInputFieldTranslation.affiliation,
+      options: [
+        { label: "Option 1", value: "option1" },
+        { label: "Option 2", value: "option2" },
+      ],
+    },
+    {
+      type: "dropdown",
+      name: "unit",
+      label: RequestOrderInputFieldTranslation.unit,
+      options: [
+        { label: "Option 1", value: "option1" },
+        { label: "Option 2", value: "option2" },
+      ],
+    },
+  ],
+  {
+    type: "number",
+    name: "quota",
+    label: RequestOrderInputFieldTranslation.quota,
+    min: 0,
+  },
+  {
+    type: "text",
+    name: "name",
+    label: RequestOrderInputFieldTranslation.name,
+  },
+  {
+    type: "number",
+    name: "land_num",
+    label: RequestOrderInputFieldTranslation.land_number,
+  },
+  {
+    type: "text",
+    name: "location_name",
+    label: RequestOrderInputFieldTranslation.location_name,
+  },
+  [
+    {
       type: "text",
-      name: "firstname",
-      label: "First Name",
-      isRequired: true,
+      name: "lattitude",
+      label: RequestOrderInputFieldTranslation.lattitude,
     },
     {
       type: "text",
-      name: "lastname",
-      label: "Last Name",
-      isRequired: true,
+      name: "longitude",
+      label: RequestOrderInputFieldTranslation.longitude,
     },
   ],
   {
     type: "text",
-    name: "username",
-    label: "Username",
-    isRequired: true,
-  },
-  {
-    type: "password",
-    name: "password",
-    label: "Password",
-    isRequired: true,
-  },
-  {
-    type: "password",
-    name: "confirm_password",
-    label: "Confirm Password",
-    isRequired: true,
-  },
-  {
-    type: "email",
-    name: "email",
-    label: "Email",
-    isRequired: true,
-  },
-  {
-    type: "number",
-    name: "age",
-    label: "Age",
-    isRequired: true,
-    min: 0,
-    max: 120,
-  },
-  {
-    type: "dropdown",
-    name: "country",
-    label: "Country",
-    isRequired: true,
-    options: [
-      { value: "us", label: "United States" },
-      { value: "ca", label: "Canada" },
-      { value: "uk", label: "United Kingdom" },
-      { value: "au", label: "Australia" },
-    ],
-    selectionMode: "single",
+    name: "supervisor",
+    label: RequestOrderInputFieldTranslation.supervisor,
   },
 ];
 

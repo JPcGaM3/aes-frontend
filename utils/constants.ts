@@ -3,6 +3,8 @@ import {
   UserStatus,
   RequestOrderStatus,
   TaskOrderStatus,
+  RequestOrderInputField,
+  TaskOrderInputField,
 } from "./enum";
 
 import { ColorType } from "@/types";
@@ -41,6 +43,25 @@ export const TaskOrderStatusTranslation = {
   [TaskOrderStatus.InProgress]: "กำลังดำเนินการ",
   [TaskOrderStatus.OnHold]: "รอการดำเนินการ",
   [TaskOrderStatus.Completed]: "เสร็จสิ้น",
+};
+
+export const RequestOrderInputFieldTranslation = {
+  [RequestOrderInputField.CustomerType]: "หัวตารางแจ้งงาน",
+  [RequestOrderInputField.Affiliation]: "สังกัด",
+  [RequestOrderInputField.Unit]: "เขต",
+  [RequestOrderInputField.Quota]: "โควต้า",
+  [RequestOrderInputField.Name]: "ชื่อ",
+  [RequestOrderInputField.LandNumber]: "เลขที่แปลง",
+  [RequestOrderInputField.LocationName]: "ชื่อสถานที่",
+  [RequestOrderInputField.Lattitude]: "พิกัด X",
+  [RequestOrderInputField.Longitude]: "พิกัด Y",
+  [RequestOrderInputField.Supervisor]: "ผู้รับผิดชอบ",
+};
+
+export const TaskOrderInputFieldTranslation = {
+  [TaskOrderInputField.Activity]: "กิจกรรม",
+  [TaskOrderInputField.Tool]: "เครื่องมือ",
+  [TaskOrderInputField.StartTime]: "เวลาเริ่มต้น",
 };
 
 export const UserStatusColorMap: Record<UserStatus, ColorType> = {

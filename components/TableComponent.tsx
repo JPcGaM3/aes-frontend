@@ -20,13 +20,13 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
-  User,
   Pagination,
   SortDescriptor,
 } from "@heroui/react";
 
-import { INF_Status, INF_TableColumn, INF_User } from "@/interfaces";
-import { ColorType, UserStatus } from "@/types";
+import { ColorType } from "@/types";
+import { UserStatus } from "@/utils/enum";
+import { User } from "@/interfaces/interfaces";
 
 export function capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -160,15 +160,15 @@ const statusColorMap: Record<UserStatus, ColorType> = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
-function TableComponent({
+export const TableComponent = ({
   columns,
   users,
   statusOptions,
 }: {
-  columns: INF_TableColumn[];
-  users: INF_User[];
-  statusOptions: INF_Status[];
-}) {
+  columns: TableColumn[];
+  users: User[];
+  statusOptions: Status[];
+}) => {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState(
@@ -224,7 +224,7 @@ function TableComponent({
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
-      const column = sortDescriptor.column as keyof INF_User;
+      const column = sortDescriptor.column as keyof User;
       const first = a[column];
       const second = b[column];
       const cmp = first < second ? -1 : first > second ? 1 : 0;
@@ -233,70 +233,73 @@ function TableComponent({
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback(
-    (user: INF_User, columnKey: string | number) => {
-      const cellValue = user[columnKey as keyof INF_User];
+  const renderCell = useCallback((user: User, columnKey: string | number) => {
+    const cellValue = user[columnKey as keyof User];
 
-      switch (columnKey) {
-        case "name":
-          return (
-            <User
-              avatarProps={{ radius: "lg", src: user.avatar }}
-              description={user.email}
-              name={cellValue}
-            >
+    switch (columnKey) {
+      case "name":
+        return (
+          // <User
+          //   avatarProps={{ radius: "lg", src: user.avatar }}
+          //   description={user.email}
+          //   name={cellValue}
+          // >
+          //   {user.email}
+          // </User>
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-default-400 text-tiny capitalize">
               {user.email}
-            </User>
-          );
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-              <p className="text-bold text-default-400 text-tiny capitalize">
-                {user.team}
-              </p>
-            </div>
-          );
-        case "status":
-          return (
-            <Chip
-              className="capitalize"
-              color={
-                statusColorMap[
-                  (user.status.toLowerCase() as UserStatus) || "default"
-                ]
-              }
-              size="sm"
-              variant="flat"
-            >
-              {cellValue}
-            </Chip>
-          );
-        case "actions":
-          return (
-            <div className="relative flex justify-end items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <div className="text-default-300">
-                      <VerticalDotsIcon />
-                    </div>
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem key="view">View</DropdownItem>
-                  <DropdownItem key="edit">Edit</DropdownItem>
-                  <DropdownItem key="delete">Delete</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [],
-  );
+            </p>
+          </div>
+        );
+      case "role":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-default-400 text-tiny capitalize">
+              {user.team}
+            </p>
+          </div>
+        );
+      case "status":
+        return (
+          <Chip
+            className="capitalize"
+            color={
+              statusColorMap[
+                (user.status.toLowerCase() as UserStatus) || "default"
+              ]
+            }
+            size="sm"
+            variant="flat"
+          >
+            {cellValue}
+          </Chip>
+        );
+      case "actions":
+        return (
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <div className="text-default-300">
+                    <VerticalDotsIcon />
+                  </div>
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem key="view">View</DropdownItem>
+                <DropdownItem key="edit">Edit</DropdownItem>
+                <DropdownItem key="delete">Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -505,6 +508,4 @@ function TableComponent({
       </TableBody>
     </Table>
   );
-}
-
-export default TableComponent;
+};

@@ -1,8 +1,11 @@
+"use client";
 import React from "react";
 import { Input } from "@heroui/input";
 import { NumberInput } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
+
 import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
+
 import { FormField, InputConfig } from "@/interfaces/interfaces";
 
 function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
@@ -28,25 +31,26 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
     case "password": {
       const [isVisible, setIsVisible] = React.useState(false);
       const toggleVisibility = () => setIsVisible((v) => !v);
+
       return (
         <Input
           {...commonProp}
-          type={isVisible ? "text" : "password"}
           endContent={
             <button
               aria-label="toggle password visibility"
               className="focus:outline-none"
-              type="button"
               tabIndex={-1}
+              type="button"
               onClick={toggleVisibility}
             >
               {isVisible ? (
-                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                <EyeSlashFilledIcon className="text-default-400 text-2xl pointer-events-none" />
               ) : (
-                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                <EyeFilledIcon className="text-default-400 text-2xl pointer-events-none" />
               )}
             </button>
           }
+          type={isVisible ? "text" : "password"}
         />
       );
     }
@@ -55,8 +59,8 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
       return (
         <NumberInput
           {...commonProp}
-          min={inputConfig.min}
           max={inputConfig.max}
+          min={inputConfig.min}
         />
       );
 
@@ -88,7 +92,7 @@ const FormFields: React.FC<{ fields: FormField[] }> = ({ fields }) => (
         </div>
       ) : (
         <InputRenderer key={index} inputConfig={field} />
-      )
+      ),
     )}
   </>
 );

@@ -35,20 +35,20 @@ export enum TASKORDERSTATUS {
 }
 
 export enum RequestOrderInputField {
-    CustomerType = "customer_type",
-    Affiliation = "affiliation",
-    Unit = "unit",
-    Quota = "quota",
-    Name = "name",
-    LandNumber = "land_number",
-    LocationName = "location_name",
-    Lattitude = "lattitude",
-    Longitude = "longitude",
-    Supervisor = "supervisor",
+  CustomerType = "customer_type",
+  Affiliation = "affiliation",
+  Unit = "unit",
+  Quota = "quota",
+  Name = "name",
+  LandNumber = "land_number",
+  LocationName = "location_name",
+  Lattitude = "lattitude",
+  Longitude = "longitude",
+  Supervisor = "supervisor",
 }
 
 export enum TaskOrderInputField {
-    Activity = "activity",
-    Tool = "tool",
-    StartTime = "start_time",
+  Activity = "activity",
+  Tool = "tool",
+  StartTime = "start_time",
 }

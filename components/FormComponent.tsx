@@ -1,9 +1,11 @@
 import React from "react";
-import { FormField } from "@/interfaces/interfaces";
 import { Form } from "@heroui/react";
+
 import FormHeader from "./FormHeader";
 import FormFields from "./FormFields";
 import FormButtons from "./FormButtons";
+
+import { FormField } from "@/interfaces/interfaces";
 
 interface FormComponentProps {
   title: string;
@@ -25,7 +27,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
     validationBehavior="aria"
     onSubmit={onSubmit}
   >
-    <FormHeader title={title} subtitle={subtitle} />
+    <FormHeader subtitle={subtitle} title={title} />
     <FormFields fields={fields} />
     <FormButtons onCancel={onCancel} />
   </Form>

@@ -5,7 +5,7 @@ import {
   UserStatus,
 } from "@/utils/enum";
 
-export interface User {
+interface User {
   id: number;
   quota_number?: string;
   fullname: string;
@@ -24,7 +24,7 @@ export interface User {
   updated_by: number;
 }
 
-export interface RequestOrder {
+interface RequestOrder {
   id: number;
   customer_type: string;
   affiliation: string;
@@ -52,7 +52,7 @@ export interface RequestOrder {
   updated_by: number;
 }
 
-export interface TaskOrder {
+interface TaskOrder {
   id: number;
   area_number: string;
   area_target?: number;
@@ -80,3 +80,54 @@ export interface TaskOrder {
   created_by: number;
   updated_by: number;
 }
+
+interface BaseInputConfig {
+  name: string;
+  label: string;
+  labelPlacement?: "inside" | "outside" | "outside-left";
+  placeholder?: string;
+  description?: React.ReactNode;
+  startContent?: React.ReactNode;
+  endContent?: React.ReactNode;
+  isRequired?: boolean;
+  isInvalid?: boolean;
+  errorMessage?: React.ReactNode;
+  className?: string;
+}
+
+interface TextInputConfig extends BaseInputConfig {
+  type: "text" | "email" | "password";
+}
+
+interface NumberInputConfig extends BaseInputConfig {
+  type: "number";
+  min?: number;
+  max?: number;
+}
+
+interface DropdownOption {
+  value: string;
+  label: string;
+}
+
+interface DropdownInputConfig extends BaseInputConfig {
+  type: "dropdown";
+  options: DropdownOption[];
+  selectionMode?: "single" | "multiple";
+}
+
+type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig;
+type FormField = InputConfig | InputConfig[];
+
+export type {
+  User,
+  RequestOrder,
+  TaskOrder,
+  BaseInputConfig,
+  TextInputConfig,
+  NumberInputConfig,
+  DropdownOption,
+  DropdownInputConfig,
+  InputConfig,
+  FormField,
+};

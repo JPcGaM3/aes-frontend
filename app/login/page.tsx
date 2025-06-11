@@ -1,31 +1,40 @@
-"use client";
-import { Button } from "@heroui/react";
-import React, { useState } from "react";
+"use client"
 
-import { UserIcon } from "@/utils/icons";
+import React from "react";
+import FormComponent from "@/components/FormComponent";
+import { FormField } from "@/interfaces/interfaces";
 
-function Login() {
-  const [isClick, setClick] = useState(0);
+const fields: FormField[] = [
+  {
+    type: "text",
+    name: "username",
+    label: "Username",
+    isRequired: true,
+  },
+  {
+    type: "password",
+    name: "password",
+    label: "Password",
+    isRequired: true,
+  },
+];
 
-  const ClickLogin = () => setClick(isClick + 1);
+function LoginPage() {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Login form submitted");
+  };
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex font-bold text-2xl text-center">Welcome to AES</div>
-      <div className="flex justify-center items-center gap-4">
-        <Button
-          color="primary"
-          startContent={<UserIcon height={20} size={24} width={60} />}
-          variant="bordered"
-          onPress={() => {
-            ClickLogin();
-          }}
-        >
-          MITR Portal
-        </Button>
-      </div>
+    <div className="min-w-[400px]">
+      <FormComponent
+        title="Login"
+        subtitle="Please enter your credentials."
+        fields={fields}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
 
-export default Login;
+export default LoginPage;

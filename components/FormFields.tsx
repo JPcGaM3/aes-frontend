@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
 import { Input } from "@heroui/input";
 import { NumberInput } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
@@ -23,15 +24,15 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
     className: inputConfig.className || "",
   };
 
+  const [isVisible, setIsVisible] = useState(false);
+  const toggleVisibility = () => setIsVisible((state) => !state);
+
   switch (inputConfig.type) {
     case "text":
     case "email":
       return <Input {...commonProp} type={inputConfig.type} />;
 
     case "password": {
-      const [isVisible, setIsVisible] = React.useState(false);
-      const toggleVisibility = () => setIsVisible((v) => !v);
-
       return (
         <Input
           {...commonProp}

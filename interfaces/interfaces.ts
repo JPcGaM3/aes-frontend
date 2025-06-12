@@ -1,3 +1,4 @@
+import { ColorType } from "@/types";
 import {
   REQUESTORDERSTATUS,
   TASKORDERSTATUS,
@@ -120,6 +121,36 @@ interface DropdownInputConfig extends BaseInputConfig {
 type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig;
 type FormField = InputConfig | InputConfig[];
 
+interface StatusConfig {
+  key: string;
+  defaultValue?: string;
+  colorMap: Record<string, ColorType>;
+  translation?: Record<string, string>;
+}
+
+interface FieldConfig {
+  key: string;
+  label?: string;
+  formatter?: (value: any) => string;
+  className?: string;
+  translation?: Record<string, string>;
+}
+
+interface ActionConfig {
+  key: string;
+  label: string;
+  onClick?: (item: any) => void;
+}
+
+interface CardComponentProps<T> {
+  items: T[];
+  statusConfig?: StatusConfig;
+  headerFields?: FieldConfig[];
+  bodyFields: FieldConfig[];
+  actions?: ActionConfig[];
+  cardClassName?: string;
+}
+
 export type {
   User,
   RequestOrder,
@@ -131,4 +162,8 @@ export type {
   DropdownInputConfig,
   InputConfig,
   FormField,
+  StatusConfig,
+  FieldConfig,
+  ActionConfig,
+  CardComponentProps,
 };

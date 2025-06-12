@@ -23,7 +23,6 @@ const fields: FormField[] = [
 function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login form submitted");
   };
 
   return (

@@ -1,11 +1,11 @@
-export default function LoginLayout({
+export default function TableLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col justify-center items-center gap-4 py-8 md:py-10">
-      <div className="inline-block justify-center max-w-7xl text-center">
+    <section className="flex flex-col justify-center gap-4 py-8 md:py-10">
+      <div className="inline-block justify-center w-full">
         {children}
       </div>
     </section>

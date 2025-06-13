@@ -18,9 +18,9 @@ const menuItems = [
 export const Navbar = () => {
   return (
     <HeroUINavbar
-      className="shadow-md"
+      className="shadow-md px-6"
       // isBordered={true}
-      maxWidth="xl"
+      maxWidth="full"
       position="sticky"
       shouldHideOnScroll={false}
     >

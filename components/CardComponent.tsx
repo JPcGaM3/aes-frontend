@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback } from "react";
 import {
   Button,
@@ -52,7 +53,7 @@ export const CardComponent = <T extends { id: number | string }>({
 
           {headerFields?.map((field) => {
             const value = (item as any)[field.key];
-            // Use translation map for label and value if available
+            // Use translation
             const label =
               field.translation && field.translation[field.key]
                 ? field.translation[field.key]
@@ -83,7 +84,7 @@ export const CardComponent = <T extends { id: number | string }>({
 
             if (value === undefined || value === null) return null;
 
-            // Use translation map for label and value if available
+            // Use translation
             const label =
               field.translation && field.translation[field.key]
                 ? field.translation[field.key]
@@ -114,7 +115,11 @@ export const CardComponent = <T extends { id: number | string }>({
         {actions && actions.length > 0 && (
           <div>
             <Divider />
-            <div className="flex justify-end gap-2 py-2 px-3">
+            <div className="flex justify-between items-center gap-2 py-2 px-3">
+              <div className="text-gray-500 text-sm">
+                More actions.
+              </div>
+
               <Dropdown>
                 <DropdownTrigger>
                   <Button isIconOnly size="sm" variant="light">

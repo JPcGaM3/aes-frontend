@@ -148,6 +148,7 @@ interface CardComponentProps<T> {
   headerFields?: FieldConfig[];
   bodyFields: FieldConfig[];
   actions?: ActionConfig[];
+  isActionsPage?: boolean;
   cardClassName?: string;
 }
 

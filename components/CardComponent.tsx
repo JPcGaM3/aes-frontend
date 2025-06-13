@@ -10,9 +10,10 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/react";
+import NextLink from "next/link";
 
 import { translateEnumValue } from "@/utils/functions";
-import { VerticalDotsIcon } from "@/utils/icons";
+import { GoToPageIcon, VerticalDotsIcon } from "@/utils/icons";
 import { CardComponentProps } from "@/interfaces/interfaces";
 
 export const CardComponent = <T extends { id: number | string }>({
@@ -21,6 +22,7 @@ export const CardComponent = <T extends { id: number | string }>({
   headerFields,
   bodyFields,
   actions,
+  isActionsPage = false,
   cardClassName = "flex flex-col gap-2 bg-white shadow-md rounded-lg min-w-64 h-full",
 }: CardComponentProps<T>) => {
   const renderCell = useCallback(
@@ -45,7 +47,7 @@ export const CardComponent = <T extends { id: number | string }>({
                     (item as any)[statusConfig.key] ||
                       statusConfig.defaultValue ||
                       "",
-                    statusConfig.translation,
+                    statusConfig.translation
                   )
                 : (item as any)[statusConfig.key] || statusConfig.defaultValue}
             </Chip>
@@ -116,9 +118,7 @@ export const CardComponent = <T extends { id: number | string }>({
           <div>
             <Divider />
             <div className="flex justify-between items-center gap-2 py-2 px-3">
-              <div className="text-gray-500 text-sm">
-                More actions.
-              </div>
+              <div className="text-gray-500 text-sm">More actions.</div>
 
               <Dropdown>
                 <DropdownTrigger>
@@ -142,13 +142,37 @@ export const CardComponent = <T extends { id: number | string }>({
             </div>
           </div>
         )}
+
+        {/* footer */}
+        {isActionsPage && (
+          <div>
+            <Divider />
+            <NextLink
+              href={{
+                pathname: `/order/${item.id}`,
+                query: { data: JSON.stringify(item) },
+              }}
+            >
+              <div className="flex justify-between items-center gap-2 p-3 text-gray-500">
+                <div className=" text-sm">Click here to view more.</div>
+                <GoToPageIcon />
+              </div>
+            </NextLink>
+          </div>
+        )}
       </div>
     ),
-    [statusConfig, headerFields, bodyFields, actions, cardClassName],
+    [
+      statusConfig,
+      headerFields,
+      bodyFields,
+      actions,
+      isActionsPage,
+      cardClassName,
+    ]
   );
 
   return (
-    // <div className="flex flex-wrap justify-between items-center gap-8 w-full h-full">
     <div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full h-full">
       {items && items.length > 0 ? (
         items.map((item) => renderCell(item))

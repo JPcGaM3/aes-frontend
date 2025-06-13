@@ -1,7 +1,4 @@
-"use client";
-
 import type {
-  ActionConfig,
   FieldConfig,
   StatusConfig,
   RequestOrder,
@@ -15,29 +12,6 @@ import { CardComponent } from "@/components/CardComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
 
 function OrderPage() {
-  const actions: ActionConfig[] = [
-    {
-      key: "detail",
-      label: "Detail",
-      onClick: (item) => alert(`Detail of item ${item.id}`),
-    },
-    {
-      key: "edit",
-      label: "Edit",
-      onClick: (item) => alert(`Edit item ${item.id}`),
-    },
-    {
-      key: "assign",
-      label: "Assign",
-      onClick: (item) => alert(`Assign item ${item.id}`),
-    },
-    {
-      key: "reject",
-      label: "Reject",
-      onClick: (item) => alert(`Reject item ${item.id}`),
-    },
-  ];
-
   const headerFields: FieldConfig[] = [
     {
       key: "customer_type",
@@ -81,16 +55,15 @@ function OrderPage() {
     {
       key: "target_area",
       label: "Target Area",
-      formatter: (value) => (value ? `${value} ไร่` : "-"),
       className: "text-left text-gray-600",
       translation: RequestOrderTranslation,
     },
   ];
 
-  const items: RequestOrder[] = [
+  const mockData: RequestOrder[] = [
     {
       id: 1,
-      customer_type: "บุคคล",
+      customer_type: "FarmPro",
       affiliation: "บริษัท A",
       quota_number: "Q-001",
       farm_name: "ฟาร์ม 1",
@@ -101,7 +74,7 @@ function OrderPage() {
       supervisor_fullname: "สมชาย ใจดี",
       unit: 1,
       zone: 1,
-      ae: "AE-01",
+      ae: "CT",
       target_area: 50,
       actual_area: 48,
       on_live: true,
@@ -118,7 +91,7 @@ function OrderPage() {
     },
     {
       id: 2,
-      customer_type: "นิติบุคคล",
+      customer_type: "CaneMIS",
       affiliation: "บริษัท B",
       quota_number: "Q-002",
       farm_name: "ฟาร์ม 2",
@@ -129,7 +102,7 @@ function OrderPage() {
       supervisor_fullname: "สมหญิง ดีใจ",
       unit: 2,
       zone: 2,
-      ae: "AE-02",
+      ae: "NE1",
       target_area: 60,
       actual_area: 60,
       on_live: false,
@@ -146,7 +119,7 @@ function OrderPage() {
     },
     {
       id: 3,
-      customer_type: "บุคคล",
+      customer_type: "Songsirm",
       affiliation: "บริษัท C",
       quota_number: "Q-003",
       farm_name: "ฟาร์ม 3",
@@ -157,7 +130,7 @@ function OrderPage() {
       supervisor_fullname: "สมปอง รักดี",
       unit: 3,
       zone: 3,
-      ae: "AE-03",
+      ae: "NE2",
       target_area: 70,
       actual_area: 68,
       on_live: true,
@@ -174,7 +147,7 @@ function OrderPage() {
     },
     {
       id: 4,
-      customer_type: "นิติบุคคล",
+      customer_type: "FarmPro",
       affiliation: "บริษัท D",
       quota_number: "Q-004",
       farm_name: "ฟาร์ม 4",
@@ -185,7 +158,7 @@ function OrderPage() {
       supervisor_fullname: "สมศักดิ์ กล้าหาญ",
       unit: 4,
       zone: 4,
-      ae: "AE-04",
+      ae: "CT",
       target_area: 80,
       actual_area: 80,
       on_live: false,
@@ -202,7 +175,7 @@ function OrderPage() {
     },
     {
       id: 5,
-      customer_type: "บุคคล",
+      customer_type: "CaneMIS",
       affiliation: "บริษัท E",
       quota_number: "Q-005",
       farm_name: "ฟาร์ม 5",
@@ -213,7 +186,7 @@ function OrderPage() {
       supervisor_fullname: "สมฤดี สวยงาม",
       unit: 5,
       zone: 5,
-      ae: "AE-05",
+      ae: "CT",
       target_area: 90,
       actual_area: 85,
       on_live: true,
@@ -230,7 +203,7 @@ function OrderPage() {
     },
     {
       id: 6,
-      customer_type: "นิติบุคคล",
+      customer_type: "Songsirm",
       affiliation: "บริษัท F",
       quota_number: "Q-006",
       farm_name: "ฟาร์ม 6",
@@ -241,7 +214,7 @@ function OrderPage() {
       supervisor_fullname: "สมหมาย ใจดี",
       unit: 6,
       zone: 6,
-      ae: "AE-06",
+      ae: "NE2",
       target_area: 100,
       actual_area: 98,
       on_live: false,
@@ -258,7 +231,7 @@ function OrderPage() {
     },
     {
       id: 7,
-      customer_type: "บุคคล",
+      customer_type: "FarmPro",
       affiliation: "บริษัท G",
       quota_number: "Q-007",
       farm_name: "ฟาร์ม 7",
@@ -269,7 +242,7 @@ function OrderPage() {
       supervisor_fullname: "สมบัติ รักดี",
       unit: 7,
       zone: 7,
-      ae: "AE-07",
+      ae: "NE1",
       target_area: 110,
       actual_area: 110,
       on_live: true,
@@ -286,7 +259,7 @@ function OrderPage() {
     },
     {
       id: 8,
-      customer_type: "นิติบุคคล",
+      customer_type: "CaneMIS",
       affiliation: "บริษัท H",
       quota_number: "Q-008",
       farm_name: "ฟาร์ม 8",
@@ -297,7 +270,7 @@ function OrderPage() {
       supervisor_fullname: "สมศรี ดีใจ",
       unit: 8,
       zone: 8,
-      ae: "AE-08",
+      ae: "NE2",
       target_area: 120,
       actual_area: 115,
       on_live: false,
@@ -332,10 +305,10 @@ function OrderPage() {
     <div className="w-full px-0">
       <Header subtitle="Please review your order" title="Order Page" />
       <CardComponent
-        actions={actions}
+        isActionsPage={true}
         bodyFields={bodyFields}
         headerFields={headerFields}
-        items={items}
+        items={mockData}
         statusConfig={statusConfig}
       />
     </div>

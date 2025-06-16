@@ -13,6 +13,7 @@ interface FormComponentProps {
   fields: FormField[];
   onCancel?: () => void;
   onSubmit: (e: React.FormEvent) => void;
+  onValueChange?: (name: string, value: string) => void;
 }
 
 const FormComponent: React.FC<FormComponentProps> = ({
@@ -21,6 +22,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
   fields,
   onCancel,
   onSubmit,
+  onValueChange,
 }) => (
   <Form
     className="flex flex-col gap-4 w-full max-w-md"
@@ -28,7 +30,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
     onSubmit={onSubmit}
   >
     <Header subtitle={subtitle} title={title} />
-    <FormFields fields={fields} />
+    <FormFields fields={fields} onValueChange={onValueChange} />
     <FormButtons onCancel={onCancel} />
   </Form>
 );

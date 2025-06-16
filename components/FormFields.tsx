@@ -9,7 +9,18 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
 
 import { FormField, InputConfig } from "@/interfaces/interfaces";
 
-function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
+interface FormFieldsProps {
+  fields: FormField[];
+  onValueChange?: (name: string, value: string) => void;
+}
+
+function InputRenderer({
+  inputConfig,
+  onValueChange,
+}: {
+  inputConfig: InputConfig;
+  onValueChange?: (name: string, value: string) => void;
+}) {
   const commonProp = {
     name: inputConfig.name,
     label: inputConfig.label,
@@ -30,7 +41,16 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
   switch (inputConfig.type) {
     case "text":
     case "email":
-      return <Input {...commonProp} type={inputConfig.type} />;
+      return (
+        <Input
+          {...commonProp}
+          type={inputConfig.type}
+          onValueChange={
+            onValueChange
+              ? (v) => onValueChange(inputConfig.name, v)
+              : undefined
+          }
+        />);
 
     case "password": {
       return (
@@ -52,6 +72,11 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
             </button>
           }
           type={isVisible ? "text" : "password"}
+          onValueChange={
+            onValueChange
+              ? (v) => onValueChange(inputConfig.name, v)
+              : undefined
+          }
         />
       );
     }
@@ -79,7 +104,7 @@ function InputRenderer({ inputConfig }: { inputConfig: InputConfig }) {
   }
 }
 
-const FormFields: React.FC<{ fields: FormField[] }> = ({ fields }) => (
+const FormFields: React.FC<FormFieldsProps> = ({ fields, onValueChange }) => (
   <>
     {fields.map((field, index) =>
       Array.isArray(field) ? (
@@ -88,12 +113,17 @@ const FormFields: React.FC<{ fields: FormField[] }> = ({ fields }) => (
             <InputRenderer
               key={`${index}-${subIndex}`}
               inputConfig={subField}
+              onValueChange={onValueChange}
             />
           ))}
         </div>
       ) : (
-        <InputRenderer key={index} inputConfig={field} />
-      ),
+        <InputRenderer
+          key={index}
+          inputConfig={field}
+          onValueChange={onValueChange}
+        />
+      )
     )}
   </>
 );

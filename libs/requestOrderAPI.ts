@@ -1,5 +1,6 @@
-export default async function getRequestOrder(){
-    const response = await fetch("http://localhost:8080/api/v1/request-order", {
+export default async function getRequestOrder() {
+    const apiUrl = process.env.API_URL || "http://localhost:8080/api/v1";
+    const response = await fetch(`${apiUrl}/request-orders`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -10,7 +11,7 @@ export default async function getRequestOrder(){
         throw new Error("Failed to fetch orders: " + response.statusText);
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     return data;
 }

@@ -3,7 +3,7 @@
 import React from "react";
 
 import FormComponent from "@/components/FormComponent";
-import { RequestOrderInputFieldTranslation } from "@/utils/constants";
+import { RequestOrderTranslation } from "@/utils/constants";
 import { RequestOrderInputField } from "@/utils/enum";
 import { FormField } from "@/interfaces/interfaces";
 
@@ -12,7 +12,7 @@ const fields: FormField[] = [
     {
       type: "dropdown",
       name: RequestOrderInputField.CustomerType,
-      label: RequestOrderInputFieldTranslation.customer_type,
+      label: RequestOrderTranslation.customer_type,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -21,7 +21,7 @@ const fields: FormField[] = [
     {
       type: "dropdown",
       name: RequestOrderInputField.Affiliation,
-      label: RequestOrderInputFieldTranslation.affiliation,
+      label: RequestOrderTranslation.affiliation,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -30,7 +30,7 @@ const fields: FormField[] = [
     {
       type: "dropdown",
       name: RequestOrderInputField.Unit,
-      label: RequestOrderInputFieldTranslation.unit,
+      label: RequestOrderTranslation.unit,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -40,40 +40,28 @@ const fields: FormField[] = [
   {
     type: "number",
     name: RequestOrderInputField.Quota,
-    label: RequestOrderInputFieldTranslation.quota,
+    label: RequestOrderTranslation.quota_number,
     min: 0,
   },
   {
     type: "text",
     name: RequestOrderInputField.Name,
-    label: RequestOrderInputFieldTranslation.name,
+    label: RequestOrderTranslation.farm_name,
   },
   {
     type: "number",
     name: RequestOrderInputField.LandNumber,
-    label: RequestOrderInputFieldTranslation.land_number,
+    label: RequestOrderTranslation.land_number,
   },
   {
     type: "text",
     name: RequestOrderInputField.LocationName,
-    label: RequestOrderInputFieldTranslation.location_name,
+    label: RequestOrderTranslation.location_id,
   },
-  [
-    {
-      type: "text",
-      name: RequestOrderInputField.Lattitude,
-      label: RequestOrderInputFieldTranslation.lattitude,
-    },
-    {
-      type: "text",
-      name: RequestOrderInputField.Longitude,
-      label: RequestOrderInputFieldTranslation.longitude,
-    },
-  ],
   {
     type: "text",
     name: RequestOrderInputField.Supervisor,
-    label: RequestOrderInputFieldTranslation.supervisor,
+    label: RequestOrderTranslation.supervisor_id,
   },
 ];
 
@@ -88,14 +76,16 @@ function FormPage() {
   };
 
   return (
-    <div className="min-w-[400px]">
-      <FormComponent
-        fields={fields}
-        subtitle="Please fill out the form below."
-        title="Request Order Form"
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-      />
+    <div className="flex justify-center min-h-screen">
+      <div className="min-w-[400px]">
+        <FormComponent
+          fields={fields}
+          subtitle="Please fill out the form below."
+          title="Request Order Form"
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 }

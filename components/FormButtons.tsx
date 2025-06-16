@@ -31,7 +31,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         {cancelLabel}
       </Button>
     )}
-    <Button className="w-full" color={submitColor} radius="sm" variant="flat">
+    <Button className="w-full" color={submitColor} radius="sm" variant="flat" type="submit">
       {submitLabel}
     </Button>
   </div>

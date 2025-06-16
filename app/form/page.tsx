@@ -76,14 +76,16 @@ function FormPage() {
   };
 
   return (
-    <div className="min-w-[400px]">
-      <FormComponent
-        fields={fields}
-        subtitle="Please fill out the form below."
-        title="Request Order Form"
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-      />
+    <div className="flex justify-center min-h-screen">
+      <div className="min-w-[400px]">
+        <FormComponent
+          fields={fields}
+          subtitle="Please fill out the form below."
+          title="Request Order Form"
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 }

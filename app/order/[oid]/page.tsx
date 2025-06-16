@@ -14,7 +14,7 @@ const OrderActionPage = () => {
 
   return (
     <div className="w-full px-0">
-      <Header title="Order Details" />
+      <Header title="Order Details" subtitle="Please verify your order details"/>
 
       {item &&
         Object.entries(item).map(([key, value]) => (

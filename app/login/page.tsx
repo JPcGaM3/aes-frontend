@@ -26,13 +26,15 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-w-[400px]">
-      <FormComponent
-        fields={fields}
-        subtitle="Please enter your credentials."
-        title="Login"
-        onSubmit={handleSubmit}
-      />
+    <div className="flex justify-center min-h-screen">
+      <div className="min-w-[400px]">
+        <FormComponent
+          fields={fields}
+          subtitle="Please enter your credentials."
+          title="Login"
+          onSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 }

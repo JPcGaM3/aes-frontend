@@ -11,8 +11,6 @@ export default async function LoginUser(
     ? { email: username, password: password }
     : { username: username, password: password };
 
-  console.log("Request body:", body);
-
   try {
     const response = await axios.post(
       `${apiUrl}/api/v1/mitr-portal/login`,
@@ -23,6 +21,7 @@ export default async function LoginUser(
         },
       }
     );
+    
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

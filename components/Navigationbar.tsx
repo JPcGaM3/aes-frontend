@@ -26,9 +26,9 @@ export const Navbar = () => {
 
   const handleNav = (path: string) => {
     setIsLoading(true);
+    router.push(path);
 
     setTimeout(() => {
-      router.push(path);
       setIsLoading(false);
     }, 1000);
   };

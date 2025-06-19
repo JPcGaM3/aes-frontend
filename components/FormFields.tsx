@@ -44,6 +44,7 @@ function InputRenderer({
       return (
         <Input
           {...commonProp}
+          radius="sm"
           type={inputConfig.type}
           onValueChange={
             onValueChange
@@ -56,6 +57,7 @@ function InputRenderer({
       return (
         <Input
           {...commonProp}
+          radius="sm"
           endContent={
             <button
               aria-label="toggle password visibility"
@@ -85,6 +87,7 @@ function InputRenderer({
       return (
         <NumberInput
           {...commonProp}
+          radius="sm"
           max={inputConfig.max}
           min={inputConfig.min}
         />
@@ -94,6 +97,7 @@ function InputRenderer({
       return (
         <Select
           {...commonProp}
+          radius="sm"
           selectionMode={inputConfig.selectionMode || "single"}
         >
           {inputConfig.options.map((option, index) => (

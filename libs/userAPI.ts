@@ -1,24 +1,36 @@
-export default async function LoginUser(username: string, password: string) {
-    const apiUrl = process.env.API_URL;
-    console.log("API URL:", apiUrl);
+import axios from "axios";
 
-    const response = await fetch(`${apiUrl}/auth`, {
-        method: "POST",
+export default async function LoginUser(
+  username: string,
+  password: string
+): Promise<any> {
+  const apiUrl = process.env.API_URL;
+
+  const isEmail = username.includes("@mitrphol.com");
+  const body = isEmail
+    ? { email: username, password: password }
+    : { username: username, password: password };
+
+  console.log("Request body:", body);
+
+  try {
+    const response = await axios.post(
+      `${apiUrl}/api/v1/mitr-portal/login`,
+      body,
+      {
         headers: {
-            "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            username,
-            // password
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch orders: " + response.statusText);
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Failed to fetch token: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
     }
 
-    const data = await response.json();
-    console.log(data);
-
-    return data;
+    throw error;
+  }
 }

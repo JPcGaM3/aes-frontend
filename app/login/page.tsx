@@ -3,21 +3,21 @@
 import React from "react";
 
 import FormComponent from "@/components/FormComponent";
-import LoginUser from "@/libs/userAPI";
+import { useAuth } from "@/providers/AuthContext";
 import { FormField } from "@/interfaces/interfaces";
 
 function LoginPage() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
+  const { user, login } = useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    console.log("Logging in with username:", username);
 
     try {
-      const data = await LoginUser(username, password);
-      console.log("Login success", data);
+      await login(username, password);
+      console.log("Login successful : ", user);
     } catch (err: any) {
       setError(err.message || "Login failed");
     }
@@ -27,19 +27,19 @@ function LoginPage() {
     {
       type: "text",
       name: "username",
-      label: "Username",
+      label: "Username / Email",
       isRequired: true,
     },
-    // {
-    //   type: "password",
-    //   name: "password",
-    //   label: "Password",
-    //   isRequired: true,
-    // },
+    {
+      type: "password",
+      name: "password",
+      label: "Password",
+      isRequired: true,
+    },
   ];
 
   return (
-    <div className="flex justify-center min-h-screen items-center">
+    <div className="flex justify-center min-h-screen">
       <div className="min-w-[400px]">
         <FormComponent
           fields={fields}
@@ -48,7 +48,7 @@ function LoginPage() {
           onSubmit={handleSubmit}
           onValueChange={(name, value) => {
             if (name === "username") setUsername(value);
-            // if (name === "password") setPassword(value);
+            if (name === "password") setPassword(value);
           }}
         />
 

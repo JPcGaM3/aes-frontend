@@ -5,21 +5,31 @@ import React from "react";
 import FormComponent from "@/components/FormComponent";
 import { useAuth } from "@/providers/AuthContext";
 import { FormField } from "@/interfaces/interfaces";
+import { useRouter } from "next/navigation";
+import { useLoading } from "@/providers/LoadingContext";
 
 function LoginPage() {
+  const router = useRouter();
+
+  const { login } = useAuth();
+  const { setIsLoading } = useLoading();
+  
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
-  const { user, login } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     try {
+      setIsLoading(true);
       await login(username, password);
-      console.log("Login successful : ", user);
     } catch (err: any) {
       setError(err.message || "Login failed");
+    } finally {
+      setIsLoading(false);
+      router.push("/");
     }
   };
 

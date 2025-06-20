@@ -1,9 +1,14 @@
+"use client";
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
   NavbarItem,
 } from "@heroui/navbar";
-import NextLink from "next/link";
+
+import { useRouter } from "next/navigation";
+import { Button } from "@heroui/button";
+import { useLoading } from "@/providers/LoadingContext";
 
 const menuItems = [
   { name: "Home", path: "/" },
@@ -16,26 +21,38 @@ const menuItems = [
 ];
 
 export const Navbar = () => {
+  const router = useRouter();
+  const { setIsLoading } = useLoading();
+
+  const handleNav = (path: string) => {
+    setIsLoading(true);
+    router.push(path);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  };
+
   return (
     <HeroUINavbar
       className="shadow-md px-6"
-      // isBordered={true}
       maxWidth="full"
       position="sticky"
       shouldHideOnScroll={false}
     >
       <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
+        className="hidden sm:flex basis-1/5 sm:basis-full gap-0"
         justify="end"
       >
         {menuItems.map((item) => (
-          <NavbarItem key={item.name} className="hidden sm:flex gap-8">
-            <NextLink
-              className="flex justify-start items-center gap-1"
-              href={item.path}
+          <NavbarItem key={item.name} className="hidden sm:flex">
+            <Button
+              variant="light"
+              className="font-bold text-inherit flex justify-center items-center"
+              onPress={() => handleNav(item.path)}
             >
-              <p className="font-bold text-inherit">{item.name}</p>
-            </NextLink>
+              {item.name}
+            </Button>
           </NavbarItem>
         ))}
       </NavbarContent>

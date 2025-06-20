@@ -3,7 +3,6 @@ import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
-
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/Navigationbar";
@@ -37,7 +36,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "bg-background min-h-screen font-sans text-foreground antialiased",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "white" }}>
@@ -46,17 +45,6 @@ export default function RootLayout({
             <main className="flex-grow mx-auto px-6 pt-2 max-w-full container">
               {children}
             </main>
-            {/* <footer className="flex justify-center items-center py-3 w-full">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-current"
-                href="https://heroui.com?utm_source=next-app-template"
-                title="heroui.com homepage"
-              >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">HeroUI</p>
-              </Link>
-            </footer> */}
           </div>
         </Providers>
       </body>

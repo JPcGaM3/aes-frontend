@@ -22,7 +22,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
   <div className="flex gap-2 mt-4 w-full">
     {onCancel && (
       <Button
-        className="w-full"
+        className="w-full font-semibold text-gray-500"
         color={cancelColor}
         radius="sm"
         variant="flat"
@@ -31,7 +31,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         {cancelLabel}
       </Button>
     )}
-    <Button className="w-full" color={submitColor} radius="sm" variant="flat" type="submit">
+    <Button className="w-full font-bold" color={submitColor} radius="sm" variant="flat" type="submit">
       {submitLabel}
     </Button>
   </div>

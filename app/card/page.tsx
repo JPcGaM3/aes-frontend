@@ -10,6 +10,7 @@ import {
   UserStatusColorMap,
   UserStatusTranslation,
 } from "@/utils/constants";
+
 import { FieldConfig, User } from "@/interfaces/interfaces";
 
 export default function Card() {
@@ -81,8 +82,6 @@ export default function Card() {
   ];
 
   const statusConfig = {
-    key: "status",
-    defaultValue: "inactive",
     colorMap: UserStatusColorMap,
     translation: UserStatusTranslation,
   };

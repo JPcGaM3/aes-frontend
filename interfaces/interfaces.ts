@@ -122,8 +122,6 @@ type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig;
 type FormField = InputConfig | InputConfig[];
 
 interface StatusConfig {
-  key: string;
-  defaultValue?: string;
   colorMap: Record<string, ColorType>;
   translation?: Record<string, string>;
 }

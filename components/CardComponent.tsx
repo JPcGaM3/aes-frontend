@@ -11,9 +11,9 @@ import {
   DropdownTrigger,
 } from "@heroui/react";
 
-import { translateEnumValue } from "@/utils/functions";
 import { CardComponentProps } from "@/interfaces/interfaces";
 import { VerticalDotsIcon } from "@/utils/icons";
+import { translateEnumValue } from "@/utils/functions";
 
 export const CardComponent = <T extends { id: number | string }>({
   items,
@@ -21,35 +21,27 @@ export const CardComponent = <T extends { id: number | string }>({
   headerFields,
   bodyFields,
   actions,
-  cardClassName = "flex flex-col gap-1 bg-white shadow-md rounded-lg min-w-64 h-full",
+  cardClassName = "flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full",
 }: CardComponentProps<T>) => {
   const renderCell = useCallback(
     (item: T) => (
       <div key={item.id} className={cardClassName}>
-
         {/* header */}
         <div className="px-4 text-left">
-          {statusConfig && (item as any)[statusConfig.key] && (
-            <Chip
-              className="w-fit capitalize p-3 mt-4 mb-2"
-              color={
-                statusConfig.colorMap[
-                  ((item as any)[statusConfig.key] ||
-                    statusConfig.defaultValue) as string
-                ]
-              }
-              size="sm"
-              variant="flat"
-              radius="sm"
-            >
-              {statusConfig.translation
-                ? translateEnumValue(
-                    statusConfig.defaultValue as any,
-                    statusConfig.translation
-                  )
-                : statusConfig.defaultValue}
-            </Chip>
-          )}
+          <Chip
+            size="sm"
+            radius="sm"
+            variant="flat"
+            className="w-fit p-3 mt-4 mb-2 tracking-wide"
+            color={statusConfig?.colorMap?.[(item as any).status] || "default"}
+          >
+            <span className="font-semibold">
+              {translateEnumValue(
+                (item as any).status,
+                statusConfig?.translation || {}
+              )}
+            </span>
+          </Chip>
 
           {headerFields?.map((field) => {
             const value = (item as any)[field.key];
@@ -64,14 +56,17 @@ export const CardComponent = <T extends { id: number | string }>({
         </div>
 
         {/* body */}
-        <div className="flex flex-col px-4">
+        <div className="flex flex-col px-4 pb-4">
           {bodyFields.map((field) => {
             const value = (item as any)[field.key];
-            const label = field.label;
-
             if (value === undefined || value === null) {
               return null;
             }
+
+            const label = translateEnumValue(
+              field.key,
+              field.translation || {}
+            );
 
             return (
               <div
@@ -80,8 +75,8 @@ export const CardComponent = <T extends { id: number | string }>({
                   field.className || "text-gray-600"
                 }`}
               >
-                <div className="w-1/4 font-medium">{label}</div>
-                <div className="w-3/4 break-words">: {value}</div>
+                <div className="w-1/3">{label}</div>
+                <div className="w-2/3">: {value}</div>
               </div>
             );
           })}
@@ -89,11 +84,10 @@ export const CardComponent = <T extends { id: number | string }>({
 
         {/* footer */}
         {actions && actions.length > 0 && (
-          <div className="pt-3">
+          <div>
             <Divider />
             <div className="flex justify-between items-center gap-2 py-1 pl-4 pr-1">
               <div className="text-gray-500 text-sm">More actions.</div>
-
               <Dropdown>
                 <DropdownTrigger>
                   <Button isIconOnly size="sm" variant="light">
@@ -102,7 +96,7 @@ export const CardComponent = <T extends { id: number | string }>({
                     </div>
                   </Button>
                 </DropdownTrigger>
-                
+
                 <DropdownMenu>
                   {actions.map((action) => (
                     <DropdownItem

@@ -1,23 +1,27 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useDisclosure } from "@heroui/react";
 
-import { User } from "@/interfaces/interfaces";
+import React from "react";
+import { useEffect, useState } from "react";
+import { useDisclosure } from "@heroui/react";
+import { useLoading } from "@/providers/LoadingContext";
+
 import { mock_users } from "@/utils/mock";
 import { AlertModal } from "@/components/AlertModal";
 import { CardComponent } from "@/components/CardComponent";
+
 import {
   UserRoleTranslation,
   UserStatusColorMap,
   UserStatusTranslation,
 } from "@/utils/constants";
-import { useLoading } from "@/providers/LoadingContext";
+import { User } from "@/interfaces/interfaces";
 
-function Card() {
-  // const [isLoading, setIsLoading] = useState(true);
+
+export default function Card() {
   const { setIsLoading } = useLoading();
-  const [users, setUsers] = useState<User[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  const [users, setUsers] = useState<User[]>([]);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   useEffect(() => {
@@ -61,6 +65,63 @@ function Card() {
     onClose();
   }
 
+  const actions = [
+    {
+      key: "view",
+      label: "ดูรายละเอียด",
+      onClick: handleView,
+    },
+    {
+      key: "edit",
+      label: "แก้ไข",
+      onClick: handleEdit,
+    },
+    {
+      key: "delete",
+      label: "ลบ",
+      onClick: handleDelete,
+    },
+  ];
+
+  const bodyFields = [
+    {
+      key: "fullname",
+      className: "font-semibold text-lg capitalize",
+    },
+    {
+      key: "role",
+      className: "text-gray-600 capitalize",
+      translation: UserRoleTranslation,
+    },
+    {
+      key: "phone",
+      className: "text-gray-600 capitalize",
+    },
+    {
+      key: "unit",
+      className: "text-gray-500",
+    },
+    {
+      key: "zone",
+      className: "text-gray-400 text-sm",
+    },
+  ];
+
+  const headerFields = [
+    {
+      key: "quota_number",
+      label: "Quota Number",
+      className: "font-semibold text-lg capitalize text-start",
+    },
+  ];
+
+  const statusConfig = {
+    key: "status",
+    defaultValue: "inactive",
+    colorMap: UserStatusColorMap,
+    translation: UserStatusTranslation,
+  };
+
   return (
     <>
       {isOpen && (
@@ -80,63 +141,12 @@ function Card() {
         />
       )}
       <CardComponent<User>
-        actions={[
-          {
-            key: "view",
-            label: "ดูรายละเอียด",
-            onClick: handleView,
-          },
-          {
-            key: "edit",
-            label: "แก้ไข",
-            onClick: handleEdit,
-          },
-          {
-            key: "delete",
-            label: "ลบ",
-            onClick: handleDelete,
-          },
-        ]}
-        bodyFields={[
-          {
-            key: "fullname",
-            className: "font-semibold text-lg capitalize",
-          },
-          {
-            key: "role",
-            className: "text-gray-600 capitalize",
-            translation: UserRoleTranslation,
-          },
-          {
-            key: "phone",
-            className: "text-gray-600 capitalize",
-          },
-          {
-            key: "unit",
-            className: "text-gray-500",
-          },
-          {
-            key: "zone",
-            className: "text-gray-400 text-sm",
-          },
-        ]}
-        headerFields={[
-          {
-            key: "quota_number",
-            label: "Quota Number",
-            className: "font-semibold text-lg capitalize text-start",
-          },
-        ]}
+        actions={actions}
+        bodyFields={bodyFields}
+        headerFields={headerFields}
         items={users}
-        statusConfig={{
-          key: "status",
-          defaultValue: "inactive",
-          colorMap: UserStatusColorMap,
-          translation: UserStatusTranslation,
-        }}
+        statusConfig={statusConfig}
       />
     </>
   );
 }
-
-export default Card;

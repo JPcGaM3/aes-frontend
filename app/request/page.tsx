@@ -13,7 +13,7 @@ import { RequestOrderTranslation } from "@/utils/constants";
 import { get } from "http";
 import getRequestOrder from "@/libs/requestOrderAPI";
 
-async function OrderPage() {
+export default async function RequestPage() {
   const headerFields: FieldConfig[] = [
     {
       key: "customer_type",
@@ -319,5 +319,3 @@ async function OrderPage() {
     </div>
   );
 }
-
-export default OrderPage;

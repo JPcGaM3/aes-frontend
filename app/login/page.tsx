@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useLoading } from "@/providers/LoadingContext";
 import { Button } from "@heroui/button";
 
-function LoginPage() {
+export default function LoginPage() {
   const router = useRouter();
 
   const { userContext, login, logout } = useAuth();
@@ -84,5 +84,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

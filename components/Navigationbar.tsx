@@ -12,12 +12,12 @@ import { useLoading } from "@/providers/LoadingContext";
 
 const menuItems = [
   { name: "Home", path: "/" },
-  { name: "Table", path: "/table" },
-  { name: "Card", path: "/card" },
   { name: "Form", path: "/form" },
-  { name: "Login", path: "/login" },
-  { name: "Order", path: "/order" },
+  { name: "Card", path: "/card" },
   { name: "Drawer", path: "/drawer" },
+  { name: "Filter", path: "/filter" },
+  { name: "Login", path: "/login" },
+  { name: "Request", path: "/request" },
 ];
 
 export const Navbar = () => {

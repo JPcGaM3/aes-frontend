@@ -130,7 +130,7 @@ interface StatusConfig {
 
 interface FieldConfig {
   key: string;
-  label?: string;
+  label: string;
   formatter?: (value: any) => string;
   className?: string;
   translation?: Record<string, string>;

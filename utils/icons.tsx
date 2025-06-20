@@ -295,7 +295,7 @@ export const PlusIcon = ({
 };
 
 export const VerticalDotsIcon = ({
-  size = 24,
+  size = 20,
   width,
   height,
   ...props

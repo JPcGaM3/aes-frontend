@@ -12,18 +12,51 @@ import {
 } from "@/utils/constants";
 
 import { FieldConfig, User } from "@/interfaces/interfaces";
+import { AlertModal } from "@/components/AlertModal";
+import { useDisclosure } from "@heroui/react";
+import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
+  const {
+    isOpen: isOpenView,
+    onOpen: onOpenView,
+    onClose: onCloseView,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+
   const handleView = (user: User) => {
     console.log(`Viewing user: ${user.fullname}`);
+
+    onOpenView();
   };
 
   const handleEdit = (user: User) => {
     console.log(`Editing user: ${user.fullname}`);
+
+    onOpenEdit();
   };
 
   const handleDelete = (user: User) => {
     console.log(`Deleting user: ${user.fullname}`);
+
+    onOpenDelete();
+  };
+
+  const handleConfirmDelete = () => {
+    console.log("Confirm deleting!");
+
+    onCloseDelete();
   };
 
   const actions = [
@@ -88,6 +121,18 @@ export default function Card() {
 
   return (
     <div>
+      <AlertModal
+        isOpen={isOpenDelete}
+        onClose={() => onCloseDelete()}
+        onConfirm={() => handleConfirmDelete()}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this user?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+
+      <DrawerComponent isOpen={isOpenView} onClose={onCloseView} />
+
       <CardComponent<User>
         actions={actions}
         bodyFields={bodyFields}

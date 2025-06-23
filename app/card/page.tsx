@@ -1,12 +1,8 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
-import { useDisclosure } from "@heroui/react";
-import { useLoading } from "@/providers/LoadingContext";
 
 import { mock_users } from "@/utils/mock";
-import { AlertModal } from "@/components/AlertModal";
 import { CardComponent } from "@/components/CardComponent";
 
 import {
@@ -14,56 +10,54 @@ import {
   UserStatusColorMap,
   UserStatusTranslation,
 } from "@/utils/constants";
-import { User } from "@/interfaces/interfaces";
 
+import { FieldConfig, User } from "@/interfaces/interfaces";
+import { AlertModal } from "@/components/AlertModal";
+import { useDisclosure } from "@heroui/react";
+import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
-  const { setIsLoading } = useLoading();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  
-  const [users, setUsers] = useState<User[]>([]);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const {
+    isOpen: isOpenView,
+    onOpen: onOpenView,
+    onClose: onCloseView,
+  } = useDisclosure();
 
-  useEffect(() => {
-    setIsLoading(true);
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
 
-    const fetchData = () => {
-      setTimeout(() => {
-        setUsers(mock_users);
-        setIsLoading(false);
-      }, 3000);
-    };
-
-    fetchData();
-
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, 10000);
-
-    return () => clearInterval(intervalId);
-  }, [setIsLoading]);
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
 
   const handleView = (user: User) => {
     console.log(`Viewing user: ${user.fullname}`);
+
+    onOpenView();
   };
 
   const handleEdit = (user: User) => {
     console.log(`Editing user: ${user.fullname}`);
+
+    onOpenEdit();
   };
 
   const handleDelete = (user: User) => {
-    setUserToDelete(user);
-    onOpen();
+    console.log(`Deleting user: ${user.fullname}`);
+
+    onOpenDelete();
   };
 
-  function confirmDelete(): void {
-    if (userToDelete) {
-      console.log(`Deleting user: ${userToDelete.fullname}`);
-      setUsers(users.filter((u) => u.id !== userToDelete.id));
-    }
-    setUserToDelete(null);
-    onClose();
-  }
+  const handleConfirmDelete = () => {
+    console.log("Confirm deleting!");
+
+    onCloseDelete();
+  };
 
   const actions = [
     {
@@ -83,70 +77,75 @@ export default function Card() {
     },
   ];
 
-  const bodyFields = [
+  const headerFields: FieldConfig[] = [
+    {
+      key: "quota_number",
+      label: "Quota Number",
+      className: "text-black text-lg font-bold",
+    },
+  ];
+
+  const bodyFields: FieldConfig[] = [
     {
       key: "fullname",
-      className: "font-semibold text-lg capitalize",
+      label: "Full Name",
+      className: "text-black text-md font-bold",
     },
     {
       key: "role",
-      className: "text-gray-600 capitalize",
+      label: "Role",
+      className: "text-gray-600 text-md font-semibold pb-2",
       translation: UserRoleTranslation,
     },
     {
       key: "phone",
-      className: "text-gray-600 capitalize",
+      label: "Phone",
+      className: "text-gray-500 text-sm",
     },
     {
       key: "unit",
-      className: "text-gray-500",
+      label: "Unit",
+      className: "text-gray-500 text-sm",
     },
     {
       key: "zone",
-      className: "text-gray-400 text-sm",
-    },
-  ];
-
-  const headerFields = [
-    {
-      key: "quota_number",
-      label: "Quota Number",
-      className: "font-semibold text-lg capitalize text-start",
+      label: "Zone",
+      className: "text-gray-500 text-sm",
     },
   ];
 
   const statusConfig = {
-    key: "status",
-    defaultValue: "inactive",
     colorMap: UserStatusColorMap,
     translation: UserStatusTranslation,
   };
 
   return (
-    <>
-      {isOpen && (
-        <AlertModal
-          cancelText="ยกเลิก"
-          confirmText="ยืนยัน"
-          isOpen={isOpen}
-          message={
-            userToDelete
-              ? `คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้ ${userToDelete.fullname}`
-              : "คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้คนนี้?"
-          }
-          title="ลบผู้ใช้"
-          onClose={onClose}
-          onConfirm={confirmDelete}
-          onOpen={onOpen}
-        />
-      )}
+    <div>
+      <AlertModal
+        isOpen={isOpenDelete}
+        onClose={() => onCloseDelete()}
+        onConfirm={() => handleConfirmDelete()}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this user?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+
+      <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
+        <div>View User Details</div>
+      </DrawerComponent>
+
+      <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
+        <div>Edit User Details</div>
+      </DrawerComponent>
+
       <CardComponent<User>
         actions={actions}
         bodyFields={bodyFields}
         headerFields={headerFields}
-        items={users}
+        items={mock_users}
         statusConfig={statusConfig}
       />
-    </>
+    </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Modal,
   ModalContent,
@@ -8,43 +9,43 @@ import {
   Button,
 } from "@heroui/react";
 
-export const AlertModal = ({
-  isOpen,
-  onOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText,
-  cancelText,
-}: {
+interface AlertModalProps {
   isOpen: boolean;
-  onOpen: () => void;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
   message: string;
   confirmText: string;
   cancelText: string;
-}) => {
+}
+
+export const AlertModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+  cancelText,
+}: AlertModalProps) => {
   return (
     <Modal isOpen={isOpen} placement="top" onOpenChange={onClose}>
       <ModalContent>
         {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-            <ModalBody>
-              <p>{message}</p>
-            </ModalBody>
+          <div>
+            <ModalHeader className="text-xl">{title}</ModalHeader>
+
+            <ModalBody className="text-md">{message}</ModalBody>
+
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="flat" onPress={onClose}>
                 {cancelText}
               </Button>
-              <Button color="primary" onPress={onConfirm}>
+              <Button color="primary" variant="solid" onPress={onConfirm}>
                 {confirmText}
               </Button>
             </ModalFooter>
-          </>
+          </div>
         )}
       </ModalContent>
     </Modal>

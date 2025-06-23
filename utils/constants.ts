@@ -43,33 +43,26 @@ const TaskOrderStatusTranslation = {
   [TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
 };
 
-const RequestOrderTranslation = {
-  id: "รหัสคำสั่งงาน",
-  customer_type: "ประเภทลูกค้า",
+const RequestOrderTranslation: Record<string, string> = {
+  id: "เลขที่ใบสั่งงาน",
+  customer_type: "หัวตารางแจ้งงาน",
   affiliation: "สังกัด",
   quota_number: "โควต้า",
   farm_name: "ชื่อฟาร์ม",
   land_number: "เลขที่แปลง",
-  activity_describe: "รายละเอียดกิจกรรม",
-  tool_describe: "รายละเอียดเครื่องมือ",
-  ap_month_year: "เดือน/ปี ปฏิบัติงาน",
-  supervisor_fullname: "ชื่อผู้ควบคุมงาน",
+  activity_describe: "กิจกรรม",
+  tool_describe: "เครื่องมือ",
+  ap_month_year: "วันปฏิบัติงาน",
+  supervisor_fullname: "ผู้รับผิดชอบ",
   unit: "เขต",
   zone: "โซน",
   ae: "AE",
   target_area: "พื้นที่เป้าหมาย",
   actual_area: "พื้นที่จริง",
-  on_live: "อยู่ระหว่างดำเนินการ",
   evidence: "หลักฐาน",
-  sale: "ยอดขาย",
+  sale: "ค่าใช้บริการ",
   status: "สถานะ",
-  supervisor_id: "รหัสผู้ควบคุมงาน",
-  location_id: "รหัสสถานที่",
   comment: "หมายเหตุ",
-  created_at: "วันที่สร้าง",
-  updated_at: "วันที่แก้ไข",
-  created_by: "ผู้สร้าง",
-  updated_by: "ผู้แก้ไข",
 };
 
 const TaskOrderTranslation = {
@@ -109,12 +102,12 @@ const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
 
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
   created: "default",
-  pending_approval: "default",
-  pending_edit: "default",
-  pending: "default",
+  pending_approval: "warning",
+  pending_edit: "warning",
+  pending: "warning",
   in_progress: "primary",
-  pending_review: "default",
-  pending_confirm: "default",
+  pending_review: "warning",
+  pending_confirm: "warning",
   completed: "success",
   rejected: "danger",
 };

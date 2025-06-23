@@ -211,6 +211,9 @@ export default function Card() {
                 if (value instanceof Date) {
                   value = value.toLocaleString();
                 }
+                if (typeof value === "boolean") {
+                  value = value.toString();
+                }
 
                 return (
                   <div key={key} className="flex flex-row items-center">

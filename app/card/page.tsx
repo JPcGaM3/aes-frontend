@@ -211,7 +211,7 @@ export default function Card() {
     {
       type: "dropdown",
       name: "status",
-      label: "Status",
+      label: "สถานะใบสั่งงาน",
       options: [
         { label: "All", value: "all" },
         { label: "Active", value: "active" },
@@ -221,12 +221,41 @@ export default function Card() {
     {
       type: "dropdown",
       name: "ae",
-      label: "AE",
+      label: "สังกัด",
       options: [
         { label: "All", value: "all" },
         { label: "CT", value: "ct" },
         { label: "NE1", value: "ne1" },
         { label: "NE2", value: "ne2" },
+      ],
+    },
+    [
+      {
+        type: "date",
+        name: "start_date",
+        label: "วันที่เริ่มต้น",
+        hasPlaceholder: false
+      },
+      {
+        type: "date",
+        name: "end_date",
+        label: "วันที่สิ้นสุด",
+        hasPlaceholder: false
+      },
+    ],
+    {
+      type: "date-range",
+      name: "date_range",
+      label: "ช่วงวันที่",
+      hasPlaceholder: false
+    },
+    {
+      type: "dropdown",
+      name: "sort",
+      label: "เรียงลำดับตาม",
+      options: [
+        { label: "วันที่ น้อยไปมาก", value: "date_asc" },
+        { label: "วันที่ มากไปน้อย", value: "date_desc" },
       ],
     },
   ];
@@ -300,7 +329,7 @@ export default function Card() {
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={{ status: "all", ae: "all" }}
+        initialValues={{ status: "all", ae: "all", sort: "date_asc" }}
       />
 
       {/* Header ----------------------------------------------------------- */}

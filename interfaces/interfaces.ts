@@ -150,6 +150,11 @@ interface CardComponentProps<T> {
   cardClassName?: string;
 }
 
+interface FilterConfig {
+  status?: string;
+  ae?: string;
+}
+
 export type {
   User,
   RequestOrder,
@@ -165,4 +170,5 @@ export type {
   FieldConfig,
   ActionConfig,
   CardComponentProps,
+  FilterConfig
 };

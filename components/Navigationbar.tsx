@@ -48,7 +48,9 @@ export const Navbar = () => {
           <NavbarItem key={item.name} className="hidden sm:flex">
             <Button
               variant="light"
-              className="font-bold text-inherit flex justify-center items-center"
+              size="sm"
+              radius="sm"
+              className="font-semibold text-base px-4 py-6 text-inherit flex justify-center items-center"
               onPress={() => handleNav(item.path)}
             >
               {item.name}

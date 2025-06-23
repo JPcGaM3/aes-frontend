@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@heroui/input";
-import { NumberInput } from "@heroui/react";
+import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
 
 import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
@@ -15,7 +15,17 @@ interface FormFieldsProps {
   onValueChange?: (name: string, value: string) => void;
 }
 
-export default function FormFields({ fields, onValueChange, values = {} }: FormFieldsProps) {
+interface InputRendererProps {
+  inputConfig: InputConfig;
+  onValueChange?: (name: string, value: string) => void;
+  value?: any;
+}
+
+export default function FormFields({
+  fields,
+  onValueChange,
+  values = {},
+}: FormFieldsProps) {
   return (
     <div className="flex flex-col gap-4 w-full">
       {fields.map((field, index) =>
@@ -47,17 +57,12 @@ function InputRenderer({
   inputConfig,
   onValueChange,
   value,
-}: {
-  inputConfig: InputConfig;
-  onValueChange?: (name: string, value: string) => void;
-  value?: any;
-}) {
-  const commonProp = {
+}: InputRendererProps) {
+  const commonProp: any = {
     name: inputConfig.name,
     label: inputConfig.label,
     labelPlacement: inputConfig.labelPlacement || "outside",
-    placeholder:
-      inputConfig.placeholder?.toString() || `กรอก ${inputConfig.label}`,
+    hasPlaceholder: inputConfig.hasPlaceholder || true,
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
@@ -66,6 +71,10 @@ function InputRenderer({
     errorMessage: inputConfig.errorMessage || null,
     className: inputConfig.className || "",
   };
+
+  if (inputConfig.hasPlaceholder) {
+    commonProp.placeholder = inputConfig.placeholder || "";
+  }
 
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
@@ -154,5 +163,28 @@ function InputRenderer({
           ))}
         </Select>
       );
+
+    case "date":
+      return (
+        <DatePicker
+          {...commonProp}
+          radius="sm"
+          showMonthAndYearPickers
+          value={value}
+        />
+      );
+
+    case "date-range": {
+      commonProp["aria-label"] = inputConfig.label || inputConfig.name || "Date range";
+      
+      return (
+        <DateRangePicker
+          {...commonProp}
+          radius="sm"
+          showMonthAndYearPickers
+          value={value}
+        />
+      );
+    }
   }
 }

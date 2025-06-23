@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import { mock_users } from "@/utils/mock";
-import { CardComponent } from "@/components/CardComponent";
+import { FilterIcon } from "@/utils/icons";
 
 import {
   UserRoleTranslation,
@@ -11,17 +11,25 @@ import {
   UserStatusTranslation,
 } from "@/utils/constants";
 
-import { FieldConfig, FormField, User } from "@/interfaces/interfaces";
+import {
+  FieldConfig,
+  FilterConfig,
+  FormField,
+  User,
+} from "@/interfaces/interfaces";
+
+import Header from "@/components/Header";
+import FilterModal from "@/components/FilterModal";
 import { AlertModal } from "@/components/AlertModal";
 import { Button, useDisclosure } from "@heroui/react";
-import DrawerComponent from "@/components/DrawerComponent";
 import FormComponent from "@/components/FormComponent";
-import Header from "@/components/Header";
-import { FilterIcon } from "@/utils/icons";
+import { CardComponent } from "@/components/CardComponent";
+import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  // useState for modal and drawer visibility ------------------------------
   const {
     isOpen: isOpenView,
     onOpen: onOpenView,
@@ -46,6 +54,7 @@ export default function Card() {
     onClose: onCloseFilter,
   } = useDisclosure();
 
+  // Handlers for modal and drawer actions ---------------------------------
   const handleView = (user: User) => {
     setSelectedUser(user);
     onOpenView();
@@ -65,6 +74,17 @@ export default function Card() {
     onCloseDelete();
   };
 
+  const handleSaveEdit = (values: any) => {
+    console.log("Form values: ", values);
+    onCloseEdit();
+  };
+
+  const handleApplyFilters = (values: any) => {
+    console.log("Filter values: ", values);
+    onCloseFilter();
+  };
+
+  // Field configurations --------------------------------------------------
   const actions = [
     {
       key: "view",
@@ -126,7 +146,6 @@ export default function Card() {
       name: "quota_number",
       label: "Quota Number",
       placeholder: selectedUser?.quota_number,
-      isRequired: true,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -137,63 +156,78 @@ export default function Card() {
       name: "fullname",
       label: "Full Name",
       placeholder: selectedUser?.fullname,
-      isRequired: true,
     },
     {
       type: "text",
       name: "email",
       label: "Email",
       placeholder: selectedUser?.email,
-      isRequired: true,
     },
     {
       type: "text",
       name: "phone",
       label: "Phone",
       placeholder: selectedUser?.phone,
-      isRequired: true,
     },
     {
       type: "number",
       name: "unit",
       label: "Unit",
       placeholder: selectedUser?.unit,
-      isRequired: true,
     },
     {
       type: "text",
       name: "zone",
       label: "Zone",
       placeholder: selectedUser?.zone,
-      isRequired: true,
     },
     {
       type: "text",
       name: "ae",
       label: "AE",
       placeholder: selectedUser?.ae,
-      isRequired: true,
     },
     {
       type: "text",
       name: "role",
       label: "Role",
       placeholder: selectedUser?.role,
-      isRequired: true,
     },
     {
       type: "text",
       name: "status",
       label: "Status",
       placeholder: selectedUser?.status,
-      isRequired: true,
     },
     {
       type: "number",
       name: "leader_id",
       label: "Leader ID",
       placeholder: selectedUser?.leader_id,
-      isRequired: true,
+    },
+  ];
+
+  const filterFields: FormField[] = [
+    {
+      type: "dropdown",
+      name: "status",
+      label: "Status",
+      options: [
+        { label: "All", value: "all" },
+        { label: "Active", value: "active" },
+        { label: "Inactive", value: "inactive" },
+      ],
+    },
+    {
+      type: "dropdown",
+      name: "ae",
+      label: "AE",
+      options: [
+        { label: "All", value: "all" },
+        { label: "CT", value: "ct" },
+        { label: "NE1", value: "ne1" },
+        { label: "NE2", value: "ne2" },
+      ],
     },
   ];
 
@@ -204,6 +238,7 @@ export default function Card() {
 
   return (
     <div>
+      {/* Drawer ----------------------------------------------------------- */}
       <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
         <div className="px-6 pb-6">
           <Header title="View User" subtitle="User details" />
@@ -239,12 +274,13 @@ export default function Card() {
             fields={editFields}
             title="Edit User"
             subtitle="Edit user details"
-            onSubmit={() => {}}
-            onCancel={() => {}}
+            onSubmit={handleSaveEdit}
+            onCancel={() => onCloseEdit()}
           />
         </div>
       </DrawerComponent>
 
+      {/* Modal ------------------------------------------------------------- */}
       <AlertModal
         isOpen={isOpenDelete}
         onClose={() => onCloseDelete()}
@@ -255,10 +291,20 @@ export default function Card() {
         cancelText="Cancel"
       />
 
-      <Header
-        title="User Management"
-        className="mb-6 w-full text-left"
-      >
+      <FilterModal
+        isOpen={isOpenFilter}
+        title="Filter Users"
+        subtitle="Apply filters to user list"
+        fields={filterFields}
+        submitLabel="Apply Filters"
+        cancelLabel="Cancel"
+        onSubmit={handleApplyFilters}
+        onClose={() => onCloseFilter()}
+        initialValues={{ status: "all", ae: "all" }}
+      />
+
+      {/* Header ----------------------------------------------------------- */}
+      <Header title="User Management" className="mb-6 w-full text-left">
         <Button
           radius="sm"
           variant="flat"
@@ -270,6 +316,7 @@ export default function Card() {
         </Button>
       </Header>
 
+      {/* Body ------------------------------------------------------------- */}
       <CardComponent<User>
         actions={actions}
         bodyFields={bodyFields}

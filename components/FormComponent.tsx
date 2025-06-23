@@ -11,6 +11,8 @@ interface FormComponentProps {
   title: string;
   subtitle?: string;
   fields: FormField[];
+  submitLabel?: string;
+  cancelLabel?: string;
   onCancel?: () => void;
   onSubmit: (e: React.FormEvent) => void;
   onValueChange?: (name: string, value: string) => void;
@@ -20,6 +22,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
   title,
   subtitle,
   fields,
+  submitLabel,
+  cancelLabel,
   onCancel,
   onSubmit,
   onValueChange,
@@ -31,7 +35,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
   >
     <Header subtitle={subtitle} title={title} />
     <FormFields fields={fields} onValueChange={onValueChange} />
-    <FormButtons onCancel={onCancel} />
+    <FormButtons
+      submitLabel={submitLabel}
+      cancelLabel={cancelLabel}
+      onCancel={onCancel}
+    />
   </Form>
 );
 

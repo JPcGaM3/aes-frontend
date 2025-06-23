@@ -52,13 +52,13 @@ export default function LoginPage() {
     {
       type: "text",
       name: "username",
-      label: "Username / Email",
+      label: "ชื่อผู้ใช้งาน / อีเมล",
       isRequired: true,
     },
     {
       type: "password",
       name: "password",
-      label: "Password",
+      label: "รหัสผ่าน",
       isRequired: true,
     },
   ];
@@ -78,8 +78,9 @@ export default function LoginPage() {
 
         <FormComponent
           fields={fields}
-          subtitle="Please enter your credentials."
-          title="Login"
+          title="ยินดีต้อนรับ"
+          subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
+          submitLabel="ยืนยัน"
           onSubmit={handleSubmit}
           onValueChange={(name, value) => {
             if (name === "username") setUsername(value);
@@ -90,10 +91,10 @@ export default function LoginPage() {
         <Button
           variant="bordered"
           radius="sm"
-          className="w-full mt-4"
+          className="w-full mt-4 font-semibold"
           onPress={() => handleLogout()}
         >
-          Logout
+          ออกจากระบบ
         </Button>
 
         {error && <div className="text-red-500 mb-2 pt-4">{error}</div>}

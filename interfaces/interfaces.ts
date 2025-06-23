@@ -87,7 +87,7 @@ interface BaseInputConfig {
   name: string;
   label: string;
   labelPlacement?: "inside" | "outside" | "outside-left";
-  placeholder?: string;
+  placeholder?: string | number | boolean;
   description?: React.ReactNode;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;

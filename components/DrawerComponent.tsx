@@ -23,11 +23,11 @@ export default function DrawerComponent({
       <Drawer
         isOpen={isOpen}
         onClose={onClose}
-        size="2xl"
-        backdrop="blur"
         hideCloseButton
+        size="5xl"
+        scrollBehavior="inside"
         classNames={{
-          base: "data-[placement=right]:sm:m-2 data-[placement=left]:sm:m-2  rounded-medium",
+          base: "data-[placement=right]:m-2 data-[placement=left]:m-2 rounded-medium w-full w-[300] sm:w-[400] md:w-[500] lg:w-[600] xl:w-[700]",
         }}
       >
         <DrawerContent>

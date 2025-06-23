@@ -25,7 +25,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
   onValueChange,
 }) => (
   <Form
-    className="flex flex-col gap-4 w-full max-w-md"
+    className="flex flex-col gap-4 w-full"
     validationBehavior="aria"
     onSubmit={onSubmit}
   >

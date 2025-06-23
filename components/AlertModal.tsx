@@ -12,12 +12,12 @@ import {
 interface AlertModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   title: string;
   message: string;
-  confirmText: string;
-  cancelText: string;
-}
+  confirmText?: string;
+  cancelText?: string;
+};
 
 export const AlertModal = ({
   isOpen,
@@ -29,21 +29,26 @@ export const AlertModal = ({
   cancelText,
 }: AlertModalProps) => {
   return (
-    <Modal isOpen={isOpen} placement="top" onOpenChange={onClose}>
+    <Modal isOpen={isOpen} placement="top" onOpenChange={onClose} size="sm" radius="sm">
       <ModalContent>
         {(onClose) => (
-          <div>
-            <ModalHeader className="text-xl">{title}</ModalHeader>
+          <div className="flex flex-col items-center justify-center w-full p-0 gap-4">
+            <ModalHeader className="flex flex-col gap-1 items-center w-full text-center">{title}</ModalHeader>
 
-            <ModalBody className="text-md">{message}</ModalBody>
+            <ModalBody className="w-full flex justify-center">
+              <p className="text-center w-full">{message}</p>
+            </ModalBody>
 
-            <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose}>
+            <ModalFooter className="flex gap-2 w-full">
+              <Button color="danger" variant="flat" onPress={onClose} radius="sm" className="w-full">
                 {cancelText}
               </Button>
-              <Button color="primary" variant="solid" onPress={onConfirm}>
-                {confirmText}
-              </Button>
+
+              {confirmText && (
+                <Button color="primary" onPress={onConfirm} radius="sm" className="w-full">
+                  {confirmText}
+                </Button>
+              )}
             </ModalFooter>
           </div>
         )}

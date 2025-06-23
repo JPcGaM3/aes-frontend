@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Input } from "@heroui/input";
-import { NumberInput } from "@heroui/react";
+import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
 
 import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
@@ -11,21 +11,58 @@ import { FormField, InputConfig } from "@/interfaces/interfaces";
 
 interface FormFieldsProps {
   fields: FormField[];
+  values?: Record<string, any>;
   onValueChange?: (name: string, value: string) => void;
+}
+
+interface InputRendererProps {
+  inputConfig: InputConfig;
+  onValueChange?: (name: string, value: string) => void;
+  value?: any;
+}
+
+export default function FormFields({
+  fields,
+  onValueChange,
+  values = {},
+}: FormFieldsProps) {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      {fields.map((field, index) =>
+        Array.isArray(field) ? (
+          <div key={index} className="flex flex-row gap-2 w-full">
+            {field.map((subField, subIndex) => (
+              <InputRenderer
+                key={`${index}-${subIndex}`}
+                inputConfig={subField}
+                onValueChange={onValueChange}
+                value={values[subField.name]}
+              />
+            ))}
+          </div>
+        ) : (
+          <InputRenderer
+            key={index}
+            inputConfig={field}
+            onValueChange={onValueChange}
+            value={values[field.name]}
+          />
+        )
+      )}
+    </div>
+  );
 }
 
 function InputRenderer({
   inputConfig,
   onValueChange,
-}: {
-  inputConfig: InputConfig;
-  onValueChange?: (name: string, value: string) => void;
-}) {
-  const commonProp = {
+  value,
+}: InputRendererProps) {
+  const commonProp: any = {
     name: inputConfig.name,
     label: inputConfig.label,
     labelPlacement: inputConfig.labelPlacement || "outside",
-    placeholder: inputConfig.placeholder || `กรอก ${inputConfig.label}`,
+    hasPlaceholder: inputConfig.hasPlaceholder || true,
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
@@ -34,6 +71,10 @@ function InputRenderer({
     errorMessage: inputConfig.errorMessage || null,
     className: inputConfig.className || "",
   };
+
+  if (inputConfig.hasPlaceholder) {
+    commonProp.placeholder = inputConfig.placeholder || "";
+  }
 
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
@@ -51,7 +92,9 @@ function InputRenderer({
               ? (v) => onValueChange(inputConfig.name, v)
               : undefined
           }
-        />);
+          value={value}
+        />
+      );
 
     case "password": {
       return (
@@ -79,6 +122,7 @@ function InputRenderer({
               ? (v) => onValueChange(inputConfig.name, v)
               : undefined
           }
+          value={value}
         />
       );
     }
@@ -90,6 +134,7 @@ function InputRenderer({
           radius="sm"
           max={inputConfig.max}
           min={inputConfig.min}
+          value={value}
         />
       );
 
@@ -99,37 +144,47 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           selectionMode={inputConfig.selectionMode || "single"}
+          onSelectionChange={
+            onValueChange
+              ? (keys) => {
+                  let value = Array.isArray(keys)
+                    ? keys[0]
+                    : keys instanceof Set
+                      ? Array.from(keys)[0]
+                      : keys;
+                  onValueChange(inputConfig.name, value);
+                }
+              : undefined
+          }
+          selectedKeys={value ? new Set([value]) : new Set()}
         >
           {inputConfig.options.map((option, index) => (
-            <SelectItem key={index}>{option.label}</SelectItem>
+            <SelectItem key={option.value}>{option.label}</SelectItem>
           ))}
         </Select>
       );
+
+    case "date":
+      return (
+        <DatePicker
+          {...commonProp}
+          radius="sm"
+          showMonthAndYearPickers
+          value={value}
+        />
+      );
+
+    case "date-range": {
+      commonProp["aria-label"] = inputConfig.label || inputConfig.name || "Date range";
+      
+      return (
+        <DateRangePicker
+          {...commonProp}
+          radius="sm"
+          showMonthAndYearPickers
+          value={value}
+        />
+      );
+    }
   }
 }
-
-const FormFields: React.FC<FormFieldsProps> = ({ fields, onValueChange }) => (
-  <>
-    {fields.map((field, index) =>
-      Array.isArray(field) ? (
-        <div key={index} className="flex gap-2 w-full">
-          {field.map((subField, subIndex) => (
-            <InputRenderer
-              key={`${index}-${subIndex}`}
-              inputConfig={subField}
-              onValueChange={onValueChange}
-            />
-          ))}
-        </div>
-      ) : (
-        <InputRenderer
-          key={index}
-          inputConfig={field}
-          onValueChange={onValueChange}
-        />
-      )
-    )}
-  </>
-);
-
-export default FormFields;

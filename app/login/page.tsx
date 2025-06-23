@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import FormComponent from "@/components/FormComponent";
 import { useAuth } from "@/providers/AuthContext";
@@ -18,17 +18,15 @@ export default function LoginPage() {
   const { userContext, login, logout } = useAuth();
   const { setIsLoading } = useLoading();
 
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (values: any) => {
     setError("");
+    console.log(values);
 
     try {
       setIsLoading(true);
-      await login(username, password);
+      await login(values.username, values.password);
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -82,10 +80,6 @@ export default function LoginPage() {
           subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
           submitLabel="ยืนยัน"
           onSubmit={handleSubmit}
-          onValueChange={(name, value) => {
-            if (name === "username") setUsername(value);
-            if (name === "password") setPassword(value);
-          }}
         />
 
         <Button

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import { mock_users } from "@/utils/mock";
-import { CardComponent } from "@/components/CardComponent";
+import { FilterIcon } from "@/utils/icons";
 
 import {
   UserRoleTranslation,
@@ -11,16 +11,25 @@ import {
   UserStatusTranslation,
 } from "@/utils/constants";
 
-import { FieldConfig, FormField, User } from "@/interfaces/interfaces";
-import { AlertModal } from "@/components/AlertModal";
-import { useDisclosure } from "@heroui/react";
-import DrawerComponent from "@/components/DrawerComponent";
-import FormComponent from "@/components/FormComponent";
+import {
+  FieldConfig,
+  FilterConfig,
+  FormField,
+  User,
+} from "@/interfaces/interfaces";
+
 import Header from "@/components/Header";
+import FilterModal from "@/components/FilterModal";
+import { AlertModal } from "@/components/AlertModal";
+import { Button, useDisclosure } from "@heroui/react";
+import FormComponent from "@/components/FormComponent";
+import { CardComponent } from "@/components/CardComponent";
+import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  // useState for modal and drawer visibility ------------------------------
   const {
     isOpen: isOpenView,
     onOpen: onOpenView,
@@ -39,6 +48,13 @@ export default function Card() {
     onClose: onCloseDelete,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenFilter,
+    onOpen: onOpenFilter,
+    onClose: onCloseFilter,
+  } = useDisclosure();
+
+  // Handlers for modal and drawer actions ---------------------------------
   const handleView = (user: User) => {
     setSelectedUser(user);
     onOpenView();
@@ -58,6 +74,17 @@ export default function Card() {
     onCloseDelete();
   };
 
+  const handleSaveEdit = (values: any) => {
+    console.log("Form values: ", values);
+    onCloseEdit();
+  };
+
+  const handleApplyFilters = (values: any) => {
+    console.log("Filter values: ", values);
+    onCloseFilter();
+  };
+
+  // Field configurations --------------------------------------------------
   const actions = [
     {
       key: "view",
@@ -113,13 +140,12 @@ export default function Card() {
     },
   ];
 
-  const formFields: FormField[] = [
+  const editFields: FormField[] = [
     {
       type: "dropdown",
       name: "quota_number",
       label: "Quota Number",
       placeholder: selectedUser?.quota_number,
-      isRequired: true,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -130,63 +156,107 @@ export default function Card() {
       name: "fullname",
       label: "Full Name",
       placeholder: selectedUser?.fullname,
-      isRequired: true,
     },
     {
       type: "text",
       name: "email",
       label: "Email",
       placeholder: selectedUser?.email,
-      isRequired: true,
     },
     {
       type: "text",
       name: "phone",
       label: "Phone",
       placeholder: selectedUser?.phone,
-      isRequired: true,
     },
     {
       type: "number",
       name: "unit",
       label: "Unit",
       placeholder: selectedUser?.unit,
-      isRequired: true,
     },
     {
       type: "text",
       name: "zone",
       label: "Zone",
       placeholder: selectedUser?.zone,
-      isRequired: true,
     },
     {
       type: "text",
       name: "ae",
       label: "AE",
       placeholder: selectedUser?.ae,
-      isRequired: true,
     },
     {
       type: "text",
       name: "role",
       label: "Role",
       placeholder: selectedUser?.role,
-      isRequired: true,
     },
     {
       type: "text",
       name: "status",
       label: "Status",
       placeholder: selectedUser?.status,
-      isRequired: true,
     },
     {
       type: "number",
       name: "leader_id",
       label: "Leader ID",
       placeholder: selectedUser?.leader_id,
-      isRequired: true,
+    },
+  ];
+
+  const filterFields: FormField[] = [
+    {
+      type: "dropdown",
+      name: "status",
+      label: "สถานะใบสั่งงาน",
+      options: [
+        { label: "All", value: "all" },
+        { label: "Active", value: "active" },
+        { label: "Inactive", value: "inactive" },
+      ],
+    },
+    {
+      type: "dropdown",
+      name: "ae",
+      label: "สังกัด",
+      options: [
+        { label: "All", value: "all" },
+        { label: "CT", value: "ct" },
+        { label: "NE1", value: "ne1" },
+        { label: "NE2", value: "ne2" },
+      ],
+    },
+    [
+      {
+        type: "date",
+        name: "start_date",
+        label: "วันที่เริ่มต้น",
+        hasPlaceholder: false
+      },
+      {
+        type: "date",
+        name: "end_date",
+        label: "วันที่สิ้นสุด",
+        hasPlaceholder: false
+      },
+    ],
+    {
+      type: "date-range",
+      name: "date_range",
+      label: "ช่วงวันที่",
+      hasPlaceholder: false
+    },
+    {
+      type: "dropdown",
+      name: "sort",
+      label: "เรียงลำดับตาม",
+      options: [
+        { label: "วันที่ น้อยไปมาก", value: "date_asc" },
+        { label: "วันที่ มากไปน้อย", value: "date_desc" },
+      ],
     },
   ];
 
@@ -197,6 +267,7 @@ export default function Card() {
 
   return (
     <div>
+      {/* Drawer ----------------------------------------------------------- */}
       <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
         <div className="px-6 pb-6">
           <Header title="View User" subtitle="User details" />
@@ -229,15 +300,16 @@ export default function Card() {
       <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
         <div className="px-6 pb-6">
           <FormComponent
-            fields={formFields}
+            fields={editFields}
             title="Edit User"
             subtitle="Edit user details"
-            onSubmit={() => {}}
-            onCancel={() => {}}
+            onSubmit={handleSaveEdit}
+            onCancel={() => onCloseEdit()}
           />
         </div>
       </DrawerComponent>
 
+      {/* Modal ------------------------------------------------------------- */}
       <AlertModal
         isOpen={isOpenDelete}
         onClose={() => onCloseDelete()}
@@ -248,6 +320,32 @@ export default function Card() {
         cancelText="Cancel"
       />
 
+      <FilterModal
+        isOpen={isOpenFilter}
+        title="Filter Users"
+        subtitle="Apply filters to user list"
+        fields={filterFields}
+        submitLabel="Apply Filters"
+        cancelLabel="Cancel"
+        onSubmit={handleApplyFilters}
+        onClose={() => onCloseFilter()}
+        initialValues={{ status: "all", ae: "all", sort: "date_asc" }}
+      />
+
+      {/* Header ----------------------------------------------------------- */}
+      <Header title="User Management" className="mb-6 w-full text-left">
+        <Button
+          radius="sm"
+          variant="flat"
+          color="primary"
+          endContent={<FilterIcon />}
+          onPress={onOpenFilter}
+        >
+          Filter User
+        </Button>
+      </Header>
+
+      {/* Body ------------------------------------------------------------- */}
       <CardComponent<User>
         actions={actions}
         bodyFields={bodyFields}

@@ -13,10 +13,11 @@ import {
 
 import { FieldConfig, FormField, User } from "@/interfaces/interfaces";
 import { AlertModal } from "@/components/AlertModal";
-import { useDisclosure } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import DrawerComponent from "@/components/DrawerComponent";
 import FormComponent from "@/components/FormComponent";
 import Header from "@/components/Header";
+import { FilterIcon } from "@/utils/icons";
 
 export default function Card() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -37,6 +38,12 @@ export default function Card() {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenFilter,
+    onOpen: onOpenFilter,
+    onClose: onCloseFilter,
   } = useDisclosure();
 
   const handleView = (user: User) => {
@@ -113,7 +120,7 @@ export default function Card() {
     },
   ];
 
-  const formFields: FormField[] = [
+  const editFields: FormField[] = [
     {
       type: "dropdown",
       name: "quota_number",
@@ -229,7 +236,7 @@ export default function Card() {
       <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
         <div className="px-6 pb-6">
           <FormComponent
-            fields={formFields}
+            fields={editFields}
             title="Edit User"
             subtitle="Edit user details"
             onSubmit={() => {}}
@@ -247,6 +254,21 @@ export default function Card() {
         confirmText="Delete"
         cancelText="Cancel"
       />
+
+      <Header
+        title="User Management"
+        className="mb-6 w-full text-left"
+      >
+        <Button
+          radius="sm"
+          variant="flat"
+          color="primary"
+          endContent={<FilterIcon />}
+          onPress={onOpenFilter}
+        >
+          Filter User
+        </Button>
+      </Header>
 
       <CardComponent<User>
         actions={actions}

@@ -10,11 +10,13 @@ import {
 interface DrawerComponentProps {
   isOpen: boolean;
   onClose: () => void;
+  children: React.ReactNode;
 }
 
 export default function DrawerComponent({
   isOpen,
   onClose,
+  children,
 }: DrawerComponentProps) {
   return (
     <div>
@@ -31,19 +33,19 @@ export default function DrawerComponent({
         <DrawerContent>
           {(onClose) => (
             <div>
-              <DrawerHeader className="absolute top-0 inset-x-0 flex flex-row gap-2 px-2 py-2 border-b justify-between">
-                <Tooltip content="Close">
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    className="text-default-400"
-                    onPress={onClose}
-                  >
-                    <CloseDrawerIcon />
-                  </Button>
-                </Tooltip>
+              <DrawerHeader className="top-0 inset-x-0 flex flex-row gap-2 px-2 py-2 border-b justify-between">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  className="text-default-400"
+                  onPress={onClose}
+                >
+                  <CloseDrawerIcon />
+                </Button>
               </DrawerHeader>
+
+              <div className="p-4">{children}</div>
             </div>
           )}
         </DrawerContent>

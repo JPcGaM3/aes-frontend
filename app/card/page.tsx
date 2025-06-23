@@ -131,7 +131,13 @@ export default function Card() {
         cancelText="Cancel"
       />
 
-      <DrawerComponent isOpen={isOpenView} onClose={onCloseView} />
+      <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
+        <div>View User Details</div>
+      </DrawerComponent>
+
+      <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
+        <div>Edit User Details</div>
+      </DrawerComponent>
 
       <CardComponent<User>
         actions={actions}

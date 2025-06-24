@@ -4,7 +4,7 @@ export default async function LoginUser(
   username: string,
   password: string
 ): Promise<any> {
-  const apiUrl = process.env.API_URL;
+  const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   const isEmail = username.includes("@mitrphol.com");
   const body = isEmail
@@ -18,6 +18,7 @@ export default async function LoginUser(
       {
         headers: {
           "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true", //! TODO: Remove ngrok-skip-browser-warning in production
         },
       }
     );

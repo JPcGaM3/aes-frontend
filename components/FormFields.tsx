@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@heroui/input";
-import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
-import { Select, SelectItem } from "@heroui/select";
-
-import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
 
 import { FormField, InputConfig } from "@/interfaces/interfaces";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
+
+import { Input } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
+import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
 
 interface FormFieldsProps {
   fields: FormField[];
@@ -21,6 +21,7 @@ interface InputRendererProps {
   value?: any;
 }
 
+//TODO: FormFields.tsx:102 WARN: A component changed from uncontrolled to controlled.
 export default function FormFields({
   fields,
   onValueChange,
@@ -63,9 +64,10 @@ function InputRenderer({
     label: inputConfig.label,
     labelPlacement: inputConfig.labelPlacement || "outside",
     hasPlaceholder: inputConfig.hasPlaceholder || true,
-    placeholder: inputConfig.hasPlaceholder === false
-      ? undefined
-      : inputConfig.placeholder || `กรุณากรอก ${inputConfig.label}`,
+    placeholder:
+      inputConfig.hasPlaceholder === false
+        ? undefined
+        : inputConfig.placeholder || `กรุณากรอก ${inputConfig.label}`,
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
@@ -168,8 +170,8 @@ function InputRenderer({
         <DatePicker
           {...commonProp}
           radius="sm"
-          showMonthAndYearPickers
           value={value}
+          showMonthAndYearPickers
         />
       );
 
@@ -181,8 +183,8 @@ function InputRenderer({
         <DateRangePicker
           {...commonProp}
           radius="sm"
-          showMonthAndYearPickers
           value={value}
+          showMonthAndYearPickers
         />
       );
     }

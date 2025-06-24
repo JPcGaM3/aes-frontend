@@ -52,4 +52,4 @@ export default function FilterModal({
       </ModalContent>
     </Modal>
   );
-};
+}

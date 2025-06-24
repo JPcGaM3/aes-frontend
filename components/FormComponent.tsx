@@ -14,7 +14,7 @@ interface FormComponentProps {
   submitLabel?: string;
   cancelLabel?: string;
   onCancel?: () => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (values: any) => void;
   onChange?: (values: any) => void;
   initialValues?: Record<string, any>;
 }
@@ -47,6 +47,7 @@ export default function FormComponent({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (onSubmit) {
       (onSubmit as any)(values);
     }

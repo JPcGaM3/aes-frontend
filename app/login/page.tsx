@@ -22,7 +22,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (values: any) => {
     setError("");
-    console.log(values);
 
     try {
       setIsLoading(true);
@@ -43,7 +42,7 @@ export default function LoginPage() {
 
   const handleConfirmLogout = () => {
     logout();
-    console.log("User logged out : ", userContext);
+    onClose();
   };
 
   const fields: FormField[] = [

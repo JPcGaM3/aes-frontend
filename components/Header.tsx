@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => (
   <header className={className}>
     <div className="flex flex-row justify-between align-middle w-full">
-      <div className="w-full flex flex-col">
+      <div className="w-full flex flex-col justify-center">
         <h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
         {subtitle && <p className="mt-1 text-base text-gray-600">{subtitle}</p>}
       </div>

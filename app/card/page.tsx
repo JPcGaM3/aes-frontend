@@ -234,20 +234,20 @@ export default function Card() {
         type: "date",
         name: "start_date",
         label: "วันที่เริ่มต้น",
-        hasPlaceholder: false
+        hasPlaceholder: false,
       },
       {
         type: "date",
         name: "end_date",
         label: "วันที่สิ้นสุด",
-        hasPlaceholder: false
+        hasPlaceholder: false,
       },
     ],
     {
       type: "date-range",
       name: "date_range",
       label: "ช่วงวันที่",
-      hasPlaceholder: false
+      hasPlaceholder: false,
     },
     {
       type: "dropdown",

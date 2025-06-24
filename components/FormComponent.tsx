@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Form } from "@heroui/react";
 
 import Header from "./Header";
@@ -11,28 +11,66 @@ interface FormComponentProps {
   title: string;
   subtitle?: string;
   fields: FormField[];
+  submitLabel?: string;
+  cancelLabel?: string;
   onCancel?: () => void;
   onSubmit: (e: React.FormEvent) => void;
-  onValueChange?: (name: string, value: string) => void;
+  onChange?: (values: any) => void;
+  initialValues?: Record<string, any>;
 }
 
-const FormComponent: React.FC<FormComponentProps> = ({
+export default function FormComponent({
   title,
   subtitle,
   fields,
+  submitLabel,
+  cancelLabel,
   onCancel,
   onSubmit,
-  onValueChange,
-}) => (
-  <Form
-    className="flex flex-col gap-4 w-full max-w-md"
-    validationBehavior="aria"
-    onSubmit={onSubmit}
-  >
-    <Header subtitle={subtitle} title={title} />
-    <FormFields fields={fields} onValueChange={onValueChange} />
-    <FormButtons onCancel={onCancel} />
-  </Form>
-);
+  onChange,
+  initialValues = {},
+}: FormComponentProps) {
+  const [values, setValues] = useState<any>(initialValues);
 
-export default FormComponent;
+  useEffect(() => {
+    setValues(initialValues);
+  }, [JSON.stringify(initialValues)]);
+
+  const handleValueChange = (name: string, value: any) => {
+    const newValues = { ...values, [name]: value };
+    setValues(newValues);
+
+    if (onChange) {
+      onChange(newValues);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onSubmit) {
+      (onSubmit as any)(values);
+    }
+  };
+
+  return (
+      <Form
+        className="flex flex-col gap-4 w-full max-w-2xl"
+        validationBehavior="aria"
+        onSubmit={handleSubmit}
+      >
+        <Header subtitle={subtitle} title={title} />
+
+        <FormFields
+          fields={fields}
+          onValueChange={handleValueChange}
+          values={values}
+        />
+
+        <FormButtons
+          submitLabel={submitLabel}
+          cancelLabel={cancelLabel}
+          onCancel={onCancel}
+        />
+      </Form>
+  );
+}

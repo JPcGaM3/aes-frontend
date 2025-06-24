@@ -6,14 +6,13 @@ import type {
 
 import React from "react";
 
-import { REQUESTORDERSTATUS } from "@/utils/enum";
 import Header from "@/components/Header";
-import { CardComponent } from "@/components/CardComponent";
-import { RequestOrderTranslation } from "@/utils/constants";
-import { get } from "http";
 import getRequestOrder from "@/libs/requestOrderAPI";
+import { CardComponent } from "@/components/CardComponent";
+import { RequestOrderStatusColorMap, RequestOrderStatusTranslation, RequestOrderTranslation } from "@/utils/constants";
+import { mockRequestOrders } from "@/utils/mock";
 
-async function OrderPage() {
+export default async function RequestPage() {
   const headerFields: FieldConfig[] = [
     {
       key: "customer_type",
@@ -21,6 +20,9 @@ async function OrderPage() {
       className: "font-bold text-lg text-left",
       translation: RequestOrderTranslation,
     },
+  ];
+
+  const bodyFields: FieldConfig[] = [
     {
       key: "affiliation",
       label: "Affiliation",
@@ -36,12 +38,9 @@ async function OrderPage() {
     {
       key: "farm_name",
       label: "Farm Name",
-      className: "font-medium text-left",
+      className: "font-medium text-left pb-3",
       translation: RequestOrderTranslation,
     },
-  ];
-
-  const bodyFields: FieldConfig[] = [
     {
       key: "ap_month_year",
       label: "Month/Year",
@@ -62,21 +61,12 @@ async function OrderPage() {
     },
   ];
 
-  const mockData: RequestOrder[] = (await getRequestOrder()).data;
-  console.log(mockData);
+  const mockData: RequestOrder[] = mockRequestOrders;
+  // const data: RequestOrder[] = (await getRequestOrder()).data;
 
   const statusConfig: StatusConfig = {
-    key: "status",
-    colorMap: {
-      pending: "warning",
-      completed: "success",
-      cancelled: "danger",
-    },
-    translation: {
-      pending: "Pending",
-      completed: "Completed",
-      cancelled: "Cancelled",
-    },
+    colorMap: RequestOrderStatusColorMap,
+    translation: RequestOrderStatusTranslation,
   };
 
   return (
@@ -92,5 +82,3 @@ async function OrderPage() {
     </div>
   );
 }
-
-export default OrderPage;

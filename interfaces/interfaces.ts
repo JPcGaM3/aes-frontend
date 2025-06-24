@@ -87,7 +87,8 @@ interface BaseInputConfig {
   name: string;
   label: string;
   labelPlacement?: "inside" | "outside" | "outside-left";
-  placeholder?: string;
+  hasPlaceholder?: boolean;
+  placeholder?: string | number | boolean;
   description?: React.ReactNode;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
@@ -118,19 +119,25 @@ interface DropdownInputConfig extends BaseInputConfig {
   selectionMode?: "single" | "multiple";
 }
 
-type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig;
+interface DateInputConfig extends BaseInputConfig {
+  type: "date";
+}
+
+interface DateRangeInputConfig extends BaseInputConfig {
+  type: "date-range";
+}
+
+type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig | DateInputConfig | DateRangeInputConfig;
 type FormField = InputConfig | InputConfig[];
 
 interface StatusConfig {
-  key: string;
-  defaultValue?: string;
   colorMap: Record<string, ColorType>;
   translation?: Record<string, string>;
 }
 
 interface FieldConfig {
   key: string;
-  label?: string;
+  label: string;
   formatter?: (value: any) => string;
   className?: string;
   translation?: Record<string, string>;
@@ -152,6 +159,11 @@ interface CardComponentProps<T> {
   cardClassName?: string;
 }
 
+interface FilterConfig {
+  status?: string;
+  ae?: string;
+}
+
 export type {
   User,
   RequestOrder,
@@ -167,4 +179,5 @@ export type {
   FieldConfig,
   ActionConfig,
   CardComponentProps,
+  FilterConfig
 };

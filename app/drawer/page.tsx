@@ -1,118 +1,216 @@
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import { Button, useDisclosure } from "@heroui/react";
-
-// import { User } from "@/interfaces/interfaces";
-// import { mock_requestorder, mock_taskorders, mock_users } from "@/utils/mock";
-// import { useLoading } from "@/providers/LoadingContext";
-// import { DrawerComponent } from "@/components/DrawerComponent";
-// import { ColorType } from "@/types";
-// import { AccordionComponent } from "@/components/AccordionComponent";
-
-// interface ActionConfig {
-//   key: string;
-//   color: ColorType;
-//   label: string;
-//   onClick?: (item: any) => void;
-// }
-
-// function Drawer() {
-//   const { setIsLoading } = useLoading();
-//   const [users, setUsers] = useState<User[]>([]);
-//   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-//   const [userToDelete, setUserToDelete] = useState<User | null>(null);
-
-//   useEffect(() => {
-//     setIsLoading(true);
-
-//     const fetchData = () => {
-//       setTimeout(() => {
-//         setUsers(mock_users);
-//         setIsLoading(false);
-//       }, 3000);
-//     };
-
-//     fetchData();
-
-//     const intervalId = setInterval(() => {
-//       fetchData();
-//     }, 10000);
-
-//     return () => clearInterval(intervalId);
-//   }, [setIsLoading]);
-
-//   const handleView = (user: User) => {
-//     console.log(`Viewing user: ${user.fullname}`);
-//   };
-
-//   const handleEdit = (user: User) => {
-//     console.log(`Editing user: ${user.fullname}`);
-//   };
-
-//   const handleDelete = (user: User) => {
-//     setUserToDelete(user);
-//     onOpen();
-//   };
-
-//   function confirmDelete(): void {
-//     if (userToDelete) {
-//       console.log(`Deleting user: ${userToDelete.fullname}`);
-//       setUsers(users.filter((u) => u.id !== userToDelete.id));
-//     }
-//     setUserToDelete(null);
-//     onClose();
-//   }
-
-//   const actions: ActionConfig[] = [
-//     {
-//       key: "Edit",
-//       color: "warning",
-//       label: "Edit",
-//       onClick: onClose,
-//     },
-//     {
-//       key: "Assign",
-//       color: "primary",
-//       label: "Assign",
-//       onClick: onClose,
-//     },
-//   ];
-
-//   return (
-//     <>
-//       <Button onPress={onOpen}>Open Drawer</Button>
-//       <DrawerComponent
-//         actions={actions}
-//         drawerTitle="Drawer"
-//         isOpen={isOpen}
-//         onClose={onClose}
-//         onOpen={onOpen}
-//         onOpenChange={onOpenChange}
-//       >
-//         <AccordionComponent
-//           requestOrder={mock_requestorder}
-//           taskOrders={mock_taskorders}
-//         />
-//       </DrawerComponent>
-//     </>
-//   );
-// }
-
-// export default Drawer;
-
 "use client";
 
-import { Button, useDisclosure } from "@heroui/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  useDisclosure,
+} from "@heroui/react";
 
 import DrawerComponent from "@/components/DrawerComponent";
+import { VerticalDotsIcon } from "@/utils/icons";
+import { mock_users } from "@/utils/mock";
+import { FormField, User } from "@/interfaces/interfaces";
+import FormComponent from "@/components/FormComponent";
+import Header from "@/components/Header";
 
 export default function DrawerPage() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const mockData: User = mock_users[0];
+
+  const {
+    isOpen: isOpenView,
+    onOpen: onOpenView,
+    onClose: onCloseView,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+
+  const handleView = () => {
+    console.log("Viewing user");
+
+    onOpenView();
+  };
+
+  const handleEdit = () => {
+    console.log("Editing user");
+
+    onOpenEdit();
+  };
+
+  const actions = [
+    {
+      key: "view",
+      label: "ดูรายละเอียด",
+      onClick: handleView,
+    },
+    {
+      key: "edit",
+      label: "แก้ไข",
+      onClick: handleEdit,
+    },
+  ];
+
+  const formFields: FormField[] = [
+    {
+      type: "dropdown",
+      name: "quota_number",
+      label: "Quota Number",
+      placeholder: mockData.quota_number,
+      isRequired: true,
+      options: [
+        { label: "Option 1", value: "option1" },
+        { label: "Option 2", value: "option2" },
+      ],
+    },
+    {
+      type: "text",
+      name: "fullname",
+      label: "Full Name",
+      placeholder: mockData.fullname,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "email",
+      label: "Email",
+      placeholder: mockData.email,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "phone",
+      label: "Phone",
+      placeholder: mockData.phone,
+      isRequired: true,
+    },
+    {
+      type: "number",
+      name: "unit",
+      label: "Unit",
+      placeholder: mockData.unit,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "zone",
+      label: "Zone",
+      placeholder: mockData.zone,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "ae",
+      label: "AE",
+      placeholder: mockData.ae,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "role",
+      label: "Role",
+      placeholder: mockData.role,
+      isRequired: true,
+    },
+    {
+      type: "text",
+      name: "status",
+      label: "Status",
+      placeholder: mockData.status,
+      isRequired: true,
+    },
+    {
+      type: "number",
+      name: "leader_id",
+      label: "Leader ID",
+      placeholder: mockData.leader_id,
+      isRequired: true,
+    },
+  ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submit the form");
+  };
+
+  const handleCancel = () => {
+    console.log("Cancel the form");
+  };
 
   return (
-    <>
-      <Button onPress={onOpen}>Open Drawer</Button>
-      <DrawerComponent isOpen={isOpen} onOpenChange={onOpenChange} />
-    </>
+    <div>
+      <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
+        <div className="px-6 pb-6">
+          <Header title="View User" subtitle="User details" />
+
+          <div className="flex flex-col gap-2">
+            {Object.keys(mockData).map((key) => {
+              let value = (mockData as any)[key];
+              if (value === undefined || value === null) {
+                return null;
+              }
+
+              if (value instanceof Date) {
+                value = value.toLocaleString();
+              }
+              if (typeof value === "boolean") {
+                value = value.toString();
+              }
+
+              return (
+                <div key={key} className="flex flex-row items-center">
+                  <div className="w-1/3">{key}</div>
+                  <div className="w-2/3">: {value}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </DrawerComponent>
+
+      <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
+        <div className="px-6 pb-6">
+          <FormComponent
+            fields={formFields}
+            title="Edit User"
+            subtitle="Edit user details"
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+          />
+        </div>
+      </DrawerComponent>
+
+      <div>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              size="lg"
+              variant="flat"
+              color="primary"
+              radius="sm"
+              endContent={<VerticalDotsIcon />}
+            >
+              <span className="text-lg font-medium">Open actions menu</span>
+            </Button>
+          </DropdownTrigger>
+
+          <DropdownMenu>
+            {actions.map((action) => (
+              <DropdownItem
+                key={action.key}
+                onClick={() => action.onClick && action.onClick()}
+              >
+                {action.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+    </div>
   );
 }

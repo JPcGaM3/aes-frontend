@@ -127,7 +127,12 @@ interface DateRangeInputConfig extends BaseInputConfig {
   type: "date-range";
 }
 
-type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig | DateInputConfig | DateRangeInputConfig;
+type InputConfig =
+  | TextInputConfig
+  | NumberInputConfig
+  | DropdownInputConfig
+  | DateInputConfig
+  | DateRangeInputConfig;
 type FormField = InputConfig | InputConfig[];
 
 interface StatusConfig {
@@ -179,5 +184,5 @@ export type {
   FieldConfig,
   ActionConfig,
   CardComponentProps,
-  FilterConfig
+  FilterConfig,
 };

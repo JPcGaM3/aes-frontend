@@ -428,3 +428,169 @@ export const FilterIcon = (props: IconSvgProps) => {
     </svg>
   );
 };
+
+export const HamburgerIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      fill={fill ? fill : "none"}
+      height={size || height}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      width={size || width}
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path d="M4 18L20 18" />
+      <path d="M4 12L20 12" />
+      <path d="M4 6L20 6" />
+    </svg>
+  );
+};
+
+export const HomeIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      d="M3 10.5L12 4l9 6.5V20a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4h-4v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const FormIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect
+      x="4"
+      y="4"
+      width="16"
+      height="16"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M8 8h8M8 12h8M8 16h4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+export const CardIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect
+      x="3"
+      y="6"
+      width="18"
+      height="12"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+export const DrawerIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect
+      x="4"
+      y="4"
+      width="16"
+      height="16"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M4 10h16M9 16h6"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+export const LoginIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      d="M15 12H3M7 8l-4 4 4 4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect
+      x="9"
+      y="4"
+      width="12"
+      height="16"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
+export const RequestIcon = (props: IconSvgProps) => (
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect
+      x="4"
+      y="4"
+      width="16"
+      height="16"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M8 8h8M8 12h8M8 16h4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <circle cx="18" cy="18" r="1.5" fill="currentColor" />
+  </svg>
+);

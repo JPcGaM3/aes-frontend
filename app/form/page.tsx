@@ -10,66 +10,51 @@ import { FormField } from "@/interfaces/interfaces";
 export default function FormPage() {
   const fields: FormField[] = [
     {
+      type: "text",
+      name: "textField",
+      label: "Text Field",
+      isRequired: true,
+    },
+    {
+      type: "email",
+      name: "emailField",
+      label: "Email Field",
+      isRequired: true,
+    },
+    {
+      type: "password",
+      name: "passwordField",
+      label: "Password Field",
+      isRequired: true,
+    },
+    {
+      type: "number",
+      name: "numberField",
+      label: "Number Field",
+      min: 0,
+      max: 100,
+      isRequired: true,
+    },
+    {
       type: "dropdown",
-      name: RequestOrderInputField.CustomerType,
-      label: RequestOrderTranslation.customer_type,
+      name: "dropdownField",
+      label: "Dropdown Field",
       isRequired: true,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
       ],
     },
-    [
-      {
-        type: "dropdown",
-        name: RequestOrderInputField.Affiliation,
-        label: RequestOrderTranslation.affiliation,
-        isRequired: true,
-        options: [
-          { label: "Option 1", value: "option1" },
-          { label: "Option 2", value: "option2" },
-        ],
-      },
-      {
-        type: "dropdown",
-        name: RequestOrderInputField.Unit,
-        label: RequestOrderTranslation.unit,
-        isRequired: true,
-        options: [
-          { label: "Option 1", value: "option1" },
-          { label: "Option 2", value: "option2" },
-        ],
-      },
-    ],
     {
-      type: "number",
-      name: RequestOrderInputField.Quota,
-      label: RequestOrderTranslation.quota_number,
-      min: 0,
+      type: "date",
+      name: "dateField",
+      label: "Date Field",
       isRequired: true,
     },
     {
-      type: "text",
-      name: RequestOrderInputField.Name,
-      label: RequestOrderTranslation.farm_name,
-      isRequired: true,
-    },
-    {
-      type: "number",
-      name: RequestOrderInputField.LandNumber,
-      label: RequestOrderTranslation.land_number,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: RequestOrderInputField.LocationName,
-      label: RequestOrderTranslation.location_id,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: RequestOrderInputField.Supervisor,
-      label: RequestOrderTranslation.supervisor_id,
+      type: "date-range",
+      name: "dateRangeField",
+      label: "Date Range Field",
       isRequired: true,
     },
   ];

@@ -28,7 +28,7 @@ export default function FormComponent({
   onCancel,
   onSubmit,
   onChange,
-  initialValues = {}, // <-- add this
+  initialValues = {},
 }: FormComponentProps) {
   const [values, setValues] = useState<any>(initialValues);
 
@@ -53,18 +53,24 @@ export default function FormComponent({
   };
 
   return (
-    <Form
-      className="flex flex-col gap-4 w-full"
-      validationBehavior="aria"
-      onSubmit={handleSubmit}
-    >
-      <Header subtitle={subtitle} title={title} />
-      <FormFields fields={fields} onValueChange={handleValueChange} values={values} />
-      <FormButtons
-        submitLabel={submitLabel}
-        cancelLabel={cancelLabel}
-        onCancel={onCancel}
-      />
-    </Form>
+      <Form
+        className="flex flex-col gap-4 w-full max-w-2xl"
+        validationBehavior="aria"
+        onSubmit={handleSubmit}
+      >
+        <Header subtitle={subtitle} title={title} />
+
+        <FormFields
+          fields={fields}
+          onValueChange={handleValueChange}
+          values={values}
+        />
+
+        <FormButtons
+          submitLabel={submitLabel}
+          cancelLabel={cancelLabel}
+          onCancel={onCancel}
+        />
+      </Form>
   );
-};
+}

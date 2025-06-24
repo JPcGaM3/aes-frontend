@@ -63,18 +63,17 @@ function InputRenderer({
     label: inputConfig.label,
     labelPlacement: inputConfig.labelPlacement || "outside",
     hasPlaceholder: inputConfig.hasPlaceholder || true,
+    placeholder: inputConfig.hasPlaceholder === false
+      ? undefined
+      : inputConfig.placeholder || `กรุณากรอก ${inputConfig.label}`,
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
     isRequired: inputConfig.isRequired || false,
     isInvalid: inputConfig.isInvalid || false,
     errorMessage: inputConfig.errorMessage || null,
-    className: inputConfig.className || "",
+    className: `${inputConfig.className || ""} break-words`,
   };
-
-  if (inputConfig.hasPlaceholder) {
-    commonProp.placeholder = inputConfig.placeholder || "";
-  }
 
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
@@ -175,8 +174,9 @@ function InputRenderer({
       );
 
     case "date-range": {
-      commonProp["aria-label"] = inputConfig.label || inputConfig.name || "Date range";
-      
+      commonProp["aria-label"] =
+        inputConfig.label || inputConfig.name || "Date range";
+
       return (
         <DateRangePicker
           {...commonProp}

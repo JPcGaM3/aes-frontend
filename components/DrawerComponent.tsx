@@ -8,12 +8,14 @@ import {
 } from "@heroui/react";
 
 interface DrawerComponentProps {
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
 export default function DrawerComponent({
+  size = "5xl",
   isOpen,
   onClose,
   children,
@@ -24,7 +26,7 @@ export default function DrawerComponent({
         isOpen={isOpen}
         onClose={onClose}
         hideCloseButton
-        size="5xl"
+        size={size}
         scrollBehavior="inside"
         classNames={{
           base: "data-[placement=right]:m-2 data-[placement=left]:m-2 rounded-medium w-full w-[300] sm:w-[400] md:w-[500] lg:w-[600] xl:w-[700]",
@@ -45,7 +47,7 @@ export default function DrawerComponent({
                 </Button>
               </DrawerHeader>
 
-              <div className="p-4">{children}</div>
+              <div className="px-2 py-4">{children}</div>
             </div>
           )}
         </DrawerContent>

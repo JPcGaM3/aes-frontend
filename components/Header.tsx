@@ -3,6 +3,7 @@ import React from "react";
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  hasBorder?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
@@ -10,6 +11,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
+  hasBorder = true,
   className = "mb-6 w-full text-center flex flex-col",
   children,
 }) => (
@@ -25,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
     </div>
 
-    <hr className="mt-4 border-gray-200" />
+    {hasBorder && <hr className="mt-4 border-gray-200" />}
   </header>
 );
 

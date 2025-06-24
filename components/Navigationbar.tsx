@@ -6,7 +6,7 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLoading } from "@/providers/LoadingContext";
 
@@ -19,7 +19,6 @@ import {
   FormIcon,
   CardIcon,
   DrawerIcon,
-  FilterIcon,
   LoginIcon,
   RequestIcon,
   HamburgerIcon,
@@ -39,15 +38,35 @@ export const Navbar = () => {
   const pathname = usePathname();
   const { setIsLoading } = useLoading();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const handleNav = (path: string) => {
+    // if (pathname !== path) {
+    //   setIsLoading(true);
+    //   setPendingPath(path);
+    //   setDrawerOpen(false);
+
+    //   router.push(path);
+    // } else {
+    //   setDrawerOpen(false);
+    // }
+
     setIsLoading(true);
-    router.push(path);
+    setPendingPath(path);
     setDrawerOpen(false);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+
+    router.push(path);
   };
+
+  useEffect(() => {
+    if (pendingPath && pathname === pendingPath) {
+      setPendingPath(null);
+
+      // setTimeout(() => {
+      //   setIsLoading(false);
+      // }, 500);
+    }
+  }, [pathname, pendingPath, setIsLoading]);
 
   return (
     <HeroUINavbar

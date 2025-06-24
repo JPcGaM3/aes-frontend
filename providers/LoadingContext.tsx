@@ -37,14 +37,39 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
       {isLoading && (
-        <div className="z-50 fixed inset-0 flex flex-col justify-center items-center gap-2 max-w-full bg-white/60 backdrop-blur-sm">
-          <Spinner
-            classNames={{ label: "text-foreground mt-4" }}
-            color={colors[colorIndex as number] as ColorType}
-            label="Loading..."
-            size="lg"
-            variant="wave"
-          />
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.4)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "1rem",
+              padding: "2rem 3rem",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.15)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Spinner
+              classNames={{ label: "text-foreground mt-4" }}
+              color={colors[colorIndex as number] as ColorType}
+              label="Loading..."
+              size="lg"
+              variant="wave"
+            />
+          </div>
         </div>
       )}
       {children}

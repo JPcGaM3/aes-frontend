@@ -55,7 +55,7 @@ export default function FormComponent({
 
   return (
       <Form
-        className="flex flex-col gap-4 w-full max-w-2xl"
+        className="flex flex-col gap-8 w-full max-w-2xl"
         validationBehavior="aria"
         onSubmit={handleSubmit}
       >

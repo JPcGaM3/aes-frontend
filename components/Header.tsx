@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
   hasBorder = true,
-  className = "mb-6 w-full text-center flex flex-col",
+  className = "w-full text-center flex flex-col",
   children,
 }) => (
   <header className={className}>

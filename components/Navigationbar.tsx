@@ -43,7 +43,11 @@ export const Navbar = () => {
     setIsLoading(true);
     setDrawerOpen(false);
 
-    router.push(path);
+    if (path === pathname) {
+      window.location.reload();
+    } else {
+      router.push(path);
+    }
   };
 
   return (

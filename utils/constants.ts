@@ -120,6 +120,28 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
   completed: "success",
 };
 
+const month = [
+  { label: "มกราคม", value: "january" },
+  { label: "กุมภาพันธ์", value: "february" },
+  { label: "มีนาคม", value: "march" },
+  { label: "เมษายน", value: "april" },
+  { label: "พฤษภาคม", value: "may" },
+  { label: "มิถุนายน", value: "june" },
+  { label: "กรกฎาคม", value: "july" },
+  { label: "สิงหาคม", value: "august" },
+  { label: "กันยายน", value: "september" },
+  { label: "ตุลาคม", value: "october" },
+  { label: "พฤศจิกายน", value: "november" },
+  { label: "ธันวาคม", value: "december" },
+];
+
+const year = [
+  { label: "2024", value: "2024" },
+  { label: "2025", value: "2025" },
+  { label: "2026", value: "2026" },
+];
+
+
 export {
   UserRoleTranslation,
   UserStatusTranslation,
@@ -130,4 +152,6 @@ export {
   UserStatusColorMap,
   RequestOrderStatusColorMap,
   TaskOrderStatusColorMap,
+  month,
+  year,
 };

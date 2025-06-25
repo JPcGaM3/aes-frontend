@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react"
+import React from "react";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/providers/AuthContext";
 import { FilterIcon } from "@/utils/icons";
 import { FormField } from "@/interfaces/interfaces";
-import { RequestOrderStatusTranslation } from "@/utils/constants";
+import { RequestOrderStatusTranslation, month, year } from "@/utils/constants";
 
 import { Button, useDisclosure } from "@heroui/react";
 
@@ -45,27 +45,6 @@ export default function RequestPage() {
 
     fetchData();
   }, []);
-
-  const month = [
-    { label: "มกราคม", value: "january" },
-    { label: "กุมภาพันธ์", value: "february" },
-    { label: "มีนาคม", value: "march" },
-    { label: "เมษายน", value: "april" },
-    { label: "พฤษภาคม", value: "may" },
-    { label: "มิถุนายน", value: "june" },
-    { label: "กรกฎาคม", value: "july" },
-    { label: "สิงหาคม", value: "august" },
-    { label: "กันยายน", value: "september" },
-    { label: "ตุลาคม", value: "october" },
-    { label: "พฤศจิกายน", value: "november" },
-    { label: "ธันวาคม", value: "december" },
-  ];
-
-  const year = [
-    { label: "2024", value: "2024" },
-    { label: "2025", value: "2025" },
-    { label: "2026", value: "2026" },
-  ];
 
   const filterFields: FormField[] = [
     {
@@ -113,7 +92,7 @@ export default function RequestPage() {
         label: "เดือนเริ่มต้น",
         placeholder: "โปรดเลือกเดือนเริ่มต้น",
         options: month,
-        className: "w-2/3"
+        className: "w-2/3",
       },
       {
         type: "dropdown",
@@ -121,7 +100,7 @@ export default function RequestPage() {
         label: "ปีเริ่มต้น",
         placeholder: "โปรดเลือกปีเริ่มต้น",
         options: year,
-        className: "w-1/3"
+        className: "w-1/3",
       },
     ],
     [
@@ -131,7 +110,7 @@ export default function RequestPage() {
         label: "เดือนสิ้นสุด",
         placeholder: "โปรดเลือกเดือนสิ้นสุด",
         options: month,
-        className: "w-2/3"
+        className: "w-2/3",
       },
       {
         type: "dropdown",
@@ -139,7 +118,7 @@ export default function RequestPage() {
         label: "ปีสิ้นสุด",
         placeholder: "โปรดเลือกปีสิ้นสุด",
         options: year,
-        className: "w-1/3"
+        className: "w-1/3",
       },
     ],
   ];

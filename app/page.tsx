@@ -6,7 +6,6 @@ import { useAuth } from "@/providers/AuthContext";
 
 export default function Home() {
   const { userContext } = useAuth();
-  console.log("User context: ", userContext);
 
   return (
     <section className="flex flex-col justify-center items-center py-8 md:py-10">

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react"
+import { useEffect, useState } from "react";
 
 import { useAuth } from "@/providers/AuthContext";
 import { FilterIcon } from "@/utils/icons";
-import { DropdownOption, FormField } from "@/interfaces/interfaces";
+import { FormField } from "@/interfaces/interfaces";
+import { RequestOrderStatusTranslation } from "@/utils/constants";
 
 import { Button, useDisclosure } from "@heroui/react";
 
@@ -36,9 +38,6 @@ export default function RequestPage() {
     const fetchData = async () => {
       const ae_areas = await getAeAreas();
       const customer_type = await getCustomerTypes();
-
-      console.log("AE Area options: ", ae_areas);
-      console.log("Customer type options: ", customer_type);
 
       setAeAreaOptions(ae_areas);
       setCustomerTypeOptions(customer_type);
@@ -85,11 +84,11 @@ export default function RequestPage() {
       label: "หัวตารางแจ้งงาน",
       placeholder: "โปรดเลือกหัวตารางแจ้งงาน",
       options: [
+        { label: "ทั้งหมด", value: "all" },
         ...customerTypeOptions.map((option: any) => ({
           label: option.name,
           value: String(option.id),
         })),
-        { label: "ทั้งหมด", value: "all" },
       ],
     },
     {
@@ -99,8 +98,12 @@ export default function RequestPage() {
       placeholder: "โปรดเลือกสถานะ",
       options: [
         { label: "ทั้งหมด", value: "all" },
-        { label: "รอดำเนินการ", value: "pending" },
-        { label: "เสร็จสิ้น", value: "completed" },
+        ...Object.entries(RequestOrderStatusTranslation).map(
+          ([value, label]) => ({
+            label: label as string,
+            value: value as string,
+          })
+        ),
       ],
     },
     [
@@ -110,6 +113,7 @@ export default function RequestPage() {
         label: "เดือนเริ่มต้น",
         placeholder: "โปรดเลือกเดือนเริ่มต้น",
         options: month,
+        className: "w-2/3"
       },
       {
         type: "dropdown",
@@ -117,6 +121,7 @@ export default function RequestPage() {
         label: "ปีเริ่มต้น",
         placeholder: "โปรดเลือกปีเริ่มต้น",
         options: year,
+        className: "w-1/3"
       },
     ],
     [
@@ -126,6 +131,7 @@ export default function RequestPage() {
         label: "เดือนสิ้นสุด",
         placeholder: "โปรดเลือกเดือนสิ้นสุด",
         options: month,
+        className: "w-2/3"
       },
       {
         type: "dropdown",
@@ -133,6 +139,7 @@ export default function RequestPage() {
         label: "ปีสิ้นสุด",
         placeholder: "โปรดเลือกปีสิ้นสุด",
         options: year,
+        className: "w-1/3"
       },
     ],
   ];

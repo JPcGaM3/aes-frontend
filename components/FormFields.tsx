@@ -21,7 +21,6 @@ interface InputRendererProps {
   value?: any;
 }
 
-//TODO: FormFields.tsx:102 WARN: A component changed from uncontrolled to controlled.
 export default function FormFields({
   fields,
   onValueChange,
@@ -74,11 +73,35 @@ function InputRenderer({
     isRequired: inputConfig.isRequired || false,
     isInvalid: inputConfig.isInvalid || false,
     errorMessage: inputConfig.errorMessage || null,
-    className: `${inputConfig.className || ""} break-words`,
+    className: `${inputConfig.className || ""} break-all`,
   };
 
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
+
+  //* TODO: FormFields.tsx:102 WARN: A component changed from uncontrolled to controlled.
+  //* SOLVED: Ensure value is always controlled
+  const getControlledValue = (type: string, value: any) => {
+    switch (type) {
+      case "text":
+      case "email":
+      case "password":
+        return value ?? "";
+
+      case "number":
+        return value ?? "";
+
+      case "dropdown":
+        return value ?? "";
+
+      case "date":
+      case "date-range":
+        return value ?? null;
+
+      default:
+        return value;
+    }
+  };
 
   switch (inputConfig.type) {
     case "text":
@@ -93,7 +116,7 @@ function InputRenderer({
               ? (v) => onValueChange(inputConfig.name, v)
               : undefined
           }
-          value={value}
+          value={getControlledValue(inputConfig.type, value)}
         />
       );
 
@@ -123,7 +146,7 @@ function InputRenderer({
               ? (v) => onValueChange(inputConfig.name, v)
               : undefined
           }
-          value={value}
+          value={getControlledValue(inputConfig.type, value)}
         />
       );
     }
@@ -135,7 +158,7 @@ function InputRenderer({
           radius="sm"
           max={inputConfig.max}
           min={inputConfig.min}
-          value={value}
+          value={getControlledValue(inputConfig.type, value)}
         />
       );
 
@@ -157,7 +180,11 @@ function InputRenderer({
                 }
               : undefined
           }
-          selectedKeys={value ? new Set([value]) : new Set()}
+          selectedKeys={
+            getControlledValue(inputConfig.type, value)
+              ? new Set([getControlledValue(inputConfig.type, value)])
+              : new Set()
+          }
         >
           {inputConfig.options.map((option, index) => (
             <SelectItem key={option.value}>{option.label}</SelectItem>
@@ -170,7 +197,7 @@ function InputRenderer({
         <DatePicker
           {...commonProp}
           radius="sm"
-          value={value}
+          value={getControlledValue(inputConfig.type, value)}
           showMonthAndYearPickers
         />
       );
@@ -183,7 +210,7 @@ function InputRenderer({
         <DateRangePicker
           {...commonProp}
           radius="sm"
-          value={value}
+          value={getControlledValue(inputConfig.type, value)}
           showMonthAndYearPickers
         />
       );

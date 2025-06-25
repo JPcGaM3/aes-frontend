@@ -7,7 +7,6 @@ export default async function getCustomerTypes() {
     const response = await axios.get(`${apiUrl}/api/v1/customer-types`, {
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
       },
     });
 

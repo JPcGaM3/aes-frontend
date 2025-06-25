@@ -18,11 +18,12 @@ export default async function LoginUser(
       {
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
         },
       }
     );
-    
+
+    console.log("Login Response:", response);
+
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

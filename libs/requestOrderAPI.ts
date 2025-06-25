@@ -10,7 +10,6 @@ export default async function getRequestOrders(params: any) {
       },
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
       },
     });
 

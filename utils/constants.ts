@@ -132,18 +132,18 @@ const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
 };
 
 const month: Record<string, string> = {
-  "january": "มกราคม",
-  "february": "กุมภาพันธ์",
-  "march": "มีนาคม",
-  "april": "เมษายน",
-  "may": "พฤษภาคม",
-  "june": "มิถุนายน",
-  "july": "กรกฎาคม",
-  "august": "สิงหาคม",
-  "september": "กันยายน",
-  "october": "ตุลาคม",
-  "november": "พฤศจิกายน",
-  "december": "ธันวาคม",
+  "January": "มกราคม",
+  "February": "กุมภาพันธ์",
+  "March": "มีนาคม",
+  "April": "เมษายน",
+  "May": "พฤษภาคม",
+  "June": "มิถุนายน",
+  "July": "กรกฎาคม",
+  "August": "สิงหาคม",
+  "September": "กันยายน",
+  "October": "ตุลาคม",
+  "November": "พฤศจิกายน",
+  "December": "ธันวาคม",
 };
 
 const year: Record<string, string> = {

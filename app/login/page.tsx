@@ -28,6 +28,7 @@ export default function LoginPage() {
       await login(values.username, values.password);
       router.push("/");
     } catch (err: any) {
+      setIsLoading(false);
       setError(err.message || "Login failed");
     }
   };

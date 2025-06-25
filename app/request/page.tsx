@@ -2,10 +2,15 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-
 import { useAuth } from "@/providers/AuthContext";
-import { EditIcon, FilterIcon, InfoIcon, RejectIcon } from "@/utils/icons";
-import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
+
+import {
+  EditIcon,
+  FilterIcon,
+  InfoIcon,
+  PlusIcon,
+  RejectIcon,
+} from "@/utils/icons";
 import {
   RequestOrderStatusColorMap,
   RequestOrderStatusTranslation,
@@ -13,8 +18,9 @@ import {
   month,
   year,
 } from "@/utils/constants";
+import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
 
-import { Button, useDisclosure } from "@heroui/react";
+import { Button, Divider, useDisclosure } from "@heroui/react";
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
@@ -27,11 +33,21 @@ import getRequestOrders from "@/libs/requestOrderAPI";
 export default function RequestPage() {
   // Fetch data ------------------------------------------------------------------
   const { userContext } = useAuth();
+  const now = new Date();
+  const currentYear = String(now.getFullYear());
+  const currentMonthKey = Object.keys(month)[now.getMonth()];
+
   const [aeAreaOptions, setAeAreaOptions] = useState([]);
   const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
-  const [filterValues, setFilterValues] = useState<any>({});
   const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
-
+  const [filterValues, setFilterValues] = useState({
+    ae_id: String(userContext.ae_id),
+    customer_type_id: "all",
+    status: "all",
+    start_month: currentMonthKey,
+    start_year: currentYear,
+  });
+  
   useEffect(() => {
     const fetchDropdownData = async () => {
       const ae_areas = await getAeAreas();
@@ -66,7 +82,7 @@ export default function RequestPage() {
     onCloseFilter();
   };
 
-  const handleAction = (action: string) => {
+  const handleNewPage = (action: string) => {
     console.log(`Action triggered: ${action}`);
   };
 
@@ -88,9 +104,8 @@ export default function RequestPage() {
   const filterFields: FormField[] = [
     {
       type: "dropdown",
-      name: "ae",
+      name: "ae_id",
       label: "สังกัด",
-      placeholder: "โปรดเลือกสังกัด",
       options: aeAreaOptions.map((option: any) => ({
         label: option.name,
         value: String(option.id),
@@ -98,9 +113,8 @@ export default function RequestPage() {
     },
     {
       type: "dropdown",
-      name: "customer_type",
+      name: "customer_type_id",
       label: "หัวตารางแจ้งงาน",
-      placeholder: "โปรดเลือกหัวตารางแจ้งงาน",
       options: [
         { label: "ทั้งหมด", value: "all" },
         ...customerTypeOptions.map((option: any) => ({
@@ -113,7 +127,6 @@ export default function RequestPage() {
       type: "dropdown",
       name: "status",
       label: "สถานะ",
-      placeholder: "โปรดเลือกสถานะ",
       options: [
         { label: "ทั้งหมด", value: "all" },
         ...Object.entries(RequestOrderStatusTranslation).map(
@@ -129,7 +142,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "start_month",
         label: "เดือนเริ่มต้น",
-        placeholder: "โปรดเลือกเดือนเริ่มต้น",
         options: monthList,
         className: "w-2/3",
       },
@@ -137,7 +149,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "start_year",
         label: "ปีเริ่มต้น",
-        placeholder: "โปรดเลือกปีเริ่มต้น",
         options: yearList,
         className: "w-1/3",
       },
@@ -147,7 +158,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "end_month",
         label: "เดือนสิ้นสุด",
-        placeholder: "โปรดเลือกเดือนสิ้นสุด",
         options: monthList,
         className: "w-2/3",
       },
@@ -155,7 +165,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "end_year",
         label: "ปีสิ้นสุด",
-        placeholder: "โปรดเลือกปีสิ้นสุด",
         options: yearList,
         className: "w-1/3",
       },
@@ -167,20 +176,20 @@ export default function RequestPage() {
       key: "view",
       label: "ดูรายละเอียด",
       icon: <InfoIcon />,
-      onClick: () => handleAction("view"),
+      onClick: () => handleNewPage("view"),
     },
     {
       key: "edit",
       label: "แก้ไข",
       icon: <EditIcon />,
-      onClick: () => handleAction("edit"),
+      onClick: () => handleNewPage("edit"),
     },
     {
       key: "reject",
       label: "ปฏิเสธ",
       icon: <RejectIcon />,
       className: "text-danger-500",
-      onClick: () => handleAction("reject"),
+      onClick: () => handleNewPage("reject"),
     },
   ];
 
@@ -247,13 +256,7 @@ export default function RequestPage() {
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={{
-          ae: String(userContext.ae_id),
-          customer_type: "all",
-          status: "all",
-          start_month: "june",
-          start_year: "2025",
-        }}
+        initialValues={filterValues}
       />
 
       {/* Header ----------------------------------------------------------- */}
@@ -264,10 +267,43 @@ export default function RequestPage() {
           color="primary"
           endContent={<FilterIcon />}
           onPress={onOpenFilter}
-          className="font-semibold"
+          className="hidden sm:inline-flex font-semibold"
         >
           Filter
         </Button>
+
+        <Button
+          isIconOnly
+          radius="sm"
+          variant="flat"
+          color="primary"
+          endContent={<FilterIcon />}
+          onPress={onOpenFilter}
+          className="sm:hidden"
+        />
+
+        <Divider orientation="vertical" className="w-[1px]" />
+
+        <Button
+          radius="sm"
+          variant="solid"
+          color="primary"
+          endContent={<PlusIcon />}
+          onPress={() => handleNewPage("add")}
+          className="hidden sm:inline-flex font-semibold"
+        >
+          Add
+        </Button>
+
+        <Button
+          isIconOnly
+          radius="sm"
+          variant="solid"
+          color="primary"
+          endContent={<PlusIcon />}
+          onPress={() => handleNewPage("add")}
+          className="sm:hidden"
+        />
       </Header>
 
       {/* Body ------------------------------------------------------------- */}

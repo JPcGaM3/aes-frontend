@@ -66,7 +66,10 @@ function InputRenderer({
     placeholder:
       inputConfig.hasPlaceholder === false
         ? undefined
-        : inputConfig.placeholder || `กรุณากรอก ${inputConfig.label}`,
+        : inputConfig.placeholder ||
+          (inputConfig.type === "dropdown"
+            ? `โปรดเลือก ${inputConfig.label}`
+            : `โปรดกรอก ${inputConfig.label}`),
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
@@ -79,8 +82,6 @@ function InputRenderer({
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
 
-  //* TODO: FormFields.tsx:102 WARN: A component changed from uncontrolled to controlled.
-  //* SOLVED: Ensure value is always controlled
   const getControlledValue = (type: string, value: any) => {
     switch (type) {
       case "text":

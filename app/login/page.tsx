@@ -37,8 +37,12 @@ export default function LoginPage() {
   };
 
   const handleConfirmLogout = () => {
+    setIsLoading(true);
+    
     logout();
     onClose();
+
+    router.push("/");
   };
 
   const fields: FormField[] = [

@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const result = await LoginUser(username, password);
 
       setId(result.data.user_result.id || null);
-      setAeId(result.data.user_result.ae_id || null);
+      setAeId(result.data.user_result.ae_area.id || null);
       setRole(result.data.user_result.role || null);
       setToken(result.data.token || null);
     } catch (error) {
@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout + clear
   const logout = () => {
     setId(null);
+    setAeId(null);
     setRole(null);
     setToken(null);
 

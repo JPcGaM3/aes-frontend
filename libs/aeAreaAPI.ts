@@ -7,7 +7,7 @@ export default async function getAeAreas() {
     const response = await axios.get(`${apiUrl}/api/v1/ae-areas`, {
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", //! TODO: Remove ngrok-skip-browser-warning in production
+        "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
       },
     });
 
@@ -18,6 +18,7 @@ export default async function getAeAreas() {
         `Failed to fetch AE areas: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
+    
     throw error;
   }
 }

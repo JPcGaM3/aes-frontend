@@ -7,7 +7,7 @@ export default async function getRequestOrders() {
     const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", //! TODO: Remove ngrok-skip-browser-warning in production
+        "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
       },
     });
 
@@ -18,6 +18,7 @@ export default async function getRequestOrders() {
         `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
+    
     throw error;
   }
 }

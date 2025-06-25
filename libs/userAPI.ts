@@ -18,7 +18,7 @@ export default async function LoginUser(
       {
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true", //! TODO: Remove ngrok-skip-browser-warning in production
+          "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
         },
       }
     );

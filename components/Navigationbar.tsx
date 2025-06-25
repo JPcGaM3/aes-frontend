@@ -38,35 +38,13 @@ export const Navbar = () => {
   const pathname = usePathname();
   const { setIsLoading } = useLoading();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const handleNav = (path: string) => {
-    // if (pathname !== path) {
-    //   setIsLoading(true);
-    //   setPendingPath(path);
-    //   setDrawerOpen(false);
-
-    //   router.push(path);
-    // } else {
-    //   setDrawerOpen(false);
-    // }
-
     setIsLoading(true);
-    setPendingPath(path);
     setDrawerOpen(false);
 
     router.push(path);
   };
-
-  useEffect(() => {
-    if (pendingPath && pathname === pendingPath) {
-      setPendingPath(null);
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [pathname, pendingPath, setIsLoading]);
 
   return (
     <HeroUINavbar

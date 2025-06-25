@@ -1,8 +1,11 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { Spinner } from "@heroui/react";
+
+import React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { ColorType } from "@/types";
+import { Spinner } from "@heroui/react";
+import { usePathname } from "next/navigation";
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -19,6 +22,7 @@ export const useLoading = () => useContext(LoadingContext);
 export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [colorIndex, setColorIndex] = useState<number>(0);
 
@@ -33,6 +37,16 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 
     return () => clearInterval(intervalId);
   }, [isLoading]);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timeout);
+  }, [pathname]);
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>

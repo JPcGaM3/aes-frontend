@@ -15,7 +15,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userContext, login, logout } = useAuth();
+  const { login, logout } = useAuth();
   const { setIsLoading } = useLoading();
 
   const [error, setError] = useState("");
@@ -29,10 +29,6 @@ export default function LoginPage() {
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Login failed");
-    } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
     }
   };
 

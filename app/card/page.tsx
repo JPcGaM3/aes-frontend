@@ -23,7 +23,7 @@ import FilterModal from "@/components/FilterModal";
 import { AlertModal } from "@/components/AlertModal";
 import { Button, useDisclosure } from "@heroui/react";
 import FormComponent from "@/components/FormComponent";
-import { CardComponent } from "@/components/CardComponent";
+import CardComponent from "@/components/CardComponent";
 import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
@@ -121,7 +121,7 @@ export default function Card() {
       key: "role",
       label: "Role",
       className: "text-gray-600 text-md font-semibold pb-2",
-      translation: UserRoleTranslation,
+      valueTranslator: UserRoleTranslation,
     },
     {
       key: "phone",

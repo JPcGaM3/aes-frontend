@@ -9,25 +9,37 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@heroui/react";
 
 import { CardComponentProps } from "@/interfaces/interfaces";
 import { VerticalDotsIcon } from "@/utils/icons";
 import { translateEnumValue } from "@/utils/functions";
 
-export const CardComponent = <T extends { id: number | string }>({
+function getNestedValue(obj: any, path: string) {
+  return path
+    .split(".")
+    .reduce(
+      (acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined),
+      obj
+    );
+}
+
+export default function CardComponent<T extends { id: number | string }>({
   items,
   statusConfig,
   headerFields,
   bodyFields,
   actions,
   cardClassName = "flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full",
-}: CardComponentProps<T>) => {
+}: CardComponentProps<T>) {
   const renderCell = useCallback(
     (item: T) => (
       <div key={item.id} className={cardClassName}>
         {/* header */}
-        <div className="px-4 text-left">
+        <div className="px-4 text-left gap-1">
           <Chip
             size="sm"
             radius="sm"
@@ -44,8 +56,15 @@ export const CardComponent = <T extends { id: number | string }>({
           </Chip>
 
           {headerFields?.map((field) => {
-            const value = (item as any)[field.key];
-            const label = field.label;
+            const label = field.label
+              ? field.label
+              : translateEnumValue(field.key, field.labelTranslator || {});
+
+            const nested = getNestedValue(item, field.key);
+            const value =
+              nested == null
+                ? "N/A"
+                : translateEnumValue(nested, field.valueTranslator || {});
 
             return (
               <div key={field.key} className={field.className || "w-fit"}>
@@ -56,17 +75,17 @@ export const CardComponent = <T extends { id: number | string }>({
         </div>
 
         {/* body */}
-        <div className="flex flex-col px-4 pb-4">
+        <div className="flex flex-col px-4 pb-1">
           {bodyFields.map((field) => {
-            const value = (item as any)[field.key];
-            if (value === undefined || value === null) {
-              return null;
-            }
+            const label = field.label
+              ? field.label
+              : translateEnumValue(field.key, field.labelTranslator || {});
 
-            const label = translateEnumValue(
-              field.key,
-              field.translation || {}
-            );
+            const nested = getNestedValue(item, field.key);
+            const value =
+              nested == null
+                ? "N/A"
+                : translateEnumValue(nested, field.valueTranslator || {});
 
             return (
               <div
@@ -75,8 +94,8 @@ export const CardComponent = <T extends { id: number | string }>({
                   field.className || "text-gray-600"
                 }`}
               >
-                <div className="w-1/3">{label}</div>
-                <div className="w-2/3">: {value}</div>
+                <div className="w-2/5">{label}</div>
+                <div className="w-3/5">{value}</div>
               </div>
             );
           })}
@@ -88,26 +107,34 @@ export const CardComponent = <T extends { id: number | string }>({
             <Divider />
             <div className="flex justify-between items-center gap-2 py-1 pl-4 pr-1">
               <div className="text-gray-500 text-sm">More actions.</div>
-              <Dropdown>
-                <DropdownTrigger>
+
+              <Popover placement="bottom-end">
+                <PopoverTrigger>
                   <Button isIconOnly size="sm" variant="light">
                     <div className="text-default-300">
                       <VerticalDotsIcon />
                     </div>
                   </Button>
-                </DropdownTrigger>
+                </PopoverTrigger>
 
-                <DropdownMenu>
-                  {actions.map((action) => (
-                    <DropdownItem
-                      key={action.key}
-                      onClick={() => action.onClick && action.onClick(item)}
-                    >
-                      {action.label}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
+                <PopoverContent className="rounded-lg shadow-lg mt-1 min-w-40 p-1">
+                  <div className="flex flex-col text-sm w-full">
+                    {actions.map((action) => (
+                      <Button
+                        key={action.key}
+                        variant="light"
+                        size="md"
+                        radius="sm"
+                        startContent={action.icon}
+                        className={`w-full justify-start text-left p-2 ${action.className || ""}`}
+                        onPress={() => action.onClick && action.onClick(item)}
+                      >
+                        {action.label}
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         )}

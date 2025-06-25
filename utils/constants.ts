@@ -35,71 +35,6 @@ const RequestOrderStatusTranslation = {
   [REQUESTORDERSTATUS.Rejected]: "ถูกปฏิเสธ",
 };
 
-const TaskOrderStatusTranslation = {
-  [TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
-  [TASKORDERSTATUS.Pending]: "รอการดำเนินการ",
-  [TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
-  [TASKORDERSTATUS.OnHold]: "รอการดำเนินการ",
-  [TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
-};
-
-const RequestOrderTranslation: Record<string, string> = {
-  id: "เลขที่ใบสั่งงาน",
-  customer_type: "หัวตารางแจ้งงาน",
-  affiliation: "สังกัด",
-  quota_number: "โควต้า",
-  farm_name: "ชื่อฟาร์ม",
-  land_number: "เลขที่แปลง",
-  activity_describe: "กิจกรรม",
-  tool_describe: "เครื่องมือ",
-  ap_month_year: "วันปฏิบัติงาน",
-  supervisor_fullname: "ผู้รับผิดชอบ",
-  unit: "เขต",
-  zone: "โซน",
-  ae: "AE",
-  target_area: "พื้นที่เป้าหมาย",
-  actual_area: "พื้นที่จริง",
-  evidence: "หลักฐาน",
-  sale: "ค่าใช้บริการ",
-  status: "สถานะ",
-  comment: "หมายเหตุ",
-};
-
-const TaskOrderTranslation = {
-  id: "รหัสงานย่อย",
-  area_number: "เลขที่พื้นที่",
-  area_target: "พื้นที่เป้าหมาย",
-  area_actual: "พื้นที่จริง",
-  price: "ราคา",
-  comment: "หมายเหตุ",
-  ap_date: "วันที่ปฏิบัติงาน",
-  oil_slip: "สลิปน้ำมัน",
-  oil_start_mile: "เลขไมล์เริ่มต้น (น้ำมัน)",
-  start_mile: "เลขไมล์เริ่มต้น",
-  end_mile: "เลขไมล์สิ้นสุด",
-  oil_start: "น้ำมันเริ่มต้น",
-  oil_end: "น้ำมันสิ้นสุด",
-  car_start_hour: "ชั่วโมงรถเริ่มต้น",
-  car_end_hour: "ชั่วโมงรถสิ้นสุด",
-  start_timer: "เวลาเริ่มต้น",
-  end_timer: "เวลาสิ้นสุด",
-  status: "สถานะ",
-  request_order_id: "รหัสคำสั่งงานหลัก",
-  car_id: "รหัสรถ",
-  tool_id: "รหัสเครื่องมือ",
-  assigned_user_id: "รหัสผู้รับมอบหมาย",
-  created_at: "วันที่สร้าง",
-  updated_at: "วันที่แก้ไข",
-  created_by: "ผู้สร้าง",
-  updated_by: "ผู้แก้ไข",
-};
-
-const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
-  working: "danger",
-  inactive: "primary",
-  on_leave: "warning",
-};
-
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
   created: "default",
   pending_approval: "warning",
@@ -112,6 +47,14 @@ const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
   rejected: "danger",
 };
 
+const TaskOrderStatusTranslation = {
+  [TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
+  [TASKORDERSTATUS.Pending]: "รอการดำเนินการ",
+  [TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
+  [TASKORDERSTATUS.OnHold]: "รอการดำเนินการ",
+  [TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
+};
+
 const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
   created: "default",
   pending: "default",
@@ -120,26 +63,94 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
   completed: "success",
 };
 
-const month = [
-  { label: "มกราคม", value: "january" },
-  { label: "กุมภาพันธ์", value: "february" },
-  { label: "มีนาคม", value: "march" },
-  { label: "เมษายน", value: "april" },
-  { label: "พฤษภาคม", value: "may" },
-  { label: "มิถุนายน", value: "june" },
-  { label: "กรกฎาคม", value: "july" },
-  { label: "สิงหาคม", value: "august" },
-  { label: "กันยายน", value: "september" },
-  { label: "ตุลาคม", value: "october" },
-  { label: "พฤศจิกายน", value: "november" },
-  { label: "ธันวาคม", value: "december" },
-];
+const RequestOrderTranslation: Record<string, string> = {
+  "work_order_number": "เลขที่ใบสั่งงาน",
+  "phone": "เบอร์โทร",
+  "customer_type.name": "แหล่งที่มา",
+  "operation_area_id": "พื้นที่ปฏิบัติงาน",
+  "quota_number": "รหัสโควต้า",
+  "company_farm_id": "รหัสฟาร์ม",
+  "zone": "โซน",
+  "farmer_name": "ชื่อเกษตรกร",
+  "land_number": "เลขที่แปลง",
+  "ap_month": "เดือน",
+  "ap_year": "ปี",
+  "ae_id": "รหัส AE",
+  "ae_name": "โซน AE",
+  "target_area": "พื้นที่เป้าหมาย",
+  "actual_area": "พื้นที่จริง",
+  "active": "สถานะใช้งาน",
+  "evidence": "หลักฐาน",
+  "sale": "ค่าใช้บริการ",
+  "status": "สถานะ",
+  "supervisor_name": "ผู้รับผิดชอบ",
+  "supervisor_id": "รหัสผู้รับผิดชอบ",
+  "location_xy": "พิกัด",
+  "location_id": "รหัสพิกัด",
+  "unit_head_id": "รหัสหัวหน้าหน่วย",
+  "_count.taskorders": "จำนวนกิจกรรม",
+  "comment": "หมายเหตุ",
+  "created_at": "วันที่สร้าง",
+  "updated_at": "วันที่แก้ไข",
+  "created_by": "ผู้สร้าง",
+  "updated_by": "ผู้แก้ไข",
+};
 
-const year = [
-  { label: "2024", value: "2024" },
-  { label: "2025", value: "2025" },
-  { label: "2026", value: "2026" },
-];
+const TaskOrderTranslation: Record<string, string> = {
+  "id": "รหัสงานย่อย",
+  "area_number": "เลขที่พื้นที่",
+  "area_target": "พื้นที่เป้าหมาย",
+  "area_actual": "พื้นที่จริง",
+  "price": "ราคา",
+  "comment": "หมายเหตุ",
+  "ap_date": "วันที่ปฏิบัติงาน",
+  "oil_slip": "สลิปน้ำมัน",
+  "oil_start_mile": "เลขไมล์เริ่มต้น (น้ำมัน)",
+  "start_mile": "เลขไมล์เริ่มต้น",
+  "end_mile": "เลขไมล์สิ้นสุด",
+  "oil_start": "น้ำมันเริ่มต้น",
+  "oil_end": "น้ำมันสิ้นสุด",
+  "car_start_hour": "ชั่วโมงรถเริ่มต้น",
+  "car_end_hour": "ชั่วโมงรถสิ้นสุด",
+  "start_timer": "เวลาเริ่มต้น",
+  "end_timer": "เวลาสิ้นสุด",
+  "status": "สถานะ",
+  "request_order_id": "รหัสคำสั่งงานหลัก",
+  "car_id": "รหัสรถ",
+  "tool_id": "รหัสเครื่องมือ",
+  "assigned_user_id": "รหัสผู้รับมอบหมาย",
+  "created_at": "วันที่สร้าง",
+  "updated_at": "วันที่แก้ไข",
+  "created_by": "ผู้สร้าง",
+  "updated_by": "ผู้แก้ไข",
+};
+
+const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
+  working: "danger",
+  inactive: "primary",
+  on_leave: "warning",
+};
+
+const month: Record<string, string> = {
+  "january": "มกราคม",
+  "february": "กุมภาพันธ์",
+  "march": "มีนาคม",
+  "april": "เมษายน",
+  "may": "พฤษภาคม",
+  "june": "มิถุนายน",
+  "july": "กรกฎาคม",
+  "august": "สิงหาคม",
+  "september": "กันยายน",
+  "october": "ตุลาคม",
+  "november": "พฤศจิกายน",
+  "december": "ธันวาคม",
+};
+
+const year: Record<string, string> = {
+  "2024": "2567",
+  "2025": "2568",
+  "2026": "2569",
+};
 
 
 export {

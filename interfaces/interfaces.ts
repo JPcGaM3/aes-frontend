@@ -1,4 +1,4 @@
-import { ColorType } from "@/types";
+import { ColorType, IconSvgProps } from "@/types";
 import {
   REQUESTORDERSTATUS,
   TASKORDERSTATUS,
@@ -27,58 +27,65 @@ interface User {
 
 interface RequestOrder {
   id: number;
-  customer_type: string;
-  affiliation: string;
+  work_order_number?: string;
+  phone?: string;
+  customer_type_id?: number;
+  customer_type_name?: string;
+  operation_area_id?: number;
   quota_number?: string;
-  farm_name?: string;
+  company_farm_id?: number;
+  zone?: string;
+  farmer_name?: string;
   land_number?: number;
-  activity_describe: string;
-  tool_describe: string;
-  ap_month_year: string;
-  supervisor_fullname?: string;
-  unit: number;
-  zone: number;
-  ae: string;
+  ap_month?: string;
+  ap_year?: number;
+  ae_id?: number;
+  ae_name?: string;
   target_area?: number;
   actual_area?: number;
-  on_live: boolean;
-  evidence?: string;
+  active?: boolean;
+  evidence?: number[];
   sale?: number;
   status?: REQUESTORDERSTATUS | string;
+  supervisor_name?: string;
   supervisor_id?: number;
+  location_xy?: string;
   location_id?: number;
+  unit_head_id?: number;
   comment?: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date | string;
+  updated_at?: Date | string;
   created_by: number;
   updated_by: number;
 }
 
 interface TaskOrder {
   id: number;
-  area_number: string;
-  area_target?: number;
-  area_actual?: number;
+  request_order_id?: number;
+  activities_id?: number;
+  tool_types_id?: number;
+  car_id?: number;
+  tool_id?: number;
+  assigned_user_id?: number;
+  target_area?: number;
+  actual_area?: number;
   price?: number;
-  comment?: string;
-  ap_date: Date;
+  ap_date?: Date | string;
   oil_slip?: string;
   oil_start_mile?: number;
   start_mile?: number;
   end_mile?: number;
   oil_start?: number;
   oil_end?: number;
-  car_start_hour: string;
-  car_end_hour: string;
-  start_timer: string;
-  end_timer: string;
+  car_start_hour?: string;
+  car_end_hour?: string;
+  start_timer?: string;
+  end_timer?: string;
   status?: TASKORDERSTATUS | string;
-  request_order_id: number;
-  car_id: number;
-  tool_id: number;
-  assigned_user_id: number;
-  created_at: Date;
-  updated_at: Date;
+  comment?: string;
+  active?: boolean;
+  created_at?: Date | string;
+  updated_at?: Date | string;
   created_by: number;
   updated_by: number;
 }
@@ -142,15 +149,18 @@ interface StatusConfig {
 
 interface FieldConfig {
   key: string;
-  label: string;
+  label?: string;
   formatter?: (value: any) => string;
   className?: string;
-  translation?: Record<string, string>;
+  labelTranslator?: Record<string, string>;
+  valueTranslator?: Record<string, string>;
 }
 
 interface ActionConfig {
   key: string;
-  label: string;
+  label?: string;
+  icon?: React.ReactNode;
+  className?: string;
   onClick?: (item: any) => void;
 }
 

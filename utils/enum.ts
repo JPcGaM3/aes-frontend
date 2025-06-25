@@ -33,22 +33,3 @@ export enum TASKORDERSTATUS {
   OnHold = "on_hold",
   Completed = "completed",
 }
-
-export enum RequestOrderInputField {
-  CustomerType = "customer_type",
-  Affiliation = "affiliation",
-  Unit = "unit",
-  Quota = "quota",
-  Name = "name",
-  LandNumber = "land_number",
-  LocationName = "location_name",
-  Lattitude = "lattitude",
-  Longitude = "longitude",
-  Supervisor = "supervisor",
-}
-
-export enum TaskOrderInputField {
-  Activity = "activity",
-  Tool = "tool",
-  StartTime = "start_time",
-}

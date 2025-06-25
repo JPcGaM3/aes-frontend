@@ -99,10 +99,10 @@ export const Navbar = () => {
                   color={isActive ? "primary" : "default"}
                   size="lg"
                   radius="sm"
-                  className="w-full justify-start text-left flex gap-4 items-center p-3 font-semibold"
+                  startContent={item.icon}
+                  className="w-full justify-start text-left p-3 font-semibold"
                   onPress={() => handleNav(item.path)}
                 >
-                  {item.icon}
                   {item.name}
                 </Button>
               );

@@ -27,9 +27,9 @@ import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 
-import getCustomerTypes from "@/libs/customerTypeAPI";
-import getAeAreas from "@/libs/aeAreaAPI";
-import getRequestOrders from "@/libs/requestOrderAPI";
+import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import { getAeAreas } from "@/libs/aeAreaAPI";
+import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
 
 interface filterInterface {

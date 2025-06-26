@@ -1,10 +1,11 @@
 import axios from "axios";
+import { useAuth } from "@/providers/AuthContext";
+import { UploadedFile } from "@/interfaces/interfaces";
 
+const apiUrl = process.env.API_URL || "http://localhost:8080";
 const numberKeys = ["ae_id", "customer_type_id", "start_year", "end_year"];
 
 export async function getRequestOrders(paramData: Record<string, any>) {
-  const apiUrl = process.env.API_URL || "http://localhost:8080";
-
   const params: Record<string, any> = {};
 
   Object.entries(paramData).forEach(([key, value]) => {
@@ -36,27 +37,45 @@ export async function getRequestOrders(paramData: Record<string, any>) {
         `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
-    
+
     throw error;
   }
 }
 
-export async function createRequestOrder(data: Record<string, any>) {
-  const apiUrl = process.env.API_URL || "http://localhost:8080";
+export async function uploadRequestOrder(uploadedFiles: UploadedFile[]) {
+  const formData = new FormData();
+  const { userContext } = useAuth();
+
+  // 'files' should match the field name your multer setup expects (e.g., uploadExcels.array('files'))
+  uploadedFiles.forEach((fileData) => {
+    formData.append("files", fileData.file);
+  });
+
+  // These values are taken directly from the state variables initialized above
+  formData.append("ae_id", userContext.ae_id!.toString());
+  formData.append("user_id", userContext.id!.toString());
 
   try {
-    const response = await axios.post(`${apiUrl}/api/v1/request-orders`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.post(
+      `${apiUrl}/api/v1/create/excel`,
+      formData,
+      {
+        headers: {},
+      }
+    );
+
+    console.log("Upload successful:", response.data);
+    alert("Files confirmed and uploaded successfully!");
+
     return response.data.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `Failed to create order: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("API Error Response:", error.response.data);
+      console.error("API Status:", error.response.status);
+    } else if (axios.isAxiosError(error) && error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Error:", error);
     }
-    throw error;
   }
 }

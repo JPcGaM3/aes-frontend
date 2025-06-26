@@ -180,6 +180,13 @@ interface FilterConfig {
   ae?: string;
 }
 
+interface UploadedFile {
+  name: string;
+  size: number;
+  type: string;
+  file: File;
+}
+
 export type {
   User,
   RequestOrder,
@@ -196,4 +203,5 @@ export type {
   ActionConfig,
   CardComponentProps,
   FilterConfig,
+  UploadedFile,
 };

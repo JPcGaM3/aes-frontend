@@ -66,6 +66,7 @@ export const Navbar = () => {
             width={48}
             height={48}
             quality={100}
+            priority
             className="object-contain w-full h-full"
           />
         </div>

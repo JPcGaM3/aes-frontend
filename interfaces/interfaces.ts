@@ -38,7 +38,7 @@ interface RequestOrder {
   farmer_name?: string;
   land_number?: number;
   ap_month?: string;
-  ap_year?: number;
+  ap_year?: number | string;
   ae_id?: number;
   ae_name?: string;
   target_area?: number;
@@ -92,7 +92,8 @@ interface TaskOrder {
 
 interface BaseInputConfig {
   name: string;
-  label: string;
+  label?: string;
+  translator?: Record<string, string>;
   labelPlacement?: "inside" | "outside" | "outside-left";
   hasPlaceholder?: boolean;
   placeholder?: string | number | boolean;
@@ -106,7 +107,7 @@ interface BaseInputConfig {
 }
 
 interface TextInputConfig extends BaseInputConfig {
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "textarea";
 }
 
 interface NumberInputConfig extends BaseInputConfig {

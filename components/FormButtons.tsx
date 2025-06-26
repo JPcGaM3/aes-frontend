@@ -31,6 +31,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         <Button
           className="w-full font-semibold text-gray-500"
           color={cancelColor}
+          size="lg"
           radius="sm"
           variant="flat"
           onPress={onCancel}
@@ -42,6 +43,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
       <Button
         className="w-full font-bold"
         color={submitColor}
+        size="lg"
         radius="sm"
         variant="flat"
         type="submit"

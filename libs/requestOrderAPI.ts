@@ -46,14 +46,14 @@ export async function uploadRequestOrder(
   aeId: number,
   userId: number
 ) {
+  // Create formData object -> handle files
   const formData = new FormData();
 
-  // 'files' should match the field name your multer setup expects (e.g., uploadExcels.array('files'))
+  // Append each file to formData object -> use key 'files'
   uploadedFiles.forEach((fileData) => {
     formData.append("files", fileData.file);
   });
 
-  // These values are passed as parameters
   formData.append("ae_id", aeId.toString());
   formData.append("user_id", userId.toString());
 
@@ -65,9 +65,6 @@ export async function uploadRequestOrder(
         headers: {},
       }
     );
-
-    console.log("Upload successful:", response.data);
-    alert("Files confirmed and uploaded successfully!");
 
     return response.data.data;
   } catch (error) {

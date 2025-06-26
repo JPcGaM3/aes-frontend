@@ -41,6 +41,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     setIsLoading(true);
 
+    // TODO: Remove timeout
     const timeout = setTimeout(() => {
       setIsLoading(false);
     }, 500);

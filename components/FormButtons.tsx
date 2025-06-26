@@ -5,22 +5,28 @@ import React from "react";
 import { Button } from "@heroui/button";
 
 interface FormButtonsProps {
+  onSubmit?: (e: PressEvent) => void;
   onCancel?: (e: PressEvent) => void;
   hasBorder?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
   submitColor?: ColorType;
   cancelColor?: ColorType;
+  isSubmitting?: boolean;
+  isCanceling?: boolean;
   className?: string;
 }
 
 const FormButtons: React.FC<FormButtonsProps> = ({
+  onSubmit,
   onCancel,
   hasBorder = true,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
   submitColor = "primary",
   cancelColor = "default",
+  isSubmitting = false,
+  isCanceling = false,
   className = "w-full text-center flex flex-col",
 }) => (
   <div className={className}>
@@ -34,6 +40,7 @@ const FormButtons: React.FC<FormButtonsProps> = ({
           size="lg"
           radius="sm"
           variant="flat"
+          isLoading={isCanceling}
           onPress={onCancel}
         >
           {cancelLabel}
@@ -46,7 +53,8 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         size="lg"
         radius="sm"
         variant="flat"
-        type="submit"
+        isLoading={isSubmitting}
+        onPress={onSubmit}
       >
         {submitLabel}
       </Button>

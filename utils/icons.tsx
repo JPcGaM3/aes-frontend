@@ -181,9 +181,9 @@ export const UserIcon = (props: IconSvgProps) => {
     <svg
       fill={fill ? fill : "none"}
       data-name="Iconly/Curved/Profile"
-      height={size || height || 24}
+      height={size || height}
       viewBox="0 0 24 24"
-      width={size || width || 24}
+      width={size || width}
       xmlns="http://www.w3.org/2000/svg"
       {...rest}
     >
@@ -213,9 +213,9 @@ export const CameraIcon = (props: IconSvgProps) => {
   return (
     <svg
       fill={fill ? fill : "none"}
-      height={size || height || 24}
+      height={size || height}
       viewBox="0 0 24 24"
-      width={size || width || 24}
+      width={size || width}
       xmlns="http://www.w3.org/2000/svg"
       {...rest}
     >
@@ -234,8 +234,8 @@ export const PlusIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -448,8 +448,8 @@ export const HomeIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       fill={fill || "currentColor"}
       viewBox="0 0 24 24"
       {...rest}
@@ -467,8 +467,8 @@ export const FormIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 52 52"
       {...rest}
     >
@@ -494,8 +494,8 @@ export const CardIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -563,8 +563,8 @@ export const RequestIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -584,8 +584,8 @@ export const InfoIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -617,8 +617,8 @@ export const EditIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -648,8 +648,8 @@ export const RejectIcon = (props: IconSvgProps) => {
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       id="Icons"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 32 32"
       fill="none"
       stroke="currentColor"
@@ -658,6 +658,75 @@ export const RejectIcon = (props: IconSvgProps) => {
       <circle cx="16" cy="16" r="13" />
       <line x1="13.2" y1="13.2" x2="18.8" y2="18.8" />
       <line x1="13.2" y1="18.8" x2="18.8" y2="13.2" />
+    </svg>
+  );
+};
+
+export const DownloadIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="mr-2 w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      stroke="currentColor"
+      strokeWidth={2}
+      {...rest}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
+    </svg>
+  );
+};
+
+export const UploadFileIcon = (props: IconSvgProps) => {
+  const { fill, size, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      width={size}
+      height={height}
+      viewBox="0 0 24 24"
+      className="icon flat-color"
+      {...rest}
+    >
+      <path
+        d="M14,19a5,5,0,0,1,4-4.9h0V5a1,1,0,0,0-.29-.71l-2-2A1,1,0,0,0,15,2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2H15A5,5,0,0,1,14,19Z"
+        fill="#2563eb"
+      />
+      <path
+        d="M19,22a1,1,0,0,1-1-1V20H17a1,1,0,0,1,0-2h1V17a1,1,0,0,1,2,0v1h1a1,1,0,0,1,0,2H20v1A1,1,0,0,1,19,22ZM15,4a1,1,0,0,0,1,1h2a1,1,0,0,0-.28-.71l-2-2A1,1,0,0,0,15,2Zm-2,9a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h6A1,1,0,0,0,13,13Zm2-4a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h8A1,1,0,0,0,15,9Z"
+        fill="#38bdf8"
+      />
+    </svg>
+  );
+};
+
+export const DeleteIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      {...rest}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
     </svg>
   );
 };

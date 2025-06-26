@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ChangeEvent, DragEvent, useRef } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/AuthContext";
 
@@ -19,6 +19,8 @@ import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import FormComponent from "@/components/FormComponent";
 import { uploadRequestOrder } from "@/libs/requestOrderAPI";
+import UploadComponent from "@/components/UploadComponent";
+import FormButtons from "@/components/FormButtons";
 
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
@@ -33,9 +35,6 @@ export default function AddRequestPage() {
   const [formValue, setFormValues] = useState<RequestOrder>({} as RequestOrder);
 
   // * For file upload
-  const MAX_FILES_LIMIT = 5;
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
@@ -72,101 +71,20 @@ export default function AddRequestPage() {
   }, [userContext]);
 
   // Handler ------------------------------------------------------------------------------------------------------
-  const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  };
-
-  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      handleFiles(files);
-      e.target.value = "";
-    }
-  };
-
-  const handleFiles = (files: File[]): void => {
-    const allowedFiles: File[] = files.filter(
-      (file) => file.name.endsWith(".xlsx") || file.name.endsWith(".csv")
-    );
-
-    const currentFileCount = uploadedFiles.length;
-    let filesAddedCount = 0;
-    const filesToAddNew: UploadedFile[] = [];
-    let filesSkipped = 0;
-
-    for (const file of allowedFiles) {
-      if (uploadedFiles.some((f) => f.name === file.name)) {
-        console.warn(`File ${file.name} is already in the list.`);
-        filesSkipped++;
-        continue;
-      }
-
-      if (currentFileCount + filesAddedCount < MAX_FILES_LIMIT) {
-        filesToAddNew.push({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          file: file,
-        });
-        filesAddedCount++;
-      } else {
-        filesSkipped++;
-      }
-    }
-
-    if (filesSkipped > 0) {
-      alert(
-        `You can only upload a maximum of ${MAX_FILES_LIMIT} files. ${filesSkipped} file(s) were not added or were duplicates.`
-      );
-    }
-
-    setUploadedFiles((prevFiles) => [...prevFiles, ...filesToAddNew]);
-  };
-
-  const handleDeleteFile = (fileName: string): void => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((file) => file.name !== fileName)
-    );
-  };
-
+  // TODO: Change button to "Downloaded!" and disable it for a sec.
   const handleDownloadTemplate = (): void => {
-    console.log("Downloading template...");
-
     const link = document.createElement("a");
+
     link.href = "/excel/request_orders_template.xlsx";
     link.download = "request_orders_template.xlsx";
-
     document.body.appendChild(link);
+
     link.click();
     document.body.removeChild(link);
-
-    console.log("Template downloaded successfully.");
   };
 
-  const handleConfirm = async (): Promise<void> => {
+  // TODO: Handle Alerts: use Alert component instead of window.alert
+  const handleConfirm = async (_e?: any): Promise<void> => {
     if (uploadedFiles.length === 0) {
       alert("Please upload files before confirming.");
       return;
@@ -178,21 +96,33 @@ export default function AddRequestPage() {
       uploadedFiles.map((f) => f.name)
     );
 
+    // TODO: Handle success
+    // * After successful upload, reset the uploadedFiles state
+    // * Change the button to "Uploaded!" and disable it for a sec.
     try {
       const response = await uploadRequestOrder(
         uploadedFiles,
         userContext.ae_id!,
         userContext.id!
       );
+
       console.log("Upload successful:", response);
     } catch (error) {
+      // TODO: Handle error
+      // * Show an error message to the user
+      // * Use Alert component instead of console.error
+
       console.error("Upload failed:", error);
     } finally {
-      setIsUploading(false);
+      // TODO: Remove timeout
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadedFiles([]);
+      }, 500);
     }
   };
 
-  const handleCancel = (): void => {
+  const handleCancel = (_e?: any): void => {
     console.log("Cancelling upload");
     setUploadedFiles([]);
   };
@@ -303,7 +233,7 @@ export default function AddRequestPage() {
       <Tabs
         aria-label="TabOptions"
         radius="sm"
-        className="p-0 flex flex-col w-full justify-center items-center"
+        className="p-0 flex flex-col w-full justify-center items-center font-semibold"
       >
         {/* Key-in tab ------------------------------------------------------------------------------------------- */}
         <Tab
@@ -313,11 +243,11 @@ export default function AddRequestPage() {
         >
           <div className="p-4 flex flex-col w-full justify-center items-center">
             <FormComponent
-              title="Add your request order"
-              subtitle="Input your order details in the form below"
+              title="สร้างใบสั่งงาน"
+              subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
               fields={workOrderFields}
-              submitLabel="Submit"
-              cancelLabel="Clear form"
+              submitLabel="ยืนยัน"
+              cancelLabel="ยกเลิก"
               onSubmit={(data) => console.log(data)}
               onCancel={() => console.log("Form cleared")}
               initialValues={formValue}
@@ -331,195 +261,14 @@ export default function AddRequestPage() {
           title="Upload"
           className="flex flex-col w-full justify-center items-center"
         >
-          <div className="flex flex-col w-full justify-center items-center p-4">
-            <div className="bg-white shadow-lg p-6 border border-gray-300 border-dashed rounded-lg w-full max-w-2xl">
-              {/* Header -------------------------------------------------------------------------------------------------------- */}
-              <h2 className="mb-2 font-semibold text-xl">อัปโหลดไฟล์</h2>
-              <p className="mb-4 text-gray-600">
-                ไฟล์ที่รองรับ ไฟล์ Excel (.xlsx, .csv)
-              </p>
-
-              {/* Download Template Button -------------------------------------------------------------------------------------- */}
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={handleDownloadTemplate}
-                  className="flex items-center bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-md text-blue-600 text-sm"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="mr-2 w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download Template
-                </button>
-              </div>
-
-              {/* Removed the input fields for aeId and createdBy */}
-              {/* They are still passed via formData, but not visible to the user */}
-
-              {/* Drag and Drop Area -------------------------------------------------------------------------------------------- */}
-              <div
-                className={`border-2 ${
-                  isDragOver
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-dashed border-gray-300"
-                } rounded-lg p-8 text-center cursor-pointer transition-all duration-200
-          ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onClick={() => !isUploading && fileInputRef.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept=".xlsx,.csv"
-                  multiple
-                  onChange={handleFileInputChange}
-                  disabled={isUploading}
-                />
-                <div className="flex flex-col justify-center items-center">
-                  <div className="mb-2 text-blue-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-16 h-16"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm12-9h-5V4.5L18.5 9z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M13 11a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1z"
-                        clipRule="evenodd"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        d="M12 15a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1z"
-                        clipRule="evenodd"
-                      />
-                      <path
-                        fillRule="evenodd"
-                        d="M11 19a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-gray-700">
-                    คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
-                  </p>
-                </div>
-              </div>
-
-              {/* Uploaded Files List */}
-              {uploadedFiles.length > 0 && (
-                <div className="mt-6">
-                  <p className="mb-3 font-semibold text-gray-800">
-                    {uploadedFiles.length} file
-                    {uploadedFiles.length > 1 ? "s" : ""} was uploaded
-                  </p>
-                  <div className="space-y-3">
-                    {uploadedFiles.map((file) => (
-                      <div
-                        key={file.name}
-                        className="flex justify-between items-center bg-gray-50 p-3 border border-gray-200 rounded-md"
-                      >
-                        <span className="text-gray-700 truncate">
-                          {file.name}
-                        </span>
-                        <button
-                          onClick={() => handleDeleteFile(file.name)}
-                          className="p-1 text-gray-400 hover:text-red-500"
-                          aria-label={`Delete ${file.name}`}
-                          disabled={isUploading}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 h-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 mt-8">
-                <button
-                  onClick={handleCancel}
-                  className="hover:bg-gray-50 px-6 py-2 border border-gray-300 rounded-md text-gray-700"
-                  disabled={isUploading}
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className={`px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <svg
-                      className="mr-3 -ml-1 w-5 h-5 text-white animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="mr-2 w-5 h-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                      />
-                    </svg>
-                  )}
-                  {isUploading ? "กำลังอัปโหลด..." : "ยืนยัน"}
-                </button>
-              </div>
-            </div>
-          </div>
+          <UploadComponent
+            isUploading={isUploading}
+            uploadedFiles={uploadedFiles}
+            setUploadedFiles={setUploadedFiles}
+            onSubmit={handleConfirm}
+            onCancel={handleCancel}
+            onDownloadTemplate={handleDownloadTemplate}
+          />
         </Tab>
       </Tabs>
     </div>

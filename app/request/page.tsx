@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/AuthContext";
 
@@ -15,8 +16,8 @@ import {
   RequestOrderStatusColorMap,
   RequestOrderStatusTranslation,
   RequestOrderTranslation,
-  month,
-  year,
+  monthList,
+  yearList,
 } from "@/utils/constants";
 import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
 
@@ -29,25 +30,31 @@ import CardComponent from "@/components/CardComponent";
 import getCustomerTypes from "@/libs/customerTypeAPI";
 import getAeAreas from "@/libs/aeAreaAPI";
 import getRequestOrders from "@/libs/requestOrderAPI";
+import { useLoading } from "@/providers/LoadingContext";
+
+interface filterInterface {
+  ae_id?: string;
+  customer_type_id?: string;
+  status?: string;
+  start_month?: string;
+  start_year?: string;
+  end_month?: string;
+  end_year?: string;
+}
 
 export default function RequestPage() {
   // Fetch data ------------------------------------------------------------------
   const { userContext } = useAuth();
   const now = new Date();
   const currentYear = String(now.getFullYear());
-  const currentMonthKey = Object.keys(month)[now.getMonth()];
+  const currentMonth = monthList[now.getMonth()].value;
 
   const [aeAreaOptions, setAeAreaOptions] = useState([]);
   const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
   const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
-  const [filterValues, setFilterValues] = useState({
-    ae_id: String(userContext.ae_id),
-    customer_type_id: "all",
-    status: "all",
-    start_month: currentMonthKey,
-    start_year: currentYear,
-  });
-  
+  const [error, setError] = useState<string | null>(null);
+  const [filterValues, setFilterValues] = useState<filterInterface | null>(null);
+
   useEffect(() => {
     const fetchDropdownData = async () => {
       const ae_areas = await getAeAreas();
@@ -61,9 +68,25 @@ export default function RequestPage() {
   }, []);
 
   useEffect(() => {
+    if (userContext.ae_id !== null) {
+      setFilterValues({
+        ae_id: String(userContext.ae_id),
+        start_month: currentMonth,
+        start_year: currentYear,
+      });
+    }
+  }, [userContext]);
+
+  useEffect(() => {
     const fetchReqOrderData = async (params: any) => {
-      const data = await getRequestOrders(params);
-      setReqOrders(data);
+      try {
+        setError(null);
+        const data = await getRequestOrders(params);
+        setReqOrders(data);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+        setReqOrders([]);
+      }
     };
 
     fetchReqOrderData(filterValues);
@@ -82,34 +105,36 @@ export default function RequestPage() {
     onCloseFilter();
   };
 
+  const router = useRouter();
+  const { setIsLoading } = useLoading();
   const handleNewPage = (action: string) => {
-    console.log(`Action triggered: ${action}`);
+    setIsLoading(true);
+
+    switch (action) {
+      case "add":
+        router.push("/request/add");
+        break;
+
+      default:
+        console.log(`Action triggered: ${action}`);
+        setIsLoading(false);
+        break;
+    }
   };
 
   // Field configurations --------------------------------------------------
-  const monthList = [
-    ...Object.entries(month).map(([value, label]) => ({
-      label: label as string,
-      value: value as string,
-    })),
-  ];
-
-  const yearList = [
-    ...Object.entries(year).map(([value, label]) => ({
-      label: label as string,
-      value: value as string,
-    })),
-  ];
-
   const filterFields: FormField[] = [
     {
       type: "dropdown",
       name: "ae_id",
       label: "สังกัด",
-      options: aeAreaOptions.map((option: any) => ({
-        label: option.name,
-        value: String(option.id),
-      })),
+      options: [
+        { label: "ทั้งหมด", value: "all" },
+        ...aeAreaOptions.map((option: any) => ({
+          label: option.name,
+          value: String(option.id),
+        })),
+      ],
     },
     {
       type: "dropdown",
@@ -256,7 +281,7 @@ export default function RequestPage() {
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={filterValues}
+        initialValues={filterValues as any}
       />
 
       {/* Header ----------------------------------------------------------- */}
@@ -307,13 +332,25 @@ export default function RequestPage() {
       </Header>
 
       {/* Body ------------------------------------------------------------- */}
-      <CardComponent
-        actions={actions}
-        bodyFields={bodyFields}
-        headerFields={headerFields}
-        items={reqOrders}
-        statusConfig={statusConfig}
-      />
+      {error ? (
+        <div className="text-gray-500 font-medium text-center my-8">
+          {error}
+        </div>
+      ) : (
+        <div>
+          <div className="mb-4 text-gray-700 font-medium text-right">
+            {`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
+          </div>
+
+          <CardComponent
+            actions={actions}
+            bodyFields={bodyFields}
+            headerFields={headerFields}
+            items={reqOrders}
+            statusConfig={statusConfig}
+          />
+        </div>
+      )}
     </div>
   );
 }

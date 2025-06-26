@@ -22,9 +22,7 @@ export default async function LoginUser(
       }
     );
 
-    console.log("Login Response:", response);
-
-    return response.data;
+    return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       throw new Error(

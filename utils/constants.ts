@@ -146,11 +146,21 @@ const month: Record<string, string> = {
   "December": "ธันวาคม",
 };
 
-const year: Record<string, string> = {
-  "2024": "2567",
-  "2025": "2568",
-  "2026": "2569",
-};
+const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
+
+const monthList = [
+  ...Object.entries(month).map(([value, label]) => ({
+    label: label as string,
+    value: value as string,
+  })),
+];
+
+const yearList = [
+  ...years.map((year) => ({
+    label: String(year + 543),
+    value: String(year),
+  })),
+];
 
 
 export {
@@ -164,5 +174,7 @@ export {
   RequestOrderStatusColorMap,
   TaskOrderStatusColorMap,
   month,
-  year,
+  years,
+  monthList,
+  yearList
 };

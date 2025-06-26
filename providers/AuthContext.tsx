@@ -30,30 +30,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("authUser");
-    if (storedUser) {
-      try {
-        const parsed = JSON.parse(storedUser);
+    const loadUser = async () => {
+      const storedUser = sessionStorage.getItem("authUser");
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
 
-        setId(parsed.id ?? null);
-        setAeId(parsed.ae_id ?? null);
-        setRole(parsed.role ?? null);
-        setToken(parsed.token ?? null);
-      } catch (e) {
-        sessionStorage.removeItem("authUser");
+          await setId(parsed.id ?? null);
+          await setAeId(parsed.ae_id ?? null);
+          await setRole(parsed.role ?? null);
+          await setToken(parsed.token ?? null);
+        } catch (e) {
+          sessionStorage.removeItem("authUser");
+        }
       }
-    }
+    };
+
+    loadUser();
   }, []);
 
   // Login API + set user context
   const login = async (username: string, password: string) => {
     try {
       const result = await LoginUser(username, password);
+      const userResult = result.user_result || {};
 
-      setId(result.data.user_result.id || null);
-      setAeId(result.data.user_result.ae_area.id || null);
-      setRole(result.data.user_result.role || null);
-      setToken(result.data.token || null);
+      setId(userResult.id ?? null);
+      setAeId(userResult.ae_id ?? null);
+      setRole(userResult.role ?? null);
+      setToken(result.token ?? null);
     } catch (error) {
       throw error;
     }

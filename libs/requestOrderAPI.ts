@@ -1,9 +1,10 @@
 import axios from "axios";
 
-export default async function getRequestOrders(paramData: Record<string, any>) {
+const numberKeys = ["ae_id", "customer_type_id", "start_year", "end_year"];
+
+export async function getRequestOrders(paramData: Record<string, any>) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
-  const numberKeys = ["ae_id", "customer_type_id", "start_year", "end_year"];
   const params: Record<string, any> = {};
 
   Object.entries(paramData).forEach(([key, value]) => {
@@ -16,8 +17,6 @@ export default async function getRequestOrders(paramData: Record<string, any>) {
       params[key] = value;
     }
   });
-
-  console.log("Fetching orders with params:", params);
 
   try {
     const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
@@ -35,6 +34,27 @@ export default async function getRequestOrders(paramData: Record<string, any>) {
       }
       throw new Error(
         `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
+    }
+    
+    throw error;
+  }
+}
+
+export async function createRequestOrder(data: Record<string, any>) {
+  const apiUrl = process.env.API_URL || "http://localhost:8080";
+
+  try {
+    const response = await axios.post(`${apiUrl}/api/v1/request-orders`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Failed to create order: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
     throw error;

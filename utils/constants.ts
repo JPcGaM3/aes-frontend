@@ -65,8 +65,9 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
 
 const RequestOrderTranslation: Record<string, string> = {
   "work_order_number": "เลขที่ใบสั่งงาน",
-  "phone": "เบอร์โทร",
+  "phone": "หมายเลขโทรศัพท์",
   "customer_type.name": "แหล่งที่มา",
+  "customer_type_id": "หัวตารางแจ้งงาน",
   "operation_area_id": "พื้นที่ปฏิบัติงาน",
   "quota_number": "รหัสโควต้า",
   "company_farm_id": "รหัสฟาร์ม",

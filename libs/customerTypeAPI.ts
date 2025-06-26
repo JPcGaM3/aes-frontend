@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default async function getCustomerTypes() {
+export async function getCustomerTypes() {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {

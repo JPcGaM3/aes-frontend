@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 
-import LoginUser from "@/libs/userAPI";
+import { LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
   id: number | null;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default async function getAeAreas() {
+export async function getAeAreas() {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {

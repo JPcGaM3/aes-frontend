@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default async function LoginUser(
+export async function LoginUser(
   username: string,
   password: string
 ): Promise<any> {

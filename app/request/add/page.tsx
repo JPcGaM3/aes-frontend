@@ -179,7 +179,11 @@ export default function AddRequestPage() {
     );
 
     try {
-      const response = await uploadRequestOrder(uploadedFiles);
+      const response = await uploadRequestOrder(
+        uploadedFiles,
+        userContext.ae_id!,
+        userContext.id!
+      );
       console.log("Upload successful:", response);
     } catch (error) {
       console.error("Upload failed:", error);
@@ -472,7 +476,7 @@ export default function AddRequestPage() {
                 <button
                   onClick={handleConfirm}
                   className={`px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={isUploading || uploadedFiles.length === 0}
+                  disabled={isUploading}
                 >
                   {isUploading ? (
                     <svg

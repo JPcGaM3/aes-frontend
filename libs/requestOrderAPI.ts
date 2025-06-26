@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useAuth } from "@/providers/AuthContext";
 import { UploadedFile } from "@/interfaces/interfaces";
 
 const apiUrl = process.env.API_URL || "http://localhost:8080";
@@ -9,7 +8,7 @@ export async function getRequestOrders(paramData: Record<string, any>) {
   const params: Record<string, any> = {};
 
   Object.entries(paramData).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "") {
+    if (value === undefined || value === null || value === "" || value === "all") {
       params[key] = null;
     } else if (numberKeys.includes(key)) {
       const num = Number(value);
@@ -42,22 +41,25 @@ export async function getRequestOrders(paramData: Record<string, any>) {
   }
 }
 
-export async function uploadRequestOrder(uploadedFiles: UploadedFile[]) {
+export async function uploadRequestOrder(
+  uploadedFiles: UploadedFile[],
+  aeId: number,
+  userId: number
+) {
   const formData = new FormData();
-  const { userContext } = useAuth();
 
   // 'files' should match the field name your multer setup expects (e.g., uploadExcels.array('files'))
   uploadedFiles.forEach((fileData) => {
     formData.append("files", fileData.file);
   });
 
-  // These values are taken directly from the state variables initialized above
-  formData.append("ae_id", userContext.ae_id!.toString());
-  formData.append("user_id", userContext.id!.toString());
+  // These values are passed as parameters
+  formData.append("ae_id", aeId.toString());
+  formData.append("user_id", userId.toString());
 
   try {
     const response = await axios.post(
-      `${apiUrl}/api/v1/create/excel`,
+      `${apiUrl}/api/v1/request-orders/create/excel`,
       formData,
       {
         headers: {},

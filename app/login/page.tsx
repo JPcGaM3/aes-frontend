@@ -62,7 +62,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="flex justify-center min-h-screen">
+    <div className="flex justify-center">
       <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl px-2 sm:px-4 md:px-8">
         <AlertModal
           isOpen={isOpen}

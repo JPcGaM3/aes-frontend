@@ -35,7 +35,7 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "bg-background min-h-screen font-sans text-foreground antialiased",
+          "bg-background font-sans text-foreground antialiased",
           fontKanit.variable
         )}
       >

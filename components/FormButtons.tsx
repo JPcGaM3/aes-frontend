@@ -47,17 +47,31 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         </Button>
       )}
 
-      <Button
-        className="w-full font-bold"
-        color={submitColor}
-        size="lg"
-        radius="sm"
-        variant="flat"
-        isLoading={isSubmitting}
-        onPress={onSubmit}
-      >
-        {submitLabel}
-      </Button>
+      {onSubmit ? (
+        <Button
+          className="w-full font-bold"
+          color={submitColor}
+          size="lg"
+          radius="sm"
+          variant="flat"
+          isLoading={isSubmitting}
+          onPress={onSubmit}
+        >
+          {submitLabel}
+        </Button>
+      ) : (
+        <Button
+          className="w-full font-bold"
+          color={submitColor}
+          size="lg"
+          radius="sm"
+          variant="flat"
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {submitLabel}
+        </Button>
+      )}
     </div>
   </div>
 );

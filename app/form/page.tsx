@@ -74,6 +74,9 @@ export default function FormPage() {
         title="Request Order Form"
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        onChange={(changed: any) => {
+          console.log("Form values changed:", changed);
+        }}
       />
     </div>
   );

@@ -1,0 +1,23 @@
+import axios from "axios";
+
+export async function getActivities() {
+  const apiUrl = process.env.API_URL || "http://localhost:8080";
+
+  try {
+    const response = await axios.get(`${apiUrl}/api/v1/activities`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Failed to fetch activities: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
+    }
+    
+    throw error;
+  }
+}

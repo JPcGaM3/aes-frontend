@@ -197,7 +197,7 @@ export default function UploadComponent({
                 <div
                   key={file.name}
                   onClick={() => handleDownloadUploadedFile(file)}
-                  className="flex justify-between items-center bg-gray-50 p-2 pl-4 border border-gray-200 rounded-xl"
+                  className="flex justify-between items-center bg-gray-50 p-2 pl-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100"
                 >
                   <span className="text-gray-700 truncate">{file.name}</span>
 

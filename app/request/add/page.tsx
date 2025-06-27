@@ -5,22 +5,28 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/AuthContext";
 
 import {
+  yearList,
   monthList,
   RequestOrderTranslation,
-  yearList,
+  TaskOrderTranslation,
 } from "@/utils/constants";
-import { FormField, RequestOrder, UploadedFile } from "@/interfaces/interfaces";
+import {
+  Activity,
+  FormField,
+  TaskOrder,
+  RequestOrder,
+  UploadedFile,
+} from "@/interfaces/interfaces";
 
-import { Tab, Tabs } from "@heroui/react";
+import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
-import Header from "@/components/Header";
+import FormComponent from "@/components/FormComponent";
+import UploadComponent from "@/components/UploadComponent";
 
+import { getActivities } from "@/libs/activityAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
-import FormComponent from "@/components/FormComponent";
 import { uploadRequestOrder } from "@/libs/requestOrderAPI";
-import UploadComponent from "@/components/UploadComponent";
-import FormButtons from "@/components/FormButtons";
 
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
@@ -30,9 +36,14 @@ export default function AddRequestPage() {
   const currentYear = String(now.getFullYear());
   const currentMonth = monthList[now.getMonth()].value;
 
+  const [activityOptions, setActivityOptions] = useState([]);
   const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
   const [operationAreaOptions, setOperationAreaOptions] = useState([]);
-  const [formValue, setFormValues] = useState<RequestOrder>({} as RequestOrder);
+  const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
+  const [tasks, setTasks] = useState<TaskOrder[]>([]);
+  const [formValues, setFormValues] = useState<RequestOrder>(
+    {} as RequestOrder
+  );
 
   // * For file upload
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -40,15 +51,42 @@ export default function AddRequestPage() {
 
   // Fetch data ---------------------------------------------------------------------------------------------------
   useEffect(() => {
-    const fetchCustomerTypes = async () => {
+    const fetchDropDownOptions = async () => {
       const customer_type = await getCustomerTypes();
+      const activity = await getActivities();
+
       setCustomerTypeOptions(customer_type);
+      setActivityWithTools(activity);
+      setActivityOptions(
+        activity.map((activity: Activity) => ({
+          label: activity.name,
+          value: activity.name,
+        }))
+      );
+
+      setTasks([
+        {
+          activity_name: "",
+          tool_type_name: "",
+        },
+      ] as TaskOrder[]);
     };
 
-    fetchCustomerTypes();
+    fetchDropDownOptions();
   }, []);
 
   useEffect(() => {
+    if (userContext.ae_id !== null) {
+      setFormValues({
+        ae_id: userContext?.ae_id,
+        activities: "",
+        tool_types: "",
+        ap_year: currentYear,
+        ap_month: currentMonth,
+        created_by: userContext?.id,
+      } as RequestOrder);
+    }
+
     const fetchOperationAreas = async (params: any) => {
       const operation_area = await getOperationAreas(params);
       setOperationAreaOptions(operation_area);
@@ -57,17 +95,6 @@ export default function AddRequestPage() {
     fetchOperationAreas({
       ae_id: userContext.ae_id,
     });
-  }, []);
-
-  useEffect(() => {
-    if (userContext.ae_id !== null) {
-      setFormValues({
-        ae_id: userContext?.ae_id,
-        ap_year: currentYear,
-        ap_month: currentMonth,
-        created_by: userContext?.id,
-      } as RequestOrder);
-    }
   }, [userContext]);
 
   // Handler ------------------------------------------------------------------------------------------------------
@@ -84,7 +111,7 @@ export default function AddRequestPage() {
   };
 
   // TODO: Handle Alerts: use Alert component instead of window.alert
-  const handleConfirmUpload = async (_e?: any): Promise<void> => {
+  const handleSubmitUpload = async (_e?: any): Promise<void> => {
     if (uploadedFiles.length === 0) {
       alert("Please upload files before confirming.");
       return;
@@ -106,13 +133,13 @@ export default function AddRequestPage() {
         userContext.id!
       );
 
-      console.log("Upload successful:", response);
+      alert("Upload successful!");
     } catch (error) {
       // TODO: Handle error
       // * Show an error message to the user
       // * Use Alert component instead of console.error
 
-      console.error("Upload failed:", error);
+      alert("Upload failed!");
     } finally {
       // TODO: Remove timeout
       setTimeout(() => {
@@ -123,12 +150,60 @@ export default function AddRequestPage() {
   };
 
   const handleCancelUpload = (_e?: any): void => {
-    console.log("Cancelling upload");
+    alert("Cancelling upload, Clear form");
     setUploadedFiles([]);
   };
 
+  const handleRequestOrderChange = (values: any) => {
+    setFormValues(values);
+  };
+
+  const handleSubmitKeyIn = () => {
+    console.log("Task : ", tasks);
+
+    const activities = tasks.map((t) => t.activity_name).join("+");
+    const tool_types = tasks.map((t) => t.tool_type_name).join("+");
+
+    const submitValue = {
+      ...formValues,
+      activities,
+      tool_types,
+    };
+
+    console.log("Submitting form with values:", submitValue);
+
+    setFormValues(submitValue);
+  };
+
+  const handleCancelKeyIn = () => {
+    setFormValues({} as RequestOrder);
+  };
+
+  const handleAddTask = () => {
+    setTasks([
+      ...tasks,
+      { activity_name: "", tool_type_name: "" },
+    ] as TaskOrder[]);
+  };
+
+  // TODO: Handler change activity make tool ""
+  // TODO: implement dropdown warning 
+  const handleTaskChange = (index: number, changed: any) => {
+    const updatedTasks: TaskOrder[] = tasks.map((task, i) => {
+      console.log("Updating task at index:", i, "with changes:", changed);
+
+      if (i === index) {
+        return { ...task, ...changed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  };
+
   // Field configurations ----------------------------------------------------------------------------------------
-  const workOrderFields: FormField[] = [
+  const requestOrderFields: FormField[] = [
     {
       type: "dropdown",
       isRequired: true,
@@ -161,7 +236,7 @@ export default function AddRequestPage() {
         ],
       },
       {
-        type: "number",
+        type: "text",
         name: "zone",
         isRequired: true,
         translator: RequestOrderTranslation,
@@ -170,7 +245,7 @@ export default function AddRequestPage() {
     ],
     [
       {
-        type: "number",
+        type: "text",
         name: "quota_number",
         isRequired: true,
         translator: RequestOrderTranslation,
@@ -215,7 +290,7 @@ export default function AddRequestPage() {
       translator: RequestOrderTranslation,
     },
     {
-      type: "number",
+      type: "text",
       name: "land_number",
       isRequired: true,
       translator: RequestOrderTranslation,
@@ -241,18 +316,81 @@ export default function AddRequestPage() {
           title="Key-in"
           className="flex flex-col w-full justify-center items-center"
         >
-          <div className="p-4 flex flex-col w-full justify-center items-center">
-            <FormComponent
-              title="สร้างใบสั่งงาน"
-              subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-              fields={workOrderFields}
-              submitLabel="ยืนยัน"
-              cancelLabel="ยกเลิก"
-              onSubmit={(data) => console.log(data)}
-              onCancel={() => console.log("Form cleared")}
-              initialValues={formValue}
-            />
-          </div>
+          <FormComponent
+            fields={requestOrderFields}
+            title="สร้างใบสั่งงาน"
+            subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+            onCancel={handleCancelKeyIn}
+            onSubmit={handleSubmitKeyIn}
+            onChange={handleRequestOrderChange}
+          >
+            <div className="flex flex-col gap-4 w-full justify-center items-center">
+              {/* Task Header */}
+              <div className="flex items-center gap-5 w-full">
+                <span className="font-semibold text-xl text-gray-700">
+                  กิจกรรม
+                </span>
+
+                <Divider className="flex-1" />
+
+                <Button
+                  size="md"
+                  radius="sm"
+                  color="default"
+                  variant="flat"
+                  className="tracking-normal"
+                  onPress={handleAddTask}
+                >
+                  เพิ่มกิจกรรม
+                </Button>
+              </div>
+
+              {/* Task Fields */}
+              {tasks.map((task, idx) => {
+                const selectedActivity = activityWithTools.find(
+                  (activity) => String(activity.name) === task.activity_name
+                );
+
+                const toolTypeOptions =
+                  selectedActivity && selectedActivity.tool_types
+                    ? selectedActivity.tool_types.map((t: any) => ({
+                        label: t.tool_type_name,
+                        value: t.tool_type_name,
+                      }))
+                    : [];
+
+                return (
+                  <FormComponent
+                    key={idx}
+                    hasHeader={false}
+                    hasButtons={false}
+                    initialValues={task}
+                    onChange={(changed: any) => handleTaskChange(idx, changed)}
+                    fields={[
+                      [
+                        {
+                          type: "dropdown",
+                          name: "activity_name",
+                          isRequired: true,
+                          translator: TaskOrderTranslation,
+                          options: activityOptions,
+                          className: "w-1/2",
+                        },
+                        {
+                          type: "dropdown",
+                          name: "tool_type_name",
+                          isRequired: true,
+                          translator: TaskOrderTranslation,
+                          options: toolTypeOptions,
+                          className: "w-1/2",
+                        },
+                      ],
+                    ]}
+                  />
+                );
+              })}
+            </div>
+          </FormComponent>
         </Tab>
 
         {/* Upload tab ------------------------------------------------------------------------------------------- */}
@@ -266,7 +404,7 @@ export default function AddRequestPage() {
             isUploading={isUploading}
             uploadedFiles={uploadedFiles}
             setUploadedFiles={setUploadedFiles}
-            onSubmit={handleConfirmUpload}
+            onSubmit={handleSubmitUpload}
             onCancel={handleCancelUpload}
             onDownloadTemplate={handleDownloadTemplate}
           />

@@ -181,6 +181,11 @@ function InputRenderer({
           radius="sm"
           max={inputConfig.max}
           min={inputConfig.min}
+          onValueChange={
+            onValueChange
+              ? (v) => onValueChange(inputConfig.name, String(v))
+              : undefined
+          }
           value={getControlledValue(inputConfig.type, value)}
         />
       );
@@ -221,6 +226,11 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
+          onValueChange={
+            onValueChange
+              ? (v: Date) => onValueChange(inputConfig.name, v.toLocaleDateString())
+              : undefined
+          }
           showMonthAndYearPickers
         />
       );
@@ -234,6 +244,17 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
+          onValueChange={
+            onValueChange
+              ? (v: [Date, Date]) =>
+                  onValueChange(
+                    inputConfig.name,
+                    v && v[0] && v[1]
+                      ? `${v[0].toLocaleDateString()}|${v[1].toLocaleDateString()}`
+                      : ""
+                  )
+              : undefined
+          }
           showMonthAndYearPickers
         />
       );

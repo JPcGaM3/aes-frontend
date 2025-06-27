@@ -57,6 +57,7 @@ interface RequestOrder {
   comment?: string;
   created_at?: Date | string;
   updated_at?: Date | string;
+  user_id?: number;
   created_by: number;
   updated_by: number;
 }

@@ -26,7 +26,7 @@ import UploadComponent from "@/components/UploadComponent";
 import { getActivities } from "@/libs/activityAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
-import { uploadRequestOrder } from "@/libs/requestOrderAPI";
+import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ export default function AddRequestPage() {
   );
 
   // * For file upload
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // Fetch data ---------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ export default function AddRequestPage() {
         tool_types: "",
         ap_year: currentYear,
         ap_month: currentMonth,
-        created_by: userContext?.id,
+        user_id: userContext?.id,
       } as RequestOrder);
     }
 
@@ -117,7 +117,7 @@ export default function AddRequestPage() {
       return;
     }
 
-    setIsUploading(true);
+    setIsAdding(true);
     console.log(
       "Attempting to upload files with Axios:",
       uploadedFiles.map((f) => f.name)
@@ -143,7 +143,7 @@ export default function AddRequestPage() {
     } finally {
       // TODO: Remove timeout
       setTimeout(() => {
-        setIsUploading(false);
+        setIsAdding(false);
         setUploadedFiles([]);
       }, 500);
     }
@@ -155,12 +155,15 @@ export default function AddRequestPage() {
   };
 
   const handleRequestOrderChange = (values: any) => {
-    setFormValues(values);
+    const updateValues = {
+      ...formValues,
+      ...values
+    };
+
+    setFormValues(updateValues);
   };
 
-  const handleSubmitKeyIn = () => {
-    console.log("Task : ", tasks);
-
+  const handleSubmitKeyIn = async () => {
     const activities = tasks.map((t) => t.activity_name).join("+");
     const tool_types = tasks.map((t) => t.tool_type_name).join("+");
 
@@ -171,8 +174,26 @@ export default function AddRequestPage() {
     };
 
     console.log("Submitting form with values:", submitValue);
-
     setFormValues(submitValue);
+
+    try {
+      const response = await KeyInRequestOrder(submitValue);
+
+      alert("Add request order successful!");
+      console.log("Add request order response:", response);
+    } catch (error) {
+      // TODO: Handle error
+      // * Show an error message to the user
+      // * Use Alert component instead of console.error
+
+      alert("Add order failed!");
+    } finally {
+      // TODO: Remove timeout
+      setTimeout(() => {
+        setIsAdding(false);
+        setFormValues({} as RequestOrder);
+      }, 500);
+    }
   };
 
   const handleCancelKeyIn = () => {
@@ -187,11 +208,9 @@ export default function AddRequestPage() {
   };
 
   // TODO: Handler change activity make tool ""
-  // TODO: implement dropdown warning 
+  // TODO: implement dropdown warning
   const handleTaskChange = (index: number, changed: any) => {
     const updatedTasks: TaskOrder[] = tasks.map((task, i) => {
-      console.log("Updating task at index:", i, "with changes:", changed);
-
       if (i === index) {
         return { ...task, ...changed };
       }
@@ -320,6 +339,7 @@ export default function AddRequestPage() {
             fields={requestOrderFields}
             title="สร้างใบสั่งงาน"
             subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+            isSubmitting={isAdding}
             onCancel={handleCancelKeyIn}
             onSubmit={handleSubmitKeyIn}
             onChange={handleRequestOrderChange}
@@ -401,7 +421,7 @@ export default function AddRequestPage() {
         >
           <UploadComponent
             maxFiles={5}
-            isUploading={isUploading}
+            isUploading={isAdding}
             uploadedFiles={uploadedFiles}
             setUploadedFiles={setUploadedFiles}
             onSubmit={handleSubmitUpload}

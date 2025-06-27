@@ -15,6 +15,8 @@ interface FormComponentProps {
   fields: FormField[];
   submitLabel?: string;
   cancelLabel?: string;
+  isSubmitting?: boolean;
+  isCanceling?: boolean;
   initialValues?: Record<string, any>;
   children?: React.ReactNode;
   onCancel?: () => void;
@@ -30,6 +32,8 @@ export default function FormComponent({
   fields,
   submitLabel,
   cancelLabel,
+  isSubmitting,
+  isCanceling,
   initialValues = {},
   children = null,
   onCancel,
@@ -80,6 +84,8 @@ export default function FormComponent({
           <FormButtons
             submitLabel={submitLabel}
             cancelLabel={cancelLabel}
+            isSubmitting={isSubmitting}
+            isCanceling={isCanceling}
             onCancel={onCancel}
           />
         </Form>

@@ -84,7 +84,7 @@ export default function AddRequestPage() {
   };
 
   // TODO: Handle Alerts: use Alert component instead of window.alert
-  const handleConfirm = async (_e?: any): Promise<void> => {
+  const handleConfirmUpload = async (_e?: any): Promise<void> => {
     if (uploadedFiles.length === 0) {
       alert("Please upload files before confirming.");
       return;
@@ -122,7 +122,7 @@ export default function AddRequestPage() {
     }
   };
 
-  const handleCancel = (_e?: any): void => {
+  const handleCancelUpload = (_e?: any): void => {
     console.log("Cancelling upload");
     setUploadedFiles([]);
   };
@@ -262,11 +262,12 @@ export default function AddRequestPage() {
           className="flex flex-col w-full justify-center items-center"
         >
           <UploadComponent
+            maxFiles={5}
             isUploading={isUploading}
             uploadedFiles={uploadedFiles}
             setUploadedFiles={setUploadedFiles}
-            onSubmit={handleConfirm}
-            onCancel={handleCancel}
+            onSubmit={handleConfirmUpload}
+            onCancel={handleCancelUpload}
             onDownloadTemplate={handleDownloadTemplate}
           />
         </Tab>

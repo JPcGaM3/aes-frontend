@@ -2,12 +2,15 @@ import React from "react";
 import { useRef, useState, ChangeEvent, DragEvent } from "react";
 
 import { UploadedFile } from "@/interfaces/interfaces";
-import { Button } from "@heroui/button";
 import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
+
+import { Button } from "@heroui/button";
+
 import Header from "./Header";
 import FormButtons from "./FormButtons";
 
 interface UploadComponentProps {
+  maxFiles?: number;
   isUploading?: boolean;
   uploadedFiles: UploadedFile[];
   setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
@@ -17,6 +20,7 @@ interface UploadComponentProps {
 }
 
 export default function UploadComponent({
+  maxFiles = 5,
   isUploading = false,
   uploadedFiles,
   setUploadedFiles,
@@ -25,7 +29,6 @@ export default function UploadComponent({
   onCancel,
 }: UploadComponentProps) {
   // Const and State --------------------------------------------------------------------------------------------------------
-  const MAX_FILES_LIMIT = 5;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
@@ -83,7 +86,7 @@ export default function UploadComponent({
         continue;
       }
 
-      if (currentFileCount + filesAddedCount < MAX_FILES_LIMIT) {
+      if (currentFileCount + filesAddedCount < maxFiles) {
         filesToAddNew.push({
           name: file.name,
           size: file.size,
@@ -98,7 +101,7 @@ export default function UploadComponent({
 
     if (filesSkipped > 0) {
       alert(
-        `You can only upload a maximum of ${MAX_FILES_LIMIT} files. ${filesSkipped} file(s) were not added or were duplicates.`
+        `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`
       );
     }
 
@@ -117,7 +120,7 @@ export default function UploadComponent({
     link.href = URL.createObjectURL(file.file);
     link.download = file.name;
     document.body.appendChild(link);
-    
+
     link.click();
     document.body.removeChild(link);
   };

@@ -22,6 +22,9 @@ import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
+import AlertComponent, {
+  AlertComponentProps,
+} from "@/components/AlertComponent";
 
 import { getActivities } from "@/libs/activityAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
@@ -48,6 +51,13 @@ export default function AddRequestPage() {
   // * For file upload
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+
+  // Alert state
+  const [alert, setAlert] = useState<AlertComponentProps>({
+    title: "",
+    description: "",
+    isVisible: false,
+  });
 
   // Fetch data ---------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -98,7 +108,6 @@ export default function AddRequestPage() {
   }, [userContext]);
 
   // Handler ------------------------------------------------------------------------------------------------------
-  // TODO: Change button to "Downloaded!" and disable it for a sec.
   const handleDownloadTemplate = (): void => {
     const link = document.createElement("a");
 
@@ -110,10 +119,15 @@ export default function AddRequestPage() {
     document.body.removeChild(link);
   };
 
-  // TODO: Handle Alerts: use Alert component instead of window.alert
   const handleSubmitUpload = async (_e?: any): Promise<void> => {
     if (uploadedFiles.length === 0) {
-      alert("Please upload files before confirming.");
+      setAlert({
+        isVisible: true,
+        color: "danger",
+        title: "Upload Error",
+        description: "Please upload files before confirming.",
+      });
+
       return;
     }
 
@@ -123,9 +137,6 @@ export default function AddRequestPage() {
       uploadedFiles.map((f) => f.name)
     );
 
-    // TODO: Handle success
-    // * After successful upload, reset the uploadedFiles state
-    // * Change the button to "Uploaded!" and disable it for a sec.
     try {
       const response = await uploadRequestOrder(
         uploadedFiles,
@@ -133,15 +144,20 @@ export default function AddRequestPage() {
         userContext.id!
       );
 
-      alert("Upload successful!");
+      setAlert({
+        isVisible: true,
+        color: "success",
+        title: "Upload Successful",
+        description: "Upload successful!",
+      });
     } catch (error) {
-      // TODO: Handle error
-      // * Show an error message to the user
-      // * Use Alert component instead of console.error
-
-      alert("Upload failed!");
+      setAlert({
+        isVisible: true,
+        color: "danger",
+        title: "Upload Failed",
+        description: "Upload failed!, error: " + error,
+      });
     } finally {
-      // TODO: Remove timeout
       setTimeout(() => {
         setIsAdding(false);
         setUploadedFiles([]);
@@ -150,14 +166,20 @@ export default function AddRequestPage() {
   };
 
   const handleCancelUpload = (_e?: any): void => {
-    alert("Cancelling upload, Clear form");
+    setAlert({
+      isVisible: true,
+      title: "Upload Cancelled",
+      description: "Cancelling upload, Clear form",
+      color: "warning",
+    });
+
     setUploadedFiles([]);
   };
 
   const handleRequestOrderChange = (values: any) => {
     const updateValues = {
       ...formValues,
-      ...values
+      ...values,
     };
 
     setFormValues(updateValues);
@@ -178,17 +200,20 @@ export default function AddRequestPage() {
 
     try {
       const response = await KeyInRequestOrder(submitValue);
-
-      alert("Add request order successful!");
-      console.log("Add request order response:", response);
+      setAlert({
+        isVisible: true,
+        title: "Add Request Order Successful",
+        description: "Add request order successful!",
+        color: "success",
+      });
     } catch (error) {
-      // TODO: Handle error
-      // * Show an error message to the user
-      // * Use Alert component instead of console.error
-
-      alert("Add order failed!");
+      setAlert({
+        isVisible: true,
+        title: "Add Request Order Failed",
+        description: "Add order failed!",
+        color: "danger",
+      });
     } finally {
-      // TODO: Remove timeout
       setTimeout(() => {
         setIsAdding(false);
         setFormValues({} as RequestOrder);
@@ -430,6 +455,19 @@ export default function AddRequestPage() {
           />
         </Tab>
       </Tabs>
+
+      {/* Alert */}
+      <div className="fixed left-0 right-0 bottom-5 flex justify-center z-50 pointer-events-none w-full">
+        {alert.isVisible && (
+          <AlertComponent
+            title={alert.title}
+            description={alert.description}
+            color={alert.color}
+            isVisible={alert.isVisible}
+            handleClose={() => setAlert({ ...alert, isVisible: false })}
+          />
+        )}
+      </div>
     </div>
   );
 }

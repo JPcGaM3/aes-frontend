@@ -3,17 +3,16 @@ import axios from "axios";
 const numberKeys = ["ae_id", "customer_type_id"];
 
 export async function getOperationAreas({
-  paramData,
   token,
+  paramData,
 }: {
-  paramData: Record<string, any>;
-  token: string;
+  token?: string;
+  paramData?: Record<string, any>;
 }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
-
   const params: Record<string, any> = {};
 
-  Object.entries(paramData).forEach(([key, value]) => {
+  Object.entries(paramData || {}).forEach(([key, value]) => {
     if (value === undefined || value === null || value === "") {
       params[key] = null;
     } else if (numberKeys.includes(key)) {

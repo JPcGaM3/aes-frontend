@@ -7,9 +7,11 @@ import { useAuth } from "@/providers/AuthContext";
 export default function HomePage() {
   const { userContext } = useAuth();
 
+  console.log("User Context:", userContext);
+
   return (
     <div>
-      <Header title="Home" subtitle={`Welcome to the home page, user ${userContext?.id}`} />
+      <Header title="Home" subtitle={`Welcome to the home page`} />
     </div>
   );
 }

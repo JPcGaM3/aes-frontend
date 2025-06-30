@@ -27,7 +27,6 @@ import AlertComponent, {
 } from "@/components/AlertComponent";
 
 import { getActivities } from "@/libs/activityAPI";
-import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 
@@ -40,7 +39,6 @@ export default function AddRequestPage() {
   const currentMonth = monthList[now.getMonth()].value;
 
   const [activityOptions, setActivityOptions] = useState([]);
-  const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
   const [operationAreaOptions, setOperationAreaOptions] = useState([]);
   const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
   const [tasks, setTasks] = useState<TaskOrder[]>([]);
@@ -61,11 +59,11 @@ export default function AddRequestPage() {
 
   // Fetch data ---------------------------------------------------------------------------------------------------
   useEffect(() => {
-    const fetchDropDownOptions = async () => {
-      const customer_type = await getCustomerTypes();
-      const activity = await getActivities();
+    const fetchDropDownOptions = async ({ token }: { token: string }) => {
+      const activity = await getActivities({ token });
+      const operation_area = await getOperationAreas({ token });
+      setOperationAreaOptions(operation_area);
 
-      setCustomerTypeOptions(customer_type);
       setActivityWithTools(activity);
       setActivityOptions(
         activity.map((activity: Activity) => ({
@@ -73,6 +71,13 @@ export default function AddRequestPage() {
           value: activity.name,
         }))
       );
+
+      setFormValues({
+        activities: "",
+        tool_types: "",
+        ap_year: currentYear,
+        ap_month: currentMonth,
+      } as RequestOrder);
 
       setTasks([
         {
@@ -82,29 +87,7 @@ export default function AddRequestPage() {
       ] as TaskOrder[]);
     };
 
-    fetchDropDownOptions();
-  }, []);
-
-  useEffect(() => {
-    if (userContext.ae_id !== null) {
-      setFormValues({
-        ae_id: userContext?.ae_id,
-        activities: "",
-        tool_types: "",
-        ap_year: currentYear,
-        ap_month: currentMonth,
-        user_id: userContext?.id,
-      } as RequestOrder);
-    }
-
-    const fetchOperationAreas = async (params: any) => {
-      const operation_area = await getOperationAreas(params);
-      setOperationAreaOptions(operation_area);
-    };
-
-    fetchOperationAreas({
-      ae_id: userContext.ae_id,
-    });
+    fetchDropDownOptions({ token: userContext.token });
   }, [userContext]);
 
   // Handler ------------------------------------------------------------------------------------------------------
@@ -139,9 +122,10 @@ export default function AddRequestPage() {
 
     try {
       const response = await uploadRequestOrder(
-        uploadedFiles,
-        userContext.ae_id!,
-        userContext.id!
+        {
+          token: userContext.token,
+          uploadedFiles: uploadedFiles,
+        }
       );
 
       setAlert({
@@ -198,7 +182,13 @@ export default function AddRequestPage() {
     setFormValues(submitValue);
 
     try {
-      const response = await KeyInRequestOrder(submitValue);
+      const response = await KeyInRequestOrder(
+        {
+          token: userContext.token,
+          data: submitValue,
+        }
+      );
+
       setAlert({
         isVisible: true,
         title: "Add Request Order Successful",
@@ -247,18 +237,6 @@ export default function AddRequestPage() {
 
   // Field configurations ----------------------------------------------------------------------------------------
   const requestOrderFields: FormField[] = [
-    {
-      type: "dropdown",
-      isRequired: true,
-      name: "customer_type_id",
-      translator: RequestOrderTranslation,
-      options: [
-        ...customerTypeOptions.map((option: any) => ({
-          label: option.name,
-          value: String(option.id),
-        })),
-      ],
-    },
     {
       type: "text",
       name: "phone",

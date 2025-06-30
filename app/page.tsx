@@ -15,7 +15,7 @@ export default function Home() {
   React.useEffect(() => {
     setIsLoading(true);
     
-    { userContext.id 
+    { userContext.token
       ? router.replace("/home")
       : router.replace("/login");
     }

@@ -32,7 +32,10 @@ export default function AlertComponent({
 
   useEffect(() => {
     if (visible) {
-      const timer = setTimeout(() => handleClose?.(), 3000);
+      const timer = setTimeout(
+        () => handleClose?.(),
+        color == "success" ? 3000 : 5000
+      );
       return () => clearTimeout(timer);
     }
   }, [visible]);

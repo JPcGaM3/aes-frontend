@@ -62,7 +62,7 @@ export const Navbar = () => {
     if (item.name === "ผู้ใช้งาน") {
       return {
         ...item,
-        path: userContext?.id ? `/profile` : "/login",
+        path: userContext?.token ? `/profile` : "/login",
         name: "ผู้ใช้งาน",
       };
     }
@@ -118,12 +118,12 @@ export const Navbar = () => {
                   key={item.name}
                   variant={isActive ? "flat" : "light"}
                   color={isActive ? "primary" : "default"}
-                  // disabled={!userContext?.id && !isActive}
+                  // disabled={!userContext?.token && !isActive}
                   size="lg"
                   radius="sm"
                   startContent={item.icon}
                   className={`w-full justify-start text-left p-3 font-semibold
-                    ${!userContext?.id && !isActive ? "opacity-50 cursor-not-allowed" : ""}
+                    ${!userContext?.token && !isActive ? "opacity-50 cursor-not-allowed" : ""}
                     `}
                   onPress={() => handleNav(item.path)}
                 >
@@ -151,9 +151,9 @@ export const Navbar = () => {
                   color={isActive ? "primary" : "default"}
                   size="md"
                   radius="sm"
-                  // disabled={!userContext?.id && !isActive}
+                  // disabled={!userContext?.token && !isActive}
                   className={`font-semibold px-2 flex justify-center items-center gap-2 
-                    ${!userContext?.id && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
+                    ${!userContext?.token && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
                   onPress={() => handleNav(item.path)}
                 >
                   {isActive && item.icon}

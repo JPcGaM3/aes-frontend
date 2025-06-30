@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
 
 import {
@@ -27,14 +27,10 @@ import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 
-import { getCustomerTypes } from "@/libs/customerTypeAPI";
-import { getAeAreas } from "@/libs/aeAreaAPI";
 import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
 
 interface filterInterface {
-  ae_id?: string;
-  customer_type_id?: string;
   status?: string;
   start_month?: string;
   start_year?: string;
@@ -49,48 +45,45 @@ export default function RequestPage() {
   const currentYear = String(now.getFullYear());
   const currentMonth = monthList[now.getMonth()].value;
 
-  const [aeAreaOptions, setAeAreaOptions] = useState([]);
-  const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
   const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [filterValues, setFilterValues] = useState<filterInterface | null>(null);
+  const [filterValues, setFilterValues] = useState<filterInterface | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchDropdownData = async () => {
-      const ae_areas = await getAeAreas();
-      const customer_type = await getCustomerTypes();
-
-      setAeAreaOptions(ae_areas);
-      setCustomerTypeOptions(customer_type);
+      setFilterValues({
+        start_month: currentMonth,
+        start_year: currentYear,
+      });
     };
 
     fetchDropdownData();
   }, []);
 
   useEffect(() => {
-    if (userContext.ae_id !== null) {
-      setFilterValues({
-        ae_id: String(userContext.ae_id),
-        start_month: currentMonth,
-        start_year: currentYear,
-      });
-    }
-  }, [userContext]);
-
-  useEffect(() => {
-    const fetchReqOrderData = async (params: any) => {
-      try {
-        setError(null);
-        const data = await getRequestOrders(params);
-        setReqOrders(data);
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
-        setReqOrders([]);
+    const fetchReqOrderData = async ({
+      token,
+      params,
+    }: {
+      token: string;
+      params: any;
+    }) => {
+      if (token && params) {
+        try {
+          setError(null);
+          const data = await getRequestOrders({ token, paramData: params });
+          setReqOrders(data);
+        } catch (err: any) {
+          setError(err.message || "Unknown error");
+          setReqOrders([]);
+        }
       }
     };
 
-    fetchReqOrderData(filterValues);
-  }, [filterValues]);
+    fetchReqOrderData({ token: userContext.token, params: filterValues });
+  }, [userContext, filterValues]);
 
   // useState for modal and drawer visibility ------------------------------
   const {
@@ -124,30 +117,6 @@ export default function RequestPage() {
 
   // Field configurations --------------------------------------------------
   const filterFields: FormField[] = [
-    {
-      type: "dropdown",
-      name: "ae_id",
-      label: "สังกัด",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...aeAreaOptions.map((option: any) => ({
-          label: option.name,
-          value: String(option.id),
-        })),
-      ],
-    },
-    {
-      type: "dropdown",
-      name: "customer_type_id",
-      label: "หัวตารางแจ้งงาน",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...customerTypeOptions.map((option: any) => ({
-          label: option.name,
-          value: String(option.id),
-        })),
-      ],
-    },
     {
       type: "dropdown",
       name: "status",

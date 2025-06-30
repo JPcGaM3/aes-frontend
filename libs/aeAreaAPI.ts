@@ -1,11 +1,12 @@
 import axios from "axios";
 
-export async function getAeAreas() {
+export async function getAeAreas({ token }: { token: string }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {
     const response = await axios.get(`${apiUrl}/api/v1/ae-areas`, {
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -17,7 +18,7 @@ export async function getAeAreas() {
         `Failed to fetch AE areas: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
-    
+
     throw error;
   }
 }

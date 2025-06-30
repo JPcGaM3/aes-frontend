@@ -2,13 +2,34 @@ import axios from "axios";
 import { UploadedFile } from "@/interfaces/interfaces";
 
 const apiUrl = process.env.API_URL || "http://localhost:8080";
-const numberKeys = ["ae_id", "customer_type_id", "start_year", "end_year", "operation_area_id", "target_area", "land_number", "ap_year", "user_id"];
+const numberKeys = [
+  "ae_id",
+  "customer_type_id",
+  "start_year",
+  "end_year",
+  "operation_area_id",
+  "target_area",
+  "land_number",
+  "ap_year",
+  "user_id",
+];
 
-export async function getRequestOrders(paramData: Record<string, any>) {
+export async function getRequestOrders({
+  paramData,
+  token,
+}: {
+  paramData: Record<string, any>;
+  token: string;
+}) {
   const params: Record<string, any> = {};
 
   Object.entries(paramData).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "" || value === "all") {
+    if (
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      value === "all"
+    ) {
       params[key] = null;
     } else if (numberKeys.includes(key)) {
       const num = Number(value);
@@ -22,6 +43,7 @@ export async function getRequestOrders(paramData: Record<string, any>) {
     const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
       params,
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -41,11 +63,17 @@ export async function getRequestOrders(paramData: Record<string, any>) {
   }
 }
 
-export async function uploadRequestOrder(
-  uploadedFiles: UploadedFile[],
-  aeId: number,
-  userId: number
-) {
+export async function uploadRequestOrder({
+  uploadedFiles,
+  aeId,
+  userId,
+  token,
+}: {
+  uploadedFiles: UploadedFile[];
+  aeId: number;
+  userId: number;
+  token: string;
+}) {
   // Create formData object -> handle files
   const formData = new FormData();
 
@@ -62,12 +90,15 @@ export async function uploadRequestOrder(
       `${apiUrl}/api/v1/request-orders/create/excel`,
       formData,
       {
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
 
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("API Error Response:", error.response.data);
       console.error("API Status:", error.response.status);
@@ -79,11 +110,20 @@ export async function uploadRequestOrder(
   }
 }
 
-export async function KeyInRequestOrder(data: Record<string, any>) {
+export async function KeyInRequestOrder({
+  data,
+}: {
+  data: Record<string, any>;
+}) {
   const body: Record<string, any> = {};
 
   Object.entries(data).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "" || value === "all") {
+    if (
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      value === "all"
+    ) {
       body[key] = null;
     } else if (numberKeys.includes(key)) {
       const num = Number(value);
@@ -94,11 +134,15 @@ export async function KeyInRequestOrder(data: Record<string, any>) {
   });
 
   try {
-    const response = await axios.post(`${apiUrl}/api/v1/request-orders/create/key-in`, body, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.post(
+      `${apiUrl}/api/v1/request-orders/create/key-in`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return response.data.data;
   } catch (error: any) {

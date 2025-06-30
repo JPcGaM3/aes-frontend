@@ -2,7 +2,13 @@ import axios from "axios";
 
 const numberKeys = ["ae_id", "customer_type_id"];
 
-export async function getOperationAreas(paramData: Record<string, any>) {
+export async function getOperationAreas({
+  paramData,
+  token,
+}: {
+  paramData: Record<string, any>;
+  token: string;
+}) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   const params: Record<string, any> = {};
@@ -22,6 +28,7 @@ export async function getOperationAreas(paramData: Record<string, any>) {
     const response = await axios.get(`${apiUrl}/api/v1/operation-areas`, {
       params,
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });

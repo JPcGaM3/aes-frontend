@@ -19,7 +19,7 @@ export default function Home() {
       ? router.replace("/home")
       : router.replace("/login");
     }
-  }, [router]);
+  }, [userContext,router]);
 
   return null;
 }

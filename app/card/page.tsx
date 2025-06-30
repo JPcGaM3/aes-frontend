@@ -20,7 +20,7 @@ import {
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
-import { AlertModal } from "@/components/AlertModal";
+import AlertModal from "@/components/AlertModal";
 import { Button, useDisclosure } from "@heroui/react";
 import FormComponent from "@/components/FormComponent";
 import CardComponent from "@/components/CardComponent";

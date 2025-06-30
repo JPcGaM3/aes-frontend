@@ -6,37 +6,45 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLoading } from "@/providers/LoadingContext";
+import { useAuth } from "@/providers/AuthContext";
 
 import { Button } from "@heroui/button";
+
 import Image from "next/image";
 import DrawerComponent from "./DrawerComponent";
 
 import {
   HomeIcon,
-  FormIcon,
   CardIcon,
   DrawerIcon,
-  LoginIcon,
   RequestIcon,
   HamburgerIcon,
+  SettingIcon,
+  DocumentIcon,
+  UserIcon,
 } from "@/utils/icons";
 
 const menuItems = [
-  { name: "Home", path: "/", icon: <HomeIcon /> },
-  { name: "Form", path: "/form", icon: <FormIcon /> },
-  { name: "Card", path: "/card", icon: <CardIcon /> },
-  { name: "Drawer", path: "/drawer", icon: <DrawerIcon /> },
-  { name: "Login", path: "/login", icon: <LoginIcon /> },
-  { name: "Request", path: "/request", icon: <RequestIcon /> },
+  // * Normal Page --------------------------------------------------
+  { name: "เมนูหลัก", path: "/home", icon: <HomeIcon /> },
+  { name: "งาน", path: "/request", icon: <RequestIcon /> },
+  { name: "รายการ", path: "/list", icon: <DocumentIcon /> },
+  { name: "การตั้งค่า", path: "/setting", icon: <SettingIcon /> },
+  { name: "ผู้ใช้งาน", path: "/login", icon: <UserIcon /> },
+  // * Componenent Page ---------------------------------------------
+  // { name: "Form", path: "/form", icon: <DocumentIcon /> },
+  // { name: "Card", path: "/card", icon: <CardIcon /> },
+  // { name: "Drawer", path: "/drawer", icon: <DrawerIcon /> },
 ];
 
 export const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { setIsLoading } = useLoading();
+  const { userContext } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleNav = (path: string) => {
@@ -49,6 +57,18 @@ export const Navbar = () => {
       router.push(path);
     }
   };
+
+  const dynamicMenuItems = menuItems.map((item) => {
+    if (item.name === "ผู้ใช้งาน") {
+      return {
+        ...item,
+        path: userContext?.id ? `/profile` : "/login",
+        name: "ผู้ใช้งาน",
+      };
+    }
+
+    return item;
+  });
 
   return (
     <HeroUINavbar
@@ -90,7 +110,7 @@ export const Navbar = () => {
           onClose={() => setDrawerOpen(false)}
         >
           <div className="flex flex-col gap-2">
-            {menuItems.map((item) => {
+            {dynamicMenuItems.map((item) => {
               const isActive = pathname === item.path;
 
               return (
@@ -101,7 +121,9 @@ export const Navbar = () => {
                   size="lg"
                   radius="sm"
                   startContent={item.icon}
-                  className="w-full justify-start text-left p-3 font-semibold"
+                  className={`w-full justify-start text-left p-3 font-semibold
+                    ${!userContext?.id && !isActive ? "opacity-50 cursor-not-allowed" : ""}
+                    `}
                   onPress={() => handleNav(item.path)}
                 >
                   {item.name}
@@ -118,7 +140,7 @@ export const Navbar = () => {
         justify="end"
       >
         <div className="p-1 bg-gray-100 rounded-xl flex flex-row items-center ">
-          {menuItems.map((item) => {
+          {dynamicMenuItems.map((item) => {
             const isActive = pathname === item.path;
 
             return (
@@ -128,7 +150,9 @@ export const Navbar = () => {
                   color={isActive ? "primary" : "default"}
                   size="md"
                   radius="sm"
-                  className="font-semibold px-2 flex justify-center items-center gap-2"
+                  disabled={!userContext?.id}
+                  className={`font-semibold px-2 flex justify-center items-center gap-2 
+                    ${!userContext?.id && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
                   onPress={() => handleNav(item.path)}
                 >
                   {isActive && item.icon}

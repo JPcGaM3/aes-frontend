@@ -19,7 +19,7 @@ interface AlertModalProps {
   cancelText?: string;
 }
 
-export const AlertModal = ({
+export default function AlertModal({
   isOpen,
   onClose,
   onConfirm,
@@ -27,7 +27,7 @@ export const AlertModal = ({
   message,
   confirmText,
   cancelText,
-}: AlertModalProps) => {
+}: AlertModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -49,21 +49,22 @@ export const AlertModal = ({
 
             <ModalFooter className="flex gap-2 w-full">
               <Button
+                radius="sm"
                 color="danger"
                 variant="flat"
+                className="w-full font-semibold"
                 onPress={onClose}
-                radius="sm"
-                className="w-full"
               >
                 {cancelText}
               </Button>
 
               {confirmText && (
                 <Button
-                  color="primary"
-                  onPress={onConfirm}
                   radius="sm"
-                  className="w-full"
+                  color="primary"
+                  variant="solid"
+                  className="w-full font-semibold"
+                  onPress={onConfirm}
                 >
                   {confirmText}
                 </Button>
@@ -74,4 +75,4 @@ export const AlertModal = ({
       </ModalContent>
     </Modal>
   );
-};
+}

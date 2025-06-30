@@ -93,8 +93,6 @@ export async function KeyInRequestOrder(data: Record<string, any>) {
     }
   });
 
-  console.log("KeyInRequestOrder body:", body);
-
   try {
     const response = await axios.post(`${apiUrl}/api/v1/request-orders/create/key-in`, body, {
       headers: {

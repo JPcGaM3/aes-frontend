@@ -8,6 +8,7 @@ import { Button } from "@heroui/button";
 
 import Header from "./Header";
 import FormButtons from "./FormButtons";
+import AlertComponent, { AlertComponentProps } from "./AlertComponent";
 
 interface UploadComponentProps {
   maxFiles?: number;
@@ -31,6 +32,11 @@ export default function UploadComponent({
   // Const and State --------------------------------------------------------------------------------------------------------
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
+  const [alert, setAlert] = useState<AlertComponentProps>({
+    title: "",
+    description: "",
+    isVisible: false,
+  });
 
   // Handlers ---------------------------------------------------------------------------------------------------------------
   const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
@@ -68,7 +74,6 @@ export default function UploadComponent({
     }
   };
 
-  // TODO: Handle Alerts: use Alert component instead of window.alert
   const handleFiles = (files: File[]): void => {
     const allowedFiles: File[] = files.filter(
       (file) => file.name.endsWith(".xlsx") || file.name.endsWith(".csv")
@@ -78,10 +83,11 @@ export default function UploadComponent({
     let filesAddedCount = 0;
     const filesToAddNew: UploadedFile[] = [];
     let filesSkipped = 0;
+    const duplicateFiles: string[] = [];
 
     for (const file of allowedFiles) {
       if (uploadedFiles.some((f) => f.name === file.name)) {
-        console.warn(`File ${file.name} is already in the list.`);
+        duplicateFiles.push(file.name);
         filesSkipped++;
         continue;
       }
@@ -99,10 +105,21 @@ export default function UploadComponent({
       }
     }
 
-    if (filesSkipped > 0) {
-      alert(
-        `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`
-      );
+    // Show duplicate alert first if any, else show skipped alert if any
+    if (duplicateFiles.length > 0) {
+      setAlert({
+        isVisible: true,
+        title: "Upload Warning",
+        description: `File(s) ${duplicateFiles.join(", ")} already in the list.`,
+        color: "warning",
+      });
+    } else if (filesSkipped > 0) {
+      setAlert({
+        isVisible: true,
+        title: "Upload Warning",
+        description: `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`,
+        color: "warning",
+      });
     }
 
     setUploadedFiles((prevFiles) => [...prevFiles, ...filesToAddNew]);
@@ -126,7 +143,7 @@ export default function UploadComponent({
   };
 
   return (
-    <div className="flex flex-col w-full justify-center gap-6 items-center p-4 max-w-xl">
+    <div className="flex flex-col w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl justify-center gap-6 items-center">
       {/* Header ------------------------------------------------------------------------------------------------------- */}
       <Header
         title="อัปโหลดไฟล์ใบสั่งงาน"
@@ -177,7 +194,7 @@ export default function UploadComponent({
               <div className="mb-2 flex items-center justify-center w-24 h-24 rounded-full bg-blue-100">
                 <UploadFileIcon size={54} />
               </div>
-              <p className="mt-2 text-gray-600 text-sm font-medium tracking-normal">
+              <p className="mt-2 text-gray-600 text-sm font-medium tracking-wide">
                 คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
               </p>
             </div>
@@ -226,6 +243,17 @@ export default function UploadComponent({
         onSubmit={onSubmit}
         onCancel={onCancel}
       />
+
+      {/* Alert */}
+      {alert.isVisible && (
+        <AlertComponent
+          title={alert.title}
+          description={alert.description}
+          color={alert.color}
+          isVisible={alert.isVisible}
+          handleClose={() => setAlert({ ...alert, isVisible: false })}
+        />
+      )}
     </div>
   );
 }

@@ -28,28 +28,32 @@ export default function FilterModal({
   initialValues = {},
 }: FilterModalProps) {
   return (
-    <Modal
-      isOpen={isOpen}
-      placement="top"
-      onOpenChange={onClose}
-      size="sm"
-      radius="sm"
-      className="p-6"
-    >
-      <ModalContent>
-        {(onClose) => (
-          <FormComponent
-            title={title}
-            subtitle={subtitle}
-            fields={fields}
-            submitLabel={submitLabel}
-            cancelLabel={cancelLabel}
-            onSubmit={onSubmit}
-            onCancel={onClose}
-            initialValues={initialValues}
-          />
-        )}
-      </ModalContent>
-    </Modal>
+    <div className="fixed left-0 right-0 top-16 flex justify-center items-center z-50 w-full p-3">
+      <div className="flex justify-center items-center w-full">
+        <Modal
+          isOpen={isOpen}
+          placement="center"
+          onOpenChange={onClose}
+          size="sm"
+          radius="sm"
+          className="w-full max-w-sm sm:max-w-md shadow-md p-4"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <FormComponent
+                title={title}
+                subtitle={subtitle}
+                fields={fields}
+                submitLabel={submitLabel}
+                cancelLabel={cancelLabel}
+                onSubmit={onSubmit}
+                onCancel={onClose}
+                initialValues={initialValues}
+              />
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
+    </div>
   );
 }

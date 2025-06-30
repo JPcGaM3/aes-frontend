@@ -32,16 +32,18 @@ export default function ProfilePage() {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl px-2 sm:px-4 md:px-8">
-        <AlertModal
-          isOpen={isOpen}
-          onClose={onClose}
-          title="Logout"
-          message="Are you sure you want to logout?"
-          confirmText="Yes"
-          cancelText="No"
-          onConfirm={handleConfirmLogout}
-        />
+      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+        {isOpen && (
+          <AlertModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Logout"
+            message="Are you sure you want to logout?"
+            confirmText="Yes"
+            cancelText="No"
+            onConfirm={handleConfirmLogout}
+          />
+        )}
 
         <Header title="User Profile" subtitle="Manage your profile settings" />
 

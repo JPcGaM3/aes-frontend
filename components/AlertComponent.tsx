@@ -38,16 +38,21 @@ export default function AlertComponent({
   }, [visible]);
 
   return (
-    <Alert
-      title={title}
-      description={description}
-      radius="sm"
-      color={color}
-      variant={variant}
-      isVisible={visible}
-      isClosable={true}
-      onClose={handleClose}
-      className="w-full max-w-xl shadow-md"
-    />
+    <div className="fixed left-0 right-0 top-16 flex justify-center items-center z-50 w-full p-3">
+      <Alert
+        title={title}
+        description={description}
+        radius="sm"
+        color={color}
+        variant={variant}
+        isVisible={visible}
+        isClosable={true}
+        onClose={() => {
+          setVisible(false);
+          handleClose?.();
+        }}
+        className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md"
+      />
+    </div>
   );
 }

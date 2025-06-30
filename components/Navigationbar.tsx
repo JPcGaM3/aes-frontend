@@ -118,6 +118,7 @@ export const Navbar = () => {
                   key={item.name}
                   variant={isActive ? "flat" : "light"}
                   color={isActive ? "primary" : "default"}
+                  // disabled={!userContext?.id && !isActive}
                   size="lg"
                   radius="sm"
                   startContent={item.icon}
@@ -150,7 +151,7 @@ export const Navbar = () => {
                   color={isActive ? "primary" : "default"}
                   size="md"
                   radius="sm"
-                  disabled={!userContext?.id}
+                  // disabled={!userContext?.id && !isActive}
                   className={`font-semibold px-2 flex justify-center items-center gap-2 
                     ${!userContext?.id && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
                   onPress={() => handleNav(item.path)}

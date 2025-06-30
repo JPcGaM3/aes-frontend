@@ -52,7 +52,7 @@ export default function AddRequestPage() {
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
-  // Alert state
+  // * Other
   const [alert, setAlert] = useState<AlertComponentProps>({
     title: "",
     description: "",
@@ -195,7 +195,6 @@ export default function AddRequestPage() {
       tool_types,
     };
 
-    console.log("Submitting form with values:", submitValue);
     setFormValues(submitValue);
 
     try {
@@ -457,17 +456,15 @@ export default function AddRequestPage() {
       </Tabs>
 
       {/* Alert */}
-      <div className="fixed left-0 right-0 bottom-5 flex justify-center z-50 pointer-events-none w-full">
-        {alert.isVisible && (
-          <AlertComponent
-            title={alert.title}
-            description={alert.description}
-            color={alert.color}
-            isVisible={alert.isVisible}
-            handleClose={() => setAlert({ ...alert, isVisible: false })}
-          />
-        )}
-      </div>
+      {alert.isVisible && (
+        <AlertComponent
+          title={alert.title}
+          description={alert.description}
+          color={alert.color}
+          isVisible={alert.isVisible}
+          handleClose={() => setAlert({ ...alert, isVisible: false })}
+        />
+      )}
     </div>
   );
 }

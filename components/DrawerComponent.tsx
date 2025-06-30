@@ -47,7 +47,7 @@ export default function DrawerComponent({
                 </Button>
               </DrawerHeader>
 
-              <div className="px-2 py-4">{children}</div>
+              <div className="px-6 pb-6">{children}</div>
             </div>
           )}
         </DrawerContent>

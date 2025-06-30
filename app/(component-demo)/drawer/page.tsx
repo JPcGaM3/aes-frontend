@@ -145,7 +145,7 @@ export default function DrawerPage() {
   return (
     <div>
       <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
-        <div className="px-6 pb-6">
+        <div>
           <Header title="View User" subtitle="User details" />
 
           <div className="flex flex-col gap-2">
@@ -174,7 +174,7 @@ export default function DrawerPage() {
       </DrawerComponent>
 
       <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
-        <div className="px-6 pb-6">
+        <div className="flex flex-col gap-4">
           <FormComponent
             fields={formFields}
             title="Edit User"
@@ -185,7 +185,7 @@ export default function DrawerPage() {
         </div>
       </DrawerComponent>
 
-      <div>
+      <div className="flex flex-col gap-4">
         <Dropdown>
           <DropdownTrigger>
             <Button

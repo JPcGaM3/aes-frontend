@@ -64,7 +64,7 @@ export default function FormComponent({
   };
 
   return (
-    <>
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
       {onSubmit ? (
         <Form
           className="flex flex-col gap-8 w-full max-w-xl"
@@ -102,6 +102,6 @@ export default function FormComponent({
           {children}
         </div>
       )}
-    </>
+    </div>
   );
 }

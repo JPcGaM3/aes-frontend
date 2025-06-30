@@ -10,6 +10,7 @@ import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 
 import FormComponent from "@/components/FormComponent";
+import AlertComponent, { AlertComponentProps } from "@/components/AlertComponent";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,18 +18,25 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { setIsLoading } = useLoading();
 
-  const [error, setError] = useState("");
+  const [alert, setAlert] = useState<AlertComponentProps>({
+    title: "",
+    description: "",
+    isVisible: false,
+  });
 
   const handleSubmit = async (values: any) => {
-    setError("");
-
     try {
       setIsLoading(true);
       await login(values.username, values.password);
-      router.push("/");
+      router.push("/home");
     } catch (err: any) {
       setIsLoading(false);
-      setError(err.message || "Login failed");
+      setAlert({
+        title: "Login Failed",
+        description: err.message || "Unknown error occurred",
+        color: "danger",
+        isVisible: true,
+      });
     }
   };
 
@@ -48,8 +56,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl px-2 sm:px-4 md:px-8">
+    <div className="flex justify-center w-full items-center">
         <FormComponent
           fields={fields}
           title="ยินดีต้อนรับ"
@@ -58,8 +65,16 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
         />
 
-        {error && <div className="text-red-500 mb-2 pt-4">{error}</div>}
-      </div>
+        {/* Alert */}
+        {alert.isVisible && (
+          <AlertComponent
+            title={alert.title}
+            description={alert.description}
+            color={alert.color}
+            isVisible={alert.isVisible}
+            handleClose={() => setAlert({ ...alert, isVisible: false })}
+          />
+        )}
     </div>
   );
 }

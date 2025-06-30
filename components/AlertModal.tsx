@@ -31,23 +31,24 @@ export default function AlertModal({
   return (
     <Modal
       isOpen={isOpen}
-      placement="top"
+      placement="center"
       onOpenChange={onClose}
       size="sm"
       radius="sm"
+      className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md p-3"
     >
       <ModalContent>
         {(onClose) => (
           <div className="flex flex-col items-center justify-center w-full p-0 gap-4">
-            <ModalHeader className="flex flex-col gap-1 items-center w-full text-center">
+            <ModalHeader className="flex flex-col items-center w-full text-center p-0">
               {title}
             </ModalHeader>
 
-            <ModalBody className="w-full flex justify-center">
+            <ModalBody className="w-full flex justify-center p-0 min-h-16">
               <p className="text-center w-full">{message}</p>
             </ModalBody>
 
-            <ModalFooter className="flex gap-2 w-full">
+            <ModalFooter className="flex gap-2 w-full p-0">
               <Button
                 radius="sm"
                 color="danger"

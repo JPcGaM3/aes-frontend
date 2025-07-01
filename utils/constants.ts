@@ -65,8 +65,9 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
 
 const RequestOrderTranslation: Record<string, string> = {
   "work_order_number": "เลขที่ใบสั่งงาน",
-  "phone": "เบอร์โทร",
+  "phone": "หมายเลขโทรศัพท์",
   "customer_type.name": "แหล่งที่มา",
+  "customer_type_id": "หัวตารางแจ้งงาน",
   "operation_area_id": "พื้นที่ปฏิบัติงาน",
   "quota_number": "รหัสโควต้า",
   "company_farm_id": "รหัสฟาร์ม",
@@ -87,6 +88,8 @@ const RequestOrderTranslation: Record<string, string> = {
   "supervisor_id": "รหัสผู้รับผิดชอบ",
   "location_xy": "พิกัด",
   "location_id": "รหัสพิกัด",
+  "activities": "กิจกรรม",
+  "tool_types": "ประเภทเครื่องมือ",
   "unit_head_id": "รหัสหัวหน้าหน่วย",
   "_count.taskorders": "จำนวนกิจกรรม",
   "comment": "หมายเหตุ",
@@ -118,6 +121,8 @@ const TaskOrderTranslation: Record<string, string> = {
   "request_order_id": "รหัสคำสั่งงานหลัก",
   "car_id": "รหัสรถ",
   "tool_id": "รหัสเครื่องมือ",
+  "tool_type_name": "ประเภทเครื่องมือ",
+  "activity_name": "กิจกรรม",
   "assigned_user_id": "รหัสผู้รับมอบหมาย",
   "created_at": "วันที่สร้าง",
   "updated_at": "วันที่แก้ไข",
@@ -132,25 +137,35 @@ const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
 };
 
 const month: Record<string, string> = {
-  "january": "มกราคม",
-  "february": "กุมภาพันธ์",
-  "march": "มีนาคม",
-  "april": "เมษายน",
-  "may": "พฤษภาคม",
-  "june": "มิถุนายน",
-  "july": "กรกฎาคม",
-  "august": "สิงหาคม",
-  "september": "กันยายน",
-  "october": "ตุลาคม",
-  "november": "พฤศจิกายน",
-  "december": "ธันวาคม",
+  "January": "มกราคม",
+  "February": "กุมภาพันธ์",
+  "March": "มีนาคม",
+  "April": "เมษายน",
+  "May": "พฤษภาคม",
+  "June": "มิถุนายน",
+  "July": "กรกฎาคม",
+  "August": "สิงหาคม",
+  "September": "กันยายน",
+  "October": "ตุลาคม",
+  "November": "พฤศจิกายน",
+  "December": "ธันวาคม",
 };
 
-const year: Record<string, string> = {
-  "2024": "2567",
-  "2025": "2568",
-  "2026": "2569",
-};
+const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
+
+const monthList = [
+  ...Object.entries(month).map(([value, label]) => ({
+    label: label as string,
+    value: value as string,
+  })),
+];
+
+const yearList = [
+  ...years.map((year) => ({
+    label: String(year + 543),
+    value: String(year),
+  })),
+];
 
 
 export {
@@ -164,5 +179,7 @@ export {
   RequestOrderStatusColorMap,
   TaskOrderStatusColorMap,
   month,
-  year,
+  years,
+  monthList,
+  yearList
 };

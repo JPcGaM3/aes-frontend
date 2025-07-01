@@ -8,27 +8,37 @@ import FormButtons from "./FormButtons";
 import { FormField } from "@/interfaces/interfaces";
 
 interface FormComponentProps {
-  title: string;
+  hasHeader?: boolean;
+  hasButtons?: boolean;
+  title?: string;
   subtitle?: string;
   fields: FormField[];
   submitLabel?: string;
   cancelLabel?: string;
-  onCancel?: () => void;
-  onSubmit: (values: any) => void;
-  onChange?: (values: any) => void;
+  isSubmitting?: boolean;
+  isCanceling?: boolean;
   initialValues?: Record<string, any>;
+  children?: React.ReactNode;
+  onCancel?: () => void;
+  onSubmit?: (values: any) => void;
+  onChange?: (values: any) => void;
 }
 
 export default function FormComponent({
+  hasHeader = true,
+  hasButtons = true,
   title,
   subtitle,
   fields,
   submitLabel,
   cancelLabel,
+  isSubmitting,
+  isCanceling,
+  initialValues = {},
+  children = null,
   onCancel,
   onSubmit,
   onChange,
-  initialValues = {},
 }: FormComponentProps) {
   const [values, setValues] = useState<any>(initialValues);
 
@@ -47,31 +57,51 @@ export default function FormComponent({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (onSubmit) {
       (onSubmit as any)(values);
     }
   };
 
   return (
-      <Form
-        className="flex flex-col gap-8 w-full max-w-2xl"
-        validationBehavior="aria"
-        onSubmit={handleSubmit}
-      >
-        <Header subtitle={subtitle} title={title} />
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+      {onSubmit ? (
+        <Form
+          className="flex flex-col gap-8 w-full max-w-xl"
+          validationBehavior="aria"
+          onSubmit={handleSubmit}
+        >
+          {hasHeader && <Header subtitle={subtitle} title={title as string} />}
 
-        <FormFields
-          fields={fields}
-          onValueChange={handleValueChange}
-          values={values}
-        />
+          <FormFields
+            fields={fields}
+            onValueChange={handleValueChange}
+            values={values}
+          />
 
-        <FormButtons
-          submitLabel={submitLabel}
-          cancelLabel={cancelLabel}
-          onCancel={onCancel}
-        />
-      </Form>
+          {children}
+
+          <FormButtons
+            submitLabel={submitLabel}
+            cancelLabel={cancelLabel}
+            isSubmitting={isSubmitting}
+            isCanceling={isCanceling}
+            onCancel={onCancel}
+          />
+        </Form>
+      ) : (
+        <div className="flex flex-col gap-8 w-full max-w-xl">
+          {hasHeader && <Header subtitle={subtitle} title={title as string} />}
+
+          <FormFields
+            fields={fields}
+            onValueChange={handleValueChange}
+            values={values}
+          />
+
+          {children}
+        </div>
+      )}
+    </div>
   );
 }

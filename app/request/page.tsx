@@ -2,56 +2,88 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
-import { EditIcon, FilterIcon, InfoIcon, RejectIcon } from "@/utils/icons";
-import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
+
+import {
+  EditIcon,
+  FilterIcon,
+  InfoIcon,
+  PlusIcon,
+  RejectIcon,
+} from "@/utils/icons";
 import {
   RequestOrderStatusColorMap,
   RequestOrderStatusTranslation,
   RequestOrderTranslation,
-  month,
-  year,
+  monthList,
+  yearList,
 } from "@/utils/constants";
+import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
 
-import { Button, useDisclosure } from "@heroui/react";
+import { Button, Divider, useDisclosure } from "@heroui/react";
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 
-import getCustomerTypes from "@/libs/customerTypeAPI";
-import getAeAreas from "@/libs/aeAreaAPI";
-import getRequestOrders from "@/libs/requestOrderAPI";
+import { getRequestOrders } from "@/libs/requestOrderAPI";
+import { useLoading } from "@/providers/LoadingContext";
+
+interface filterInterface {
+  status?: string;
+  start_month?: string;
+  start_year?: string;
+  end_month?: string;
+  end_year?: string;
+}
 
 export default function RequestPage() {
   // Fetch data ------------------------------------------------------------------
   const { userContext } = useAuth();
-  const [aeAreaOptions, setAeAreaOptions] = useState([]);
-  const [customerTypeOptions, setCustomerTypeOptions] = useState([]);
-  const [filterValues, setFilterValues] = useState<any>({});
+  const now = new Date();
+  const currentYear = String(now.getFullYear());
+  const currentMonth = monthList[now.getMonth()].value;
+
   const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [filterValues, setFilterValues] = useState<filterInterface | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchDropdownData = async () => {
-      const ae_areas = await getAeAreas();
-      const customer_type = await getCustomerTypes();
-
-      setAeAreaOptions(ae_areas);
-      setCustomerTypeOptions(customer_type);
+      setFilterValues({
+        start_month: currentMonth,
+        start_year: currentYear,
+      });
     };
 
     fetchDropdownData();
   }, []);
 
   useEffect(() => {
-    const fetchReqOrderData = async (params: any) => {
-      const data = await getRequestOrders(params);
-      setReqOrders(data);
+    const fetchReqOrderData = async ({
+      token,
+      params,
+    }: {
+      token: string;
+      params: any;
+    }) => {
+      if (token && params) {
+        try {
+          setError(null);
+          const data = await getRequestOrders({ token, paramData: params });
+          setReqOrders(data);
+        } catch (err: any) {
+          setError(err.message || "Unknown error");
+          setReqOrders([]);
+        }
+      }
     };
 
-    fetchReqOrderData(filterValues);
-  }, [filterValues]);
+    fetchReqOrderData({ token: userContext.token, params: filterValues });
+  }, [userContext, filterValues]);
 
   // useState for modal and drawer visibility ------------------------------
   const {
@@ -66,54 +98,29 @@ export default function RequestPage() {
     onCloseFilter();
   };
 
-  const handleAction = (action: string) => {
-    console.log(`Action triggered: ${action}`);
+  const router = useRouter();
+  const { setIsLoading } = useLoading();
+  const handleNewPage = (action: string) => {
+    setIsLoading(true);
+
+    switch (action) {
+      case "add":
+        router.push("/request/add");
+        break;
+
+      default:
+        console.log(`Action triggered: ${action}`);
+        setIsLoading(false);
+        break;
+    }
   };
 
   // Field configurations --------------------------------------------------
-  const monthList = [
-    ...Object.entries(month).map(([value, label]) => ({
-      label: label as string,
-      value: value as string,
-    })),
-  ];
-
-  const yearList = [
-    ...Object.entries(year).map(([value, label]) => ({
-      label: label as string,
-      value: value as string,
-    })),
-  ];
-
   const filterFields: FormField[] = [
-    {
-      type: "dropdown",
-      name: "ae",
-      label: "สังกัด",
-      placeholder: "โปรดเลือกสังกัด",
-      options: aeAreaOptions.map((option: any) => ({
-        label: option.name,
-        value: String(option.id),
-      })),
-    },
-    {
-      type: "dropdown",
-      name: "customer_type",
-      label: "หัวตารางแจ้งงาน",
-      placeholder: "โปรดเลือกหัวตารางแจ้งงาน",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...customerTypeOptions.map((option: any) => ({
-          label: option.name,
-          value: String(option.id),
-        })),
-      ],
-    },
     {
       type: "dropdown",
       name: "status",
       label: "สถานะ",
-      placeholder: "โปรดเลือกสถานะ",
       options: [
         { label: "ทั้งหมด", value: "all" },
         ...Object.entries(RequestOrderStatusTranslation).map(
@@ -129,7 +136,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "start_month",
         label: "เดือนเริ่มต้น",
-        placeholder: "โปรดเลือกเดือนเริ่มต้น",
         options: monthList,
         className: "w-2/3",
       },
@@ -137,7 +143,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "start_year",
         label: "ปีเริ่มต้น",
-        placeholder: "โปรดเลือกปีเริ่มต้น",
         options: yearList,
         className: "w-1/3",
       },
@@ -147,7 +152,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "end_month",
         label: "เดือนสิ้นสุด",
-        placeholder: "โปรดเลือกเดือนสิ้นสุด",
         options: monthList,
         className: "w-2/3",
       },
@@ -155,7 +159,6 @@ export default function RequestPage() {
         type: "dropdown",
         name: "end_year",
         label: "ปีสิ้นสุด",
-        placeholder: "โปรดเลือกปีสิ้นสุด",
         options: yearList,
         className: "w-1/3",
       },
@@ -167,20 +170,20 @@ export default function RequestPage() {
       key: "view",
       label: "ดูรายละเอียด",
       icon: <InfoIcon />,
-      onClick: () => handleAction("view"),
+      onClick: () => handleNewPage("view"),
     },
     {
       key: "edit",
       label: "แก้ไข",
       icon: <EditIcon />,
-      onClick: () => handleAction("edit"),
+      onClick: () => handleNewPage("edit"),
     },
     {
       key: "reject",
       label: "ปฏิเสธ",
       icon: <RejectIcon />,
       className: "text-danger-500",
-      onClick: () => handleAction("reject"),
+      onClick: () => handleNewPage("reject"),
     },
   ];
 
@@ -247,13 +250,7 @@ export default function RequestPage() {
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={{
-          ae: String(userContext.ae_id),
-          customer_type: "all",
-          status: "all",
-          start_month: "june",
-          start_year: "2025",
-        }}
+        initialValues={filterValues as any}
       />
 
       {/* Header ----------------------------------------------------------- */}
@@ -264,20 +261,65 @@ export default function RequestPage() {
           color="primary"
           endContent={<FilterIcon />}
           onPress={onOpenFilter}
-          className="font-semibold"
+          className="hidden sm:inline-flex font-semibold"
         >
           Filter
         </Button>
+
+        <Button
+          isIconOnly
+          radius="sm"
+          variant="flat"
+          color="primary"
+          endContent={<FilterIcon />}
+          onPress={onOpenFilter}
+          className="sm:hidden"
+        />
+
+        <Divider orientation="vertical" className="w-[1px]" />
+
+        <Button
+          radius="sm"
+          variant="solid"
+          color="primary"
+          endContent={<PlusIcon />}
+          onPress={() => handleNewPage("add")}
+          className="hidden sm:inline-flex font-semibold"
+        >
+          Add
+        </Button>
+
+        <Button
+          isIconOnly
+          radius="sm"
+          variant="solid"
+          color="primary"
+          endContent={<PlusIcon />}
+          onPress={() => handleNewPage("add")}
+          className="sm:hidden"
+        />
       </Header>
 
       {/* Body ------------------------------------------------------------- */}
-      <CardComponent
-        actions={actions}
-        bodyFields={bodyFields}
-        headerFields={headerFields}
-        items={reqOrders}
-        statusConfig={statusConfig}
-      />
+      {error ? (
+        <div className="text-gray-500 font-medium text-center my-8">
+          {error}
+        </div>
+      ) : (
+        <div>
+          <div className="mb-4 text-gray-700 font-medium text-right">
+            {`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
+          </div>
+
+          <CardComponent
+            actions={actions}
+            bodyFields={bodyFields}
+            headerFields={headerFields}
+            items={reqOrders}
+            statusConfig={statusConfig}
+          />
+        </div>
+      )}
     </div>
   );
 }

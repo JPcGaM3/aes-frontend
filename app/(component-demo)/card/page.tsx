@@ -20,7 +20,7 @@ import {
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
-import { AlertModal } from "@/components/AlertModal";
+import AlertModal from "@/components/AlertModal";
 import { Button, useDisclosure } from "@heroui/react";
 import FormComponent from "@/components/FormComponent";
 import CardComponent from "@/components/CardComponent";
@@ -269,8 +269,9 @@ export default function Card() {
     <div>
       {/* Drawer ----------------------------------------------------------- */}
       <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
-        <div className="px-6 pb-6">
+        <div className="flex flex-col gap-4">
           <Header title="View User" subtitle="User details" />
+
           <div className="flex flex-col gap-2">
             {selectedUser &&
               Object.keys(selectedUser).map((key) => {
@@ -298,7 +299,7 @@ export default function Card() {
       </DrawerComponent>
 
       <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
-        <div className="px-6 pb-6">
+        <div className="flex flex-col gap-4">
           <FormComponent
             fields={editFields}
             title="Edit User"

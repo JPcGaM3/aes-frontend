@@ -5,9 +5,10 @@ import React, { useState } from "react";
 import { FormField, InputConfig } from "@/interfaces/interfaces";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "../utils/icons";
 
-import { Input } from "@heroui/input";
+import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
+import { translateEnumValue } from "@/utils/functions";
 
 interface FormFieldsProps {
   fields: FormField[];
@@ -58,15 +59,24 @@ function InputRenderer({
   onValueChange,
   value,
 }: InputRendererProps) {
+  const label = inputConfig.label
+    ? translateEnumValue(inputConfig.label, inputConfig.translator || {})
+    : translateEnumValue(inputConfig.name, inputConfig.translator || {});
+
+  const placeholder =
+    inputConfig.hasPlaceholder === false
+      ? undefined
+      : inputConfig.placeholder ||
+        (inputConfig.type === "dropdown"
+          ? `โปรดเลือก ${label}`
+          : `โปรดกรอก ${label}`);
+
   const commonProp: any = {
     name: inputConfig.name,
-    label: inputConfig.label,
+    label: label,
     labelPlacement: inputConfig.labelPlacement || "outside",
     hasPlaceholder: inputConfig.hasPlaceholder || true,
-    placeholder:
-      inputConfig.hasPlaceholder === false
-        ? undefined
-        : inputConfig.placeholder || `กรุณากรอก ${inputConfig.label}`,
+    placeholder: placeholder,
     description: inputConfig.description || null,
     startContent: inputConfig.startContent || null,
     endContent: inputConfig.endContent || null,
@@ -79,13 +89,12 @@ function InputRenderer({
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible((state) => !state);
 
-  //* TODO: FormFields.tsx:102 WARN: A component changed from uncontrolled to controlled.
-  //* SOLVED: Ensure value is always controlled
   const getControlledValue = (type: string, value: any) => {
     switch (type) {
       case "text":
       case "email":
       case "password":
+      case "textarea":
         return value ?? "";
 
       case "number":
@@ -151,6 +160,20 @@ function InputRenderer({
       );
     }
 
+    case "textarea":
+      return (
+        <Textarea
+          {...commonProp}
+          radius="sm"
+          onValueChange={
+            onValueChange
+              ? (v) => onValueChange(inputConfig.name, v)
+              : undefined
+          }
+          value={getControlledValue(inputConfig.type, value)}
+        />
+      );
+
     case "number":
       return (
         <NumberInput
@@ -158,6 +181,11 @@ function InputRenderer({
           radius="sm"
           max={inputConfig.max}
           min={inputConfig.min}
+          onValueChange={
+            onValueChange
+              ? (v) => onValueChange(inputConfig.name, String(v))
+              : undefined
+          }
           value={getControlledValue(inputConfig.type, value)}
         />
       );
@@ -198,6 +226,11 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
+          onValueChange={
+            onValueChange
+              ? (v: Date) => onValueChange(inputConfig.name, v.toLocaleDateString())
+              : undefined
+          }
           showMonthAndYearPickers
         />
       );
@@ -211,6 +244,17 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
+          onValueChange={
+            onValueChange
+              ? (v: [Date, Date]) =>
+                  onValueChange(
+                    inputConfig.name,
+                    v && v[0] && v[1]
+                      ? `${v[0].toLocaleDateString()}|${v[1].toLocaleDateString()}`
+                      : ""
+                  )
+              : undefined
+          }
           showMonthAndYearPickers
         />
       );

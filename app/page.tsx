@@ -1,15 +1,25 @@
 "use client";
 
-import Header from "@/components/Header";
 import React from "react";
+
+import { useRouter } from "next/navigation";
+
 import { useAuth } from "@/providers/AuthContext";
+import { useLoading } from "@/providers/LoadingContext";
 
 export default function Home() {
+  const router = useRouter();
   const { userContext } = useAuth();
+  const { setIsLoading } = useLoading();
 
-  return (
-    <section className="flex flex-col justify-center items-center py-8 md:py-10">
-      <Header title="Homepage" subtitle={`Welcome to the homepage, user ${userContext?.id}`} />
-    </section>
-  );
+  React.useEffect(() => {
+    setIsLoading(true);
+    
+    { userContext.token
+      ? router.replace("/home")
+      : router.replace("/login");
+    }
+  }, [userContext,router]);
+
+  return null;
 }

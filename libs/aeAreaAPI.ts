@@ -1,13 +1,13 @@
 import axios from "axios";
 
-export default async function getAeAreas() {
+export async function getAeAreas({ token }: { token: string }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {
     const response = await axios.get(`${apiUrl}/api/v1/ae-areas`, {
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true", // TODO: Remove ngrok-skip-browser-warning in production
       },
     });
 
@@ -18,7 +18,7 @@ export default async function getAeAreas() {
         `Failed to fetch AE areas: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
-    
+
     throw error;
   }
 }

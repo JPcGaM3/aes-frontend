@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { IconSvgProps } from "@/types";
-import { requestToBodyStream } from "next/dist/server/body-streams";
 
 export const Logo = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
@@ -180,31 +179,19 @@ export const UserIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
-      fill={fill ? fill : "none"}
+      fill={fill ? fill : "currentColor"}
       data-name="Iconly/Curved/Profile"
-      height={size || height || 24}
+      width={size || width}
+      height={size || height}
       viewBox="0 0 24 24"
-      width={size || width || 24}
       xmlns="http://www.w3.org/2000/svg"
       {...rest}
     >
-      <g
-        fill="none"
-        stroke={fill}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeMiterlimit={10}
-        strokeWidth={1.5}
-      >
-        <path
-          d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
-          data-name="Stroke 1"
-        />
-        <path
-          d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
-          data-name="Stroke 3"
-        />
-      </g>
+      <path
+        d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
+        data-name="Stroke 1"
+      />
+      <path d="M11.837 11.174a4.372 4.372 0 10-.031 0z" data-name="Stroke 3" />
     </svg>
   );
 };
@@ -214,9 +201,9 @@ export const CameraIcon = (props: IconSvgProps) => {
   return (
     <svg
       fill={fill ? fill : "none"}
-      height={size || height || 24}
+      height={size || height}
       viewBox="0 0 24 24"
-      width={size || width || 24}
+      width={size || width}
       xmlns="http://www.w3.org/2000/svg"
       {...rest}
     >
@@ -234,25 +221,18 @@ export const PlusIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
-      fill={fill ? fill : "none"}
-      aria-hidden="true"
-      focusable="false"
-      height={size || height}
-      role="presentation"
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
-      width={size || width}
-      {...rest}
+      fill="none"
     >
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-      >
-        <path d="M6 12h12" />
-        <path d="M12 18V6" />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22ZM12 8.25C12.4142 8.25 12.75 8.58579 12.75 9V11.25H15C15.4142 11.25 15.75 11.5858 15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H12.75L12.75 15C12.75 15.4142 12.4142 15.75 12 15.75C11.5858 15.75 11.25 15.4142 11.25 15V12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H11.25L11.25 9C11.25 8.58579 11.5858 8.25 12 8.25Z"
+        fill="currentColor"
+      />
     </svg>
   );
 };
@@ -456,8 +436,8 @@ export const HomeIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       fill={fill || "currentColor"}
       viewBox="0 0 24 24"
       {...rest}
@@ -470,13 +450,13 @@ export const HomeIcon = (props: IconSvgProps) => {
   );
 };
 
-export const FormIcon = (props: IconSvgProps) => {
+export const DocumentIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 52 52"
       {...rest}
     >
@@ -502,8 +482,8 @@ export const CardIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -571,8 +551,8 @@ export const RequestIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -592,8 +572,8 @@ export const InfoIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -601,8 +581,8 @@ export const InfoIcon = (props: IconSvgProps) => {
       <path
         d="M12 17V11"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
       <circle
         cx="1"
@@ -614,7 +594,7 @@ export const InfoIcon = (props: IconSvgProps) => {
       <path
         d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z"
         stroke="currentColor"
-        stroke-width="1.5"
+        strokeWidth="1.5"
       />
     </svg>
   );
@@ -625,8 +605,8 @@ export const EditIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       {...rest}
@@ -634,16 +614,16 @@ export const EditIcon = (props: IconSvgProps) => {
       <path
         d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
         stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -656,8 +636,8 @@ export const RejectIcon = (props: IconSvgProps) => {
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       id="Icons"
-      width={size || 24}
-      height={size || 24}
+      width={size}
+      height={size}
       viewBox="0 0 32 32"
       fill="none"
       stroke="currentColor"
@@ -666,6 +646,93 @@ export const RejectIcon = (props: IconSvgProps) => {
       <circle cx="16" cy="16" r="13" />
       <line x1="13.2" y1="13.2" x2="18.8" y2="18.8" />
       <line x1="13.2" y1="18.8" x2="18.8" y2="13.2" />
+    </svg>
+  );
+};
+
+export const DownloadIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="mr-2 w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      stroke="currentColor"
+      strokeWidth={2}
+      {...rest}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
+    </svg>
+  );
+};
+
+export const UploadFileIcon = (props: IconSvgProps) => {
+  const { fill, size, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      width={size}
+      height={height}
+      viewBox="0 0 24 24"
+      className="icon flat-color"
+      {...rest}
+    >
+      <path
+        d="M14,19a5,5,0,0,1,4-4.9h0V5a1,1,0,0,0-.29-.71l-2-2A1,1,0,0,0,15,2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2H15A5,5,0,0,1,14,19Z"
+        fill="#2563eb"
+      />
+      <path
+        d="M19,22a1,1,0,0,1-1-1V20H17a1,1,0,0,1,0-2h1V17a1,1,0,0,1,2,0v1h1a1,1,0,0,1,0,2H20v1A1,1,0,0,1,19,22ZM15,4a1,1,0,0,0,1,1h2a1,1,0,0,0-.28-.71l-2-2A1,1,0,0,0,15,2Zm-2,9a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h6A1,1,0,0,0,13,13Zm2-4a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h8A1,1,0,0,0,15,9Z"
+        fill="#38bdf8"
+      />
+    </svg>
+  );
+};
+
+export const DeleteIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      {...rest}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
+    </svg>
+  );
+};
+
+export const SettingIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size | 24}
+      height={size | 24}
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M20.1 9.2214C18.29 9.2214 17.55 7.9414 18.45 6.3714C18.97 5.4614 18.66 4.3014 17.75 3.7814L16.02 2.7914C15.23 2.3214 14.21 2.6014 13.74 3.3914L13.63 3.5814C12.73 5.1514 11.25 5.1514 10.34 3.5814L10.23 3.3914C9.78 2.6014 8.76 2.3214 7.97 2.7914L6.24 3.7814C5.33 4.3014 5.02 5.4714 5.54 6.3814C6.45 7.9414 5.71 9.2214 3.9 9.2214C2.86 9.2214 2 10.0714 2 11.1214V12.8814C2 13.9214 2.85 14.7814 3.9 14.7814C5.71 14.7814 6.45 16.0614 5.54 17.6314C5.02 18.5414 5.33 19.7014 6.24 20.2214L7.97 21.2114C8.76 21.6814 9.78 21.4014 10.25 20.6114L10.36 20.4214C11.26 18.8514 12.74 18.8514 13.65 20.4214L13.76 20.6114C14.23 21.4014 15.25 21.6814 16.04 21.2114L17.77 20.2214C18.68 19.7014 18.99 18.5314 18.47 17.6314C17.56 16.0614 18.3 14.7814 20.11 14.7814C21.15 14.7814 22.01 13.9314 22.01 12.8814V11.1214C22 10.0814 21.15 9.2214 20.1 9.2214ZM12 15.2514C10.21 15.2514 8.75 13.7914 8.75 12.0014C8.75 10.2114 10.21 8.7514 12 8.7514C13.79 8.7514 15.25 10.2114 15.25 12.0014C15.25 13.7914 13.79 15.2514 12 15.2514Z"
+        fill="currentColor"
+      />
     </svg>
   );
 };

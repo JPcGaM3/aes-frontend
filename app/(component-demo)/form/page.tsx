@@ -3,8 +3,6 @@
 import React from "react";
 
 import FormComponent from "@/components/FormComponent";
-import { RequestOrderTranslation } from "@/utils/constants";
-import { RequestOrderInputField } from "@/utils/enum";
 import { FormField } from "@/interfaces/interfaces";
 
 export default function FormPage() {
@@ -69,13 +67,16 @@ export default function FormPage() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen">
+    <div className="flex justify-center">
       <FormComponent
         fields={fields}
         subtitle="Please fill out the form below."
         title="Request Order Form"
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        onChange={(changed: any) => {
+          console.log("Form values changed:", changed);
+        }}
       />
     </div>
   );

@@ -5,22 +5,28 @@ import React from "react";
 import { Button } from "@heroui/button";
 
 interface FormButtonsProps {
+  onSubmit?: (e: PressEvent) => void;
   onCancel?: (e: PressEvent) => void;
   hasBorder?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
   submitColor?: ColorType;
   cancelColor?: ColorType;
+  isSubmitting?: boolean;
+  isCanceling?: boolean;
   className?: string;
 }
 
 const FormButtons: React.FC<FormButtonsProps> = ({
+  onSubmit,
   onCancel,
   hasBorder = true,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
   submitColor = "primary",
   cancelColor = "default",
+  isSubmitting = false,
+  isCanceling = false,
   className = "w-full text-center flex flex-col",
 }) => (
   <div className={className}>
@@ -31,23 +37,41 @@ const FormButtons: React.FC<FormButtonsProps> = ({
         <Button
           className="w-full font-semibold text-gray-500"
           color={cancelColor}
+          size="lg"
           radius="sm"
           variant="flat"
+          isLoading={isCanceling}
           onPress={onCancel}
         >
           {cancelLabel}
         </Button>
       )}
 
-      <Button
-        className="w-full font-bold"
-        color={submitColor}
-        radius="sm"
-        variant="flat"
-        type="submit"
-      >
-        {submitLabel}
-      </Button>
+      {onSubmit ? (
+        <Button
+          className="w-full font-bold"
+          color={submitColor}
+          size="lg"
+          radius="sm"
+          variant="flat"
+          isLoading={isSubmitting}
+          onPress={onSubmit}
+        >
+          {submitLabel}
+        </Button>
+      ) : (
+        <Button
+          className="w-full font-bold"
+          color={submitColor}
+          size="lg"
+          radius="sm"
+          variant="flat"
+          isLoading={isSubmitting}
+          type="submit"
+        >
+          {submitLabel}
+        </Button>
+      )}
     </div>
   </div>
 );

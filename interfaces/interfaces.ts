@@ -38,7 +38,7 @@ interface RequestOrder {
   farmer_name?: string;
   land_number?: number;
   ap_month?: string;
-  ap_year?: number;
+  ap_year?: number | string;
   ae_id?: number;
   ae_name?: string;
   target_area?: number;
@@ -51,10 +51,13 @@ interface RequestOrder {
   supervisor_id?: number;
   location_xy?: string;
   location_id?: number;
+  activities?: string;
+  tool_types?: string;
   unit_head_id?: number;
   comment?: string;
   created_at?: Date | string;
   updated_at?: Date | string;
+  user_id?: number;
   created_by: number;
   updated_by: number;
 }
@@ -62,8 +65,10 @@ interface RequestOrder {
 interface TaskOrder {
   id: number;
   request_order_id?: number;
-  activities_id?: number;
-  tool_types_id?: number;
+  activity_id?: number;
+  activity_name?: string;
+  tool_type_id?: number;
+  tool_type_name?: string;
   car_id?: number;
   tool_id?: number;
   assigned_user_id?: number;
@@ -90,9 +95,16 @@ interface TaskOrder {
   updated_by: number;
 }
 
+interface Activity {
+  id: number;
+  name: string;
+  tool_types?: string[];
+}
+
 interface BaseInputConfig {
   name: string;
-  label: string;
+  label?: string;
+  translator?: Record<string, string>;
   labelPlacement?: "inside" | "outside" | "outside-left";
   hasPlaceholder?: boolean;
   placeholder?: string | number | boolean;
@@ -106,7 +118,7 @@ interface BaseInputConfig {
 }
 
 interface TextInputConfig extends BaseInputConfig {
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "textarea";
 }
 
 interface NumberInputConfig extends BaseInputConfig {
@@ -179,6 +191,13 @@ interface FilterConfig {
   ae?: string;
 }
 
+interface UploadedFile {
+  name: string;
+  size: number;
+  type: string;
+  file: File;
+}
+
 export type {
   User,
   RequestOrder,
@@ -195,4 +214,6 @@ export type {
   ActionConfig,
   CardComponentProps,
   FilterConfig,
+  UploadedFile,
+  Activity,
 };

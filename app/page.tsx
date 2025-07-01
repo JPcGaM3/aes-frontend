@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -12,7 +12,7 @@ export default function Home() {
   const { userContext } = useAuth();
   const { setIsLoading } = useLoading();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsLoading(true);
     
     { userContext.token

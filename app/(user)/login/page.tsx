@@ -30,7 +30,7 @@ export default function LoginPage() {
     isVisible: false,
   });
 
-  // Fetch operation areas on mount
+  // TODO: core fetch function 
   useEffect(() => {
     const fetchOperationAreas = async () => {
       try {

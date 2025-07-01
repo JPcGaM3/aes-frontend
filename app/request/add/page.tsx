@@ -59,6 +59,7 @@ export default function AddRequestPage() {
   });
 
   // Fetch data ---------------------------------------------------------------------------------------------------
+  // TODO: core fetch function 
   useEffect(() => {
     const fetchDropDownOptions = async ({ token }: { token: string }) => {
       const activity = await getActivities({ token });
@@ -116,10 +117,6 @@ export default function AddRequestPage() {
     }
 
     setIsAdding(true);
-    console.log(
-      "Attempting to upload files with Axios:",
-      uploadedFiles.map((f) => f.name)
-    );
 
     try {
       const response = await uploadRequestOrder({
@@ -400,7 +397,6 @@ export default function AddRequestPage() {
                   <FormComponent
                     key={idx + "-" + (task.activity_name || "")}
                     hasHeader={false}
-                    hasButtons={false}
                     initialValues={task}
                     onChange={(changed: any) => handleTaskChange(idx, changed)}
                     fields={[

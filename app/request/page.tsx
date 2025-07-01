@@ -51,6 +51,7 @@ export default function RequestPage() {
     null
   );
 
+  // TODO: core fetch function 
   useEffect(() => {
     const fetchDropdownData = async () => {
       setFilterValues({
@@ -62,6 +63,7 @@ export default function RequestPage() {
     fetchDropdownData();
   }, []);
 
+  // TODO: core fetch function 
   useEffect(() => {
     const fetchReqOrderData = async ({
       token,

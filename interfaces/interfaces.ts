@@ -198,10 +198,60 @@ interface UploadedFile {
   file: File;
 }
 
+interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  employeeName: {
+    th?: string;
+    en?: string;
+  };
+  splitNameTH?: {
+    foa?: string;
+    FNameTH?: string;
+    LNameTH?: string;
+  };
+  department?: {
+    id?: string;
+    name?: {
+      th?: string;
+      en?: string;
+    };
+  };
+  position?: {
+    id?: string;
+    name?: {
+      th?: string;
+      en?: string;
+    };
+  };
+  attorney?: {
+    id?: string;
+    name?: string;
+  };
+  level?: {
+    id?: string;
+    name?: string;
+  };
+  company?: {
+    id?: string;
+    name?: string;
+  };
+  plant?: {
+    id?: string;
+    name?: string;
+  };
+  approver?: {
+    id?: string;
+    username?: string;
+  };
+}
+
 export type {
   User,
   RequestOrder,
   TaskOrder,
+  UserProfile,
   BaseInputConfig,
   TextInputConfig,
   NumberInputConfig,

@@ -9,7 +9,6 @@ import { FormField } from "@/interfaces/interfaces";
 
 interface FormComponentProps {
   hasHeader?: boolean;
-  hasButtons?: boolean;
   title?: string;
   subtitle?: string;
   fields: FormField[];
@@ -26,7 +25,6 @@ interface FormComponentProps {
 
 export default function FormComponent({
   hasHeader = true,
-  hasButtons = true,
   title,
   subtitle,
   fields,

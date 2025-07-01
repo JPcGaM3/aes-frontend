@@ -247,6 +247,43 @@ interface UserProfile {
   };
 }
 
+interface AeArea {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  created_by: number;
+  updated_by: number;
+}
+
+interface UserResult {
+  id: number;
+  phone: string | null;
+  unit: number | null;
+  ae_id: number;
+  role: string[];
+  status: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: number;
+  updated_by: number;
+  username: string;
+  email: string;
+  fullname: string;
+  employee_id: string;
+  ae_area: AeArea;
+}
+
+interface UserProfileResponse {
+  success: boolean;
+  message: string;
+  data: {
+    profile: UserProfile;
+    user_result: UserResult;
+  };
+}
+
 export type {
   User,
   RequestOrder,
@@ -266,4 +303,6 @@ export type {
   FilterConfig,
   UploadedFile,
   Activity,
+  UserResult,
+  UserProfileResponse,
 };

@@ -40,7 +40,7 @@ export default function AlertModal({
       <ModalContent>
         {(onClose) => (
           <div className="flex flex-col items-center justify-center w-full p-0 gap-4">
-            <ModalHeader className="flex flex-col items-center w-full text-center p-0">
+            <ModalHeader className="flex flex-col items-center w-full text-center text-2xl p-0">
               {title}
             </ModalHeader>
 

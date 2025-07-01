@@ -80,7 +80,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
             <Spinner
               classNames={{ label: "text-foreground mt-4" }}
               color={colors[colorIndex as number] as ColorType}
-              label="Loading..."
+              label="กำลังโหลด..."
               size="lg"
               variant="wave"
             />

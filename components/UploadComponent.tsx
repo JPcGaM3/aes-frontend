@@ -159,7 +159,7 @@ export default function UploadComponent({
             radius="sm"
             variant="flat"
             color="primary"
-            className="p-3 tracking-normal"
+            className="p-3"
             startContent={<DownloadIcon />}
             onPress={onDownloadTemplate}
           >
@@ -194,7 +194,7 @@ export default function UploadComponent({
               <div className="mb-2 flex items-center justify-center w-24 h-24 rounded-full bg-blue-100">
                 <UploadFileIcon size={54} />
               </div>
-              <p className="mt-2 text-gray-600 text-sm font-medium tracking-wide">
+              <p className="mt-2 text-gray-600 text-sm font-medium">
                 คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
               </p>
             </div>

@@ -11,11 +11,13 @@ import FieldValueDisplayer, {
   FieldSection,
 } from "@/components/FieldValueDisplayer";
 
-import { AlertComponentProps } from "@/components/AlertComponent";
+import AlertComponent, {
+  AlertComponentProps,
+} from "@/components/AlertComponent";
 
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { UserProfile } from "@/interfaces/interfaces";
+import { UserProfileResponse } from "@/interfaces/interfaces";
 
 import { getProfile } from "@/libs/userAPI";
 
@@ -25,7 +27,9 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const { userContext, logout } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
+    null
+  );
   const [alert, setAlert] = useState<AlertComponentProps>({
     title: "",
     description: "",
@@ -35,12 +39,13 @@ export default function ProfilePage() {
   // TODO: core fetch function
   useEffect(() => {
     if (userContext.token) {
-      const fetchProfile = async () => {
+      const fetchProfile = async ({ token }: { token: string }) => {
         try {
           setIsLoading(true);
-          const response = await getProfile({ token: userContext.token });
-          await setProfile(response.profile);
-          console.log("Profile data:", response.profile);
+          const response = await getProfile({ token });
+
+          setProfile(response);
+          console.log("Profile data:", response);
         } catch (error: any) {
           setAlert({
             title: "Failed to load user profile",
@@ -53,7 +58,7 @@ export default function ProfilePage() {
         }
       };
 
-      fetchProfile();
+      fetchProfile({ token: userContext!.token ?? "" });
     }
   }, [userContext]);
 
@@ -70,68 +75,80 @@ export default function ProfilePage() {
     router.push("/login");
   };
 
-  const profileSections: FieldSection[] = profile
-    ? [
+  const profileSections: FieldSection[] = [
+    {
+      title: "ข้อมูลส่วนตัว",
+      fields: [
+        { label: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
+        { label: "อีเมล", value: profile?.user_result.email ?? "-" },
         {
-          title: "ข้อมูลส่วนตัว",
-          fields: [
-            { label: "รหัสพนักงาน", value: profile.id },
-            { label: "อีเมล", value: profile.email },
-            { label: "ชื่อ-สกุล (TH)", value: profile.employeeName?.th || "-" },
-            { label: "ชื่อ-สกุล (EN)", value: profile.employeeName?.en || "-" },
-          ],
+          label: "ชื่อ-สกุล (TH)",
+          value: profile?.profile.employeeName?.th ?? "-",
         },
         {
-          title: "ข้อมูลการติดต่อ",
-          fields: [
-            { label: "เบอร์โทรศัพท์", value: "-" },
-            { label: "ที่อยู่", value: "-" },
-          ],
+          label: "ชื่อ-สกุล (EN)",
+          value: profile?.profile.employeeName?.en ?? "-",
+        },
+        { label: "เบอร์โทรศัพท์", value: profile?.user_result.phone ?? "-" },
+        { label: "ที่อยู่", value: "-" },
+      ],
+    },
+    {
+      title: "ข้อมูลการทำงาน",
+      fields: [
+        {
+          label: "ตำแหน่ง",
+          value: profile?.user_result.role?.length
+            ? profile.user_result.role.join(", ")
+            : "-",
+        },
+        { label: "ระดับ", value: profile?.profile.level?.name ?? "-" },
+        {
+          label: "แผนก",
+          value:
+            profile?.profile.department?.name?.en?.replace(/ Section$/i, "") ??
+            "-",
         },
         {
-          title: "ข้อมูลการทำงาน",
-          fields: [
-            { label: "ตำแหน่ง", value: profile.position?.name?.th || "-" },
-            { label: "ระดับ", value: profile.level?.name || "-" },
-            { label: "ฝ่าย/แผนก", value: profile.department?.name?.th || "-" },
-            { label: "บริษัท", value: profile.company?.name || "-" },
-            { label: "โรงงาน", value: profile.plant?.name || "-" },
-            { label: "ผู้อนุมัติ", value: profile.approver?.username || "-" },
-          ],
+          label: "สังกัด AE",
+          value: profile?.user_result.ae_area?.name ?? "-",
         },
-      ]
-    : [];
+      ],
+    },
+  ];
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-xl">
+      <div className="w-full max-w-xl flex flex-col gap-6">
         {isOpen && (
           <AlertModal
             isOpen={isOpen}
             onClose={onClose}
-            title="Logout"
-            message="Are you sure you want to logout?"
-            confirmText="Yes"
-            cancelText="No"
+            title="ออกจากระบบ"
+            message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
+            confirmText="ยืนยัน"
+            cancelText="ยกเลิก"
             onConfirm={handleConfirmLogout}
           />
         )}
 
         {alert.isVisible && (
-          <AlertModal
-            isOpen={alert.isVisible}
+          <AlertComponent
             title={alert.title}
-            message={alert.description}
-            onClose={() => setAlert({ ...alert, isVisible: false })}
+            description={alert.description}
+            color={alert.color}
+            isVisible={alert.isVisible}
+            handleClose={() => setAlert({ ...alert, isVisible: false })}
           />
         )}
 
-        {profile && <FieldValueDisplayer sections={profileSections} />}
+        <FieldValueDisplayer sections={profileSections} />
 
         <Button
-          variant="bordered"
           size="lg"
           radius="sm"
+          color="danger"
+          variant="flat"
           className="w-full mt-4 font-semibold"
           onPress={() => handleLogout()}
         >

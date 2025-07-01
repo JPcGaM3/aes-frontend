@@ -40,18 +40,18 @@ export default function FieldValueDisplayer({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 tracking-normal">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
             {section.fields.map((field, i) => (
               <div
                 key={i}
                 className={`flex items-start gap-2 ${field.className || ""}`}
               >
                 <span
-                  className={`text-sm font-medium min-w-[80px] ${field.highlight ? "text-blue-600" : ""}`}
+                  className={`text-sm font-semibold min-w-[80px] ${field.highlight ? "text-blue-600" : ""}`}
                 >
                   {field.label}
                 </span>
-                <span className="text-gray-900 break-all text-sm">{field.value}</span>
+                <span className="text-gray-800 break-all text-sm">{field.value}</span>
               </div>
             ))}
           </div>

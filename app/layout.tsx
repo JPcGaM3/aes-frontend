@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
-import { fontSans, fontKanit } from "@/config/fonts";
+import { fontSans, fontKanit, fontNoto } from "@/config/fonts";
 import { Navbar } from "@/components/Navigationbar";
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "bg-background font-sans text-foreground antialiased",
-          fontKanit.variable
+          fontNoto.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "white" }}>

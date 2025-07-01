@@ -72,10 +72,13 @@ export const Navbar = () => {
 
   return (
     <HeroUINavbar
-      className="shadow-md p-0 h-16 flex items-center"
       maxWidth="full"
       position="sticky"
       shouldHideOnScroll={false}
+      className="shadow-md p-0 h-16 flex items-center"
+      classNames={{
+          wrapper: "px-3",
+        }}
     >
       {/* Logo */}
       <div className="flex items-center justify-center h-full w-auto">

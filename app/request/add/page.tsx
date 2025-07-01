@@ -29,6 +29,7 @@ import AlertComponent, {
 import { getActivities } from "@/libs/activityAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
+import { AddIcon, MinusIcon } from "@/utils/icons";
 
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
@@ -121,12 +122,10 @@ export default function AddRequestPage() {
     );
 
     try {
-      const response = await uploadRequestOrder(
-        {
-          token: userContext.token,
-          uploadedFiles: uploadedFiles,
-        }
-      );
+      const response = await uploadRequestOrder({
+        token: userContext.token,
+        uploadedFiles: uploadedFiles,
+      });
 
       setAlert({
         isVisible: true,
@@ -182,12 +181,10 @@ export default function AddRequestPage() {
     setFormValues(submitValue);
 
     try {
-      const response = await KeyInRequestOrder(
-        {
-          token: userContext.token,
-          data: submitValue,
-        }
-      );
+      const response = await KeyInRequestOrder({
+        token: userContext.token,
+        data: submitValue,
+      });
 
       setAlert({
         isVisible: true,
@@ -221,11 +218,19 @@ export default function AddRequestPage() {
     ] as TaskOrder[]);
   };
 
-  // TODO: Handler change activity make tool ""
-  // TODO: implement dropdown warning
+  const handleRemoveTask = () => {
+    if (tasks.length > 1) {
+      setTasks(tasks.slice(0, -1));
+    }
+  };
+
   const handleTaskChange = (index: number, changed: any) => {
     const updatedTasks: TaskOrder[] = tasks.map((task, i) => {
       if (i === index) {
+        if (changed.activity_name !== undefined) {
+          return { ...task, ...changed, tool_type_name: "" };
+        }
+
         return { ...task, ...changed };
       }
 
@@ -319,7 +324,7 @@ export default function AddRequestPage() {
     {
       type: "textarea",
       name: "location_xy",
-      isRequired: true,
+      isRequired: false,
       translator: RequestOrderTranslation,
     },
   ];
@@ -355,16 +360,26 @@ export default function AddRequestPage() {
 
                 <Divider className="flex-1" />
 
-                <Button
-                  size="md"
-                  radius="sm"
-                  color="default"
-                  variant="flat"
-                  className="tracking-normal"
-                  onPress={handleAddTask}
-                >
-                  เพิ่มกิจกรรม
-                </Button>
+                <div className="flex flex-row gap-2">
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    radius="sm"
+                    color="default"
+                    variant="flat"
+                    startContent={<AddIcon />}
+                    onPress={handleAddTask}
+                  />
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    radius="sm"
+                    color="default"
+                    variant="flat"
+                    startContent={<MinusIcon />}
+                    onPress={handleRemoveTask}
+                  />
+                </div>
               </div>
 
               {/* Task Fields */}
@@ -383,7 +398,7 @@ export default function AddRequestPage() {
 
                 return (
                   <FormComponent
-                    key={idx}
+                    key={idx + "-" + (task.activity_name || "")}
                     hasHeader={false}
                     hasButtons={false}
                     initialValues={task}

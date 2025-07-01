@@ -225,13 +225,13 @@ export const PlusIcon = (props: IconSvgProps) => {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill || "none"}
     >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22ZM12 8.25C12.4142 8.25 12.75 8.58579 12.75 9V11.25H15C15.4142 11.25 15.75 11.5858 15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H12.75L12.75 15C12.75 15.4142 12.4142 15.75 12 15.75C11.5858 15.75 11.25 15.4142 11.25 15V12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H11.25L11.25 9C11.25 8.58579 11.5858 8.25 12 8.25Z"
-        fill="currentColor"
+        fill={fill || "currentColor"}
       />
     </svg>
   );
@@ -733,6 +733,78 @@ export const SettingIcon = (props: IconSvgProps) => {
         d="M20.1 9.2214C18.29 9.2214 17.55 7.9414 18.45 6.3714C18.97 5.4614 18.66 4.3014 17.75 3.7814L16.02 2.7914C15.23 2.3214 14.21 2.6014 13.74 3.3914L13.63 3.5814C12.73 5.1514 11.25 5.1514 10.34 3.5814L10.23 3.3914C9.78 2.6014 8.76 2.3214 7.97 2.7914L6.24 3.7814C5.33 4.3014 5.02 5.4714 5.54 6.3814C6.45 7.9414 5.71 9.2214 3.9 9.2214C2.86 9.2214 2 10.0714 2 11.1214V12.8814C2 13.9214 2.85 14.7814 3.9 14.7814C5.71 14.7814 6.45 16.0614 5.54 17.6314C5.02 18.5414 5.33 19.7014 6.24 20.2214L7.97 21.2114C8.76 21.6814 9.78 21.4014 10.25 20.6114L10.36 20.4214C11.26 18.8514 12.74 18.8514 13.65 20.4214L13.76 20.6114C14.23 21.4014 15.25 21.6814 16.04 21.2114L17.77 20.2214C18.68 19.7014 18.99 18.5314 18.47 17.6314C17.56 16.0614 18.3 14.7814 20.11 14.7814C21.15 14.7814 22.01 13.9314 22.01 12.8814V11.1214C22 10.0814 21.15 9.2214 20.1 9.2214ZM12 15.2514C10.21 15.2514 8.75 13.7914 8.75 12.0014C8.75 10.2114 10.21 8.7514 12 8.7514C13.79 8.7514 15.25 10.2114 15.25 12.0014C15.25 13.7914 13.79 15.2514 12 15.2514Z"
         fill="currentColor"
       />
+    </svg>
+  );
+};
+
+export const AddIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size || 24}
+      height={size || 24}
+      viewBox="0 0 24 24"
+    >
+      <g id="Complete">
+        <g data-name="add" id="add-2">
+          <g>
+            <line
+              fill="none"
+              stroke={fill || "currentColor"}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              x1="12"
+              x2="12"
+              y1="19"
+              y2="5"
+            />
+
+            <line
+              fill="none"
+              stroke={fill || "currentColor"}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              x1="5"
+              x2="19"
+              y1="12"
+              y2="12"
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export const MinusIcon = (props: IconSvgProps) => {
+  const { fill, size = 24, width, height, ...rest } = props;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size || 24}
+      height={size || 24}
+      viewBox="0 0 24 24"
+    >
+      <g id="Complete">
+        <g data-name="add" id="add-2">
+          <g>
+            <line
+              fill="none"
+              stroke={fill || "currentColor"}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              x1="5"
+              x2="19"
+              y1="12"
+              y2="12"
+            />
+          </g>
+        </g>
+      </g>
     </svg>
   );
 };

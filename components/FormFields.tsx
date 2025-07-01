@@ -59,9 +59,12 @@ function InputRenderer({
   onValueChange,
   value,
 }: InputRendererProps) {
-  const label = inputConfig.label
-    ? translateEnumValue(inputConfig.label, inputConfig.translator || {})
-    : translateEnumValue(inputConfig.name, inputConfig.translator || {});
+  const label =
+    inputConfig.hasLabel === false
+      ? undefined
+      : inputConfig.label
+        ? translateEnumValue(inputConfig.label, inputConfig.translator || {})
+        : translateEnumValue(inputConfig.name, inputConfig.translator || {});
 
   const placeholder =
     inputConfig.hasPlaceholder === false
@@ -74,6 +77,7 @@ function InputRenderer({
   const commonProp: any = {
     name: inputConfig.name,
     label: label,
+    size: inputConfig.size || "md",
     labelPlacement: inputConfig.labelPlacement || "outside",
     hasPlaceholder: inputConfig.hasPlaceholder || true,
     placeholder: placeholder,
@@ -228,7 +232,8 @@ function InputRenderer({
           value={getControlledValue(inputConfig.type, value)}
           onValueChange={
             onValueChange
-              ? (v: Date) => onValueChange(inputConfig.name, v.toLocaleDateString())
+              ? (v: Date) =>
+                  onValueChange(inputConfig.name, v.toLocaleDateString())
               : undefined
           }
           showMonthAndYearPickers

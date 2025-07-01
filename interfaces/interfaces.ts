@@ -104,10 +104,12 @@ interface Activity {
 interface BaseInputConfig {
   name: string;
   label?: string;
-  translator?: Record<string, string>;
+  hasLabel?: boolean;
   labelPlacement?: "inside" | "outside" | "outside-left";
-  hasPlaceholder?: boolean;
+  translator?: Record<string, string>;
   placeholder?: string | number | boolean;
+  hasPlaceholder?: boolean;
+  size?: "sm" | "md" | "lg";
   description?: React.ReactNode;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;

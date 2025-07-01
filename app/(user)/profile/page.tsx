@@ -45,7 +45,6 @@ export default function ProfilePage() {
           const response = await getProfile({ token });
 
           setProfile(response);
-          console.log("Profile data:", response);
         } catch (error: any) {
           setAlert({
             title: "Failed to load user profile",

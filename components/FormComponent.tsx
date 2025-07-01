@@ -17,6 +17,7 @@ interface FormComponentProps {
   isSubmitting?: boolean;
   isCanceling?: boolean;
   initialValues?: Record<string, any>;
+  className?: string;
   children?: React.ReactNode;
   onCancel?: () => void;
   onSubmit?: (values: any) => void;
@@ -34,6 +35,7 @@ export default function FormComponent({
   isCanceling,
   initialValues = {},
   children = null,
+  className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
   onCancel,
   onSubmit,
   onChange,
@@ -62,7 +64,7 @@ export default function FormComponent({
   };
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+    <div className={className}>
       {onSubmit ? (
         <Form
           className="flex flex-col gap-8 w-full max-w-xl"

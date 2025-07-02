@@ -285,6 +285,34 @@ export const ChevronDownIcon = (
   );
 };
 
+export const ChevronUpIcon = (
+  props: IconSvgProps & { strokeWidth?: number }
+) => {
+  const { fill, size = 24, width, height, strokeWidth = 1.5, ...rest } = props;
+  return (
+    <svg
+      fill={fill ? fill : "none"}
+      aria-hidden="true"
+      focusable="false"
+      height={size || height}
+      role="presentation"
+      viewBox="0 0 24 24"
+      width={size || width}
+      transform="rotate(180 0 0)"
+      {...rest}
+    >
+      <path
+        d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+};
+
 export const EyeFilledIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (

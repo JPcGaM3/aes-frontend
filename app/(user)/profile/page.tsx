@@ -117,8 +117,8 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-xl flex flex-col gap-6">
+    <div className="flex justify-center items-center">
+      <div className="w-full flex flex-col justify-center items-center gap-6">
         {isOpen && (
           <AlertModal
             isOpen={isOpen}
@@ -148,7 +148,7 @@ export default function ProfilePage() {
           radius="sm"
           color="danger"
           variant="flat"
-          className="w-full mt-4 font-semibold"
+          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mt-4 font-semibold"
           onPress={() => handleLogout()}
         >
           ออกจากระบบ

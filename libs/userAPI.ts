@@ -3,22 +3,19 @@ import axios from "axios";
 export interface LoginParams {
   username: string;
   password: string;
-  ae_id: number | null;
   operation_area_id: number | null;
 }
 
 export async function LoginUser({
   username,
   password,
-  ae_id,
-  operation_area_id,
 }: LoginParams): Promise<any> {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   const isEmail = username.includes("@mitrphol.com");
   const body = isEmail
-    ? { email: username, password: password, ae_id, operation_area_id }
-    : { username: username, password: password, ae_id, operation_area_id };
+    ? { email: username, password: password }
+    : { username: username, password: password };
 
   try {
     const response = await axios.post(

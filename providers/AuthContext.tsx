@@ -10,18 +10,27 @@ import { LoginParams, LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
   token: string;
+  operationAreaId: number;
 }
 
 interface AuthContextType {
   userContext: UserContextType;
-  login: ({ params }: { params: LoginParams }) => Promise<void>;
+  login: ({
+    params,
+    operationAreaId,
+  }: {
+    params: LoginParams;
+    operationAreaId: number;
+  }) => Promise<void>;
   logout: () => void;
+  setUserContext: (context: Partial<UserContextType>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string>("");
+  const [operationAreaId, setOperationAreaId] = useState<number>(0);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -30,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const parsed = JSON.parse(storedUser);
           await setToken(parsed.token ?? "");
+          await setOperationAreaId(parsed.operationAreaId ?? 0);
         } catch (e) {
           sessionStorage.removeItem("authUser");
         }
@@ -40,10 +50,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Login API + set user context
-  const login = async ({ params }: { params: LoginParams }) => {
+  const login = async ({
+    params,
+    operationAreaId,
+  }: {
+    params: LoginParams;
+    operationAreaId: number;
+  }) => {
     try {
       const result = await LoginUser(params);
       setToken(result.token ?? null);
+      setOperationAreaId(operationAreaId);
     } catch (error) {
       throw error;
     }
@@ -52,20 +69,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout + clear
   const logout = () => {
     setToken("");
+    setOperationAreaId(0);
 
     sessionStorage.removeItem("authUser");
   };
 
+  const setUserContext = (context: Partial<UserContextType>) => {
+    if (context.token !== undefined) setToken(context.token);
+    if (context.operationAreaId !== undefined)
+      setOperationAreaId(context.operationAreaId);
+  };
+
   const userContext: UserContextType = {
     token: token,
+    operationAreaId: operationAreaId,
   };
 
   useEffect(() => {
     sessionStorage.setItem("authUser", JSON.stringify(userContext));
-  }, [token]);
+  }, [token, operationAreaId]);
 
   return (
-    <AuthContext.Provider value={{ userContext, login, logout }}>
+    <AuthContext.Provider value={{ userContext, login, logout, setUserContext }}>
       {children}
     </AuthContext.Provider>
   );

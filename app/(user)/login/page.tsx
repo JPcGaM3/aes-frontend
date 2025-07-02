@@ -30,11 +30,11 @@ export default function LoginPage() {
     isVisible: false,
   });
 
-  // TODO: core fetch function 
+  // TODO: core fetch function
   useEffect(() => {
     const fetchOperationAreas = async () => {
       try {
-        const data = await getOperationAreas({ paramData: {}, });
+        const data = await getOperationAreas({ paramData: {} });
         setOperationAreas(data || []);
       } catch (err: any) {
         setAlert({
@@ -62,9 +62,8 @@ export default function LoginPage() {
         params: {
           username: values.username,
           password: values.password,
-          ae_id,
-          operation_area_id: values.operation_area_id,
         } as LoginParams,
+        operationAreaId: Number(values.operation_area_id),
       });
 
       router.push("/home");
@@ -96,7 +95,6 @@ export default function LoginPage() {
       type: "dropdown",
       name: "operation_area_id",
       label: "พื้นที่ปฏิบัติงาน",
-      isRequired: true,
       options: operationAreas.map((area) => ({
         value: String(area.id),
         label: `${area.operation_area} (${area.ae_area?.name || "-"})`,

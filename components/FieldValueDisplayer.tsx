@@ -21,7 +21,7 @@ export interface FieldValueDisplayerProps {
 }
 
 export default function FieldValueDisplayer({
-  className = "flex flex-col gap-3 w-full",
+  className = "flex flex-col gap-3 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
   sections,
 }: FieldValueDisplayerProps) {
   return (
@@ -40,7 +40,7 @@ export default function FieldValueDisplayer({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
             {section.fields.map((field, i) => (
               <div
                 key={i}

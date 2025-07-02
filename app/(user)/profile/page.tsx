@@ -29,7 +29,7 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const { userContext, logout } = useAuth();
 
-  const [mounted, setMounted] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
     null
   );
@@ -63,7 +63,7 @@ export default function ProfilePage() {
       fetchProfile({ token: userContext!.token ?? "" });
     }
 
-    setMounted(true);
+    setHasMounted(true);
   }, [userContext]);
 
   const handleLogout = () => {
@@ -150,7 +150,7 @@ export default function ProfilePage() {
 
         <div className="flex flex-col gap-1 justify-center items-center">
           <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-700">
-            {mounted
+            {hasMounted
               ? (profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-")
               : "-"}
           </div>

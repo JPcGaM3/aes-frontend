@@ -49,6 +49,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [operationAreas, setOperationAreas] = useState<any[]>([]);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const menuItems = [
     // * Normal Page --------------------------------------------------
@@ -80,6 +81,8 @@ export default function Navbar() {
 
       fetchOperationAreas({ token: userContext!.token });
     }
+
+    setHasMounted(true);
   }, [userContext]);
 
   const dynamicMenuItems = menuItems.map((item) => {
@@ -155,10 +158,10 @@ export default function Navbar() {
         </NavbarBrand>
 
         {/* Operation Dropdown */}
-        {userContext.token && (
+        {(userContext.token && hasMounted) && (
           <NavbarItem
             className={clsx(
-              "h-full justify-end items-center font-mono  bg-default-100 rounded-lg",
+              "h-full justify-end items-center font-mono  bg-default-100 rounded-lg w-fit",
               fontMono.variable
             )}
           >
@@ -188,7 +191,7 @@ export default function Navbar() {
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="rounded-lg shadow-lg mt-1 w-28 p-1">
+              <PopoverContent className="rounded-lg shadow-lg mt-1 p-1 w-fit min-w-28">
                 <div className="flex flex-col text-sm w-full font-semibold">
                   {operationOptions.length > 0 ? (
                     operationOptions.map((option) => (
@@ -228,7 +231,7 @@ export default function Navbar() {
           />
         </NavbarItem>
 
-        {/* Nav bar menu */}
+        {/* Nav bar desktop */}
         <NavbarItem className="hidden md:flex h-full p-[4px] bg-default-100 rounded-lg flex-row items-center ">
           {dynamicMenuItems.map((item) => {
             const isActive = pathname === item.path;
@@ -265,6 +268,7 @@ export default function Navbar() {
                 disabled={!userContext?.token && !isActive}
                 size="md"
                 radius="sm"
+                disableAnimation
                 startContent={item.icon}
                 className={`w-full justify-start text-left p-3 font-semibold
                   ${!userContext?.token && !isActive ? "opacity-50 cursor-not-allowed" : ""}

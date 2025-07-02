@@ -241,7 +241,7 @@ export const VerticalDotsIcon = (props: IconSvgProps) => {
   const { fill, size = 24, width, height, ...rest } = props;
   return (
     <svg
-      fill={fill ? fill : "none"}
+      fill="none"
       aria-hidden="true"
       focusable="false"
       height={size || height}
@@ -252,7 +252,7 @@ export const VerticalDotsIcon = (props: IconSvgProps) => {
     >
       <path
         d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-        fill="currentColor"
+        fill={fill || "currentColor"}
       />
     </svg>
   );
@@ -683,7 +683,7 @@ export const DownloadIcon = (props: IconSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="mr-2 w-4 h-4"
+      className="w-4 h-4 mr-2"
       fill="none"
       viewBox="0 0 24 24"
       width={size}

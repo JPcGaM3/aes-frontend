@@ -29,7 +29,6 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const { userContext, logout } = useAuth();
 
-  const [hasMounted, setHasMounted] = useState(false);
   const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
     null
   );
@@ -62,8 +61,6 @@ export default function ProfilePage() {
 
       fetchProfile({ token: userContext!.token ?? "" });
     }
-
-    setHasMounted(true);
   }, [userContext]);
 
   const handleLogout = () => {
@@ -124,8 +121,8 @@ export default function ProfilePage() {
   const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
 
   return (
-    <div className="flex justify-center items-center pt-3">
-      <div className="w-full flex flex-col justify-center items-center gap-8">
+    <div className="flex items-center justify-center pt-3">
+      <div className="flex flex-col items-center justify-center w-full gap-8">
         {isOpen && (
           <AlertModal
             isOpen={isOpen}
@@ -148,11 +145,9 @@ export default function ProfilePage() {
           />
         )}
 
-        <div className="flex flex-col gap-1 justify-center items-center">
-          <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-700">
-            {hasMounted
-              ? (profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-")
-              : "-"}
+        <div className="flex flex-col items-center justify-center gap-1">
+          <div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+            {profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-"}
           </div>
 
           <Header
@@ -173,7 +168,7 @@ export default function ProfilePage() {
           radius="sm"
           color="danger"
           variant="flat"
-          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl font-semibold"
+          className="w-full max-w-sm font-semibold sm:max-w-md md:max-w-lg lg:max-w-xl"
           onPress={() => handleLogout()}
         >
           ออกจากระบบ

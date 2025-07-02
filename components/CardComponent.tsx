@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Button,
   Chip,
@@ -36,16 +36,20 @@ export default function CardComponent<T extends { id: number | string }>({
   actions,
   cardClassName = "flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full",
 }: CardComponentProps<T>) {
+  const [openPopoverId, setOpenPopoverId] = useState<string | number | null>(
+    null
+  );
+
   const renderCell = useCallback(
     (item: T) => (
       <div key={item.id} className={cardClassName}>
         {/* header */}
-        <div className="px-4 text-left gap-1">
+        <div className="gap-1 px-4 text-left">
           <Chip
             size="sm"
             radius="sm"
             variant="flat"
-            className="w-fit p-3 mt-4 mb-2 tracking-wide"
+            className="p-3 mt-4 mb-2 tracking-wide w-fit"
             color={statusConfig?.colorMap?.[(item as any).status] || "default"}
           >
             <span className="font-semibold">
@@ -113,10 +117,16 @@ export default function CardComponent<T extends { id: number | string }>({
         {actions && actions.length > 0 && (
           <div>
             <Divider />
-            <div className="flex justify-between items-center gap-2 py-1 pl-4 pr-1">
-              <div className="text-gray-500 text-sm">More actions.</div>
+            <div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
+              <div className="text-sm text-gray-500">More actions.</div>
 
-              <Popover placement="bottom-end">
+              <Popover
+                placement="bottom-end"
+                isOpen={openPopoverId === item.id}
+                onOpenChange={(isOpen) =>
+                  setOpenPopoverId(isOpen ? item.id : null)
+                }
+              >
                 <PopoverTrigger>
                   <Button isIconOnly size="sm" variant="light">
                     <div className="text-default-300">
@@ -125,8 +135,8 @@ export default function CardComponent<T extends { id: number | string }>({
                   </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="rounded-lg shadow-lg mt-1 min-w-40 p-1">
-                  <div className="flex flex-col text-sm w-full">
+                <PopoverContent className="p-1 mt-1 rounded-lg shadow-lg min-w-40">
+                  <div className="flex flex-col w-full text-sm">
                     {actions.map((action) => (
                       <Button
                         key={action.key}
@@ -134,10 +144,13 @@ export default function CardComponent<T extends { id: number | string }>({
                         size="md"
                         radius="sm"
                         startContent={action.icon}
-                        className={`w-full justify-start text-left p-2 ${action.className || ""}`}
-                        onPress={() =>
-                          action.onClick && action.onClick({ item })
-                        }
+                        className={`w-full justify-start text-left p-2 ${
+                          action.className || ""
+                        }`}
+                        onPress={() => {
+                          action.onClick && action.onClick({ item });
+                          setOpenPopoverId(null);
+                        }}
                       >
                         {action.label}
                       </Button>
@@ -150,11 +163,18 @@ export default function CardComponent<T extends { id: number | string }>({
         )}
       </div>
     ),
-    [statusConfig, headerFields, bodyFields, actions, cardClassName]
+    [
+      statusConfig,
+      headerFields,
+      bodyFields,
+      actions,
+      cardClassName,
+      openPopoverId,
+    ]
   );
 
   return (
-    <div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full h-full">
+    <div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => renderCell(item))}
     </div>
   );

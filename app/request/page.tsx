@@ -36,6 +36,7 @@ import { fontMono } from "@/config/fonts";
 
 interface filterInterface {
   status?: string;
+  operation_area_id?: number;
   start_month?: string;
   start_year?: string;
   end_month?: string;
@@ -45,6 +46,9 @@ interface filterInterface {
 export default function RequestPage() {
   // Fetch data ------------------------------------------------------------------
   const { userContext } = useAuth();
+  const { setIsLoading } = useLoading();
+  
+  const router = useRouter();
   const now = new Date();
   const currentYear = String(now.getFullYear());
   const currentMonth = monthList[now.getMonth()].value;
@@ -88,7 +92,12 @@ export default function RequestPage() {
       }
     };
 
-    fetchReqOrderData({ token: userContext.token, params: filterValues });
+    const params = {
+      ...filterValues,
+      operation_area_id: userContext.operationAreaId
+    }
+
+    fetchReqOrderData({ token: userContext.token, params: params });
   }, [userContext, filterValues]);
 
   // useState for modal and drawer visibility ------------------------------
@@ -104,8 +113,6 @@ export default function RequestPage() {
     onCloseFilter();
   };
 
-  const router = useRouter();
-  const { setIsLoading } = useLoading();
   const handleNewPage = ({
     params,
   }: {

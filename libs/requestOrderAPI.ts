@@ -48,7 +48,7 @@ export async function getRequestOrders({
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
-        throw new Error("There is no request orders.");
+        throw new Error("ไม่มีรายการในขณะนี้");
       }
       
       throw new Error(

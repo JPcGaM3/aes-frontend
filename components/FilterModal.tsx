@@ -28,7 +28,7 @@ export default function FilterModal({
   initialValues = {},
 }: FilterModalProps) {
   return (
-    <div className="fixed left-0 right-0 top-16 flex justify-center items-center z-50 w-full p-3">
+    <div className="fixed left-0 right-0 top-16 flex justify-center items-center w-full p-3">
       <div className="flex justify-center items-center w-full">
         <Modal
           isOpen={isOpen}

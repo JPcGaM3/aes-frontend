@@ -3,14 +3,15 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { clsx } from "clsx";
 
 import { Button, useDisclosure } from "@heroui/react";
 
+import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
 import FieldValueDisplayer, {
   FieldSection,
 } from "@/components/FieldValueDisplayer";
-
 import AlertComponent, {
   AlertComponentProps,
 } from "@/components/AlertComponent";
@@ -20,6 +21,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/interfaces";
 
 import { getProfile } from "@/libs/userAPI";
+import { fontMono } from "@/config/fonts";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -27,6 +29,7 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const { userContext, logout } = useAuth();
 
+  const [mounted, setMounted] = useState(false);
   const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
     null
   );
@@ -59,6 +62,8 @@ export default function ProfilePage() {
 
       fetchProfile({ token: userContext!.token ?? "" });
     }
+
+    setMounted(true);
   }, [userContext]);
 
   const handleLogout = () => {
@@ -116,9 +121,11 @@ export default function ProfilePage() {
     },
   ];
 
+  const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
+
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-full flex flex-col justify-center items-center gap-6">
+    <div className="flex justify-center items-center pt-3">
+      <div className="w-full flex flex-col justify-center items-center gap-8">
         {isOpen && (
           <AlertModal
             isOpen={isOpen}
@@ -141,6 +148,24 @@ export default function ProfilePage() {
           />
         )}
 
+        <div className="flex flex-col gap-1 justify-center items-center">
+          <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-700">
+            {mounted
+              ? (profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-")
+              : "-"}
+          </div>
+
+          <Header
+            title={firstname}
+            subtitle={`employee_id: ${profile?.profile.id ? `@${profile?.profile.id}` : "-"}`}
+            subtitleClassName={clsx(
+              "mt-1 text-sm text-gray-600 font-mono",
+              fontMono.variable
+            )}
+            hasBorder={false}
+          />
+        </div>
+
         <FieldValueDisplayer sections={profileSections} />
 
         <Button
@@ -148,7 +173,7 @@ export default function ProfilePage() {
           radius="sm"
           color="danger"
           variant="flat"
-          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mt-4 font-semibold"
+          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl font-semibold"
           onPress={() => handleLogout()}
         >
           ออกจากระบบ

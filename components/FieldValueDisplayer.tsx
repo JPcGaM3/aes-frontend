@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Divider } from "@heroui/react";
+import clsx from "clsx";
+import { fontMono } from "@/config/fonts";
 
 export interface FieldValue {
   label: string;
@@ -35,12 +37,12 @@ export default function FieldValueDisplayer({
                 {section.title}
               </span>
 
-              <Divider className="flex-1 bg-primary h-[1.5px] w-full" />
+              <Divider className="flex-1 bg-primary w-full" />
             </div>
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-1 gap-y-2">
             {section.fields.map((field, i) => (
               <div
                 key={i}
@@ -51,7 +53,9 @@ export default function FieldValueDisplayer({
                 >
                   {field.label}
                 </span>
-                <span className="text-gray-800 break-all text-sm">{field.value}</span>
+                <span className="text-gray-800 break-all text-sm">
+                  : {field.value}
+                </span>
               </div>
             ))}
           </div>

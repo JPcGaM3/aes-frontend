@@ -67,13 +67,10 @@ export default function Navbar() {
   // TODO: core fetch function
   useEffect(() => {
     if (userContext.token) {
-      console.log("User context:", userContext);
-
       const fetchOperationAreas = async ({ token }: { token: string }) => {
         try {
           const response = await getOperationAreasUser({ token });
           setOperationAreas(response);
-          console.log("Fetched operation areas:", response);
         } catch (error: any) {
           console.error("Failed to fetch operation areas:", error);
         } finally {
@@ -136,7 +133,7 @@ export default function Navbar() {
       shouldHideOnScroll={false}
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="shadow-md p-0 h-18 z-[100] flex items-center"
+      className="shadow-md p-0 h-18 z-50 flex items-center"
       classNames={{
         wrapper: "px-3 py-2",
       }}

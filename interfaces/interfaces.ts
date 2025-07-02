@@ -311,3 +311,8 @@ export type {
   UserResult,
   UserProfileResponse,
 };
+
+export interface TableHeader {
+  label: string;
+  keyword: string;
+}

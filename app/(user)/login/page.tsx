@@ -53,11 +53,6 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
 
-      const selectedArea = operationAreas.find(
-        (area) => String(area.id) === String(values.operation_area_id)
-      );
-      const ae_id = selectedArea?.ae_id || null;
-
       await login({
         params: {
           username: values.username,
@@ -68,13 +63,14 @@ export default function LoginPage() {
 
       router.push("/home");
     } catch (err: any) {
-      setIsLoading(false);
       setAlert({
         title: "Login Failed",
         description: err.message || "Unknown error occurred",
         color: "danger",
         isVisible: true,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

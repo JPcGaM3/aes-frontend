@@ -1,10 +1,11 @@
-import { ColorType, IconSvgProps } from "@/types";
+import { ColorType } from "@/types";
 import {
   REQUESTORDERSTATUS,
   TASKORDERSTATUS,
   USERROLE,
   USERSTATUS,
 } from "@/utils/enum";
+import { ClassValue } from "clsx";
 
 interface User {
   id: number;
@@ -168,6 +169,8 @@ interface FieldConfig {
   className?: string;
   labelTranslator?: Record<string, string>;
   valueTranslator?: Record<string, string>;
+  valueFunction?: (item: any) => string;
+  valueClassName?: ClassValue;
 }
 
 interface ActionConfig {

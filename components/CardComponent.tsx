@@ -17,6 +17,7 @@ import {
 import { CardComponentProps } from "@/interfaces/interfaces";
 import { VerticalDotsIcon } from "@/utils/icons";
 import { translateEnumValue } from "@/utils/functions";
+import { clsx } from "clsx";
 
 function getNestedValue(obj: any, path: string) {
   return path
@@ -81,11 +82,16 @@ export default function CardComponent<T extends { id: number | string }>({
               ? field.label
               : translateEnumValue(field.key, field.labelTranslator || {});
 
-            const nested = getNestedValue(item, field.key);
-            const value =
-              nested == null
-                ? "N/A"
-                : translateEnumValue(nested, field.valueTranslator || {});
+            let value;
+            if (field.valueFunction) {
+              value = field.valueFunction(item);
+            } else {
+              const nested = getNestedValue(item, field.key);
+              value =
+                nested == null
+                  ? "N/A"
+                  : translateEnumValue(nested, field.valueTranslator || {});
+            }
 
             return (
               <div
@@ -95,7 +101,9 @@ export default function CardComponent<T extends { id: number | string }>({
                 }`}
               >
                 <div className="w-2/5">{label}</div>
-                <div className="w-3/5">{value}</div>
+                <div className={clsx(`${field.valueClassName} w-3/5`)}>
+                  {value}
+                </div>
               </div>
             );
           })}
@@ -127,7 +135,9 @@ export default function CardComponent<T extends { id: number | string }>({
                         radius="sm"
                         startContent={action.icon}
                         className={`w-full justify-start text-left p-2 ${action.className || ""}`}
-                        onPress={() => action.onClick && action.onClick(item)}
+                        onPress={() =>
+                          action.onClick && action.onClick({ item })
+                        }
                       >
                         {action.label}
                       </Button>
@@ -148,4 +158,4 @@ export default function CardComponent<T extends { id: number | string }>({
       {items.map((item) => renderCell(item))}
     </div>
   );
-};
+}

@@ -167,6 +167,10 @@ const yearList = [
   })),
 ];
 
+const yearMap = yearList.reduce(
+  (acc, { value, label }) => ({ ...acc, [value]: label }),
+  {} as Record<string, string>
+);
 
 export {
   UserRoleTranslation,
@@ -179,7 +183,8 @@ export {
   RequestOrderStatusColorMap,
   TaskOrderStatusColorMap,
   month,
-  years,
   monthList,
-  yearList
+  years,
+  yearList,
+  yearMap
 };

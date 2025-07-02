@@ -16,8 +16,10 @@ import {
   RequestOrderStatusColorMap,
   RequestOrderStatusTranslation,
   RequestOrderTranslation,
+  month,
   monthList,
   yearList,
+  yearMap,
 } from "@/utils/constants";
 import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
 
@@ -29,6 +31,8 @@ import CardComponent from "@/components/CardComponent";
 
 import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
+import clsx from "clsx";
+import { fontMono } from "@/config/fonts";
 
 interface filterInterface {
   status?: string;
@@ -51,7 +55,7 @@ export default function RequestPage() {
     null
   );
 
-  // TODO: core fetch function 
+  // TODO: core fetch function
   useEffect(() => {
     const fetchDropdownData = async () => {
       setFilterValues({
@@ -63,7 +67,7 @@ export default function RequestPage() {
     fetchDropdownData();
   }, []);
 
-  // TODO: core fetch function 
+  // TODO: core fetch function
   useEffect(() => {
     const fetchReqOrderData = async ({
       token,
@@ -102,16 +106,29 @@ export default function RequestPage() {
 
   const router = useRouter();
   const { setIsLoading } = useLoading();
-  const handleNewPage = (action: string) => {
+  const handleNewPage = ({
+    params,
+  }: {
+    params: {
+      action: string;
+      id?: number;
+    };
+  }) => {
     setIsLoading(true);
 
-    switch (action) {
+    switch (params.action) {
+      case "view":
+      case "edit":
+      case "reject":
+        router.push(`/request/${params.id}?action=${params.action}`);
+        break;
+
       case "add":
         router.push("/request/add");
         break;
 
       default:
-        console.log(`Action triggered: ${action}`);
+        console.log(`Action triggered: ${params.action}`);
         setIsLoading(false);
         break;
     }
@@ -172,20 +189,23 @@ export default function RequestPage() {
       key: "view",
       label: "ดูรายละเอียด",
       icon: <InfoIcon />,
-      onClick: () => handleNewPage("view"),
+      onClick: ({ item }: { item: RequestOrder }) =>
+        handleNewPage({ params: { id: item.id, action: "view" } }),
     },
     {
       key: "edit",
       label: "แก้ไข",
       icon: <EditIcon />,
-      onClick: () => handleNewPage("edit"),
+      onClick: ({ item }: { item: RequestOrder }) =>
+        handleNewPage({ params: { id: item.id, action: "edit" } }),
     },
     {
       key: "reject",
       label: "ปฏิเสธ",
       icon: <RejectIcon />,
       className: "text-danger-500",
-      onClick: () => handleNewPage("reject"),
+      onClick: ({ item }: { item: RequestOrder }) =>
+        handleNewPage({ params: { id: item.id, action: "reject" } }),
     },
   ];
 
@@ -194,6 +214,10 @@ export default function RequestPage() {
       key: "quota_number",
       className: "text-black text-lg font-bold",
       labelTranslator: RequestOrderTranslation,
+      valueClassName: clsx(
+        "mt-1 text-sm text-gray-600 font-mono",
+        fontMono.variable
+      ),
     },
     {
       key: "farmer_name",
@@ -212,6 +236,17 @@ export default function RequestPage() {
       key: "work_order_number",
       className: "text-gray-600 text-md font-semibold pb-4",
       labelTranslator: RequestOrderTranslation,
+      valueFunction: (item: any) => {
+        const aeArea = item.ae_area?.name || "";
+        const opArea = item.operation_area?.operation_area || "";
+        const year = item.ap_year ? Number(item.ap_year) + 543 : "";
+        const run = item.run_number || "";
+        return `${aeArea}${opArea}${year + "/"}${run}`;
+      },
+      valueClassName: clsx(
+        "mt-1 text-sm text-gray-600 font-mono",
+        fontMono.variable
+      ),
     },
     {
       key: "land_number",
@@ -227,12 +262,13 @@ export default function RequestPage() {
       key: "ap_month",
       className: "text-gray-500 text-sm",
       labelTranslator: RequestOrderTranslation,
-      valueTranslator: RequestOrderTranslation,
+      valueTranslator: month,
     },
     {
       key: "ap_year",
       className: "text-gray-500 text-sm",
       labelTranslator: RequestOrderTranslation,
+      valueTranslator: yearMap,
     },
   ];
 
@@ -256,14 +292,14 @@ export default function RequestPage() {
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการใบสั่งงาน" className="mb-6 w-full text-left">
+      <Header title="รายการใบสั่งงาน" className="w-full mb-6 text-left">
         <Button
           radius="sm"
           variant="flat"
           color="primary"
           endContent={<FilterIcon />}
           onPress={onOpenFilter}
-          className="hidden sm:inline-flex font-semibold"
+          className="hidden font-semibold sm:inline-flex"
         >
           Filter
         </Button>
@@ -285,8 +321,8 @@ export default function RequestPage() {
           variant="solid"
           color="primary"
           endContent={<PlusIcon />}
-          onPress={() => handleNewPage("add")}
-          className="hidden sm:inline-flex font-semibold"
+          onPress={() => handleNewPage({ params: { action: "add" } })}
+          className="hidden font-semibold sm:inline-flex"
         >
           Add
         </Button>
@@ -297,19 +333,19 @@ export default function RequestPage() {
           variant="solid"
           color="primary"
           endContent={<PlusIcon />}
-          onPress={() => handleNewPage("add")}
+          onPress={() => handleNewPage({ params: { action: "add" } })}
           className="sm:hidden"
         />
       </Header>
 
       {/* Body ------------------------------------------------------------- */}
       {error ? (
-        <div className="text-gray-500 font-medium text-center my-8">
+        <div className="my-8 font-medium text-center text-gray-500">
           {error}
         </div>
       ) : (
         <div>
-          <div className="mb-4 text-gray-700 font-medium text-right">
+          <div className="mb-4 font-medium text-right text-gray-700">
             {`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
           </div>
 

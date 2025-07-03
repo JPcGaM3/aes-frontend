@@ -1,3 +1,19 @@
+import type {
+  FieldSection,
+  FormField,
+  InputConfig,
+  UploadedFile,
+  StatusConfig,
+  FieldConfig,
+  ActionConfig,
+} from "@/interfaces/interfaces";
+
+import type { PressEvent } from "@react-types/shared";
+import type { ColorType } from "../types";
+import type { ClassValue } from "clsx";
+import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
+import type { SwitchProps } from "@heroui/switch";
+
 export interface AlertComponentProps {
   title: string;
   description: string;
@@ -31,13 +47,11 @@ export interface DrawerComponentProps {
   children: React.ReactNode;
 }
 
-import type { FieldSection } from "@/interfaces/interfaces";
 export interface FieldValueDisplayerProps {
   className?: string;
   sections: FieldSection[];
 }
 
-import type { FormField } from "@/interfaces/interfaces";
 export interface FilterModalProps {
   isOpen: boolean;
   title: string;
@@ -50,8 +64,6 @@ export interface FilterModalProps {
   initialValues?: Record<string, any>;
 }
 
-import type { PressEvent } from "@react-types/shared";
-import type { ColorType } from "../types";
 export interface FormButtonsProps {
   onSubmit?: (e: PressEvent) => void;
   onCancel?: (e: PressEvent) => void;
@@ -71,7 +83,6 @@ export interface FormFieldsProps {
   onValueChange?: (name: string, value: any) => void;
 }
 
-import { InputConfig } from "@/interfaces/interfaces";
 export interface InputRendererProps {
   inputConfig: InputConfig;
   onValueChange?: (name: string, value: any) => void;
@@ -96,24 +107,34 @@ export interface FormComponentProps {
   onChange?: (values: any) => void;
 }
 
-import type { ClassValue } from "clsx";
 export interface HeaderProps {
+  // Text Props
   title: string;
   subtitle?: string;
+
+  // Boolean Props
   hasBorder?: boolean;
+
+  // Style Props
+  orientation?: "horizontal" | "vertical";
+
+  // Class Props
   className?: ClassValue;
   titleClassName?: ClassValue;
   subtitleClassName?: ClassValue;
+  headerContainerClassName?: ClassValue;
+  childrenContainerClassName?: ClassValue;
+  borderClassName?: string;
+
+  // Children Props
   children?: React.ReactNode;
 }
 
-import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
 export interface AccordionComponentProps {
   requestOrder: RequestOrder;
   taskOrders?: TaskOrder[];
 }
 
-import type { UploadedFile } from "@/interfaces/interfaces";
 export interface UploadComponentProps {
   maxFiles?: number;
   isUploading?: boolean;
@@ -124,11 +145,6 @@ export interface UploadComponentProps {
   onCancel?: () => void;
 }
 
-import type {
-  StatusConfig,
-  FieldConfig,
-  ActionConfig,
-} from "@/interfaces/interfaces";
 export interface CardComponentProps<T> {
   items: T[];
   statusConfig?: StatusConfig;
@@ -139,7 +155,6 @@ export interface CardComponentProps<T> {
   cardClassName?: string;
 }
 
-import type { SwitchProps } from "@heroui/switch";
 export interface ThemeSwitchProps {
   className?: string;
   classNames?: SwitchProps["classNames"];

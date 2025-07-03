@@ -1,30 +1,63 @@
 import React from "react";
-import { ClassValue, clsx } from "clsx";
-import type { HeaderProps } from "@/interfaces/props";
+import { clsx } from "clsx";
 
-const Header: React.FC<HeaderProps> = ({
-  title,
-  subtitle,
-  hasBorder = true,
-  className = "flex flex-col w-full text-center",
-  titleClassName = "text-2xl font-semibold text-gray-900",
-  subtitleClassName = "mt-1 text-base text-gray-600",
-  children,
-}) => (
-  <header className={clsx(className)}>
-    <div className="flex flex-row justify-between w-full pt-3 align-middle">
-      <div className="flex flex-col justify-center w-full">
-        <h2 className={clsx(titleClassName)}>{title}</h2>
-        {subtitle && <p className={clsx(subtitleClassName)}>{subtitle}</p>}
+import { HeaderProps } from "@/interfaces/props";
+import { Divider } from "@heroui/react";
+
+export default function Header(props: HeaderProps) {
+  const {
+    title,
+    subtitle,
+    hasBorder = true,
+    orientation = "vertical",
+    className = "w-full",
+    titleClassName = "text-3xl font-bold text-gray-900",
+    subtitleClassName = "mt-1 text-md text-gray-600",
+    headerContainerClassName,
+    childrenContainerClassName,
+    borderClassName = "mt-4 border-gray-200",
+    children,
+  } = props;
+
+  const hasChildren = React.Children.count(children) > 0;
+
+  const headerContainerClasses = clsx(
+    "flex w-full",
+    {
+      "flex-row justify-between": orientation === "horizontal",
+      "flex-col justify-center": orientation === "vertical",
+    },
+    headerContainerClassName
+  );
+
+  const titleContainerClasses = clsx("flex flex-col", {
+    " w-full": orientation === "horizontal",
+    "items-center": orientation === "vertical",
+  });
+
+  const childrenContainerClasses = clsx(
+    "flex flex-row items-center gap-2",
+    {
+      "justify-start": orientation === "horizontal" && hasChildren,
+      "justify-center mt-4": orientation === "vertical" && hasChildren,
+    },
+    childrenContainerClassName
+  );
+
+  return (
+    <header className={clsx("flex flex-col", className)}>
+      <div className={headerContainerClasses}>
+        <div className={titleContainerClasses}>
+          <h2 className={clsx(titleClassName)}>{title}</h2>
+          {subtitle && <p className={clsx(subtitleClassName)}>{subtitle}</p>}
+        </div>
+
+        {hasChildren && (
+          <div className={childrenContainerClasses}>{children}</div>
+        )}
       </div>
 
-      <div className="flex flex-row items-center justify-center gap-2">
-        {children}
-      </div>
-    </div>
-
-    {hasBorder && <hr className="mt-4 border-gray-200" />}
-  </header>
-);
-
-export default Header;
+      {hasBorder && <Divider className={borderClassName} />}
+    </header>
+  );
+}

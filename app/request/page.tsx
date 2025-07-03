@@ -300,7 +300,7 @@ export default function RequestPage() {
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการใบสั่งงาน" className="w-full mb-6 text-left">
+      <Header title="รายการใบสั่งงาน" subtitle="ใบสั่งงานทั้งหมด" orientation="horizontal" className="w-full mb-6 text-left">
         <Button
           radius="sm"
           variant="flat"

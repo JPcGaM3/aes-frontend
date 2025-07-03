@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from "@heroui/react";
 
-import { CardComponentProps } from "@/interfaces/interfaces";
+import type { CardComponentProps } from "@/interfaces/props";
 import { VerticalDotsIcon } from "@/utils/icons";
 import { translateEnumValue } from "@/utils/functions";
 import { clsx } from "clsx";

@@ -1,15 +1,6 @@
 import React from "react";
 import { ClassValue, clsx } from "clsx";
-
-interface HeaderProps {
-  title: string;
-  subtitle?: string;
-  hasBorder?: boolean;
-  className?: ClassValue;
-  titleClassName?: ClassValue;
-  subtitleClassName?: ClassValue;
-  children?: React.ReactNode;
-}
+import type { HeaderProps } from "@/interfaces/props";
 
 const Header: React.FC<HeaderProps> = ({
   title,

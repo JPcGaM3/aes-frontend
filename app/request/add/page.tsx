@@ -10,42 +10,53 @@ import {
   RequestOrderTranslation,
   TaskOrderTranslation,
 } from "@/utils/constants";
-import {
-  Activity,
-  FormField,
-  TaskOrder,
-  RequestOrder,
-  UploadedFile,
-} from "@/interfaces/interfaces";
+import { Activity, OperationArea, RequestOrder, ToolType } from "@/interfaces/schema";
+import { AlertComponentProps } from "@/interfaces/props";
+import { DropdownOption, FormField, UploadedFile } from "@/interfaces/interfaces";
 
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
-import AlertComponent, {
-  AlertComponentProps,
-} from "@/components/AlertComponent";
+import AlertComponent from "@/components/AlertComponent";
 
 import { getActivities } from "@/libs/activityAPI";
-import { getOperationAreas } from "@/libs/operationAreaAPI";
+import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 import { AddIcon, MinusIcon } from "@/utils/icons";
+
+interface FormType extends RequestOrder {
+  activities: string;
+  tool_types: string;
+}
+
+interface TaskFormType {
+  activity_name: string;
+  tool_type_name: string;
+}
+
+interface OperationAreaResponse {
+  operation_area: OperationArea;
+}
 
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
   // * For key-in form
   const { userContext } = useAuth();
   const now = new Date();
-  const currentYear = String(now.getFullYear());
+  const currentYear = now.getFullYear();
   const currentMonth = monthList[now.getMonth()].value;
 
-  const [activityOptions, setActivityOptions] = useState([]);
-  const [operationAreaOptions, setOperationAreaOptions] = useState([]);
+  const [operationAreaOptions, setOperationAreaOptions] = useState<OperationAreaResponse[]>([]);
   const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
-  const [tasks, setTasks] = useState<TaskOrder[]>([]);
-  const [formValues, setFormValues] = useState<RequestOrder>(
-    {} as RequestOrder
-  );
+  const [activityOptions, setActivityOptions] = useState<DropdownOption[]>([]);
+  const [tasks, setTasks] = useState<TaskFormType[]>([]);
+  const [formValues, setFormValues] = useState<FormType>({
+    activities: "",
+    tool_types: "",
+    ap_year: currentYear,
+    ap_month: currentMonth,
+  } as FormType);
 
   // * For file upload
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -59,37 +70,47 @@ export default function AddRequestPage() {
   });
 
   // Fetch data ---------------------------------------------------------------------------------------------------
-  // TODO: core fetch function 
+  // TODO: core fetch function
   useEffect(() => {
-    const fetchDropDownOptions = async ({ token }: { token: string }) => {
-      const activity = await getActivities({ token });
-      const operation_area = await getOperationAreas({ token });
-      setOperationAreaOptions(operation_area);
+    if (userContext.token && userContext.operationAreaId) {
+      const fetchDropDownOptions = async ({
+        token,
+        operation_area_id,
+      }: {
+        token: string;
+        operation_area_id: number;
+      }) => {
+        const activity = await getActivities({ token });
+        const operation_area = await getOperationAreasUser({ token });
 
-      setActivityWithTools(activity);
-      setActivityOptions(
-        activity.map((activity: Activity) => ({
-          label: activity.name,
-          value: activity.name,
-        }))
-      );
+        setOperationAreaOptions(operation_area);
+        setActivityWithTools(activity);
+        setActivityOptions(
+          activity.map((activity: Activity) => ({
+            label: activity.name,
+            value: activity.name,
+          }))
+        );
 
-      setFormValues({
-        activities: "",
-        tool_types: "",
-        ap_year: currentYear,
-        ap_month: currentMonth,
-      } as RequestOrder);
+        setFormValues({
+          ...formValues,
+          operation_area_id: operation_area_id,
+          customer_operation_area_id: operation_area_id,
+        } as FormType);
 
-      setTasks([
-        {
-          activity_name: "",
-          tool_type_name: "",
-        },
-      ] as TaskOrder[]);
-    };
+        setTasks([
+          {
+            activity_name: "",
+            tool_type_name: "",
+          },
+        ]);
+      };
 
-    fetchDropDownOptions({ token: userContext.token });
+      fetchDropDownOptions({
+        token: userContext.token,
+        operation_area_id: userContext.operationAreaId,
+      });
+    }
   }, [userContext]);
 
   // Handler ------------------------------------------------------------------------------------------------------
@@ -166,6 +187,8 @@ export default function AddRequestPage() {
   };
 
   const handleSubmitKeyIn = async () => {
+    console.log("Tasks : ", tasks);
+
     const activities = tasks.map((t) => t.activity_name).join("+");
     const tool_types = tasks.map((t) => t.tool_type_name).join("+");
 
@@ -199,20 +222,17 @@ export default function AddRequestPage() {
     } finally {
       setTimeout(() => {
         setIsAdding(false);
-        setFormValues({} as RequestOrder);
+        setFormValues({} as FormType);
       }, 500);
     }
   };
 
   const handleCancelKeyIn = () => {
-    setFormValues({} as RequestOrder);
+    setFormValues({} as FormType);
   };
 
   const handleAddTask = () => {
-    setTasks([
-      ...tasks,
-      { activity_name: "", tool_type_name: "" },
-    ] as TaskOrder[]);
+    setTasks([...tasks, { activity_name: "", tool_type_name: "" }]);
   };
 
   const handleRemoveTask = () => {
@@ -222,15 +242,18 @@ export default function AddRequestPage() {
   };
 
   const handleTaskChange = (index: number, changed: any) => {
-    const updatedTasks: TaskOrder[] = tasks.map((task, i) => {
+    console.log("Task changed: ", index, changed);
+
+    const updatedTasks: TaskFormType[] = tasks.map((task, i) => {
       if (i === index) {
-        if (changed.activity_name !== undefined) {
+        if (
+          changed.activity_name !== undefined &&
+          changed.activity_name !== task.activity_name
+        ) {
           return { ...task, ...changed, tool_type_name: "" };
         }
-
         return { ...task, ...changed };
       }
-
       return task;
     });
 
@@ -247,14 +270,14 @@ export default function AddRequestPage() {
     [
       {
         type: "dropdown",
-        name: "operation_area_id",
+        name: "customer_operation_area_id",
         isRequired: true,
         translator: RequestOrderTranslation,
         className: "w-1/3",
         options: [
-          ...operationAreaOptions.map((option: any) => ({
-            label: option.operation_area,
-            value: option.id,
+          ...operationAreaOptions.map((option: OperationAreaResponse) => ({
+            label: option.operation_area.operation_area ?? "",
+            value: option.operation_area.id,
           })),
         ],
       },
@@ -327,31 +350,32 @@ export default function AddRequestPage() {
   ];
 
   return (
-    <div className="flex flex-col w-full justify-center items-center">
+    <div className="flex flex-col items-center justify-center w-full">
       <Tabs
         aria-label="TabOptions"
         radius="sm"
-        className="p-0 flex flex-col w-full justify-center items-center font-semibold"
+        className="flex flex-col items-center justify-center w-full p-0 font-semibold"
       >
         {/* Key-in tab ------------------------------------------------------------------------------------------- */}
         <Tab
           key="key-in"
           title="Key-in"
-          className="flex flex-col w-full justify-center items-center"
+          className="flex flex-col items-center justify-center w-full"
         >
           <FormComponent
             fields={requestOrderFields}
             title="สร้างใบสั่งงาน"
             subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+            initialValues={formValues}
             isSubmitting={isAdding}
             onCancel={handleCancelKeyIn}
             onSubmit={handleSubmitKeyIn}
             onChange={handleRequestOrderChange}
           >
-            <div className="flex flex-col gap-4 w-full justify-center items-center">
+            <div className="flex flex-col items-center justify-center w-full gap-4">
               {/* Task Header */}
-              <div className="flex items-center gap-5 w-full">
-                <span className="font-semibold text-xl text-gray-700">
+              <div className="flex items-center w-full gap-5">
+                <span className="text-xl font-semibold text-gray-700">
                   กิจกรรม
                 </span>
 
@@ -381,13 +405,13 @@ export default function AddRequestPage() {
 
               {/* Task Fields */}
               {tasks.map((task, idx) => {
-                const selectedActivity = activityWithTools.find(
+                const selectedActivity: Activity | undefined = activityWithTools.find(
                   (activity) => String(activity.name) === task.activity_name
                 );
 
                 const toolTypeOptions =
                   selectedActivity && selectedActivity.tool_types
-                    ? selectedActivity.tool_types.map((t: any) => ({
+                    ? selectedActivity.tool_types.map((t: ToolType) => ({
                         label: t.tool_type_name,
                         value: t.tool_type_name,
                       }))
@@ -430,7 +454,7 @@ export default function AddRequestPage() {
         <Tab
           key="upload"
           title="Upload"
-          className="flex flex-col w-full justify-center items-center"
+          className="flex flex-col items-center justify-center w-full"
         >
           <UploadComponent
             maxFiles={5}

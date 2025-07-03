@@ -9,10 +9,13 @@ import {
   useDisclosure,
 } from "@heroui/react";
 
-import DrawerComponent from "@/components/DrawerComponent";
 import { VerticalDotsIcon } from "@/utils/icons";
 import { mock_users } from "@/utils/mock";
-import { FormField, User } from "@/interfaces/interfaces";
+
+import { FormField } from "@/interfaces/interfaces";
+import { User } from "@/interfaces/schema";
+
+import DrawerComponent from "@/components/DrawerComponent";
 import FormComponent from "@/components/FormComponent";
 import Header from "@/components/Header";
 
@@ -58,17 +61,6 @@ export default function DrawerPage() {
 
   const formFields: FormField[] = [
     {
-      type: "dropdown",
-      name: "quota_number",
-      label: "Quota Number",
-      placeholder: mockData.quota_number,
-      isRequired: true,
-      options: [
-        { label: "Option 1", value: "option1" },
-        { label: "Option 2", value: "option2" },
-      ],
-    },
-    {
       type: "text",
       name: "fullname",
       label: "Full Name",
@@ -98,37 +90,9 @@ export default function DrawerPage() {
     },
     {
       type: "text",
-      name: "zone",
-      label: "Zone",
-      placeholder: mockData.zone,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "ae",
-      label: "AE",
-      placeholder: mockData.ae,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "role",
-      label: "Role",
-      placeholder: mockData.role,
-      isRequired: true,
-    },
-    {
-      type: "text",
       name: "status",
       label: "Status",
       placeholder: mockData.status,
-      isRequired: true,
-    },
-    {
-      type: "number",
-      name: "leader_id",
-      label: "Leader ID",
-      placeholder: mockData.leader_id,
       isRequired: true,
     },
   ];

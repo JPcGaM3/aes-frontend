@@ -1,6 +1,7 @@
 import { Accordion, AccordionItem, Code } from "@heroui/react";
+import type { AccordionComponentProps } from "@/interfaces/props";
 
-import { RequestOrder, TaskOrder } from "@/interfaces/interfaces";
+import { RequestOrder, TaskOrder } from "@/interfaces/schema";
 import {
   RequestOrderStatusColorMap,
   TaskOrderStatusColorMap,
@@ -10,10 +11,7 @@ import { REQUESTORDERSTATUS, TASKORDERSTATUS } from "@/utils/enum";
 export const AccordionComponent = ({
   requestOrder,
   taskOrders,
-}: {
-  requestOrder: RequestOrder;
-  taskOrders?: TaskOrder[];
-}) => {
+}: AccordionComponentProps) => {
   const items = [
     {
       id: `request-${requestOrder.id}`,
@@ -41,7 +39,7 @@ export const AccordionComponent = ({
                   >
                     <li
                       key={key}
-                      className="justify-start grid grid-cols-2 w-full"
+                      className="grid justify-start w-full grid-cols-2"
                     >
                       <span>{key}</span>
                       <span>{String(value)}</span>
@@ -52,7 +50,7 @@ export const AccordionComponent = ({
                 return (
                   <li
                     key={key}
-                    className="justify-start grid grid-cols-2 w-full"
+                    className="grid justify-start w-full grid-cols-2"
                   >
                     <span>{key}</span>
                     <span>{String(value)}</span>
@@ -89,7 +87,7 @@ export const AccordionComponent = ({
                   >
                     <li
                       key={key}
-                      className="justify-start grid grid-cols-2 w-full"
+                      className="grid justify-start w-full grid-cols-2"
                     >
                       <span>{key}</span>
                       <span>{String(value)}</span>
@@ -100,7 +98,7 @@ export const AccordionComponent = ({
                 return (
                   <li
                     key={key}
-                    className="justify-start grid grid-cols-2 w-full"
+                    className="grid justify-start w-full grid-cols-2"
                   >
                     <span>{key}</span>
                     <span>{String(value)}</span>

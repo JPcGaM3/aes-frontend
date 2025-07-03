@@ -21,7 +21,8 @@ import {
   yearList,
   yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
+import { FieldConfig, FormField } from "@/interfaces/interfaces";
+import { RequestOrder } from "@/interfaces/schema";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 

@@ -8,16 +8,7 @@ import {
   ModalFooter,
   Button,
 } from "@heroui/react";
-
-interface AlertModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm?: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-}
+import type { AlertModalProps } from "@/interfaces/props";
 
 export default function AlertModal({
   isOpen,

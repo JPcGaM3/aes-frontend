@@ -2,19 +2,7 @@
 
 import { Modal, ModalContent, Button } from "@heroui/react";
 import FormComponent from "./FormComponent";
-import { FormField } from "@/interfaces/interfaces";
-
-interface FilterModalProps {
-  isOpen: boolean;
-  title: string;
-  subtitle?: string;
-  fields: FormField[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  onClose?: () => void;
-  onSubmit: (e: React.FormEvent) => void;
-  initialValues?: Record<string, any>;
-}
+import type { FilterModalProps } from "@/interfaces/props";
 
 export default function FilterModal({
   isOpen,

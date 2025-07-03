@@ -1,4 +1,5 @@
 import { CloseDrawerIcon } from "@/utils/icons";
+import type { DrawerComponentProps } from "@/interfaces/props";
 import {
   Drawer,
   DrawerContent,
@@ -6,14 +7,6 @@ import {
   Button,
   Tooltip,
 } from "@heroui/react";
-
-interface DrawerComponentProps {
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
-  placement?: "left" | "right" | "top" | "bottom";
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}
 
 export default function DrawerComponent({
   size = "5xl",

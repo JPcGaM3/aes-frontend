@@ -3,10 +3,8 @@ import axios from "axios";
 const numberKeys = ["ae_id", "customer_type_id"];
 
 export async function getOperationAreas({
-  token,
   paramData,
 }: {
-  token?: string;
   paramData?: Record<string, any>;
 }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
@@ -27,7 +25,6 @@ export async function getOperationAreas({
     const response = await axios.get(`${apiUrl}/api/v1/operation-areas`, {
       params,
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });

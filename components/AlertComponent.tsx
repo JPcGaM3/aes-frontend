@@ -1,20 +1,6 @@
 import { Alert } from "@heroui/react";
 import React, { useEffect, useState } from "react";
-
-export interface AlertComponentProps {
-  title: string;
-  description: string;
-  isVisible?: boolean;
-  handleClose?: () => void;
-  variant?: "solid" | "bordered" | "flat" | "faded";
-  color?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "danger";
-}
+import type { AlertComponentProps } from "@/interfaces/props";
 
 export default function AlertComponent({
   title,

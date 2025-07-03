@@ -45,6 +45,7 @@ const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
   pending_confirm: "warning",
   completed: "success",
   rejected: "danger",
+  cancelled: "danger",
 };
 
 const TaskOrderStatusTranslation = {
@@ -61,6 +62,7 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
   in_progress: "primary",
   on_hold: "warning",
   completed: "success",
+  cancelled: "danger",
 };
 
 const RequestOrderTranslation: Record<string, string> = {
@@ -69,6 +71,7 @@ const RequestOrderTranslation: Record<string, string> = {
   "customer_type.name": "แหล่งที่มา",
   "customer_type_id": "หัวตารางแจ้งงาน",
   "operation_area_id": "พื้นที่ปฏิบัติงาน",
+  "customer_operation_area_id": "พื้นที่ปฏิบัติงาน",
   "quota_number": "รหัสโควต้า",
   "company_farm_id": "รหัสฟาร์ม",
   "zone": "โซน",
@@ -131,9 +134,11 @@ const TaskOrderTranslation: Record<string, string> = {
 };
 
 const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
-  working: "danger",
+  working: "warning",
   inactive: "primary",
   on_leave: "warning",
+  cancelled: "default",
+  rejected: "danger",
 };
 
 const month: Record<string, string> = {

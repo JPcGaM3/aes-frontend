@@ -8,6 +8,7 @@ const numberKeys = [
   "target_area",
   "land_number",
   "ap_year",
+  "customer_operation_area_id"
 ];
 
 export async function getRequestOrders({
@@ -51,6 +52,40 @@ export async function getRequestOrders({
         throw new Error("ไม่มีรายการในขณะนี้");
       }
       
+      throw new Error(
+        `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
+    }
+
+    throw error;
+  }
+}
+
+export async function getRequestOrderWithTask({
+  token,
+  requestId,
+}: {
+  token: string;
+  requestId: number;
+}) {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/v1/request-orders/${requestId}/get-task`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error("ไม่มีรายการในขณะนี้");
+      }
+
       throw new Error(
         `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
@@ -121,6 +156,8 @@ export async function KeyInRequestOrder({
       body[key] = value;
     }
   });
+
+  console.log("KeyInRequestOrder body:", body);
 
   try {
     const response = await axios.post(

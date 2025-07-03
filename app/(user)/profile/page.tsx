@@ -9,16 +9,13 @@ import { Button, useDisclosure } from "@heroui/react";
 
 import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
-import FieldValueDisplayer, {
-  FieldSection,
-} from "@/components/FieldValueDisplayer";
-import AlertComponent, {
-  AlertComponentProps,
-} from "@/components/AlertComponent";
+import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import AlertComponent from "@/components/AlertComponent";
 
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { UserProfileResponse } from "@/interfaces/interfaces";
+import { UserProfileResponse } from "@/interfaces/schema";
+import { AlertComponentProps } from "@/interfaces/props";
 
 import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
@@ -76,7 +73,7 @@ export default function ProfilePage() {
     router.push("/login");
   };
 
-  const profileSections: FieldSection[] = [
+  const profileSections = [
     {
       title: "ข้อมูลส่วนตัว",
       fields: [

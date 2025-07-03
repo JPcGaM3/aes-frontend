@@ -4,23 +4,7 @@ import React from "react";
 import { Divider } from "@heroui/react";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
-
-export interface FieldValue {
-  label: string;
-  value: React.ReactNode;
-  highlight?: boolean;
-  className?: string;
-}
-
-export interface FieldSection {
-  title?: string;
-  fields: FieldValue[];
-}
-
-export interface FieldValueDisplayerProps {
-  className?: string;
-  sections: FieldSection[];
-}
+import type { FieldValue, FieldSection, FieldValueDisplayerProps } from "@/interfaces/props";
 
 export default function FieldValueDisplayer({
   className = "flex flex-col gap-3 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",

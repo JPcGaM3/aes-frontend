@@ -9,18 +9,7 @@ import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
 import { translateEnumValue } from "@/utils/functions";
-
-interface FormFieldsProps {
-  fields: FormField[];
-  values?: Record<string, any>;
-  onValueChange?: (name: string, value: string) => void;
-}
-
-interface InputRendererProps {
-  inputConfig: InputConfig;
-  onValueChange?: (name: string, value: string) => void;
-  value?: any;
-}
+import { FormFieldsProps, InputRendererProps } from "@/interfaces/props";
 
 export default function FormFields({
   fields,
@@ -28,10 +17,10 @@ export default function FormFields({
   values = {},
 }: FormFieldsProps) {
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col w-full gap-4">
       {fields.map((field, index) =>
         Array.isArray(field) ? (
-          <div key={index} className="flex flex-row gap-2 w-full">
+          <div key={index} className="flex flex-row w-full gap-2">
             {field.map((subField, subIndex) => (
               <InputRenderer
                 key={`${index}-${subIndex}`}
@@ -147,9 +136,9 @@ function InputRenderer({
               onClick={toggleVisibility}
             >
               {isVisible ? (
-                <EyeSlashFilledIcon className="text-default-400 text-2xl pointer-events-none" />
+                <EyeSlashFilledIcon className="text-2xl pointer-events-none text-default-400" />
               ) : (
-                <EyeFilledIcon className="text-default-400 text-2xl pointer-events-none" />
+                <EyeFilledIcon className="text-2xl pointer-events-none text-default-400" />
               )}
             </button>
           }
@@ -195,6 +184,10 @@ function InputRenderer({
       );
 
     case "dropdown":
+      const optionType =
+        inputConfig.options && inputConfig.options.length > 0
+          ? typeof inputConfig.options[0].value
+          : "string";
       return (
         <Select
           {...commonProp}
@@ -203,23 +196,35 @@ function InputRenderer({
           onSelectionChange={
             onValueChange
               ? (keys) => {
-                  let value = Array.isArray(keys)
+                  let selected = Array.isArray(keys)
                     ? keys[0]
                     : keys instanceof Set
                       ? Array.from(keys)[0]
                       : keys;
+
+                  let value = selected;
+                  if (
+                    optionType === "number" &&
+                    selected !== undefined &&
+                    selected !== null &&
+                    selected !== ""
+                  ) {
+                    const num = Number(selected);
+                    value = isNaN(num) ? selected : num;
+                  }
+                  
                   onValueChange(inputConfig.name, value);
                 }
               : undefined
           }
           selectedKeys={
-            getControlledValue(inputConfig.type, value)
-              ? new Set([getControlledValue(inputConfig.type, value)])
+            value !== undefined && value !== null && value !== ""
+              ? new Set([String(value)])
               : new Set()
           }
         >
-          {inputConfig.options.map((option, index) => (
-            <SelectItem key={option.value}>{option.label}</SelectItem>
+          {inputConfig.options.map((option) => (
+            <SelectItem key={String(option.value)}>{option.label}</SelectItem>
           ))}
         </Select>
       );

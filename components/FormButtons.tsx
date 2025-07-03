@@ -1,21 +1,9 @@
 import type { PressEvent } from "@react-types/shared";
 import type { ColorType } from "../types";
+import type { FormButtonsProps } from "@/interfaces/props";
 
 import React from "react";
 import { Button } from "@heroui/button";
-
-interface FormButtonsProps {
-  onSubmit?: (e: PressEvent) => void;
-  onCancel?: (e: PressEvent) => void;
-  hasBorder?: boolean;
-  submitLabel?: string;
-  cancelLabel?: string;
-  submitColor?: ColorType;
-  cancelColor?: ColorType;
-  isSubmitting?: boolean;
-  isCanceling?: boolean;
-  className?: string;
-}
 
 const FormButtons: React.FC<FormButtonsProps> = ({
   onSubmit,

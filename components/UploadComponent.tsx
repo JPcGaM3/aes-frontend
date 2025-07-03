@@ -3,22 +3,14 @@ import { useRef, useState, ChangeEvent, DragEvent } from "react";
 
 import { UploadedFile } from "@/interfaces/interfaces";
 import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
+import type { UploadComponentProps } from "@/interfaces/props";
+import type { AlertComponentProps } from "@/interfaces/props";
 
 import { Button } from "@heroui/button";
 
 import Header from "./Header";
 import FormButtons from "./FormButtons";
-import AlertComponent, { AlertComponentProps } from "./AlertComponent";
-
-interface UploadComponentProps {
-  maxFiles?: number;
-  isUploading?: boolean;
-  uploadedFiles: UploadedFile[];
-  setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
-  onDownloadTemplate?: () => void;
-  onSubmit?: () => void;
-  onCancel?: () => void;
-}
+import AlertComponent from "./AlertComponent";
 
 export default function UploadComponent({
   maxFiles = 5,

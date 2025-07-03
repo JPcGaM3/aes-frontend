@@ -5,17 +5,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { FormField } from "@/interfaces/interfaces";
+import { AlertComponentProps } from "@/interfaces/props";
 
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 
 import FormComponent from "@/components/FormComponent";
-import AlertComponent, {
-  AlertComponentProps,
-} from "@/components/AlertComponent";
+import AlertComponent from "@/components/AlertComponent";
 
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { LoginParams } from "@/libs/userAPI";
+import { OperationArea } from "@/interfaces/schema";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { setIsLoading } = useLoading();
 
-  const [operationAreas, setOperationAreas] = useState<any[]>([]);
+  const [operationAreas, setOperationAreas] = useState<OperationArea[]>([]);
   const [alert, setAlert] = useState<AlertComponentProps>({
     title: "",
     description: "",
@@ -69,8 +69,6 @@ export default function LoginPage() {
         color: "danger",
         isVisible: true,
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -91,15 +89,16 @@ export default function LoginPage() {
       type: "dropdown",
       name: "operation_area_id",
       label: "พื้นที่ปฏิบัติงาน",
-      options: operationAreas.map((area) => ({
-        value: String(area.id),
+      isRequired: true,
+      options: operationAreas.map((area: OperationArea) => ({
+        value: area.id,
         label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
       })),
     },
   ];
 
   return (
-    <div className="flex justify-center w-full items-center">
+    <div className="flex items-center justify-center w-full">
       <FormComponent
         fields={fields}
         title="ยินดีต้อนรับ"

@@ -13,10 +13,9 @@ import {
 
 import {
   FieldConfig,
-  FilterConfig,
   FormField,
-  User,
 } from "@/interfaces/interfaces";
+import { User } from "@/interfaces/schema";
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
@@ -145,7 +144,6 @@ export default function Card() {
       type: "dropdown",
       name: "quota_number",
       label: "Quota Number",
-      placeholder: selectedUser?.quota_number,
       options: [
         { label: "Option 1", value: "option1" },
         { label: "Option 2", value: "option2" },
@@ -177,33 +175,9 @@ export default function Card() {
     },
     {
       type: "text",
-      name: "zone",
-      label: "Zone",
-      placeholder: selectedUser?.zone,
-    },
-    {
-      type: "text",
-      name: "ae",
-      label: "AE",
-      placeholder: selectedUser?.ae,
-    },
-    {
-      type: "text",
-      name: "role",
-      label: "Role",
-      placeholder: selectedUser?.role,
-    },
-    {
-      type: "text",
       name: "status",
       label: "Status",
       placeholder: selectedUser?.status,
-    },
-    {
-      type: "number",
-      name: "leader_id",
-      label: "Leader ID",
-      placeholder: selectedUser?.leader_id,
     },
   ];
 
@@ -334,7 +308,7 @@ export default function Card() {
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="User Management" className="mb-6 w-full text-left">
+      <Header title="User Management" className="w-full mb-6 text-left">
         <Button
           radius="sm"
           variant="flat"

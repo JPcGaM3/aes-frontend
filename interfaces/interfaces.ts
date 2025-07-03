@@ -1,108 +1,7 @@
-import { ColorType } from "@/types";
-import {
-  REQUESTORDERSTATUS,
-  TASKORDERSTATUS,
-  USERROLE,
-  USERSTATUS,
-} from "@/utils/enum";
 import { ClassValue } from "clsx";
+import { ColorType } from "@/types";
 
-interface User {
-  id: number;
-  quota_number?: string;
-  fullname: string;
-  email: string;
-  phone: string;
-  unit: number;
-  zone: string;
-  ae: string;
-  role: USERROLE;
-  leader_id?: number;
-  status?: USERSTATUS | string;
-  active: boolean;
-  created_at: Date;
-  updated_at: Date;
-  created_by: number;
-  updated_by: number;
-}
-
-interface RequestOrder {
-  id: number;
-  work_order_number?: string;
-  phone?: string;
-  customer_type_id?: number;
-  customer_type_name?: string;
-  operation_area_id?: number;
-  quota_number?: string;
-  company_farm_id?: number;
-  zone?: string;
-  farmer_name?: string;
-  land_number?: number;
-  ap_month?: string;
-  ap_year?: number | string;
-  ae_id?: number;
-  ae_name?: string;
-  target_area?: number;
-  actual_area?: number;
-  active?: boolean;
-  evidence?: number[];
-  sale?: number;
-  status?: REQUESTORDERSTATUS | string;
-  supervisor_name?: string;
-  supervisor_id?: number;
-  location_xy?: string;
-  location_id?: number;
-  activities?: string;
-  tool_types?: string;
-  unit_head_id?: number;
-  comment?: string;
-  created_at?: Date | string;
-  updated_at?: Date | string;
-  user_id?: number;
-  created_by: number;
-  updated_by: number;
-}
-
-interface TaskOrder {
-  id: number;
-  request_order_id?: number;
-  activity_id?: number;
-  activity_name?: string;
-  tool_type_id?: number;
-  tool_type_name?: string;
-  car_id?: number;
-  tool_id?: number;
-  assigned_user_id?: number;
-  target_area?: number;
-  actual_area?: number;
-  price?: number;
-  ap_date?: Date | string;
-  oil_slip?: string;
-  oil_start_mile?: number;
-  start_mile?: number;
-  end_mile?: number;
-  oil_start?: number;
-  oil_end?: number;
-  car_start_hour?: string;
-  car_end_hour?: string;
-  start_timer?: string;
-  end_timer?: string;
-  status?: TASKORDERSTATUS | string;
-  comment?: string;
-  active?: boolean;
-  created_at?: Date | string;
-  updated_at?: Date | string;
-  created_by: number;
-  updated_by: number;
-}
-
-interface Activity {
-  id: number;
-  name: string;
-  tool_types?: string[];
-}
-
-interface BaseInputConfig {
+export interface BaseInputConfig {
   name: string;
   label?: string;
   hasLabel?: boolean;
@@ -120,32 +19,32 @@ interface BaseInputConfig {
   className?: string;
 }
 
-interface TextInputConfig extends BaseInputConfig {
+export interface TextInputConfig extends BaseInputConfig {
   type: "text" | "email" | "password" | "textarea";
 }
 
-interface NumberInputConfig extends BaseInputConfig {
+export interface NumberInputConfig extends BaseInputConfig {
   type: "number";
   min?: number;
   max?: number;
 }
 
-interface DropdownOption {
-  value: string;
+export interface DropdownOption {
+  value: string | number;
   label: string;
 }
 
-interface DropdownInputConfig extends BaseInputConfig {
+export interface DropdownInputConfig extends BaseInputConfig {
   type: "dropdown";
   options: DropdownOption[];
   selectionMode?: "single" | "multiple";
 }
 
-interface DateInputConfig extends BaseInputConfig {
+export interface DateInputConfig extends BaseInputConfig {
   type: "date";
 }
 
-interface DateRangeInputConfig extends BaseInputConfig {
+export interface DateRangeInputConfig extends BaseInputConfig {
   type: "date-range";
 }
 
@@ -155,14 +54,16 @@ type InputConfig =
   | DropdownInputConfig
   | DateInputConfig
   | DateRangeInputConfig;
-type FormField = InputConfig | InputConfig[];
+export type { InputConfig };
 
-interface StatusConfig {
+export type FormField = InputConfig | InputConfig[];
+
+export interface StatusConfig {
   colorMap: Record<string, ColorType>;
   translation?: Record<string, string>;
 }
 
-interface FieldConfig {
+export interface FieldConfig {
   key: string;
   label?: string;
   formatter?: (value: any) => string;
@@ -173,7 +74,7 @@ interface FieldConfig {
   valueClassName?: ClassValue;
 }
 
-interface ActionConfig {
+export interface ActionConfig {
   key: string;
   label?: string;
   icon?: React.ReactNode;
@@ -181,138 +82,31 @@ interface ActionConfig {
   onClick?: (item: any) => void;
 }
 
-interface CardComponentProps<T> {
-  items: T[];
-  statusConfig?: StatusConfig;
-  headerFields?: FieldConfig[];
-  bodyFields: FieldConfig[];
-  actions?: ActionConfig[];
-  isActionsPage?: boolean;
-  cardClassName?: string;
-}
-
-interface FilterConfig {
+export interface FilterConfig {
   status?: string;
   ae?: string;
 }
 
-interface UploadedFile {
+export interface UploadedFile {
   name: string;
   size: number;
   type: string;
   file: File;
 }
 
-interface UserProfile {
-  id: string;
-  username: string;
-  email: string;
-  employeeName: {
-    th?: string;
-    en?: string;
-  };
-  splitNameTH?: {
-    foa?: string;
-    FNameTH?: string;
-    LNameTH?: string;
-  };
-  department?: {
-    id?: string;
-    name?: {
-      th?: string;
-      en?: string;
-    };
-  };
-  position?: {
-    id?: string;
-    name?: {
-      th?: string;
-      en?: string;
-    };
-  };
-  attorney?: {
-    id?: string;
-    name?: string;
-  };
-  level?: {
-    id?: string;
-    name?: string;
-  };
-  company?: {
-    id?: string;
-    name?: string;
-  };
-  plant?: {
-    id?: string;
-    name?: string;
-  };
-  approver?: {
-    id?: string;
-    username?: string;
-  };
-}
-
-interface AeArea {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-  created_by: number;
-  updated_by: number;
-}
-
-interface UserResult {
-  id: number;
-  phone: string | null;
-  unit: number | null;
-  ae_id: number;
-  role: string[];
-  status: string;
-  active: boolean;
-  created_at: string;
-  updated_at: string;
-  created_by: number;
-  updated_by: number;
-  username: string;
-  email: string;
-  fullname: string;
-  employee_id: string;
-  ae_area: AeArea;
-}
-
-interface UserProfileResponse {
-  success: boolean;
-  message: string;
-  data: {
-    profile: UserProfile;
-    user_result: UserResult;
-  };
-}
-
-export type {
-  User,
-  RequestOrder,
-  TaskOrder,
-  UserProfile,
-  BaseInputConfig,
-  TextInputConfig,
-  NumberInputConfig,
-  DropdownOption,
-  DropdownInputConfig,
-  InputConfig,
-  FormField,
-  StatusConfig,
-  FieldConfig,
-  ActionConfig,
-  CardComponentProps,
-  FilterConfig,
-  UploadedFile,
-  Activity,
-  UserResult,
-  UserProfileResponse,
-};
-
 export interface TableHeader {
   label: string;
   keyword: string;
+}
+
+export interface FieldValue {
+  label: string;
+  value: React.ReactNode;
+  highlight?: boolean;
+  className?: string;
+}
+
+export interface FieldSection {
+  title?: string;
+  fields: FieldValue[];
 }

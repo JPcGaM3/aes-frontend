@@ -5,24 +5,8 @@ import Header from "./Header";
 import FormFields from "./FormFields";
 import FormButtons from "./FormButtons";
 
-import { FormField } from "@/interfaces/interfaces";
-
-interface FormComponentProps {
-  hasHeader?: boolean;
-  title?: string;
-  subtitle?: string;
-  fields: FormField[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  isSubmitting?: boolean;
-  isCanceling?: boolean;
-  initialValues?: Record<string, any>;
-  className?: string;
-  children?: React.ReactNode;
-  onCancel?: () => void;
-  onSubmit?: (values: any) => void;
-  onChange?: (values: any) => void;
-}
+import type { FormField } from "@/interfaces/interfaces";
+import type { FormComponentProps } from "@/interfaces/props";
 
 export default function FormComponent({
   hasHeader = true,

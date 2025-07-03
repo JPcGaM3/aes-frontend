@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import clsx from "clsx";
@@ -11,14 +11,21 @@ import { Button, Tab, Tabs } from "@heroui/react";
 
 import Header from "@/components/Header";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+
 import { useLoading } from "@/providers/LoadingContext";
+import { useAuth } from "@/providers/AuthContext";
+
+import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
+import { FieldSection } from "@/interfaces/interfaces";
 
 export default function RequestManagementPage({
   params,
 }: {
-  params: Promise<{ rid: string }>;
+  params: Promise<{ rid: number }>;
 }) {
+  // const and hooks -------------------------------------------------------------------------------------------
   const { rid } = use(params);
+  const { userContext } = useAuth();
   const { setIsLoading } = useLoading();
 
   const searchParams = useSearchParams();
@@ -27,7 +34,40 @@ export default function RequestManagementPage({
   const action = searchParams.get("action") || "view";
 
   const [selectedTab, setSelectedTab] = useState(action);
+  const [requestData, setRequestData] = useState(null);
+  const [taskData, setTaskData] = useState(null);
 
+  // Fetch data ------------------------------------------------------------------------------------------------
+  useEffect(() => {
+    if (rid && userContext.token) {
+      const fetchData = async ({
+        token,
+        requestId,
+      }: {
+        token: string;
+        requestId: number;
+      }) => {
+        setIsLoading(true);
+        try {
+          const response = await getRequestOrderWithTask({
+            token: token,
+            requestId: requestId,
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchData({
+        token: userContext.token,
+        requestId: rid,
+      });
+    }
+  }, [rid, userContext.token]);
+
+  // Handler ---------------------------------------------------------------------------------------------------
   const handleTabChange = (key: React.Key) => {
     if (typeof key === "string") {
       setSelectedTab(key);
@@ -39,6 +79,17 @@ export default function RequestManagementPage({
       router.push(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
     }
   };
+
+  // Field config ----------------------------------------------------------------------------------------------
+  const dataSection: FieldSection[] = [
+    {
+      fields: [],
+    },
+    {
+      title: "ข้อมูลการทำงาน",
+      fields: [],
+    },
+  ];
 
   return (
     <div className="flex flex-col items-center justify-center w-full">

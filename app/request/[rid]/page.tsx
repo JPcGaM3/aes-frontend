@@ -7,7 +7,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 
-import { Button, Tab, Tabs } from "@heroui/react";
+import { Button, Tab, Tabs, user } from "@heroui/react";
 
 import Header from "@/components/Header";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
@@ -16,7 +16,25 @@ import { useLoading } from "@/providers/LoadingContext";
 import { useAuth } from "@/providers/AuthContext";
 
 import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
-import { FieldSection } from "@/interfaces/interfaces";
+import {
+  FieldSection,
+  FormField,
+  OperationAreaResponse,
+} from "@/interfaces/interfaces";
+import { AeArea, CustomerType, RequestOrder, User } from "@/interfaces/schema";
+import {
+  month,
+  monthList,
+  yearMap,
+  yearList,
+  RequestOrderTranslation,
+} from "@/utils/constants";
+import FormComponent from "@/components/FormComponent";
+import { getOperationAreasUser } from "@/libs/operationAreaAPI";
+import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import { getAeAreas } from "@/libs/aeAreaAPI";
+import { USERROLE } from "@/utils/enum";
+import { getUsers } from "@/libs/userAPI";
 
 export default function RequestManagementPage({
   params,
@@ -34,8 +52,17 @@ export default function RequestManagementPage({
   const action = searchParams.get("action") || "view";
 
   const [selectedTab, setSelectedTab] = useState(action);
-  const [requestData, setRequestData] = useState(null);
-  const [taskData, setTaskData] = useState(null);
+  const [usersData, setUsersData] = useState<User[]>([]);
+  const [aeAreasData, setAeAreasData] = useState<AeArea[]>([]);
+  const [customerTypesData, setCustomerTypesData] = useState<CustomerType[]>(
+    []
+  );
+  const [operationAreasData, setOperationAreasData] = useState<
+    OperationAreaResponse[]
+  >([]);
+  const [requestData, setRequestData] = useState<RequestOrder>(
+    {} as RequestOrder
+  );
 
   // Fetch data ------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -48,10 +75,33 @@ export default function RequestManagementPage({
         requestId: number;
       }) => {
         setIsLoading(true);
+
         try {
-          const response = await getRequestOrderWithTask({
+          const user = await getUsers({
+            token: token,
+            params: { role: USERROLE.UnitHead },
+          });
+          const ae_area = await getAeAreas({ token: token });
+          const customer_type = await getCustomerTypes({ token: token });
+          const operation_area = await getOperationAreasUser({ token: token });
+          const request: RequestOrder = await getRequestOrderWithTask({
             token: token,
             requestId: requestId,
+          });
+
+          console.log("User Data:", user);
+          console.log("AE Area Data:", ae_area);
+          console.log("Customer Type Data:", customer_type);
+          console.log("Operation Area Data:", operation_area);
+          console.log("Request Data:", request);
+
+          setUsersData(user);
+          setAeAreasData(ae_area);
+          setCustomerTypesData(customer_type);
+          setOperationAreasData(operation_area);
+          setRequestData({
+            ...request,
+            work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
           });
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -83,11 +133,188 @@ export default function RequestManagementPage({
   // Field config ----------------------------------------------------------------------------------------------
   const dataSection: FieldSection[] = [
     {
-      fields: [],
+      fields: [
+        { label: "แหล่งที่มา", value: requestData?.customer_type?.name || "-" },
+        {
+          label: "วันที่สร้าง",
+          value: requestData?.created_at?.toLocaleString() || "-",
+        },
+        { label: "สังกัด", value: requestData?.ae_area?.name || "-" },
+        { label: "หัวหน้าหน่วย", value: requestData?.users?.fullname || "-" },
+        { label: "ผู้ประสานงาน", value: requestData?.supervisor_name || "-" },
+        { label: "เบอร์โทรศัพท์", value: requestData?.phone || "-" },
+        {
+          label: "เดือนที่จะเริ่ม",
+          value: requestData?.ap_month || "-",
+          translator: month,
+        },
+        {
+          label: "ปีที่จะเริ่ม",
+          value: String(requestData?.ap_year) || "-",
+          translator: yearMap,
+        },
+      ],
     },
     {
-      title: "ข้อมูลการทำงาน",
-      fields: [],
+      title: "สถานที่ปฏิบัติงาน",
+      fields: [
+        { label: "โควต้า", value: requestData?.quota_number || "-" },
+        {
+          label: "ชาวไร่",
+          value: requestData?.farmer_name || "-",
+        },
+        { label: "เลขที่แปลง", value: requestData?.land_number || "-" },
+        {
+          label: "สถานที่",
+          value: requestData?.operation_area?.operation_area || "-",
+        },
+        { label: "พิกัด", value: requestData?.location_xy || "-" },
+        { label: "พื้นที่", value: requestData?.target_area || "-" },
+      ],
+    },
+    {
+      title: "กิจกรรมและเครื่องมือ",
+      fields: [
+        {
+          label: "จำนวน",
+          value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
+        },
+      ],
+    },
+  ];
+
+  const formFields: FormField[] = [
+    [
+      {
+        type: "dropdown",
+        name: "customer_type_id",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        isReadOnly: true,
+        className: "w-1/2",
+        options: [
+          ...customerTypesData.map((item) => ({
+            label: item.name || "-",
+            value: item.id,
+          })),
+        ],
+      },
+      {
+        type: "text",
+        name: "created_at",
+        isRequired: false,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        isReadOnly: true,
+      },
+    ],
+    [
+      {
+        type: "dropdown",
+        name: "ae_id",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        options: [
+          ...aeAreasData.map((item) => ({
+            label: item.name || "-",
+            value: item.id,
+          })),
+        ],
+      },
+      {
+        type: "dropdown",
+        name: "unit_head_id",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        options: [
+          ...usersData.map((item) => ({
+            label: item.fullname || item.username || "-",
+            value: item.id,
+          })),
+        ],
+      },
+    ],
+    {
+      type: "text",
+      name: "supervisor_name",
+      isRequired: true,
+      translator: RequestOrderTranslation,
+    },
+    {
+      type: "text",
+      name: "phone",
+      isRequired: true,
+      translator: RequestOrderTranslation,
+    },
+    [
+      {
+        type: "dropdown",
+        name: "ap_month",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        options: monthList,
+      },
+      {
+        type: "dropdown",
+        name: "ap_year",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        options: yearList,
+      },
+    ],
+    [
+      {
+        type: "text",
+        name: "quota_number",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+      },
+      {
+        type: "text",
+        name: "farmer_name",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+      },
+    ],
+    [
+      {
+        type: "text",
+        name: "land_number",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+      },
+      {
+        type: "dropdown",
+        name: "operation_area_id",
+        isRequired: true,
+        translator: RequestOrderTranslation,
+        className: "w-1/2",
+        options: [
+          ...operationAreasData.map((item) => ({
+            label: item.operation_area.operation_area || "-",
+            value: item.operation_area.id,
+          })),
+        ],
+      },
+    ],
+    {
+      type: "textarea",
+      name: "location_xy",
+      isRequired: false,
+      translator: RequestOrderTranslation,
+    },
+    {
+      type: "number",
+      name: "target_area",
+      isRequired: true,
+      translator: RequestOrderTranslation,
     },
   ];
 
@@ -108,7 +335,7 @@ export default function RequestManagementPage({
         >
           <Header
             title="ดูรายละเอียดใบสั่งงาน"
-            subtitle="@CT0RDC02568/00057"
+            subtitle={`@${requestData.work_order_number}`}
             subtitleClassName={clsx(
               "mt-1 text-sm text-gray-600 font-mono",
               fontMono.variable
@@ -116,7 +343,7 @@ export default function RequestManagementPage({
             hasBorder={false}
           />
 
-          {/* <FieldValueDisplayer sections={profileSections} /> */}
+          <FieldValueDisplayer sections={dataSection} />
 
           <Button
             size="lg"
@@ -138,7 +365,19 @@ export default function RequestManagementPage({
           key="edit"
           title="แก้ไข"
           className="flex flex-col items-center justify-center w-full"
-        ></Tab>
+        >
+          <FormComponent
+            title="แก้ไขใบสั่งงาน"
+            subtitle={`@${requestData.work_order_number}`}
+            subtitleClassName={clsx(
+              "mt-1 text-sm text-gray-600 font-mono",
+              fontMono.variable
+            )}
+            initialValues={requestData}
+            fields={formFields}
+            onSubmit={() => {}}
+          />
+        </Tab>
 
         {/* Reject tab ----------------------------------------------------------------------------------------- */}
         <Tab

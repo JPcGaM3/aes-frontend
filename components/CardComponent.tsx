@@ -5,10 +5,6 @@ import {
   Button,
   Chip,
   Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -66,10 +62,16 @@ export default function CardComponent<T extends { id: number | string }>({
               : translateEnumValue(field.key, field.labelTranslator || {});
 
             const nested = getNestedValue(item, field.key);
-            const value =
+            let value =
               nested == null
                 ? "N/A"
                 : translateEnumValue(nested, field.valueTranslator || {});
+            if (
+              typeof value === "string" &&
+              (value.length > 20 || value.includes("\n"))
+            ) {
+              value = value.slice(0, 20) + "...";
+            }
 
             return (
               <div key={field.key} className={field.className || "w-fit"}>
@@ -95,6 +97,12 @@ export default function CardComponent<T extends { id: number | string }>({
                 nested == null
                   ? "N/A"
                   : translateEnumValue(nested, field.valueTranslator || {});
+            }
+            if (
+              typeof value === "string" &&
+              (value.length > 20 || value.includes("\n"))
+            ) {
+              value = value.slice(0, 20) + "...";
             }
 
             return (

@@ -77,6 +77,7 @@ function InputRenderer({
     isInvalid: inputConfig.isInvalid || false,
     errorMessage: inputConfig.errorMessage || null,
     className: `${inputConfig.className || ""} break-all`,
+    disabled: inputConfig.isReadOnly || false,
   };
 
   const [isVisible, setIsVisible] = useState(false);
@@ -212,7 +213,7 @@ function InputRenderer({
                     const num = Number(selected);
                     value = isNaN(num) ? selected : num;
                   }
-                  
+
                   onValueChange(inputConfig.name, value);
                 }
               : undefined

@@ -214,6 +214,7 @@ export interface CustomerType {
 
 export interface RequestOrder {
   id: number;
+  work_order_number: string;
   run_number?: string;
   phone?: string;
   customer_type_id?: number;

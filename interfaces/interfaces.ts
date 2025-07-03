@@ -1,5 +1,6 @@
 import { ClassValue } from "clsx";
 import { ColorType } from "@/types";
+import { OperationArea } from "./schema";
 
 export interface BaseInputConfig {
   name: string;
@@ -17,6 +18,7 @@ export interface BaseInputConfig {
   isInvalid?: boolean;
   errorMessage?: React.ReactNode;
   className?: string;
+  isReadOnly?: boolean;
 }
 
 export interface TextInputConfig extends BaseInputConfig {
@@ -102,6 +104,7 @@ export interface TableHeader {
 export interface FieldValue {
   label: string;
   value: React.ReactNode;
+  translator?: Record<string, string>;
   highlight?: boolean;
   className?: string;
 }
@@ -109,4 +112,8 @@ export interface FieldValue {
 export interface FieldSection {
   title?: string;
   fields: FieldValue[];
+}
+
+export interface OperationAreaResponse {
+  operation_area: OperationArea;
 }

@@ -12,7 +12,7 @@ import {
 } from "@/utils/constants";
 import { Activity, OperationArea, RequestOrder, ToolType } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
-import { DropdownOption, FormField, UploadedFile } from "@/interfaces/interfaces";
+import { DropdownOption, FormField, OperationAreaResponse, UploadedFile } from "@/interfaces/interfaces";
 
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
@@ -33,10 +33,6 @@ interface FormType extends RequestOrder {
 interface TaskFormType {
   activity_name: string;
   tool_type_name: string;
-}
-
-interface OperationAreaResponse {
-  operation_area: OperationArea;
 }
 
 export default function AddRequestPage() {

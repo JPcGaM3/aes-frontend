@@ -89,6 +89,7 @@ export interface FormComponentProps {
   isCanceling?: boolean;
   initialValues?: Record<string, any>;
   className?: string;
+  subtitleClassName?: ClassValue;
   children?: React.ReactNode;
   onCancel?: () => void;
   onSubmit?: (values: any) => void;

@@ -2,26 +2,25 @@
 
 import React from "react";
 import { Divider } from "@heroui/react";
-import clsx from "clsx";
-import { fontMono } from "@/config/fonts";
-import type { FieldValue, FieldSection, FieldValueDisplayerProps } from "@/interfaces/props";
+import type { FieldValueDisplayerProps } from "@/interfaces/props";
+import { translateEnumValue } from "@/utils/functions";
 
 export default function FieldValueDisplayer({
-  className = "flex flex-col gap-3 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
+  className = "flex flex-col w-full max-w-sm gap-4 sm:max-w-md md:max-w-lg lg:max-w-xl",
   sections,
 }: FieldValueDisplayerProps) {
   return (
     <div className={className}>
       {sections.map((section, idx) => (
-        <div key={idx} className="flex flex-col gap-2 w-full">
+        <div key={idx} className="flex flex-col w-full gap-2">
           {/* Title ----------------------------------------------------------------------------------------------------------------------- */}
           {section.title && (
-            <div className="flex items-center gap-5 w-full">
-              <span className="font-semibold text-lg text-primary">
+            <div className="flex items-center w-full gap-5">
+              <span className="text-lg font-semibold text-primary">
                 {section.title}
               </span>
 
-              <Divider className="flex-1 bg-primary w-full" />
+              <Divider className="flex-1 w-full bg-primary" />
             </div>
           )}
 
@@ -37,8 +36,21 @@ export default function FieldValueDisplayer({
                 >
                   {field.label}
                 </span>
-                <span className="text-gray-800 break-all text-sm">
-                  : {field.value}
+                <span className="text-sm text-gray-800 break-all">
+                  :{" "}
+                  {(() => {
+                    let displayValue =
+                      typeof field.value === "string" && field.translator
+                        ? translateEnumValue(field.value, field.translator)
+                        : field.value;
+                    if (
+                      typeof displayValue === "string" &&
+                      (displayValue.length > 20 || displayValue.includes("\n"))
+                    ) {
+                      displayValue = displayValue.slice(0, 20) + "...";
+                    }
+                    return displayValue;
+                  })()}
                 </span>
               </div>
             ))}

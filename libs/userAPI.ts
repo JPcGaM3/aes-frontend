@@ -1,9 +1,18 @@
+import { USERROLE } from "@/utils/enum";
 import axios from "axios";
 
 export interface LoginParams {
   username: string;
   password: string;
   operation_area_id: number | null;
+}
+
+export interface getUsersParams {
+  token: string;
+  params?: {
+    ae_id?: number;
+    role?: USERROLE;
+  };
 }
 
 export async function LoginUser({
@@ -50,7 +59,7 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
   try {
     const response = await axios.get(`${apiUrl}/api/v1/mitr-portal/profile`, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -63,9 +72,42 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
       } else if (error.response?.status === 404) {
         throw new Error("User profile not found.");
       }
-      
+
       throw new Error(
         `Failed to fetch user profile: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
+    }
+
+    throw error;
+  }
+}
+
+export async function getUsers({
+  token,
+  params,
+}: getUsersParams): Promise<any> {
+  const apiUrl = process.env.API_URL || "http://localhost:8080";
+
+  try {
+    const response = await axios.get(`${apiUrl}/api/v1/users`, {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        throw new Error("Unauthorized access - please log in.");
+      } else if (error.response?.status === 404) {
+        throw new Error("User not found.");
+      }
+
+      throw new Error(
+        `Failed to fetch users: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
 

@@ -6,19 +6,19 @@ const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
   hasBorder = true,
-  className = "w-full text-center flex flex-col",
+  className = "flex flex-col w-full text-center",
   titleClassName = "text-2xl font-semibold text-gray-900",
   subtitleClassName = "mt-1 text-base text-gray-600",
   children,
 }) => (
   <header className={clsx(className)}>
-    <div className="flex flex-row justify-between align-middle w-full pt-3">
-      <div className="w-full flex flex-col justify-center">
+    <div className="flex flex-row justify-between w-full pt-3 align-middle">
+      <div className="flex flex-col justify-center w-full">
         <h2 className={clsx(titleClassName)}>{title}</h2>
         {subtitle && <p className={clsx(subtitleClassName)}>{subtitle}</p>}
       </div>
 
-      <div className="flex flex-row justify-center items-center gap-2">
+      <div className="flex flex-row items-center justify-center gap-2">
         {children}
       </div>
     </div>

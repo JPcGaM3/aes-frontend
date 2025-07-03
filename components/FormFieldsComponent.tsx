@@ -31,9 +31,9 @@ export default function FormFields({
     const {
       type,
       name,
-      hasLabel,
+      hasLabel = true,
       labelTranslator,
-      hasPlaceholder,
+      hasPlaceholder = true,
       labelPlacement,
       isReadOnly,
       isRequired,
@@ -81,7 +81,7 @@ export default function FormFields({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-1 gap-y-2">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-1 gap-y-4">
             {(section.fields).map((field, i) =>
               Array.isArray(field) ? (
                 <div key={i} className="flex flex-row w-full gap-1">

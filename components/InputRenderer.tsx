@@ -90,6 +90,9 @@ export default function InputRenderer({
     }
 
     case "dropdown": {
+      if (!commonProps.options || !Array.isArray(commonProps.options) || commonProps.options.length === 0) {
+        return null;
+      }
       const optionType = typeof commonProps.options[0].value;
 
       return (

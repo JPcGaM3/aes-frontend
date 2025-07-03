@@ -31,23 +31,23 @@ export default function LoginPage() {
   });
 
   // TODO: core fetch function
-  useEffect(() => {
-    const fetchOperationAreas = async () => {
-      try {
-        const data = await getOperationAreas({ paramData: {} });
-        setOperationAreas(data || []);
-      } catch (err: any) {
-        setAlert({
-          title: "โหลดข้อมูลพื้นที่ปฏิบัติงานล้มเหลว",
-          description: err.message || "Unknown error occurred",
-          color: "danger",
-          isVisible: true,
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const fetchOperationAreas = async () => {
+  //     try {
+  //       const data = await getOperationAreas({ paramData: {} });
+  //       setOperationAreas(data || []);
+  //     } catch (err: any) {
+  //       setAlert({
+  //         title: "โหลดข้อมูลพื้นที่ปฏิบัติงานล้มเหลว",
+  //         description: err.message || "Unknown error occurred",
+  //         color: "danger",
+  //         isVisible: true,
+  //       });
+  //     }
+  //   };
 
-    fetchOperationAreas();
-  }, []);
+  //   fetchOperationAreas();
+  // }, []);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -89,10 +89,15 @@ export default function LoginPage() {
           type: "dropdown",
           name: "operation_area_id",
           isRequired: true,
-          options: operationAreas.map((area: OperationArea) => ({
-            value: area.id,
-            label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
-          })),
+          // options: operationAreas.map((area: OperationArea) => ({
+          //   value: area.id,
+          //   label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
+          // })),
+          options: [
+            { value: 1, label: "พื้นที่ปฏิบัติงาน 1 (AE Area 1)" },
+            { value: 2, label: "พื้นที่ปฏิบัติงาน 2 (AE Area 2)" },
+            { value: 3, label: "พื้นที่ปฏิบัติงาน 3 (AE Area 3)" },
+          ]
         },
       ],
     },
@@ -106,6 +111,7 @@ export default function LoginPage() {
         subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
         submitLabel="ยืนยัน"
         onSubmit={handleSubmit}
+        // values={{ username: "L.Kritsada", password: "Ad#F5C2v66", operation_area_id: 3 }}
       />
 
       {/* Alert */}

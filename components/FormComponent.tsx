@@ -16,9 +16,9 @@ export default function FormComponent({
   cancelLabel,
   isSubmitting,
   isCanceling,
-  values,
+  values = {},
   children = null,
-  className = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
+  className = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl",
   subtitleClassName,
   onCancel,
   onSubmit,
@@ -51,7 +51,7 @@ export default function FormComponent({
     <div className={className}>
       {onSubmit ? (
         <Form
-          className="flex flex-col w-full max-w-xl gap-8"
+          className="flex flex-col w-full gap-8"
           validationBehavior="aria"
           onSubmit={handleSubmit}
         >

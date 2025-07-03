@@ -14,7 +14,7 @@ export default function Header(props: HeaderProps) {
     titleClassName = "text-3xl font-bold text-gray-900",
     subtitleClassName = "mt-1 text-md text-gray-600",
     headerContainerClassName,
-    childrenContainerClassName,
+    childrenContainerClassName = "gap-2",
     borderClassName = "mt-4 border-gray-200",
     children,
   } = props;
@@ -24,21 +24,21 @@ export default function Header(props: HeaderProps) {
   const headerContainerClasses = clsx(
     "flex w-full",
     {
-      "flex-row justify-between": orientation === "horizontal",
+      "flex-row justify-between items-center": orientation === "horizontal",
       "flex-col justify-center": orientation === "vertical",
     },
     headerContainerClassName
   );
 
   const titleContainerClasses = clsx("flex flex-col", {
-    " w-full": orientation === "horizontal",
+    "w-full": orientation === "horizontal",
     "items-center": orientation === "vertical",
   });
 
   const childrenContainerClasses = clsx(
-    "flex flex-row items-center gap-2",
+    "flex flex-row items-center",
     {
-      "justify-start": orientation === "horizontal" && hasChildren,
+      "justify-end": orientation === "horizontal" && hasChildren,
       "justify-center mt-4": orientation === "vertical" && hasChildren,
     },
     childrenContainerClassName

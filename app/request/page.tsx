@@ -322,7 +322,7 @@ export default function RequestPage() {
           className="sm:hidden"
         />
 
-        <Divider orientation="vertical" className="w-[1px]" />
+        <Divider orientation="vertical" className="w-[1px] h-10" />
 
         <Button
           radius="sm"

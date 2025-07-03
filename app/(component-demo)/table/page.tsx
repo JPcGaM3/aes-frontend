@@ -11,7 +11,7 @@ export default function TableComponent({
   actions: ActionConfig[];
 }) {
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col p-6 gap-8">
       <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-lg">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-50">
@@ -85,7 +85,7 @@ export default function TableComponent({
 //   actions: ActionConfig[];
 // }) {
 //   return (
-//     <div className="flex flex-col gap-6 p-6">
+//     <div className="flex flex-col p-6 gap-6">
 //       <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
 //         <div className="overflow-x-auto">
 //           <table className="min-w-full">

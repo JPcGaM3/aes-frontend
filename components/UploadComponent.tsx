@@ -135,7 +135,7 @@ export default function UploadComponent({
   };
 
   return (
-    <div className="flex flex-col w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl justify-center gap-6 items-center">
+    <div className="flex flex-col items-center justify-center w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl gap-6">
       {/* Header ------------------------------------------------------------------------------------------------------- */}
       <Header
         title="อัปโหลดไฟล์ใบสั่งงาน"
@@ -182,11 +182,11 @@ export default function UploadComponent({
               disabled={isUploading}
             />
 
-            <div className="flex flex-col justify-center items-center h-full py-8">
-              <div className="mb-2 flex items-center justify-center w-24 h-24 rounded-full bg-blue-100">
+            <div className="flex flex-col items-center justify-center h-full py-8">
+              <div className="flex items-center justify-center w-24 h-24 mb-2 bg-blue-100 rounded-full">
                 <UploadFileIcon size={54} />
               </div>
-              <p className="mt-2 text-gray-600 text-sm font-medium">
+              <p className="mt-2 text-sm font-medium text-gray-600">
                 คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
               </p>
             </div>
@@ -206,7 +206,7 @@ export default function UploadComponent({
                 <div
                   key={file.name}
                   onClick={() => handleDownloadUploadedFile(file)}
-                  className="flex justify-between items-center bg-gray-50 p-2 pl-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100"
+                  className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 rounded-xl hover:bg-gray-100"
                 >
                   <span className="text-gray-700 truncate">{file.name}</span>
 

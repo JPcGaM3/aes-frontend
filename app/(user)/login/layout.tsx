@@ -5,7 +5,7 @@ export default function LoginLayout({
 }) {
   return (
     <section className="flex flex-col justify-center gap-4">
-      <div className="inline-block justify-center w-full">
+      <div className="justify-center inline-block w-full">
         {children}
       </div>
     </section>

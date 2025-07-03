@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form } from "@heroui/react";
 
 import Header from "./Header";
-import FormFields from "./FormFields";
+import FormFields from "./FormFieldsComponent";
 import FormButtons from "./FormButtons";
 
 import type { FormComponentProps } from "@/interfaces/props";
@@ -11,12 +11,12 @@ export default function FormComponent({
   hasHeader = true,
   title,
   subtitle,
-  fields,
+  sections,
   submitLabel,
   cancelLabel,
   isSubmitting,
   isCanceling,
-  initialValues = {},
+  values,
   children = null,
   className = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
   subtitleClassName,
@@ -24,15 +24,15 @@ export default function FormComponent({
   onSubmit,
   onChange,
 }: FormComponentProps) {
-  const [values, setValues] = useState<any>(initialValues);
+  const [formValues, setFormValues] = useState<any>(values);
 
   useEffect(() => {
-    setValues(initialValues);
-  }, [JSON.stringify(initialValues)]);
+    setFormValues(values);
+  }, [JSON.stringify(values)]);
 
   const handleValueChange = (name: string, value: any) => {
-    const newValues = { ...values, [name]: value };
-    setValues(newValues);
+    const newValues = { ...formValues, [name]: value };
+    setFormValues(newValues);
 
     if (onChange) {
       onChange(newValues);
@@ -58,15 +58,15 @@ export default function FormComponent({
           {hasHeader && (
             <Header
               subtitle={subtitle}
-              title={title as string}
+              title={title}
               subtitleClassName={subtitleClassName}
             />
           )}
 
           <FormFields
-            fields={fields}
+            sections={sections}
             onValueChange={handleValueChange}
-            values={values}
+            values={formValues}
           />
 
           {children}
@@ -90,9 +90,9 @@ export default function FormComponent({
           )}
 
           <FormFields
-            fields={fields}
+            sections={sections}
             onValueChange={handleValueChange}
-            values={values}
+            values={formValues}
           />
 
           {children}

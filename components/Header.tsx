@@ -4,27 +4,25 @@ import { clsx } from "clsx";
 import { HeaderProps } from "@/interfaces/props";
 import { Divider } from "@heroui/react";
 
-export default function Header(props: HeaderProps) {
-  const {
-    title,
-    subtitle,
-    hasBorder = true,
-    orientation = "vertical",
-    className = "w-full",
-    titleClassName = "text-3xl font-bold text-gray-900",
-    subtitleClassName = "mt-1 text-md text-gray-600",
-    headerContainerClassName,
-    childrenContainerClassName = "gap-2",
-    borderClassName = "mt-4 border-gray-200",
-    children,
-  } = props;
-
+export default function Header({
+  title,
+  subtitle,
+  hasBorder = true,
+  orientation = "vertical",
+  className = "w-full",
+  titleClassName = "text-3xl font-bold text-gray-900",
+  subtitleClassName = "mt-1 text-md text-gray-600",
+  headerContainerClassName,
+  childrenContainerClassName = "gap-2",
+  borderClassName = "mt-4 border-gray-200",
+  children,
+}: HeaderProps) {
   const hasChildren = React.Children.count(children) > 0;
 
   const headerContainerClasses = clsx(
     "flex w-full",
     {
-      "flex-row justify-between items-center": orientation === "horizontal",
+      "flex-row justify-between items-center'": orientation === "horizontal",
       "flex-col justify-center": orientation === "vertical",
     },
     headerContainerClassName

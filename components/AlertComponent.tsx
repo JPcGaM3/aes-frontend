@@ -27,7 +27,7 @@ export default function AlertComponent({
   }, [visible]);
 
   return (
-    <div className="fixed left-0 right-0 top-16 flex justify-center items-center z-50 w-full p-3">
+    <div className="fixed left-0 right-0 z-50 flex items-center justify-center w-full p-3 top-16">
       <Alert
         title={title}
         description={description}
@@ -40,7 +40,7 @@ export default function AlertComponent({
           setVisible(false);
           handleClose?.();
         }}
-        className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md"
+        className="w-full max-w-sm shadow-md sm:max-w-md md:max-w-lg lg:max-w-xl"
       />
     </div>
   );

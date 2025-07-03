@@ -4,7 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { FormField } from "@/interfaces/interfaces";
+import { FormField, FormSection } from "@/interfaces/interfaces";
 import { AlertComponentProps } from "@/interfaces/props";
 
 import { useAuth } from "@/providers/AuthContext";
@@ -72,35 +72,36 @@ export default function LoginPage() {
     }
   };
 
-  const fields: FormField[] = [
+  const sections: FormSection[] = [
     {
-      type: "text",
-      name: "username",
-      label: "ชื่อผู้ใช้งาน / อีเมล",
-      isRequired: true,
-    },
-    {
-      type: "password",
-      name: "password",
-      label: "รหัสผ่าน",
-      isRequired: true,
-    },
-    {
-      type: "dropdown",
-      name: "operation_area_id",
-      label: "พื้นที่ปฏิบัติงาน",
-      isRequired: true,
-      options: operationAreas.map((area: OperationArea) => ({
-        value: area.id,
-        label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
-      })),
+      fields: [
+        {
+          type: "text",
+          name: "username",
+          isRequired: true,
+        },
+        {
+          type: "password",
+          name: "password",
+          isRequired: true,
+        },
+        {
+          type: "dropdown",
+          name: "operation_area_id",
+          isRequired: true,
+          options: operationAreas.map((area: OperationArea) => ({
+            value: area.id,
+            label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
+          })),
+        },
+      ],
     },
   ];
 
   return (
     <div className="flex items-center justify-center w-full">
       <FormComponent
-        fields={fields}
+        sections={sections}
         title="ยินดีต้อนรับ"
         subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
         submitLabel="ยืนยัน"

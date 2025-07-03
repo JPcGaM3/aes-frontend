@@ -184,7 +184,7 @@ export default function Navbar() {
                       <ChevronDownIcon strokeWidth={2} />
                     )
                   }
-                  className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-28 w-fit"
+                  className="flex flex-row justify-between h-full px-3 text-lg font-bold gap-3 min-w-28 w-fit"
                   onPress={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   {getOperationAreaLabel(userContext.operationAreaId)}

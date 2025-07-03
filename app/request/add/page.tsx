@@ -10,9 +10,14 @@ import {
   RequestOrderTranslation,
   TaskOrderTranslation,
 } from "@/utils/constants";
-import { Activity, OperationArea, RequestOrder, ToolType } from "@/interfaces/schema";
+import { Activity, RequestOrder, ToolType } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
-import { DropdownOption, FormField, OperationAreaResponse, UploadedFile } from "@/interfaces/interfaces";
+import {
+  DropdownOption,
+  FormSection,
+  OperationAreaResponse,
+  UploadedFile,
+} from "@/interfaces/interfaces";
 
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
@@ -43,7 +48,9 @@ export default function AddRequestPage() {
   const currentYear = now.getFullYear();
   const currentMonth = monthList[now.getMonth()].value;
 
-  const [operationAreaOptions, setOperationAreaOptions] = useState<OperationAreaResponse[]>([]);
+  const [operationAreaOptions, setOperationAreaOptions] = useState<
+    OperationAreaResponse[]
+  >([]);
   const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
   const [activityOptions, setActivityOptions] = useState<DropdownOption[]>([]);
   const [tasks, setTasks] = useState<TaskFormType[]>([]);
@@ -257,91 +264,95 @@ export default function AddRequestPage() {
   };
 
   // Field configurations ----------------------------------------------------------------------------------------
-  const requestOrderFields: FormField[] = [
+  const requestOrderFields: FormSection[] = [
     {
-      type: "text",
-      name: "phone",
-      translator: RequestOrderTranslation,
-    },
-    [
-      {
-        type: "dropdown",
-        name: "customer_operation_area_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-        options: [
-          ...operationAreaOptions.map((option: OperationAreaResponse) => ({
-            label: option.operation_area.operation_area ?? "",
-            value: option.operation_area.id,
-          })),
+      fields: [
+        {
+          type: "text",
+          name: "phone",
+          labelTranslator: RequestOrderTranslation,
+        },
+        [
+          {
+            type: "dropdown",
+            name: "customer_operation_area_id",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+            options: [
+              ...operationAreaOptions.map((option: OperationAreaResponse) => ({
+                label: option.operation_area.operation_area ?? "",
+                value: option.operation_area.id,
+              })),
+            ],
+          },
+          {
+            type: "text",
+            name: "zone",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+          },
         ],
-      },
-      {
-        type: "text",
-        name: "zone",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-      },
-    ],
-    [
-      {
-        type: "text",
-        name: "quota_number",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-      },
-      {
-        type: "text",
-        name: "farmer_name",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-      },
-    ],
-    [
-      {
-        type: "dropdown",
-        name: "ap_year",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-        options: yearList,
-      },
-      {
-        type: "dropdown",
-        name: "ap_month",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-        options: monthList,
-      },
-    ],
-    {
-      type: "text",
-      name: "supervisor_name",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "number",
-      name: "target_area",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "text",
-      name: "land_number",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "textarea",
-      name: "location_xy",
-      isRequired: false,
-      translator: RequestOrderTranslation,
+        [
+          {
+            type: "text",
+            name: "quota_number",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+          },
+          {
+            type: "text",
+            name: "farmer_name",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+          },
+        ],
+        [
+          {
+            type: "dropdown",
+            name: "ap_year",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+            options: yearList,
+          },
+          {
+            type: "dropdown",
+            name: "ap_month",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+            options: monthList,
+          },
+        ],
+        {
+          type: "text",
+          name: "supervisor_name",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "number",
+          name: "target_area",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "text",
+          name: "land_number",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "textarea",
+          name: "location_xy",
+          isRequired: false,
+          labelTranslator: RequestOrderTranslation,
+        },
+      ],
     },
   ];
 
@@ -359,10 +370,10 @@ export default function AddRequestPage() {
           className="flex flex-col items-center justify-center w-full"
         >
           <FormComponent
-            fields={requestOrderFields}
+            sections={requestOrderFields}
             title="สร้างใบสั่งงาน"
             subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-            initialValues={formValues}
+            values={formValues}
             isSubmitting={isAdding}
             onCancel={handleCancelKeyIn}
             onSubmit={handleSubmitKeyIn}
@@ -401,9 +412,10 @@ export default function AddRequestPage() {
 
               {/* Task Fields */}
               {tasks.map((task, idx) => {
-                const selectedActivity: Activity | undefined = activityWithTools.find(
-                  (activity) => String(activity.name) === task.activity_name
-                );
+                const selectedActivity: Activity | undefined =
+                  activityWithTools.find(
+                    (activity) => String(activity.name) === task.activity_name
+                  );
 
                 const toolTypeOptions =
                   selectedActivity && selectedActivity.tool_types
@@ -417,27 +429,31 @@ export default function AddRequestPage() {
                   <FormComponent
                     key={idx + "-" + (task.activity_name || "")}
                     hasHeader={false}
-                    initialValues={task}
+                    values={task}
                     onChange={(changed: any) => handleTaskChange(idx, changed)}
-                    fields={[
-                      [
-                        {
-                          type: "dropdown",
-                          name: "activity_name",
-                          isRequired: true,
-                          translator: TaskOrderTranslation,
-                          options: activityOptions,
-                          className: "w-1/2",
-                        },
-                        {
-                          type: "dropdown",
-                          name: "tool_type_name",
-                          isRequired: true,
-                          translator: TaskOrderTranslation,
-                          options: toolTypeOptions,
-                          className: "w-1/2",
-                        },
-                      ],
+                    sections={[
+                      {
+                        fields: [
+                          [
+                            {
+                              type: "dropdown",
+                              name: "activity_name",
+                              isRequired: true,
+                              labelTranslator: TaskOrderTranslation,
+                              options: activityOptions,
+                              className: "w-1/2",
+                            },
+                            {
+                              type: "dropdown",
+                              name: "tool_type_name",
+                              isRequired: true,
+                              labelTranslator: TaskOrderTranslation,
+                              options: toolTypeOptions,
+                              className: "w-1/2",
+                            },
+                          ],
+                        ],
+                      },
                     ]}
                   />
                 );

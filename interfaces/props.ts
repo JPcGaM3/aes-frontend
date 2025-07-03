@@ -1,11 +1,11 @@
 import type {
   FieldSection,
-  FormField,
   InputConfig,
   UploadedFile,
   StatusConfig,
   FieldConfig,
   ActionConfig,
+  FormSection,
 } from "@/interfaces/interfaces";
 
 import type { PressEvent } from "@react-types/shared";
@@ -56,7 +56,7 @@ export interface FilterModalProps {
   isOpen: boolean;
   title: string;
   subtitle?: string;
-  fields: FormField[];
+  fields: FormSection[];
   submitLabel?: string;
   cancelLabel?: string;
   onClose?: () => void;
@@ -78,29 +78,29 @@ export interface FormButtonsProps {
 }
 
 export interface FormFieldsProps {
-  fields: FormField[];
+  sections: FormSection[];
   values?: Record<string, any>;
   onValueChange?: (name: string, value: any) => void;
 }
 
 export interface InputRendererProps {
-  inputConfig: InputConfig;
-  onValueChange?: (name: string, value: any) => void;
   value?: any;
+  type:
+    | "text"
+    | "email"
+    | "textarea"
+    | "password"
+    | "dropdown"
+    | "date"
+    | "date-range"
+    | "number";
+  commonProps: any;
+  onValueChange?: (name: string, value: any) => void;
 }
 
-export interface FormComponentProps {
+export interface FormComponentProps extends HeaderProps, FormFieldsProps, FormButtonsProps{
   hasHeader?: boolean;
-  title?: string;
-  subtitle?: string;
-  fields: FormField[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  isSubmitting?: boolean;
-  isCanceling?: boolean;
-  initialValues?: Record<string, any>;
   className?: string;
-  subtitleClassName?: ClassValue;
   children?: React.ReactNode;
   onCancel?: () => void;
   onSubmit?: (values: any) => void;
@@ -109,7 +109,7 @@ export interface FormComponentProps {
 
 export interface HeaderProps {
   // Text Props
-  title: string;
+  title?: string;
   subtitle?: string;
 
   // Boolean Props

@@ -40,7 +40,7 @@ export default function CardComponent<T extends { id: number | string }>({
     (item: T) => (
       <div key={item.id} className={cardClassName}>
         {/* header */}
-        <div className="gap-1 px-4 text-left">
+        <div className="px-4 text-left gap-1">
           <Chip
             size="sm"
             radius="sm"
@@ -125,7 +125,7 @@ export default function CardComponent<T extends { id: number | string }>({
         {actions && actions.length > 0 && (
           <div>
             <Divider />
-            <div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
+            <div className="flex items-center justify-between py-1 pl-4 pr-1 gap-2">
               <div className="text-sm text-gray-500">More actions.</div>
 
               <Popover
@@ -182,7 +182,7 @@ export default function CardComponent<T extends { id: number | string }>({
   );
 
   return (
-    <div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="items-center w-full h-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => renderCell(item))}
     </div>
   );

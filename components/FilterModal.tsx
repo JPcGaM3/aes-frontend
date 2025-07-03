@@ -16,15 +16,15 @@ export default function FilterModal({
   initialValues = {},
 }: FilterModalProps) {
   return (
-    <div className="fixed left-0 right-0 top-16 flex justify-center items-center w-full p-3">
-      <div className="flex justify-center items-center w-full">
+    <div className="fixed left-0 right-0 flex items-center justify-center w-full p-3 top-16">
+      <div className="flex items-center justify-center w-full">
         <Modal
           isOpen={isOpen}
           placement="center"
           onOpenChange={onClose}
           size="sm"
           radius="sm"
-          className="w-full max-w-sm sm:max-w-md shadow-md p-4"
+          className="w-full max-w-sm p-4 shadow-md sm:max-w-md"
         >
           <ModalContent>
             {(onClose) => (

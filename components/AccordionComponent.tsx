@@ -39,7 +39,7 @@ export const AccordionComponent = ({
                   >
                     <li
                       key={key}
-                      className="grid justify-start w-full grid-cols-2"
+                      className="justify-start w-full grid grid-cols-2"
                     >
                       <span>{key}</span>
                       <span>{String(value)}</span>
@@ -50,7 +50,7 @@ export const AccordionComponent = ({
                 return (
                   <li
                     key={key}
-                    className="grid justify-start w-full grid-cols-2"
+                    className="justify-start w-full grid grid-cols-2"
                   >
                     <span>{key}</span>
                     <span>{String(value)}</span>
@@ -87,7 +87,7 @@ export const AccordionComponent = ({
                   >
                     <li
                       key={key}
-                      className="grid justify-start w-full grid-cols-2"
+                      className="justify-start w-full grid grid-cols-2"
                     >
                       <span>{key}</span>
                       <span>{String(value)}</span>
@@ -98,7 +98,7 @@ export const AccordionComponent = ({
                 return (
                   <li
                     key={key}
-                    className="grid justify-start w-full grid-cols-2"
+                    className="justify-start w-full grid grid-cols-2"
                   >
                     <span>{key}</span>
                     <span>{String(value)}</span>

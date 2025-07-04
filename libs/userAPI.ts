@@ -50,7 +50,7 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
   try {
     const response = await axios.get(`${apiUrl}/api/v1/mitr-portal/profile`, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -63,9 +63,32 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
       } else if (error.response?.status === 404) {
         throw new Error("User profile not found.");
       }
-      
+
       throw new Error(
         `Failed to fetch user profile: ${error.response?.status} ${error.response?.statusText || error.message}`
+      );
+    }
+
+    throw error;
+  }
+}
+
+export async function getUsers({ token }: { token: string }) {
+  const apiUrl = process.env.API_URL || "http://localhost:8080";
+
+  try {
+    const response = await axios.get(`${apiUrl}/api/v1/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
       );
     }
 

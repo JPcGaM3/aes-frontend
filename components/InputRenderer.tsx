@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { InputRendererProps } from "@/interfaces/props";
 
@@ -22,6 +22,42 @@ export default function InputRenderer({
   onValueChange,
 }: InputRendererProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      if (entries && entries.length > 0) {
+        setWidth(entries[0].contentRect.width);
+      }
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
+  const getVisibleMonths = () => {
+    console.log("getVisibleMonths called with width:", width);
+
+    if (width < 500) {
+      return 1;
+    }
+    if (width < 750) {
+      return 2;
+    }
+    if (width < 1000) {
+      return 3;
+    }
+
+    return 4;
+  };
 
   const handleUnifiedValueChange = useCallback(
     (v: any) => {
@@ -126,19 +162,19 @@ export default function InputRenderer({
           {...commonProps}
           type={isVisible ? "text" : "password"}
           value={value}
+          onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
           endContent={
             <Button
-              variant="light"
-              size="sm"
               isIconOnly
-              color="default"
+              size="sm"
+              radius="full"
+              variant="light"
               onPress={() => setIsVisible((state) => !state)}
-              endContent={
-                isVisible ? <EyeFilledIcon /> : <EyeSlashFilledIcon />
-              }
-            />
+              className="p-0 -mx-2 text-2xl pointer-events-none text-default-400"
+            >
+              {isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
+            </Button>
           }
-          onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
         />
       );
     }
@@ -157,12 +193,33 @@ export default function InputRenderer({
           }
           classNames={{
             ...commonProps.classNames,
-            popoverContent: "rounded-lg p-0"
+            popoverContent: "rounded-lg p-0",
           }}
         >
-          {(commonProps.options || []).map((option: DropdownOption) => (
-            <SelectItem key={String(option.value)}>{option.label}</SelectItem>
-          ))}
+          {(commonProps.options || []).length === 0 ? (
+            <SelectItem key="no-option" isDisabled>
+              No option.
+            </SelectItem>
+          ) : (
+            (commonProps.options || []).map((option: DropdownOption) => {
+              const isSelected =
+                value !== undefined &&
+                value !== null &&
+                value !== "" &&
+                String(option.value) === String(value);
+
+              return (
+                <SelectItem
+                  key={String(option.value)}
+                  classNames={{
+                    base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
+                  }}
+                >
+                  {option.label}
+                </SelectItem>
+              );
+            })
+          )}
         </Select>
       );
     }
@@ -180,12 +237,15 @@ export default function InputRenderer({
 
     case "date-range": {
       return (
-        <DateRangePicker
-          {...commonProps}
-          value={value}
-          showMonthAndYearPickers
-          onChange={onValueChange ? handleUnifiedValueChange : undefined}
-        />
+        <div ref={containerRef}>
+          <DateRangePicker
+            {...commonProps}
+            value={value}
+            showMonthAndYearPickers
+            visibleMonths={getVisibleMonths()}
+            onChange={onValueChange ? handleUnifiedValueChange : undefined}
+          />
+        </div>
       );
     }
   }

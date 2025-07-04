@@ -231,7 +231,6 @@ export default function RequestManagementPage({
           name: "customer_type",
           path: "customer_type_id",
           isReadOnly: true,
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
           options: customerTypesData.map((type) => ({
             label: type.name || "-",
@@ -242,14 +241,12 @@ export default function RequestManagementPage({
           type: "text",
           name: "created_at",
           isReadOnly: true,
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "dropdown",
           name: "ae_name",
           path: "ae_id",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
           options: aeAreasData.map((ae) => ({
             label: ae.name || "-",
@@ -260,7 +257,6 @@ export default function RequestManagementPage({
           type: "dropdown",
           name: "unit_head",
           path: "unit_head_id",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
           options: usersData.map((user) => ({
             label:
@@ -272,29 +268,27 @@ export default function RequestManagementPage({
         {
           type: "text",
           name: "supervisor_name",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "text",
           name: "phone",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
-        {
-          type: "dropdown",
-          name: "ap_month",
-          labelPlacement: "outside-left",
-          labelTranslator: RequestOrderTranslation,
-          options: monthList,
-        },
-        {
-          type: "dropdown",
-          name: "ap_year",
-          labelPlacement: "outside-left",
-          labelTranslator: RequestOrderTranslation,
-          options: yearList,
-        },
+        [
+          {
+            type: "dropdown",
+            name: "ap_month",
+            labelTranslator: RequestOrderTranslation,
+            options: monthList,
+          },
+          {
+            type: "dropdown",
+            name: "ap_year",
+            labelTranslator: RequestOrderTranslation,
+            options: yearList,
+          },
+        ],
       ],
     },
     {
@@ -303,26 +297,22 @@ export default function RequestManagementPage({
         {
           type: "number",
           name: "quota_number",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "text",
           name: "farmer_name",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "number",
           name: "land_number",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "dropdown",
           name: "operation_area",
           path: "customer_operation_area_id",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
           options: operationAreasData.map((area) => ({
             label: area.operation_area.operation_area || "-",
@@ -332,13 +322,11 @@ export default function RequestManagementPage({
         {
           type: "text",
           name: "location_xy",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
         {
           type: "number",
           name: "target_area",
-          labelPlacement: "outside-left",
           labelTranslator: RequestOrderTranslation,
         },
       ],
@@ -352,7 +340,6 @@ export default function RequestManagementPage({
             name: "count",
             path: "_count.taskorders",
             isReadOnly: true,
-            labelPlacement: "outside-left",
             labelTranslator: RequestOrderTranslation,
           },
         ],
@@ -406,9 +393,22 @@ export default function RequestManagementPage({
         <Tab
           key="edit"
           title="แก้ไข"
-          className="flex flex-col items-center justify-center w-full"
+          className="flex flex-col items-center justify-center w-full gap-20"
         >
           <FormComponent
+            title="แก้ไขใบสั่งงาน"
+            subtitle={`@${requestData.work_order_number}`}
+            subtitleClassName={clsx(
+              "mt-1 text-sm text-gray-600 font-mono",
+              fontMono.variable
+            )}
+            values={requestData}
+            sections={formSection}
+            onSubmit={() => {}}
+          />
+
+          <FormComponent
+            isCompact
             title="แก้ไขใบสั่งงาน"
             subtitle={`@${requestData.work_order_number}`}
             subtitleClassName={clsx(

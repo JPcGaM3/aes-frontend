@@ -45,12 +45,18 @@ export default function FormPage() {
             { label: "Option 2", value: "option2" },
           ],
         },
-        {
-          type: "date",
-          name: "dateField",
-          label: "Date Field",
-          isRequired: true,
-        },
+        [
+          {
+            type: "date",
+            name: "dateFieldStart",
+            isRequired: true,
+          },
+          {
+            type: "date",
+            name: "dateFieldEnd",
+            isRequired: true,
+          },
+        ],
         {
           type: "date-range",
           name: "dateRangeField",
@@ -71,7 +77,7 @@ export default function FormPage() {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center justify-center gap-20">
       <FormComponent
         sections={sections}
         subtitle="Please fill out the form below."
@@ -79,7 +85,41 @@ export default function FormPage() {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         onChange={(changed: any) => {
-          console.log("Form values changed:", changed);
+          const loggedValues = { ...changed };
+          if (loggedValues.dateField) {
+            loggedValues.dateField = loggedValues.dateField.toString();
+          }
+          if (loggedValues.dateRangeField) {
+            loggedValues.dateRangeField = {
+              start: loggedValues.dateRangeField.start?.toString(),
+              end: loggedValues.dateRangeField.end?.toString(),
+            };
+          }
+
+          console.log("Form values changed: ", loggedValues);
+        }}
+      />
+
+      <FormComponent
+        isCompact
+        sections={sections}
+        subtitle="Please fill out the form below."
+        title="Request Order Form"
+        onCancel={handleCancel}
+        onSubmit={handleSubmit}
+        onChange={(changed: any) => {
+          const loggedValues = { ...changed };
+          if (loggedValues.dateField) {
+            loggedValues.dateField = loggedValues.dateField.toString();
+          }
+          if (loggedValues.dateRangeField) {
+            loggedValues.dateRangeField = {
+              start: loggedValues.dateRangeField.start?.toString(),
+              end: loggedValues.dateRangeField.end?.toString(),
+            };
+          }
+
+          console.log("Form values changed: ", loggedValues);
         }}
       />
     </div>

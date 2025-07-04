@@ -70,29 +70,32 @@ export default function FormFields({
         : `โปรดกรอก ${labelValue || name}`
       : undefined;
 
+    const resolvedLabelPlacement = labelPlacement || (isCompact ? "outside" : "outside-left");
+
     return {
       name: name,
       label: labelValue,
       placeholder: placeholder,
-      "aria-label": config.name,
+      "aria-label": name,
       radius: "sm",
-      size: config.size || "md",
-      isDisabled: config.isReadOnly || false,
-      isRequired: config.isRequired || false,
-      labelPlacement: config.labelPlacement || "outside",
+      size: size || "md",
+      isDisabled: isReadOnly || false,
+      isRequired: isRequired || false,
+      labelPlacement: resolvedLabelPlacement,
       className: `w-full ${className || ""}`,
       classNames: {
         label: "min-w-[100px] p-0",
-        mainWrapper: "w-full",
+        mainWrapper: "w-full min-w-0",
+        base: "min-w-0",
       },
       ...restProps,
     };
   }, []);
 
   return (
-    <div className="flex flex-col w-full gap-2">
+    <div className="flex flex-col w-full gap-6">
       {sections.map((section, idx) => (
-        <div key={idx} className="flex flex-col w-full gap-2">
+        <div key={idx} className="flex flex-col w-full gap-3">
           {/* Title ----------------------------------------------------------------------------------------------------------------------- */}
           {section.title && (
             <div className="flex items-center w-full gap-5">
@@ -106,11 +109,11 @@ export default function FormFields({
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
           <div
-            className={`grid w-full ${isCompact ? "gap-2 grid-cols-1" : "gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
+            className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
           >
             {section.fields.map((field, i) =>
               Array.isArray(field) ? (
-                <div key={i} className="flex flex-row w-full gap-1">
+                <div key={i} className="flex flex-row w-full gap-2">
                   {field.map(
                     (subField, subIndex) =>
                       subField && (
@@ -118,10 +121,7 @@ export default function FormFields({
                           key={subIndex}
                           type={subField.type}
                           value={getValue(subField)}
-                          commonProps={commonProp({
-                            ...subField,
-                            labelPlacement: subField.labelPlacement || "outside",
-                          })}
+                          commonProps={commonProp(subField)}
                           onValueChange={onValueChange}
                         />
                       )
@@ -133,10 +133,7 @@ export default function FormFields({
                     <InputRenderer
                       type={field.type}
                       value={getValue(field)}
-                      commonProps={commonProp({
-                        ...field,
-                        labelPlacement: field.labelPlacement || "outside",
-                      })}
+                      commonProps={commonProp(field)}
                       onValueChange={onValueChange}
                     />
                   </div>

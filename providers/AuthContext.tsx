@@ -13,6 +13,7 @@ import { LoginParams, LoginUser } from "@/libs/userAPI";
 interface UserContextType {
   token: string;
   id: number;
+  role: string[];
   operationAreaId: number;
 }
 
@@ -32,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string>("");
   const [id, setId] = useState<number>(NaN);
+  const [role, setRole] = useState<string[]>([]);
   const [operationAreaId, setOperationAreaId] = useState<number>(NaN);
   const [isReady, setIsReady] = useState<boolean>(false);
 
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUserContext({
           token: parsed.token ?? "",
           id: parsed.id,
+          role: parsed.role ?? [],
           operationAreaId: parsed.operationAreaId,
         });
       } catch {
@@ -55,20 +58,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const userContext: UserContextType = {
     token,
     id,
+    role,
     operationAreaId,
   };
 
   useEffect(() => {
-    const isValid = token !== "" && !isNaN(id) && !isNaN(operationAreaId);
+    const isValid =
+      token !== "" && !isNaN(id) && !isNaN(operationAreaId) && role.length > 0;
 
     if (isValid) {
       sessionStorage.setItem("authUser", JSON.stringify(userContext));
     }
-  }, [token, id, operationAreaId]);
+  }, [token, id, operationAreaId, role]);
 
   const setUserContext = (context: Partial<UserContextType>) => {
     if (context.token !== undefined) setToken(context.token);
     if (context.id !== undefined) setId(context.id);
+    if (context.role !== undefined) setRole(context.role);
     if (context.operationAreaId !== undefined)
       setOperationAreaId(context.operationAreaId);
   };
@@ -82,10 +88,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     try {
       const result = await LoginUser(params);
+      console.log(result);
       if (result) {
         const newUserContext = {
           token: result.token ?? "",
           id: result.id,
+          role: result.role,
           operationAreaId,
         };
         setUserContext(newUserContext);
@@ -100,6 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const newUserContext = {
       token: "",
       id: NaN,
+      role: [],
       operationAreaId: NaN,
     };
     setUserContext(newUserContext);

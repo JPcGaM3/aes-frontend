@@ -36,15 +36,15 @@ const RequestOrderStatusTranslation = {
 };
 
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
-  created: "default",
-  pending_approval: "warning",
-  pending_edit: "warning",
-  pending: "warning",
-  in_progress: "primary",
-  pending_review: "warning",
-  pending_confirm: "warning",
-  completed: "success",
-  rejected: "danger",
+  CREATED: "default",
+  PENDING_APPROVAL: "warning",
+  PENDING_EDIT: "warning",
+  PENDING: "warning",
+  IN_PROGRESS: "primary",
+  PENDING_REVIEW: "warning",
+  PENDING_CONFIRM: "warning",
+  COMPLETED: "success",
+  REJECTED: "danger",
 };
 
 const TaskOrderStatusTranslation = {
@@ -56,11 +56,11 @@ const TaskOrderStatusTranslation = {
 };
 
 const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
-  created: "default",
-  pending: "default",
-  in_progress: "primary",
-  on_hold: "warning",
-  completed: "success",
+  CREATED: "default",
+  PENDING: "default",
+  IN_PROGRESS: "primary",
+  ON_HOLD: "warning",
+  COMPLETED: "success",
 };
 
 const RequestOrderTranslation: Record<string, string> = {
@@ -135,9 +135,9 @@ const TaskOrderTranslation: Record<string, string> = {
 };
 
 const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
-  working: "danger",
-  inactive: "primary",
-  on_leave: "warning",
+  WORKING: "danger",
+  INACTIVE: "primary",
+  ON_LEAVE: "warning",
 };
 
 const month: Record<string, string> = {

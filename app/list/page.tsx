@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useMemo } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
@@ -16,20 +16,12 @@ import {
   RequestOrderStatusColorMap,
   RequestOrderStatusTranslation,
   RequestOrderTranslation,
-  TaskOrderStatusColorMap,
-  TaskOrderStatusTranslation,
-  TaskOrderTranslation,
   month,
   monthList,
   yearList,
   yearMap,
 } from "@/utils/constants";
-import {
-  FieldConfig,
-  FormField,
-  RequestOrder,
-  TaskOrder,
-} from "@/interfaces/interfaces";
+import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 
@@ -41,79 +33,66 @@ import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
-import { getAssignedTask } from "@/libs/taskOrderAPI";
-import moment, { now } from "moment-timezone";
-import {
-  parseDate,
-  CalendarDate,
-  BuddhistCalendar,
-  toCalendar,
-} from "@internationalized/date";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
-  start_date?: CalendarDate;
-  end_date?: CalendarDate;
-  status?: string;
+  operation_area_id?: number;
+  start_month?: string;
+  start_year?: string;
+  end_month?: string;
+  end_year?: string;
 }
 
-export default function TaskPage() {
+export default function ListPage() {
   const router = useRouter();
   const { userContext, isReady } = useAuth();
   const { setIsLoading } = useLoading();
-  const [taskOrders, setTaskOrders] = useState<TaskOrder[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const {
     isOpen: isOpenFilter,
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
   } = useDisclosure();
-  const now = moment.tz("Asia/Bangkok");
-  const startDateStr = now.clone().startOf("month").format("YYYY-MM-DD");
-  const endDateStr = now.clone().endOf("month").format("YYYY-MM-DD");
-  const startDateValue = toCalendar(
-    parseDate(startDateStr),
-    new BuddhistCalendar()
-  );
-  const endDateValue = toCalendar(
-    parseDate(endDateStr),
-    new BuddhistCalendar()
-  );
+
+  const now = new Date();
+  const currentYear = String(now.getFullYear());
+  const currentMonth = monthList[now.getMonth()].value;
+
+  const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [filterValues, setFilterValues] = useState<filterInterface>({
-    start_date: startDateValue,
-    end_date: endDateValue,
-    status: undefined,
+    start_month: currentMonth,
+    start_year: currentYear,
   });
 
-  const fetchTaskOrderData = async ({
-    token,
-    user_id,
-  }: {
-    token: string;
-    user_id: number;
-  }) => {
+  const fetchRequestOrderData = async ({ token }: { token: string }) => {
     try {
       const params = filterValues
         ? {
-            start_date: filterValues.start_date
-              ? filterValues.start_date.toString()
+            start_month: filterValues.start_month
+              ? filterValues.start_month.toString()
               : undefined,
-            end_date: filterValues.end_date
-              ? filterValues.end_date.toString()
+            start_year: filterValues.start_year
+              ? filterValues.start_year.toString()
               : undefined,
-            status: filterValues.status
-              ? filterValues.status?.toUpperCase()
+            end_month: filterValues.end_month
+              ? filterValues.end_month.toString()
               : undefined,
+            end_year: filterValues.end_year
+              ? filterValues.end_year.toString()
+              : undefined,
+            status: REQUESTORDERSTATUS.PendingApproval.toUpperCase(),
+            operation_area_id: userContext.operationAreaId,
           }
         : undefined;
       setError(null);
-      const data = await getAssignedTask({ token, user_id, params });
+      const data = await getRequestOrders({ token: token, paramData: params });
       if (!data) {
-        setTaskOrders([]);
+        setReqOrders([]);
       }
-      setTaskOrders(data || []);
+      setReqOrders(data || []);
     } catch (error: any) {
       setError(error.message || "Unknown error");
-      setTaskOrders([]);
+      setReqOrders([]);
     }
   };
 
@@ -123,14 +102,14 @@ export default function TaskPage() {
       isReady &&
       userContext.id &&
       userContext.token &&
+      userContext.role &&
       userContext.operationAreaId
     ) {
       const fetchData = async (): Promise<any> => {
         try {
-          setTaskOrders([]);
-          await fetchTaskOrderData({
+          setReqOrders([]);
+          await fetchRequestOrderData({
             token: userContext.token,
-            user_id: userContext.id,
           });
         } catch (error) {
           console.error("Failed to fetch:", error);
@@ -142,80 +121,6 @@ export default function TaskPage() {
       fetchData();
     }
   }, [userContext, filterValues, isReady]);
-
-  const headerFields: FieldConfig[] = [
-    {
-      key: "id",
-      className: "text-black text-lg font-bold",
-      labelTranslator: TaskOrderTranslation,
-      valueClassName: clsx(
-        "mt-1 text-sm text-gray-600 font-mono",
-        fontMono.variable
-      ),
-    },
-  ];
-
-  const bodyFields: FieldConfig[] = [
-    {
-      key: "requestorders.quota_number",
-      className: "text-gray-600 text-md font-semibold",
-      labelTranslator: RequestOrderTranslation,
-    },
-    {
-      key: "requestorders.farmer_name",
-      className: "text-gray-600 text-md font-semibold pb-4",
-      labelTranslator: RequestOrderTranslation,
-    },
-    {
-      key: "activities.name",
-      className: "text-gray-500 text-sm",
-      labelTranslator: TaskOrderTranslation,
-    },
-    {
-      key: "tool_type.tool_type_name",
-      className: "text-gray-500 text-sm",
-      labelTranslator: TaskOrderTranslation,
-    },
-    {
-      key: "ap_date",
-      className: "text-gray-500 text-sm",
-      labelTranslator: TaskOrderTranslation,
-    },
-  ];
-
-  const filterFields: FormField[] = [
-    {
-      type: "dropdown",
-      name: "status",
-      label: "สถานะ",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...Object.entries(TaskOrderStatusTranslation).map(([value, label]) => ({
-          label: label as string,
-          value: value as string,
-        })),
-      ],
-    },
-    [
-      {
-        type: "date",
-        name: "start_date",
-        label: "วันเริ่มต้น",
-        className: "w-2/3",
-      },
-      {
-        type: "date",
-        name: "end_date",
-        label: "วันสิ้นสุด",
-        className: "w-2/3",
-      },
-    ],
-  ];
-
-  const statusConfig = {
-    colorMap: TaskOrderStatusColorMap,
-    translation: TaskOrderStatusTranslation,
-  };
 
   const actions = [
     {
@@ -242,48 +147,111 @@ export default function TaskPage() {
     },
   ];
 
+  const headerFields: FieldConfig[] = [
+    {
+      key: "quota_number",
+      className: "text-black text-lg font-bold",
+      labelTranslator: RequestOrderTranslation,
+      valueClassName: clsx(
+        "mt-1 text-sm text-gray-600 font-mono",
+        fontMono.variable
+      ),
+    },
+    {
+      key: "farmer_name",
+      className: "text-black text-lg font-bold",
+      labelTranslator: RequestOrderTranslation,
+    },
+  ];
+
+  const bodyFields: FieldConfig[] = [
+    {
+      key: "customer_type.name",
+      className: "text-gray-600 text-md font-semibold",
+      labelTranslator: RequestOrderTranslation,
+    },
+    {
+      key: "work_order_number",
+      className: "text-gray-600 text-md font-semibold pb-4",
+      labelTranslator: RequestOrderTranslation,
+      valueFunction: (item: any) => {
+        const aeArea = item.ae_area?.name || "";
+        const opArea = item.operation_area?.operation_area || "";
+        const year = item.ap_year ? Number(item.ap_year) + 543 : "";
+        const run = item.run_number || "";
+        return `${aeArea}${opArea}${year + "/"}${run}`;
+      },
+      valueClassName: clsx(
+        "mt-1 text-sm text-gray-600 font-mono",
+        fontMono.variable
+      ),
+    },
+    {
+      key: "land_number",
+      className: "text-gray-500 text-sm",
+      labelTranslator: RequestOrderTranslation,
+    },
+    {
+      key: "_count.taskorders",
+      className: "text-gray-500 text-sm",
+      labelTranslator: RequestOrderTranslation,
+    },
+    {
+      key: "ap_month",
+      className: "text-gray-500 text-sm",
+      labelTranslator: RequestOrderTranslation,
+      valueTranslator: month,
+    },
+    {
+      key: "ap_year",
+      className: "text-gray-500 text-sm",
+      labelTranslator: RequestOrderTranslation,
+      valueTranslator: yearMap,
+    },
+  ];
+
+  const filterFields: FormField[] = [
+    [
+      {
+        type: "dropdown",
+        name: "start_month",
+        label: "เดือนเริ่มต้น",
+        options: monthList,
+        className: "w-2/3",
+      },
+      {
+        type: "dropdown",
+        name: "start_year",
+        label: "ปีเริ่มต้น",
+        options: yearList,
+        className: "w-1/3",
+      },
+    ],
+    [
+      {
+        type: "dropdown",
+        name: "end_month",
+        label: "เดือนสิ้นสุด",
+        options: monthList,
+        className: "w-2/3",
+      },
+      {
+        type: "dropdown",
+        name: "end_year",
+        label: "ปีสิ้นสุด",
+        options: yearList,
+        className: "w-1/3",
+      },
+    ],
+  ];
+
+  const statusConfig = {
+    colorMap: RequestOrderStatusColorMap,
+    translation: RequestOrderStatusTranslation,
+  };
+
   const handleApplyFilters = (values: any) => {
-    try {
-      let startDate;
-      if (!values.start_date) {
-        startDate = startDateValue;
-      } else if (typeof values.start_date === "string") {
-        startDate = toCalendar(
-          parseDate(values.start_date),
-          new BuddhistCalendar()
-        );
-      } else {
-        startDate = values.start_date;
-      }
-
-      let endDate;
-      if (!values.end_date) {
-        endDate = endDateValue;
-      } else if (typeof values.end_date === "string") {
-        endDate = toCalendar(
-          parseDate(values.end_date),
-          new BuddhistCalendar()
-        );
-      } else {
-        endDate = values.end_date;
-      }
-
-      let status;
-      if (values.status === "all") {
-        status = undefined;
-      } else {
-        status = values.status;
-      }
-
-      setFilterValues({
-        start_date: startDate,
-        end_date: endDate,
-        status: status,
-      });
-    } catch (error) {
-      console.error("Error processing date values:", error);
-    }
-
+    setFilterValues(values);
     onCloseFilter();
   };
 
@@ -300,11 +268,13 @@ export default function TaskPage() {
     switch (params.action) {
       case "view":
       case "edit":
-      case "comment":
-        router.push(`/task/${params.id}/${params.action}`);
-        break;
       case "reject":
+        router.push(`/list/${params.id}?action=${params.action}`);
+        break;
+
       case "add":
+        router.push("/list/add");
+        break;
 
       default:
         console.log(`Action triggered: ${params.action}`);
@@ -318,17 +288,17 @@ export default function TaskPage() {
       {/* Modal ------------------------------------------------------------- */}
       <FilterModal
         isOpen={isOpenFilter}
-        title="ฟิลเตอร์รายการงานย่อย"
+        title="ฟิลเตอร์รายการใบสั่งงาน"
         fields={filterFields}
         submitLabel="Apply Filters"
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
-        onClose={onCloseFilter}
+        onClose={() => onCloseFilter()}
         initialValues={filterValues}
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการงานย่อย" className="w-full mb-6 text-left">
+      <Header title="รายการใบสั่งงาน" className="w-full mb-6 text-left">
         <Button
           radius="sm"
           variant="flat"
@@ -382,14 +352,14 @@ export default function TaskPage() {
       ) : (
         <div>
           <div className="mb-4 font-medium text-right text-gray-700">
-            {`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
+            {`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
           </div>
 
           <CardComponent
             actions={actions}
             bodyFields={bodyFields}
             headerFields={headerFields}
-            items={taskOrders}
+            items={reqOrders}
             statusConfig={statusConfig}
           />
         </div>

@@ -82,8 +82,8 @@ export default function FormFields({
       labelPlacement: config.labelPlacement || "outside",
       className: `w-full ${className || ""}`,
       classNames: {
-        label: "min-w-[100px] text-start",
-        wrapper: "w-full",
+        label: "min-w-[100px] p-0",
+        mainWrapper: "w-full",
       },
       ...restProps,
     };

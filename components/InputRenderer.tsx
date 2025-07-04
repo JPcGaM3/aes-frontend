@@ -103,6 +103,7 @@ export default function InputRenderer({
       return (
         <Textarea
           {...commonProps}
+          minRows={commonProps.minRows || 3}
           value={value}
           onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
         />
@@ -154,6 +155,10 @@ export default function InputRenderer({
           onSelectionChange={
             onValueChange ? handleUnifiedValueChange : undefined
           }
+          classNames={{
+            ...commonProps.classNames,
+            popoverContent: "rounded-lg p-0"
+          }}
         >
           {(commonProps.options || []).map((option: DropdownOption) => (
             <SelectItem key={String(option.value)}>{option.label}</SelectItem>

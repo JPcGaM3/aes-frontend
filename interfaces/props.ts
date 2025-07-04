@@ -13,6 +13,7 @@ import type { ColorType } from "../types";
 import type { ClassValue } from "clsx";
 import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
 import type { SwitchProps } from "@heroui/switch";
+import { extend } from "dayjs";
 
 export interface AlertComponentProps {
   title: string;
@@ -50,18 +51,6 @@ export interface DrawerComponentProps {
 export interface FieldValueDisplayerProps {
   className?: string;
   sections: FieldSection[];
-}
-
-export interface FilterModalProps {
-  isOpen: boolean;
-  title: string;
-  subtitle?: string;
-  fields: FormSection[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  onClose?: () => void;
-  onSubmit: (e: React.FormEvent) => void;
-  initialValues?: Record<string, any>;
 }
 
 export interface FormButtonsProps {
@@ -105,6 +94,11 @@ export interface FormComponentProps extends HeaderProps, FormFieldsProps, FormBu
   onCancel?: () => void;
   onSubmit?: (values: any) => void;
   onChange?: (values: any) => void;
+}
+
+export interface FilterModalProps extends FormComponentProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export interface HeaderProps {

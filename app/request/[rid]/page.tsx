@@ -325,7 +325,7 @@ export default function RequestManagementPage({
         radius="sm"
         selectedKey={selectedTab}
         onSelectionChange={handleTabChange}
-        className="flex flex-col items-center justify-center w-full p-0 font-semibold"
+        className="flex flex-col items-center justify-center w-full pt-3 font-semibold"
       >
         {/* View tab ------------------------------------------------------------------------------------------- */}
         <Tab
@@ -373,8 +373,8 @@ export default function RequestManagementPage({
               "mt-1 text-sm text-gray-600 font-mono",
               fontMono.variable
             )}
-            initialValues={requestData}
-            fields={formFields}
+            values={requestData}
+            sections={formFields}
             onSubmit={() => {}}
           />
         </Tab>

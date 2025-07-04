@@ -14,6 +14,8 @@ export interface BaseInputConfig {
 
   /** Label configuration */
   hasLabel?: boolean;
+  /** Custom label for the field (overrides name/translation) */
+  label?: string;
   hasPlaceholder?: boolean;
   labelTranslator?: Record<string, string>;
   labelPlacement?: "inside" | "outside" | "outside-left";

@@ -5,55 +5,73 @@ import { getNestedValue, translateEnumValue } from "@/utils/functions";
 
 import { Divider } from "@heroui/react";
 import InputRenderer from "./InputRenderer";
+import { useCallback } from "react";
 
 export default function FormFields({
   sections,
   onValueChange,
   values = {},
 }: FormFieldsProps) {
-  const getValue = (config: InputConfig) => {
-    // if (!config) return "";
+  const getValue = useCallback(
+    (config: InputConfig) => {
+      if (!config) {
+        return "";
+      }
 
-    // if (config.path) {
-    //   return getNestedValue(values, config.path) ?? "";
-    // }
+      if (config.type === "date" || config.type === "date-range") {
+        if (config.path) {
+          return getNestedValue(values, config.path) ?? null;
+        }
+        if (config.name && typeof values === "object" && values !== null) {
+          return values[config.name] ?? config.defaultValue ?? null;
+        }
+        return config.defaultValue ?? null;
+      } else {
+        if (config.path) {
+          return getNestedValue(values, config.path) ?? "";
+        }
+        if (config.name && typeof values === "object" && values !== null) {
+          return values[config.name] ?? config.defaultValue ?? "";
+        }
+      }
 
-    // if (config.name && typeof values === "object" && values !== null) {
-    //   return values[config.name] ?? config.defaultValue ?? "";
-    // }
+      return config.defaultValue ?? "";
+    },
+    [values]
+  );
 
-    // return config.defaultValue ?? "";
-    console.log("values", values);
-    return values[config.name] ?? "";
-  };
-
-  const commonProp: any = (config: InputConfig) => {
+  const commonProp: any = useCallback((config: InputConfig) => {
     const {
       type,
       name,
       hasLabel = true,
+      label,
       labelTranslator,
       hasPlaceholder = true,
       labelPlacement,
       isReadOnly,
       isRequired,
       size,
+      className,
       ...restProps
     } = config;
 
-    const label = hasLabel
-      ? translateEnumValue(name, labelTranslator || {})
-      : undefined;
+    const labelValue =
+      hasLabel === false
+        ? undefined
+        : label
+          ? translateEnumValue(label, labelTranslator || {})
+          : translateEnumValue(name, labelTranslator || {});
 
     const placeholder = hasPlaceholder
       ? type === "dropdown"
-        ? `โปรดเลือก ${label || name}`
-        : `โปรดกรอก ${label || name}`
+        ? `โปรดเลือก ${labelValue || name}`
+        : `โปรดกรอก ${labelValue || name}`
       : undefined;
 
     return {
       name: name,
-      label: label,
+      label: labelValue,
       placeholder: placeholder,
       "aria-label": config.name,
       radius: "sm",
@@ -61,9 +79,10 @@ export default function FormFields({
       disabled: config.isReadOnly || false,
       isRequired: config.isRequired || false,
       labelPlacement: config.labelPlacement || "outside",
+      className: `w-full ${className || ""}`,
       ...restProps,
     };
-  };
+  }, []);
 
   return (
     <div className="flex flex-col w-full gap-2">
@@ -81,8 +100,8 @@ export default function FormFields({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-1 gap-y-4">
-            {(section.fields).map((field, i) =>
+          <div className="grid w-full gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]">
+            {section.fields.map((field, i) =>
               Array.isArray(field) ? (
                 <div key={i} className="flex flex-row w-full gap-1">
                   {field.map(
@@ -100,13 +119,14 @@ export default function FormFields({
                 </div>
               ) : (
                 field && (
-                  <InputRenderer
-                    key={i}
-                    type={field.type}
-                    value={getValue(field)}
-                    commonProps={commonProp(field)}
-                    onValueChange={onValueChange}
-                  />
+                  <div key={i} className="w-full col-span-1">
+                    <InputRenderer
+                      type={field.type}
+                      value={getValue(field)}
+                      commonProps={commonProp(field)}
+                      onValueChange={onValueChange}
+                    />
+                  </div>
                 )
               )
             )}

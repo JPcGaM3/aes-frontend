@@ -25,7 +25,7 @@ export default function FieldValueDisplayer({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-1 gap-y-2">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-1 gap-y-2">
             {section.fields.map((field, i) => (
               <div
                 key={i}
@@ -36,6 +36,7 @@ export default function FieldValueDisplayer({
                 >
                   {field.label}
                 </span>
+                
                 <span className="text-sm text-gray-800 break-all">
                   :{" "}
                   {(() => {

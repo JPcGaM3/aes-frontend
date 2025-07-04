@@ -5,15 +5,15 @@ import FormComponent from "./FormComponent";
 import type { FilterModalProps } from "@/interfaces/props";
 
 export default function FilterModal({
-  isOpen,
-  title,
-  subtitle,
-  fields,
-  submitLabel,
-  cancelLabel,
-  onClose,
-  onSubmit,
-  initialValues = {},
+ isOpen,
+ onClose,
+ title,
+ subtitle,
+ sections,
+ submitLabel,
+ cancelLabel,
+ onSubmit,
+ values
 }: FilterModalProps) {
   return (
     <div className="fixed left-0 right-0 flex items-center justify-center w-full p-3 top-16">
@@ -31,12 +31,12 @@ export default function FilterModal({
               <FormComponent
                 title={title}
                 subtitle={subtitle}
-                fields={fields}
+                sections={sections}
                 submitLabel={submitLabel}
                 cancelLabel={cancelLabel}
                 onSubmit={onSubmit}
                 onCancel={onClose}
-                initialValues={initialValues}
+                values={values}
               />
             )}
           </ModalContent>

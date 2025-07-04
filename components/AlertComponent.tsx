@@ -40,7 +40,7 @@ export default function AlertComponent({
           setVisible(false);
           handleClose?.();
         }}
-        className="w-full max-w-sm shadow-md sm:max-w-md md:max-w-lg lg:max-w-xl"
+        className="w-full max-w-sm shadow-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
       />
     </div>
   );

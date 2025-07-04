@@ -43,7 +43,7 @@ export default function FormComponent({
     e.preventDefault();
 
     if (onSubmit) {
-      (onSubmit as any)(values);
+      (onSubmit as any)(formValues);
     }
   };
 
@@ -80,7 +80,7 @@ export default function FormComponent({
           />
         </Form>
       ) : (
-        <div className="flex flex-col w-full max-w-xl gap-8">
+        <div className="flex flex-col w-full gap-8">
           {hasHeader && (
             <Header
               subtitle={subtitle}

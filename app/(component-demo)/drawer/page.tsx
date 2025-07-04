@@ -12,7 +12,7 @@ import {
 import { VerticalDotsIcon } from "@/utils/icons";
 import { mock_users } from "@/utils/mock";
 
-import { FormField } from "@/interfaces/interfaces";
+import { FormSection } from "@/interfaces/interfaces";
 import { User } from "@/interfaces/schema";
 
 import DrawerComponent from "@/components/DrawerComponent";
@@ -59,41 +59,40 @@ export default function DrawerPage() {
     },
   ];
 
-  const formFields: FormField[] = [
+  const formSections: FormSection[] = [
     {
-      type: "text",
-      name: "fullname",
-      label: "Full Name",
-      placeholder: mockData.fullname,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "email",
-      label: "Email",
-      placeholder: mockData.email,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "phone",
-      label: "Phone",
-      placeholder: mockData.phone,
-      isRequired: true,
-    },
-    {
-      type: "number",
-      name: "unit",
-      label: "Unit",
-      placeholder: mockData.unit,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "status",
-      label: "Status",
-      placeholder: mockData.status,
-      isRequired: true,
+      fields: [
+        {
+          type: "text",
+          name: "fullname",
+          label: "Full Name",
+          isRequired: true,
+        },
+        {
+          type: "text",
+          name: "email",
+          label: "Email",
+          isRequired: true,
+        },
+        {
+          type: "text",
+          name: "phone",
+          label: "Phone",
+          isRequired: true,
+        },
+        {
+          type: "number",
+          name: "unit",
+          label: "Unit",
+          isRequired: true,
+        },
+        {
+          type: "text",
+          name: "status",
+          label: "Status",
+          isRequired: true,
+        },
+      ],
     },
   ];
 
@@ -140,7 +139,7 @@ export default function DrawerPage() {
       <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
         <div className="flex flex-col gap-4">
           <FormComponent
-            fields={formFields}
+            sections={formSections}
             title="Edit User"
             subtitle="Edit user details"
             onSubmit={handleSubmit}

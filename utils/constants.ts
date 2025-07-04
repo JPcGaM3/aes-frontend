@@ -36,16 +36,16 @@ const RequestOrderStatusTranslation = {
 };
 
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
-  created: "default",
-  pending_approval: "warning",
-  pending_edit: "warning",
-  pending: "warning",
-  in_progress: "primary",
-  pending_review: "warning",
-  pending_confirm: "warning",
-  completed: "success",
-  rejected: "danger",
-  cancelled: "danger",
+  CREATED: "default",
+  PENDING_APPROVAL: "warning",
+  PENDING_EDIT: "warning",
+  PENDING: "warning",
+  IN_PROGRESS: "primary",
+  PENDING_REVIEW: "warning",
+  PENDING_CONFIRM: "warning",
+  COMPLETED: "success",
+  REJECTED: "danger",
+  CANCELLED: "danger",
 };
 
 const TaskOrderStatusTranslation = {
@@ -57,49 +57,44 @@ const TaskOrderStatusTranslation = {
 };
 
 const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
-  created: "default",
-  pending: "default",
-  in_progress: "primary",
-  on_hold: "warning",
-  completed: "success",
-  cancelled: "danger",
+  CREATED: "default",
+  PENDING: "default",
+  IN_PROGRESS: "primary",
+  ON_HOLD: "warning",
+  COMPLETED: "success",
+  CANCELLED: "danger",
 };
 
 const RequestOrderTranslation: Record<string, string> = {
   "work_order_number": "เลขที่ใบสั่งงาน",
-  "phone": "หมายเลขโทรศัพท์",
-  "customer_type.name": "แหล่งที่มา",
-  "customer_type_id": "หัวตารางแจ้งงาน",
-  "operation_area_id": "พื้นที่ปฏิบัติงาน",
-  "customer_operation_area_id": "พื้นที่ปฏิบัติงาน",
+  "phone": "เบอร์ติดต่อ",
+  "customer_type": "แหล่งที่มา",
+  "customer_operation_area": "พื้นที่ปฏิบัติงาน",
+  "operation_area": "พื้นที่ปฏิบัติงาน",
   "quota_number": "รหัสโควต้า",
-  "company_farm_id": "รหัสฟาร์ม",
-  "zone": "โซน",
-  "farmer_name": "ชื่อเกษตรกร",
+  "farmer_name": "ชื่อไร่",
   "land_number": "เลขที่แปลง",
+  "zone": "รหัสไร่",
   "ap_month": "เดือน",
   "ap_year": "ปี",
-  "ae_id": "รหัส AE",
-  "ae_name": "โซน AE",
+  "ae_name": "สังกัด",
   "target_area": "พื้นที่เป้าหมาย",
   "actual_area": "พื้นที่จริง",
   "active": "สถานะใช้งาน",
   "evidence": "หลักฐาน",
   "sale": "ค่าใช้บริการ",
   "status": "สถานะ",
-  "supervisor_name": "ผู้รับผิดชอบ",
-  "supervisor_id": "รหัสผู้รับผิดชอบ",
+  "supervisor_name": "ผู้ประสานงาน",
   "location_xy": "พิกัด",
-  "location_id": "รหัสพิกัด",
   "activities": "กิจกรรม",
   "tool_types": "ประเภทเครื่องมือ",
-  "unit_head_id": "รหัสหัวหน้าหน่วย",
-  "_count.taskorders": "จำนวนกิจกรรม",
+  "unit_head": "หัวหน้าหน่วย",
+  "count": "จำนวนกิจกรรม",
   "comment": "หมายเหตุ",
   "created_at": "วันที่สร้าง",
-  "updated_at": "วันที่แก้ไข",
   "created_by": "ผู้สร้าง",
-  "updated_by": "ผู้แก้ไข",
+  "updated_at": "วันที่แก้ไข",
+  "updated_by": "ผู้แก้ไข"
 };
 
 const TaskOrderTranslation: Record<string, string> = {
@@ -134,11 +129,11 @@ const TaskOrderTranslation: Record<string, string> = {
 };
 
 const UserStatusColorMap: Record<USERSTATUS, ColorType> = {
-  working: "warning",
-  inactive: "primary",
-  on_leave: "warning",
-  cancelled: "default",
-  rejected: "danger",
+  WORKING: "warning",
+  INACTIVE: "primary",
+  ON_LEAVE: "warning",
+  CANCELLED: "default",
+  REJECTED: "danger",
 };
 
 const month: Record<string, string> = {

@@ -78,6 +78,7 @@ export interface StatusConfig {
 
 export interface FieldConfig {
   key: string;
+  path?: string;
   label?: string;
   formatter?: (value: any) => string;
   className?: string;
@@ -113,7 +114,8 @@ export interface TableHeader {
 }
 
 export interface FieldValue {
-  label: string;
+  name: string;
+  labelTranslator?: Record<string, string>;
   value: React.ReactNode;
   translator?: Record<string, string>;
   highlight?: boolean;

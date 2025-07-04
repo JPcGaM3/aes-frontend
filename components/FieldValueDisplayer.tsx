@@ -6,7 +6,7 @@ import type { FieldValueDisplayerProps } from "@/interfaces/props";
 import { translateEnumValue } from "@/utils/functions";
 
 export default function FieldValueDisplayer({
-  className = "flex flex-col w-full max-w-sm gap-4 sm:max-w-md md:max-w-lg lg:max-w-xl",
+  className = "flex flex-col w-full gap-4",
   sections,
 }: FieldValueDisplayerProps) {
   return (
@@ -25,18 +25,25 @@ export default function FieldValueDisplayer({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-1 gap-y-2">
+          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-x-1 gap-y-2">
             {section.fields.map((field, i) => (
               <div
                 key={i}
                 className={`flex items-start gap-2 ${field.className || ""}`}
               >
                 <span
-                  className={`text-sm font-semibold min-w-[80px] ${field.highlight ? "text-blue-600" : ""}`}
+                  className={`text-sm font-semibold min-w-[100px] ${field.highlight ? "text-blue-600" : ""}`}
                 >
-                  {field.label}
+                  {(() => {
+                    let displayLabel =
+                      typeof field.name === "string" && field.labelTranslator
+                        ? translateEnumValue(field.name, field.labelTranslator)
+                        : field.name;
+
+                    return displayLabel;
+                  })()}
                 </span>
-                
+
                 <span className="text-sm text-gray-800 break-all">
                   :{" "}
                   {(() => {
@@ -44,12 +51,14 @@ export default function FieldValueDisplayer({
                       typeof field.value === "string" && field.translator
                         ? translateEnumValue(field.value, field.translator)
                         : field.value;
+
                     if (
                       typeof displayValue === "string" &&
-                      (displayValue.length > 20 || displayValue.includes("\n"))
+                      (displayValue.length > 30 || displayValue.includes("\n"))
                     ) {
-                      displayValue = displayValue.slice(0, 20) + "...";
+                      displayValue = displayValue.slice(0, 30) + "...";
                     }
+
                     return displayValue;
                   })()}
                 </span>

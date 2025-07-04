@@ -68,8 +68,9 @@ export interface FormButtonsProps {
 
 export interface FormFieldsProps {
   sections: FormSection[];
-  values?: Record<string, any>;
   onValueChange?: (name: string, value: any) => void;
+  values?: any;
+  isCompact?: boolean;
 }
 
 export interface InputRendererProps {

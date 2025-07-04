@@ -12,17 +12,9 @@ import {
 
 import type { CardComponentProps } from "@/interfaces/props";
 import { VerticalDotsIcon } from "@/utils/icons";
-import { translateEnumValue } from "@/utils/functions";
+import { getNestedValue, translateEnumValue } from "@/utils/functions";
 import { clsx } from "clsx";
-
-function getNestedValue(obj: any, path: string) {
-  return path
-    .split(".")
-    .reduce(
-      (acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined),
-      obj
-    );
-}
+import { FieldConfig } from "@/interfaces/interfaces";
 
 export default function CardComponent<T extends { id: number | string }>({
   items,
@@ -36,36 +28,51 @@ export default function CardComponent<T extends { id: number | string }>({
     null
   );
 
+  const getFieldValue = useCallback((item: any, config: FieldConfig) => {
+    if (config.path) {
+      return getNestedValue(item, config.path);
+    }
+    if (config.key) {
+      return item[config.key];
+    }
+
+    return undefined;
+  }, []);
+
   const renderCell = useCallback(
     (item: T) => (
       <div key={item.id} className={cardClassName}>
         {/* header */}
-        <div className="px-4 text-left gap-1">
-          <Chip
-            size="sm"
-            radius="sm"
-            variant="flat"
-            className="p-3 mt-4 mb-2 tracking-wide w-fit"
-            color={statusConfig?.colorMap?.[(item as any).status] || "default"}
-          >
-            <span className="font-semibold">
-              {translateEnumValue(
-                (item as any).status,
-                statusConfig?.translation || {}
-              )}
-            </span>
-          </Chip>
+        <div className="gap-1 px-4 text-left">
+          {(item as any).status && (
+            <Chip
+              size="sm"
+              radius="sm"
+              variant="flat"
+              className="p-3 mt-4 mb-2 tracking-wide w-fit"
+              color={
+                statusConfig?.colorMap?.[(item as any).status] || "default"
+              }
+            >
+              <span className="font-semibold">
+                {translateEnumValue(
+                  (item as any).status,
+                  statusConfig?.translation || {}
+                )}
+              </span>
+            </Chip>
+          )}
 
           {headerFields?.map((field) => {
             const label = field.label
               ? field.label
               : translateEnumValue(field.key, field.labelTranslator || {});
 
-            const nested = getNestedValue(item, field.key);
+            const rawValue = getFieldValue(item, field);
             let value =
-              nested == null
+              rawValue == null
                 ? "N/A"
-                : translateEnumValue(nested, field.valueTranslator || {});
+                : translateEnumValue(rawValue, field.valueTranslator || {});
             if (
               typeof value === "string" &&
               (value.length > 20 || value.includes("\n"))
@@ -92,11 +99,11 @@ export default function CardComponent<T extends { id: number | string }>({
             if (field.valueFunction) {
               value = field.valueFunction(item);
             } else {
-              const nested = getNestedValue(item, field.key);
+              const rawValue = getFieldValue(item, field);
               value =
-                nested == null
+                rawValue == null
                   ? "N/A"
-                  : translateEnumValue(nested, field.valueTranslator || {});
+                  : translateEnumValue(rawValue, field.valueTranslator || {});
             }
             if (
               typeof value === "string" &&
@@ -125,7 +132,7 @@ export default function CardComponent<T extends { id: number | string }>({
         {actions && actions.length > 0 && (
           <div>
             <Divider />
-            <div className="flex items-center justify-between py-1 pl-4 pr-1 gap-2">
+            <div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
               <div className="text-sm text-gray-500">More actions.</div>
 
               <Popover
@@ -178,11 +185,12 @@ export default function CardComponent<T extends { id: number | string }>({
       actions,
       cardClassName,
       openPopoverId,
+      getFieldValue,
     ]
   );
 
   return (
-    <div className="items-center w-full h-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => renderCell(item))}
     </div>
   );

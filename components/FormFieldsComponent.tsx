@@ -11,7 +11,8 @@ export default function FormFields({
   sections,
   onValueChange,
   values = {},
-}: FormFieldsProps) {
+  isCompact = false,
+}: FormFieldsProps & { isCompact?: boolean }) {
   const getValue = useCallback(
     (config: InputConfig) => {
       if (!config) {
@@ -76,10 +77,14 @@ export default function FormFields({
       "aria-label": config.name,
       radius: "sm",
       size: config.size || "md",
-      disabled: config.isReadOnly || false,
+      isDisabled: config.isReadOnly || false,
       isRequired: config.isRequired || false,
       labelPlacement: config.labelPlacement || "outside",
       className: `w-full ${className || ""}`,
+      classNames: {
+        label: "min-w-[100px] text-start",
+        wrapper: "w-full",
+      },
       ...restProps,
     };
   }, []);
@@ -100,7 +105,9 @@ export default function FormFields({
           )}
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-          <div className="grid w-full gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]">
+          <div
+            className={`grid w-full ${isCompact ? "gap-2 grid-cols-1" : "gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
+          >
             {section.fields.map((field, i) =>
               Array.isArray(field) ? (
                 <div key={i} className="flex flex-row w-full gap-1">
@@ -111,7 +118,10 @@ export default function FormFields({
                           key={subIndex}
                           type={subField.type}
                           value={getValue(subField)}
-                          commonProps={commonProp(subField)}
+                          commonProps={commonProp({
+                            ...subField,
+                            labelPlacement: subField.labelPlacement || "outside",
+                          })}
                           onValueChange={onValueChange}
                         />
                       )
@@ -123,7 +133,10 @@ export default function FormFields({
                     <InputRenderer
                       type={field.type}
                       value={getValue(field)}
-                      commonProps={commonProp(field)}
+                      commonProps={commonProp({
+                        ...field,
+                        labelPlacement: field.labelPlacement || "outside",
+                      })}
                       onValueChange={onValueChange}
                     />
                   </div>

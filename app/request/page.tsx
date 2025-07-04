@@ -21,7 +21,7 @@ import {
   yearList,
   yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormField } from "@/interfaces/interfaces";
+import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import { RequestOrder } from "@/interfaces/schema";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
@@ -48,7 +48,7 @@ export default function RequestPage() {
   // Fetch data ------------------------------------------------------------------
   const { userContext } = useAuth();
   const { setIsLoading } = useLoading();
-  
+
   const router = useRouter();
   const now = new Date();
   const currentYear = String(now.getFullYear());
@@ -95,8 +95,8 @@ export default function RequestPage() {
 
     const params = {
       ...filterValues,
-      operation_area_id: userContext.operationAreaId
-    }
+      operation_area_id: userContext.operationAreaId,
+    };
 
     fetchReqOrderData({ token: userContext.token, params: params });
   }, [userContext, filterValues]);
@@ -143,53 +143,57 @@ export default function RequestPage() {
   };
 
   // Field configurations --------------------------------------------------
-  const filterFields: FormField[] = [
+  const filterSections: FormSection[] = [
     {
-      type: "dropdown",
-      name: "status",
-      label: "สถานะ",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...Object.entries(RequestOrderStatusTranslation).map(
-          ([value, label]) => ({
-            label: label as string,
-            value: value as string,
-          })
-        ),
+      fields: [
+        {
+          type: "dropdown",
+          name: "status",
+          label: "สถานะ",
+          options: [
+            { label: "ทั้งหมด", value: "all" },
+            ...Object.entries(RequestOrderStatusTranslation).map(
+              ([value, label]) => ({
+                label: label as string,
+                value: value as string,
+              })
+            ),
+          ],
+        },
+        [
+          {
+            type: "dropdown",
+            name: "start_month",
+            label: "เดือนเริ่มต้น",
+            options: monthList,
+            className: "w-2/3",
+          },
+          {
+            type: "dropdown",
+            name: "start_year",
+            label: "ปีเริ่มต้น",
+            options: yearList,
+            className: "w-1/3",
+          },
+        ],
+        [
+          {
+            type: "dropdown",
+            name: "end_month",
+            label: "เดือนสิ้นสุด",
+            options: monthList,
+            className: "w-2/3",
+          },
+          {
+            type: "dropdown",
+            name: "end_year",
+            label: "ปีสิ้นสุด",
+            options: yearList,
+            className: "w-1/3",
+          },
+        ],
       ],
     },
-    [
-      {
-        type: "dropdown",
-        name: "start_month",
-        label: "เดือนเริ่มต้น",
-        options: monthList,
-        className: "w-2/3",
-      },
-      {
-        type: "dropdown",
-        name: "start_year",
-        label: "ปีเริ่มต้น",
-        options: yearList,
-        className: "w-1/3",
-      },
-    ],
-    [
-      {
-        type: "dropdown",
-        name: "end_month",
-        label: "เดือนสิ้นสุด",
-        options: monthList,
-        className: "w-2/3",
-      },
-      {
-        type: "dropdown",
-        name: "end_year",
-        label: "ปีสิ้นสุด",
-        options: yearList,
-        className: "w-1/3",
-      },
-    ],
   ];
 
   const actions = [
@@ -236,7 +240,8 @@ export default function RequestPage() {
 
   const bodyFields: FieldConfig[] = [
     {
-      key: "customer_type.name",
+      key: "customer_type",
+      path: "customer_type.name",
       className: "text-gray-600 text-md font-semibold",
       labelTranslator: RequestOrderTranslation,
     },
@@ -262,7 +267,8 @@ export default function RequestPage() {
       labelTranslator: RequestOrderTranslation,
     },
     {
-      key: "_count.taskorders",
+      key: "count",
+      path: "_count.taskorders",
       className: "text-gray-500 text-sm",
       labelTranslator: RequestOrderTranslation,
     },
@@ -291,16 +297,21 @@ export default function RequestPage() {
       <FilterModal
         isOpen={isOpenFilter}
         title="ฟิลเตอร์รายการใบสั่งงาน"
-        fields={filterFields}
+        sections={filterSections}
         submitLabel="Apply Filters"
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={filterValues as any}
+        values={filterValues as any}
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการใบสั่งงาน" subtitle="ใบสั่งงานทั้งหมด" orientation="horizontal" className="w-full mb-6 text-left">
+      <Header
+        title="รายการใบสั่งงาน"
+        subtitle="ใบสั่งงานทั้งหมด"
+        orientation="horizontal"
+        className="w-full mb-6 text-left"
+      >
         <Button
           radius="sm"
           variant="flat"

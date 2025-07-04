@@ -18,7 +18,7 @@ import { useAuth } from "@/providers/AuthContext";
 import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
 import {
   FieldSection,
-  FormField,
+  FormSection,
   OperationAreaResponse,
 } from "@/interfaces/interfaces";
 import { AeArea, CustomerType, RequestOrder, User } from "@/interfaces/schema";
@@ -33,7 +33,6 @@ import FormComponent from "@/components/FormComponent";
 import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getAeAreas } from "@/libs/aeAreaAPI";
-import { USERROLE } from "@/utils/enum";
 import { getUsers } from "@/libs/userAPI";
 
 export default function RequestManagementPage({
@@ -79,7 +78,6 @@ export default function RequestManagementPage({
         try {
           const user = await getUsers({
             token: token,
-            params: { role: USERROLE.UnitHead },
           });
           const ae_area = await getAeAreas({ token: token });
           const customer_type = await getCustomerTypes({ token: token });
@@ -134,23 +132,46 @@ export default function RequestManagementPage({
   const dataSection: FieldSection[] = [
     {
       fields: [
-        { label: "แหล่งที่มา", value: requestData?.customer_type?.name || "-" },
         {
-          label: "วันที่สร้าง",
-          value: requestData?.created_at?.toLocaleString() || "-",
+          name: "customer_type",
+          value: requestData?.customer_type?.name || "-",
+          labelTranslator: RequestOrderTranslation,
         },
-        { label: "สังกัด", value: requestData?.ae_area?.name || "-" },
-        { label: "หัวหน้าหน่วย", value: requestData?.users?.fullname || "-" },
-        { label: "ผู้ประสานงาน", value: requestData?.supervisor_name || "-" },
-        { label: "เบอร์โทรศัพท์", value: requestData?.phone || "-" },
         {
-          label: "เดือนที่จะเริ่ม",
+          name: "created_at",
+          value: requestData?.created_at?.toLocaleString() || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "ae_name",
+          value: requestData?.ae_area?.name || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "users",
+          value: requestData?.users?.fullname || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "supervisor_name",
+          value: requestData?.supervisor_name || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "phone",
+          value: requestData?.phone || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "ap_month",
           value: requestData?.ap_month || "-",
+          labelTranslator: RequestOrderTranslation,
           translator: month,
         },
         {
-          label: "ปีที่จะเริ่ม",
+          name: "ap_year",
           value: String(requestData?.ap_year) || "-",
+          labelTranslator: RequestOrderTranslation,
           translator: yearMap,
         },
       ],
@@ -158,163 +179,184 @@ export default function RequestManagementPage({
     {
       title: "สถานที่ปฏิบัติงาน",
       fields: [
-        { label: "โควต้า", value: requestData?.quota_number || "-" },
         {
-          label: "ชาวไร่",
+          name: "quota_number",
+          value: requestData?.quota_number || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "farmer_name",
           value: requestData?.farmer_name || "-",
+          labelTranslator: RequestOrderTranslation,
         },
-        { label: "เลขที่แปลง", value: requestData?.land_number || "-" },
         {
-          label: "สถานที่",
-          value: requestData?.operation_area?.operation_area || "-",
+          name: "land_number",
+          value: requestData?.land_number || "-",
+          labelTranslator: RequestOrderTranslation,
         },
-        { label: "พิกัด", value: requestData?.location_xy || "-" },
-        { label: "พื้นที่", value: requestData?.target_area || "-" },
+        {
+          name: "operation_area",
+          value: requestData?.operation_area?.operation_area || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "location_xy",
+          value: requestData?.location_xy || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          name: "target_area",
+          value: requestData?.target_area || "-",
+          labelTranslator: RequestOrderTranslation,
+        },
       ],
     },
     {
       title: "กิจกรรมและเครื่องมือ",
       fields: [
         {
-          label: "จำนวน",
+          name: "count",
           value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
+          labelTranslator: RequestOrderTranslation,
         },
       ],
     },
   ];
 
-  const formFields: FormField[] = [
-    [
-      {
-        type: "dropdown",
-        name: "customer_type_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        isReadOnly: true,
-        className: "w-1/2",
-        options: [
-          ...customerTypesData.map((item) => ({
-            label: item.name || "-",
-            value: item.id,
-          })),
-        ],
-      },
-      {
-        type: "text",
-        name: "created_at",
-        isRequired: false,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        isReadOnly: true,
-      },
-    ],
-    [
-      {
-        type: "dropdown",
-        name: "ae_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        options: [
-          ...aeAreasData.map((item) => ({
-            label: item.name || "-",
-            value: item.id,
-          })),
-        ],
-      },
-      {
-        type: "dropdown",
-        name: "unit_head_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        options: [
-          ...usersData.map((item) => ({
-            label: item.fullname || item.username || "-",
-            value: item.id,
-          })),
-        ],
-      },
-    ],
+  const formSection: FormSection[] = [
     {
-      type: "text",
-      name: "supervisor_name",
-      isRequired: true,
-      translator: RequestOrderTranslation,
+      fields: [
+        {
+          type: "dropdown",
+          name: "customer_type",
+          path: "customer_type_id",
+          isReadOnly: true,
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: customerTypesData.map((type) => ({
+            label: type.name || "-",
+            value: type.id,
+          })),
+        },
+        {
+          type: "text",
+          name: "created_at",
+          isReadOnly: true,
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "dropdown",
+          name: "ae_name",
+          path: "ae_id",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: aeAreasData.map((ae) => ({
+            label: ae.name || "-",
+            value: ae.id,
+          })),
+        },
+        {
+          type: "dropdown",
+          name: "unit_head",
+          path: "unit_head_id",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: usersData.map((user) => ({
+            label:
+              `${user.username?.charAt(0).toUpperCase()}${user.username?.slice(1).toLowerCase()}` ||
+              "-",
+            value: user.id,
+          })),
+        },
+        {
+          type: "text",
+          name: "supervisor_name",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "text",
+          name: "phone",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "dropdown",
+          name: "ap_month",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: monthList,
+        },
+        {
+          type: "dropdown",
+          name: "ap_year",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: yearList,
+        },
+      ],
     },
     {
-      type: "text",
-      name: "phone",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    [
-      {
-        type: "dropdown",
-        name: "ap_month",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        options: monthList,
-      },
-      {
-        type: "dropdown",
-        name: "ap_year",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        options: yearList,
-      },
-    ],
-    [
-      {
-        type: "text",
-        name: "quota_number",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-      },
-      {
-        type: "text",
-        name: "farmer_name",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-      },
-    ],
-    [
-      {
-        type: "text",
-        name: "land_number",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-      },
-      {
-        type: "dropdown",
-        name: "operation_area_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/2",
-        options: [
-          ...operationAreasData.map((item) => ({
-            label: item.operation_area.operation_area || "-",
-            value: item.operation_area.id,
+      title: "สถานที่ปฏิบัติงาน",
+      fields: [
+        {
+          type: "number",
+          name: "quota_number",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "text",
+          name: "farmer_name",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "number",
+          name: "land_number",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "dropdown",
+          name: "operation_area",
+          path: "customer_operation_area_id",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+          options: operationAreasData.map((area) => ({
+            label: area.operation_area.operation_area || "-",
+            value: area.operation_area.id,
           })),
-        ],
-      },
-    ],
-    {
-      type: "textarea",
-      name: "location_xy",
-      isRequired: false,
-      translator: RequestOrderTranslation,
+        },
+        {
+          type: "text",
+          name: "location_xy",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "number",
+          name: "target_area",
+          labelPlacement: "outside-left",
+          labelTranslator: RequestOrderTranslation,
+        },
+      ],
     },
     {
-      type: "number",
-      name: "target_area",
-      isRequired: true,
-      translator: RequestOrderTranslation,
+      title: "กิจกรรมและเครื่องมือ",
+      fields: [
+        [
+          {
+            type: "text",
+            name: "count",
+            path: "_count.taskorders",
+            isReadOnly: true,
+            labelPlacement: "outside-left",
+            labelTranslator: RequestOrderTranslation,
+          },
+        ],
+      ],
     },
   ];
 
@@ -325,13 +367,13 @@ export default function RequestManagementPage({
         radius="sm"
         selectedKey={selectedTab}
         onSelectionChange={handleTabChange}
-        className="flex flex-col items-center justify-center w-full pt-3 font-semibold"
+        className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
       >
         {/* View tab ------------------------------------------------------------------------------------------- */}
         <Tab
           key="view"
           title="รายละเอียด"
-          className="flex flex-col items-center justify-center w-full gap-8"
+          className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
         >
           <Header
             title="ดูรายละเอียดใบสั่งงาน"
@@ -350,7 +392,7 @@ export default function RequestManagementPage({
             radius="sm"
             color="danger"
             variant="flat"
-            className="w-full max-w-sm font-semibold sm:max-w-md md:max-w-lg lg:max-w-xl"
+            className="w-full font-semibold"
             onPress={() => {
               setIsLoading(true);
               router.push(`/request`);
@@ -374,7 +416,7 @@ export default function RequestManagementPage({
               fontMono.variable
             )}
             values={requestData}
-            sections={formFields}
+            sections={formSection}
             onSubmit={() => {}}
           />
         </Tab>

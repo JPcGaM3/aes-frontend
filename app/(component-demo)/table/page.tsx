@@ -53,7 +53,11 @@ export default function TableComponent({
                           className="px-2 py-1 text-sm whitespace-nowrap"
                         >
                           <button
-                            onClick={action.onClick}
+                            onClick={() => {
+                              if (action.onClick) {
+                                action.onClick(data);
+                              }
+                            }}
                             className="text-blue-500 hover:underline"
                           >
                             {action.icon}

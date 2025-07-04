@@ -9,6 +9,11 @@ import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { DatePicker, DateRangePicker, NumberInput } from "@heroui/react";
 import { translateEnumValue } from "@/utils/functions";
+import {
+  toCalendar,
+  parseDate,
+  BuddhistCalendar,
+} from "@internationalized/date";
 
 interface FormFieldsProps {
   fields: FormField[];
@@ -28,10 +33,10 @@ export default function FormFields({
   values = {},
 }: FormFieldsProps) {
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col w-full gap-4">
       {fields.map((field, index) =>
         Array.isArray(field) ? (
-          <div key={index} className="flex flex-row gap-2 w-full">
+          <div key={index} className="flex flex-row w-full gap-2">
             {field.map((subField, subIndex) => (
               <InputRenderer
                 key={`${index}-${subIndex}`}
@@ -147,9 +152,9 @@ function InputRenderer({
               onClick={toggleVisibility}
             >
               {isVisible ? (
-                <EyeSlashFilledIcon className="text-default-400 text-2xl pointer-events-none" />
+                <EyeSlashFilledIcon className="text-2xl pointer-events-none text-default-400" />
               ) : (
-                <EyeFilledIcon className="text-default-400 text-2xl pointer-events-none" />
+                <EyeFilledIcon className="text-2xl pointer-events-none text-default-400" />
               )}
             </button>
           }
@@ -230,12 +235,9 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
-          onValueChange={
-            onValueChange
-              ? (v: Date) =>
-                  onValueChange(inputConfig.name, v.toLocaleDateString())
-              : undefined
-          }
+          onChange={(v: any) => {
+            onValueChange ? onValueChange(inputConfig.name, v) : undefined;
+          }}
           showMonthAndYearPickers
         />
       );

@@ -136,14 +136,14 @@ export default function Navbar() {
       shouldHideOnScroll={false}
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="shadow-md p-0 h-18 z-50 flex items-center"
+      className="z-50 flex items-center p-0 shadow-md h-18"
       classNames={{
         wrapper: "px-3 py-2",
       }}
     >
-      <NavbarContent className="w-full items-center justify-start gap-2">
+      <NavbarContent className="items-center justify-start w-full gap-2">
         {/* Logo */}
-        <NavbarBrand className="h-full w-full flex items-center justify-start p-0">
+        <NavbarBrand className="flex items-center justify-start w-full h-full p-0">
           <div className="relative h-full aspect-[1/1]">
             <Image
               src="/pictures/logo.png"
@@ -158,7 +158,7 @@ export default function Navbar() {
         </NavbarBrand>
 
         {/* Operation Dropdown */}
-        {(userContext.token && hasMounted) && (
+        {userContext.token && hasMounted && (
           <NavbarItem
             className={clsx(
               "h-full justify-end items-center font-mono  bg-default-100 rounded-lg w-fit",
@@ -184,15 +184,15 @@ export default function Navbar() {
                       <ChevronDownIcon strokeWidth={2} />
                     )
                   }
-                  className="h-full min-w-28 w-fit font-bold text-lg flex flex-row justify-between gap-3 px-3"
+                  className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-28 w-fit"
                   onPress={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   {getOperationAreaLabel(userContext.operationAreaId)}
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="rounded-lg shadow-lg mt-1 p-1 w-fit min-w-28">
-                <div className="flex flex-col text-sm w-full font-semibold">
+              <PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-28">
+                <div className="flex flex-col w-full text-sm font-semibold">
                   {operationOptions.length > 0 ? (
                     operationOptions.map((option) => (
                       <Button
@@ -200,14 +200,14 @@ export default function Navbar() {
                         variant="light"
                         size="md"
                         radius="sm"
-                        className="w-full justify-start text-left p-2 font-medium"
+                        className="justify-start w-full p-2 font-medium text-left"
                         onPress={() => handleDropdownSelect(option.value)}
                       >
                         {option.label}
                       </Button>
                     ))
                   ) : (
-                    <div className="text-gray-400 p-2 text-center">
+                    <div className="p-2 text-center text-gray-400">
                       No options available
                     </div>
                   )}
@@ -218,7 +218,7 @@ export default function Navbar() {
         )}
 
         {/* Menu Toggle */}
-        <NavbarItem className="flex md:hidden h-full justify-end items-center">
+        <NavbarItem className="flex items-center justify-end h-full md:hidden">
           <Button
             size="lg"
             radius="sm"

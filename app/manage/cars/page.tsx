@@ -6,13 +6,50 @@ import { FieldConfig, TableHeader } from "@/interfaces/interfaces";
 import { getCars } from "@/libs/carAPI";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { EditIcon, InfoIcon, RejectIcon } from "@/utils/icons";
+import { DeleteIcon, EditIcon, InfoIcon, RejectIcon } from "@/utils/icons";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 export default function ManageCarsPage() {
   const { setIsLoading } = useLoading();
   const { userContext } = useAuth();
   const [car, setCar] = useState<any[]>([]);
+  // const router = useRouter();
+
+  const handleActions = ({
+    params,
+  }: {
+    params: {
+      action: string;
+      id?: number;
+    };
+  }) => {
+    setIsLoading(true);
+
+    switch (params.action) {
+      case "view":
+      case "edit":
+        console.log(`Action triggered: ${params.action} ${params.id}`);
+        setIsLoading(false);
+        // router.push(`/manage/cars/${params.id}?action=${params.action}`);
+        break;
+      case "reject":
+      case "add":
+        console.log(`Action triggered: ${params.action}`);
+        // router.push("/manage/cars/add");
+        break;
+      case "delete":
+        console.log(`Action triggered: ${params.action} ${params.id}`);
+        setIsLoading(false);
+        // router.push("/manage/cars/delete");
+        break;
+
+      default:
+        console.log(`Action triggered: ${params.action}`);
+        setIsLoading(false);
+        break;
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -40,35 +77,28 @@ export default function ManageCarsPage() {
     { label: "HP", key: "hp" },
   ];
 
-  const cardHeaderFields = [{ label: "Asset", key: "asset" }];
+  // const cardHeaderFields = [{ label: "Asset", key: "asset" }];
 
-  const cardBodyFields = [
-    { label: "Description", key: "asset_description" },
-    { label: "HP", key: "hp" },
-  ];
+  // const cardBodyFields = [
+  //   { label: "Description", key: "asset_description" },
+  //   { label: "HP", key: "hp" },
+  // ];
 
   const actions = [
-    {
-      key: "view",
-      label: "ดูรายละเอียด",
-      icon: <InfoIcon />,
-      onClick: () => console.log("View details clicked"),
-      // onClick: () => handleNewPage("view"),
-    },
     {
       key: "edit",
       label: "แก้ไข",
       icon: <EditIcon />,
-      onClick: () => console.log("Edit clicked"),
-      // onClick: () => handleNewPage("edit"),
+      onClick: (item: any) =>
+        handleActions({ params: { action: "edit", id: item.id } }),
     },
     {
-      key: "reject",
-      label: "ปฏิเสธ",
-      icon: <RejectIcon />,
+      key: "delete",
+      label: "ลบ",
+      icon: <DeleteIcon />,
       className: "text-danger-500",
-      onClick: () => console.log("Reject clicked"),
-      // onClick: () => handleNewPage("reject"),
+      onClick: (item: any) =>
+        handleActions({ params: { action: "delete", id: item.id } }),
     },
   ];
 

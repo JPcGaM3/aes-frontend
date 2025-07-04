@@ -17,7 +17,7 @@ export async function getRequestOrders({
 }: {
   token: string;
   paramData?: Record<string, any>;
-}) {
+}): Promise<any> {
   const params: Record<string, any> = {};
 
   Object.entries(paramData || {}).forEach(([key, value]) => {
@@ -40,7 +40,7 @@ export async function getRequestOrders({
     const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
       params,
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -51,7 +51,7 @@ export async function getRequestOrders({
       if (error.response?.status === 404) {
         throw new Error("ไม่มีรายการในขณะนี้");
       }
-      
+
       throw new Error(
         `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
       );

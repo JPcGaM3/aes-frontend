@@ -212,7 +212,7 @@ function InputRenderer({
                     const num = Number(selected);
                     value = isNaN(num) ? selected : num;
                   }
-                  
+
                   onValueChange(inputConfig.name, value);
                 }
               : undefined
@@ -235,12 +235,9 @@ function InputRenderer({
           {...commonProp}
           radius="sm"
           value={getControlledValue(inputConfig.type, value)}
-          onValueChange={
-            onValueChange
-              ? (v: Date) =>
-                  onValueChange(inputConfig.name, v.toLocaleDateString())
-              : undefined
-          }
+          onChange={(v: any) => {
+            onValueChange ? onValueChange(inputConfig.name, v) : undefined;
+          }}
           showMonthAndYearPickers
         />
       );

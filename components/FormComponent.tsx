@@ -48,7 +48,6 @@ export default function FormComponent({
     }
   };
 
-  // Set width and gap based on isCompact
   const computedClassName =
     className ||
     (isCompact
@@ -59,7 +58,7 @@ export default function FormComponent({
     <div className={computedClassName}>
       {onSubmit ? (
         <Form
-          className={`flex flex-col w-full ${isCompact ? "gap-2" : "gap-8"}`}
+          className={"flex flex-col w-full gap-8"}
           validationBehavior="aria"
           onSubmit={handleSubmit}
         >
@@ -89,7 +88,7 @@ export default function FormComponent({
           />
         </Form>
       ) : (
-        <div className={`flex flex-col w-full ${isCompact ? "gap-2" : "gap-8"}`}>
+        <div className="flex flex-col w-full gap-8">
           {hasHeader && (
             <Header
               subtitle={subtitle}

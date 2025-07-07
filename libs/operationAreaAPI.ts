@@ -31,21 +31,13 @@ export async function getOperationAreas({
 
     return response.data.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `Failed to fetch operation areas: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
-    }
-
-    throw error;
+    throw new Error(
+      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
+    );
   }
 }
 
-export async function getOperationAreasUser({
-  token,
-}: {
-  token: string;
-}) {
+export async function getOperationAreasUser({ token }: { token: string }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {
@@ -58,12 +50,8 @@ export async function getOperationAreasUser({
 
     return response.data.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `Failed to fetch operation area user: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
-    }
-
-    throw error;
+    throw new Error(
+      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
+    );
   }
 }

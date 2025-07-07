@@ -1,14 +1,17 @@
+import { useCallback } from "react";
+
+import { Divider } from "@heroui/react";
+
 import { InputConfig } from "@/interfaces/interfaces";
 import { FormFieldsProps } from "@/interfaces/props";
 
 import { getNestedValue, translateEnumValue } from "@/utils/functions";
 
-import { Divider } from "@heroui/react";
 import InputRenderer from "./InputRenderer";
-import { useCallback } from "react";
+import { clsx } from "clsx";
 
 export default function FormFields({
-  sections,
+  sections = [],
   onValueChange,
   values = {},
   isCompact = false,
@@ -70,7 +73,8 @@ export default function FormFields({
         : `โปรดกรอก ${labelValue || name}`
       : undefined;
 
-    const resolvedLabelPlacement = labelPlacement || (isCompact ? "outside" : "outside-left");
+    const resolvedLabelPlacement =
+      labelPlacement || (isCompact ? "outside" : "outside-left");
 
     return {
       name: name,
@@ -82,7 +86,7 @@ export default function FormFields({
       isDisabled: isReadOnly || false,
       isRequired: isRequired || false,
       labelPlacement: resolvedLabelPlacement,
-      className: `w-full ${className || ""}`,
+      className: clsx("min-w-[100px] p-0", className),
       classNames: {
         label: "min-w-[100px] p-0",
         mainWrapper: "w-full min-w-0",
@@ -109,7 +113,7 @@ export default function FormFields({
 
           {/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
           <div
-            className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
+            className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-2"}`}
           >
             {section.fields.map((field, i) =>
               Array.isArray(field) ? (

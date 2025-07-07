@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
+
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 
 import {
@@ -15,12 +17,8 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { Popover, PopoverContent, PopoverTrigger, user } from "@heroui/react";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { Button } from "@heroui/button";
-
-import Image from "next/image";
-
-import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 
 import {
   HomeIcon,
@@ -35,8 +33,13 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@/utils/icons";
+
 import { clsx } from "clsx";
+import { getAeArea } from "@/libs/aeAreaAPI";
+
 import { fontMono } from "@/config/fonts";
+import { AeArea } from "@/interfaces/schema";
+import { AlertComponentProps } from "@/interfaces/props";
 
 export default function Navbar() {
   // const value & react hook -------------------------------------------------------------------------------------
@@ -48,8 +51,12 @@ export default function Navbar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [operationAreas, setOperationAreas] = useState<any[]>([]);
-  const [hasMounted, setHasMounted] = useState(false);
+  const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
+  const [alert, setAlert] = useState<AlertComponentProps>({
+    title: "",
+    description: "",
+    isVisible: false,
+  });
 
   const menuItems = [
     // * Normal Page --------------------------------------------------
@@ -68,21 +75,21 @@ export default function Navbar() {
   // TODO: core fetch function
   useEffect(() => {
     if (userContext.token) {
-      const fetchOperationAreas = async ({ token }: { token: string }) => {
+      const fetchAeArea = async ({ token }: { token: string }) => {
         try {
-          const response = await getOperationAreasUser({ token });
-          setOperationAreas(response);
+          const response = await getAeArea({ token: token });
+          setAeAreas(response);
         } catch (error: any) {
-          console.error("Failed to fetch operation areas:", error);
-        } finally {
-          setIsLoading(false);
+          setAlert({
+            title: "Error fetching areas",
+            description: error.message,
+            isVisible: true,
+          });
         }
       };
 
-      fetchOperationAreas({ token: userContext!.token });
+      fetchAeArea({ token: userContext!.token });
     }
-
-    setHasMounted(true);
   }, [userContext]);
 
   const dynamicMenuItems = menuItems.map((item) => {
@@ -97,17 +104,9 @@ export default function Navbar() {
     return item;
   });
 
-  const operationOptions = operationAreas.map((area) => ({
-    value: String(area.operation_area.id),
-    label: area.operation_area.operation_area,
-  }));
-
-  const getOperationAreaLabel = (id: number) => {
-    const found = operationOptions.find(
-      (option) => option.value === String(id)
-    );
-
-    return found ? found.label : "OP_AREA";
+  const getAeAreaLabel = (id: number) => {
+    const found = aeAreas.find((area) => area.ae_area.id === id);
+    return found ? found.ae_area.name : "AE_AREA";
   };
 
   // Handler ------------------------------------------------------------------------------------------------------
@@ -122,10 +121,10 @@ export default function Navbar() {
     }
   };
 
-  const handleDropdownSelect = (value: string) => {
+  const handleDropdownSelect = (value: number) => {
     setIsDropdownOpen(false);
     setUserContext({
-      operationAreaId: Number(value),
+      aeAreaId: value,
     });
   };
 
@@ -158,7 +157,7 @@ export default function Navbar() {
         </NavbarBrand>
 
         {/* Operation Dropdown */}
-        {userContext.token && hasMounted && (
+        {userContext.token && (
           <NavbarItem
             className={clsx(
               "h-full justify-end items-center font-mono  bg-default-100 rounded-lg w-fit",
@@ -184,16 +183,16 @@ export default function Navbar() {
                       <ChevronDownIcon strokeWidth={2} />
                     )
                   }
-                  className="flex flex-row justify-between h-full px-3 text-lg font-bold gap-3 min-w-28 w-fit"
+                  className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-28 w-fit"
                   onPress={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  {getOperationAreaLabel(userContext.operationAreaId)}
+                  {getAeAreaLabel(userContext.aeAreaId)}
                 </Button>
               </PopoverTrigger>
 
               <PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-28">
                 <div className="flex flex-col w-full text-sm font-semibold">
-                  {operationOptions.length > 0 ? (
+                  {/* {operationOptions.length > 0 ? (
                     operationOptions.map((option) => (
                       <Button
                         key={option.value}
@@ -210,7 +209,7 @@ export default function Navbar() {
                     <div className="p-2 text-center text-gray-400">
                       No options available
                     </div>
-                  )}
+                  )} */}
                 </div>
               </PopoverContent>
             </Popover>

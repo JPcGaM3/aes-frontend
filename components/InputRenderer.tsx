@@ -14,6 +14,8 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
+import { fontMono } from "@/config/fonts";
+import clsx from "clsx";
 
 export default function InputRenderer({
   type,
@@ -44,8 +46,6 @@ export default function InputRenderer({
   }, []);
 
   const getVisibleMonths = () => {
-    console.log("getVisibleMonths called with width:", width);
-
     if (width < 500) {
       return 1;
     }
@@ -162,6 +162,7 @@ export default function InputRenderer({
           {...commonProps}
           type={isVisible ? "text" : "password"}
           value={value}
+          autocomplete="current-password"
           onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
           endContent={
             <Button
@@ -170,10 +171,11 @@ export default function InputRenderer({
               radius="full"
               variant="light"
               onPress={() => setIsVisible((state) => !state)}
-              className="p-0 -mx-2 text-2xl pointer-events-none text-default-400"
-            >
-              {isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
-            </Button>
+              className="p-0 -mx-2 text-2xl text-default-400"
+              endContent={
+                isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />
+              }
+            />
           }
         />
       );
@@ -214,6 +216,7 @@ export default function InputRenderer({
                   classNames={{
                     base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
                   }}
+                  className={clsx("font-mono", fontMono.variable)}
                 >
                   {option.label}
                 </SelectItem>

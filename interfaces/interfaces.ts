@@ -24,7 +24,7 @@ export interface BaseInputConfig {
   isReadOnly?: boolean;
   isRequired?: boolean;
   size?: "sm" | "md" | "lg";
-  className?: string;
+  className?: ClassValue;
 }
 
 export interface TextInputConfig extends BaseInputConfig {

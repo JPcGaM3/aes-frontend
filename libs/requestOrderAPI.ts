@@ -8,7 +8,7 @@ const numberKeys = [
   "target_area",
   "land_number",
   "ap_year",
-  "customer_operation_area_id"
+  "customer_operation_area_id",
 ];
 
 export async function getRequestOrders({
@@ -40,7 +40,7 @@ export async function getRequestOrders({
     const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
       params,
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -48,12 +48,8 @@ export async function getRequestOrders({
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        throw new Error("ไม่มีรายการในขณะนี้");
-      }
-      
       throw new Error(
-        `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -82,12 +78,8 @@ export async function getRequestOrderWithTask({
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        throw new Error("ไม่มีรายการในขณะนี้");
-      }
-
       throw new Error(
-        `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -122,13 +114,9 @@ export async function uploadRequestOrder({
 
     return response.data.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `Failed to fetch operation areas: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
-    }
-
-    throw error;
+    throw new Error(
+      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
+    );
   }
 }
 
@@ -157,8 +145,6 @@ export async function KeyInRequestOrder({
     }
   });
 
-  console.log("KeyInRequestOrder body:", body);
-
   try {
     const response = await axios.post(
       `${apiUrl}/api/v1/request-orders/create/key-in`,
@@ -173,15 +159,8 @@ export async function KeyInRequestOrder({
 
     return response.data.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        throw new Error("There is no request orders.");
-      }
-      throw new Error(
-        `Failed to fetch orders: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
-    }
-
-    throw error;
+    throw new Error(
+      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
+    );
   }
 }

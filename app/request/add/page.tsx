@@ -226,7 +226,7 @@ export default function AddRequestPage() {
     } finally {
       setTimeout(() => {
         setIsAdding(false);
-        
+
         setTasks([defaultTask]);
         setFormValues({
           ...defaultFormValues,
@@ -257,8 +257,6 @@ export default function AddRequestPage() {
   };
 
   const handleTaskChange = (index: number, changed: any) => {
-    console.log("Task changed: ", index, changed);
-
     const updatedTasks: TaskFormType[] = tasks.map((task, i) => {
       if (i === index) {
         if (
@@ -427,6 +425,7 @@ export default function AddRequestPage() {
           className="flex flex-col items-center justify-center w-full"
         >
           <FormComponent
+            isCompact={true}
             sections={requestOrderFields}
             title="สร้างใบสั่งงาน"
             subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
@@ -469,6 +468,7 @@ export default function AddRequestPage() {
 
               {/* Task Fields */}
               <FormComponent
+                isCompact={true}
                 hasHeader={false}
                 sections={[
                   {

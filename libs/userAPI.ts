@@ -1,23 +1,15 @@
-import { USERROLE } from "@/utils/enum";
 import axios from "axios";
 
 export interface LoginParams {
   username: string;
   password: string;
-  operation_area_id: number | null;
-}
-
-export interface getUsersParams {
-  token: string;
-  params?: {
-    ae_id?: number;
-    role?: USERROLE;
-  };
+  ae_area_id: number | null;
 }
 
 export async function LoginUser({
   username,
   password,
+  ae_area_id,
 }: LoginParams): Promise<any> {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
@@ -26,9 +18,11 @@ export async function LoginUser({
     ? { email: username, password: password }
     : { username: username, password: password };
 
+  const queryParams = ae_area_id ? `?ae_id=${ae_area_id}` : "";
+
   try {
     const response = await axios.post(
-      `${apiUrl}/api/v1/mitr-portal/login`,
+      `${apiUrl}/api/v1/mitr-portal/login${queryParams}`,
       body,
       {
         headers: {
@@ -40,12 +34,8 @@ export async function LoginUser({
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        throw new Error("Invalid username or password.");
-      }
-
       throw new Error(
-        `Failed to fetch token: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -67,14 +57,8 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        throw new Error("Unauthorized access - please log in.");
-      } else if (error.response?.status === 404) {
-        throw new Error("User profile not found.");
-      }
-
       throw new Error(
-        `Failed to fetch user profile: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -82,15 +66,11 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
   }
 }
 
-export async function getUsers({
-  token,
-  params,
-}: getUsersParams): Promise<any> {
+export async function getUsers({ token }: { token: string }) {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
   try {
     const response = await axios.get(`${apiUrl}/api/v1/users`, {
-      params,
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -100,14 +80,8 @@ export async function getUsers({
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        throw new Error("Unauthorized access - please log in.");
-      } else if (error.response?.status === 404) {
-        throw new Error("User not found.");
-      }
-
       throw new Error(
-        `Failed to fetch users: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 

@@ -18,6 +18,7 @@ import { extend } from "dayjs";
 export interface AlertComponentProps {
   title: string;
   description: string;
+  isCompact?: boolean;
   isVisible?: boolean;
   handleClose?: () => void;
   variant?: "solid" | "bordered" | "flat" | "faded";

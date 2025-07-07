@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   createContext,
   useContext,
@@ -10,98 +12,118 @@ import { LoginParams, LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
   token: string;
-  operationAreaId: number;
+  id: number;
+  role: string[];
+  aeAreaId: number;
 }
 
 interface AuthContextType {
   userContext: UserContextType;
-  login: ({
-    params,
-    operationAreaId,
-  }: {
-    params: LoginParams;
-    operationAreaId: number;
-  }) => Promise<void>;
+  login: ({ params }: { params: LoginParams }) => Promise<void>;
   logout: () => void;
   setUserContext: (context: Partial<UserContextType>) => void;
+  isReady: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string>("");
-  const [operationAreaId, setOperationAreaId] = useState<number>(0);
+  const [id, setId] = useState<number>(NaN);
+  const [role, setRole] = useState<string[]>([]);
+  const [aeAreaId, setAeAreaId] = useState<number>(NaN);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   useEffect(() => {
-    const loadUser = async () => {
-      const storedUser = sessionStorage.getItem("authUser");
-      if (storedUser) {
-        try {
-          const parsed = JSON.parse(storedUser);
-          await setToken(parsed.token ?? "");
-          await setOperationAreaId(parsed.operationAreaId ?? 0);
-        } catch (e) {
-          sessionStorage.removeItem("authUser");
-        }
+    const storedUser = sessionStorage.getItem("authUser");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUserContext({
+          token: parsed.token ?? "",
+          id: parsed.id,
+          role: parsed.role ?? [],
+          aeAreaId: parsed.aeAreaId,
+        });
+      } catch {
+        sessionStorage.removeItem("authUser");
       }
-    };
-
-    loadUser();
+    }
+    setIsReady(true);
   }, []);
 
-  // Login API + set user context
+  const userContext: UserContextType = {
+    token,
+    id,
+    role,
+    aeAreaId,
+  };
+
+  useEffect(() => {
+    const isValid =
+      token !== "" && !isNaN(id) && !isNaN(aeAreaId) && role.length > 0;
+
+    if (isValid) {
+      sessionStorage.setItem("authUser", JSON.stringify(userContext));
+    }
+  }, [token, id, aeAreaId, role]);
+
+  const setUserContext = (context: Partial<UserContextType>) => {
+    if (context.token !== undefined) setToken(context.token);
+    if (context.id !== undefined) setId(context.id);
+    if (context.role !== undefined) setRole(context.role);
+    if (context.aeAreaId !== undefined) setAeAreaId(context.aeAreaId);
+  };
+
   const login = async ({
     params,
-    operationAreaId,
   }: {
     params: LoginParams;
-    operationAreaId: number;
   }) => {
     try {
       const result = await LoginUser(params);
-      setToken(result.token ?? null);
-      setOperationAreaId(operationAreaId);
+      
+      if (result) {
+        const newUserContext = {
+          token: result.token ?? "",
+          id: result.id,
+          role: result.role,
+          aeAreaId: params.ae_area_id ?? NaN,
+        };
+
+        setUserContext(newUserContext);
+        sessionStorage.setItem("authUser", JSON.stringify(newUserContext));
+      }
     } catch (error) {
       throw error;
     }
   };
 
-  // Logout + clear
   const logout = () => {
-    setToken("");
-    setOperationAreaId(0);
-
+    const newUserContext = {
+      token: "",
+      id: NaN,
+      role: [],
+      aeAreaId: NaN,
+    };
+    
+    setUserContext(newUserContext);
     sessionStorage.removeItem("authUser");
   };
 
-  const setUserContext = (context: Partial<UserContextType>) => {
-    if (context.token !== undefined) setToken(context.token);
-    if (context.operationAreaId !== undefined)
-      setOperationAreaId(context.operationAreaId);
-  };
-
-  const userContext: UserContextType = {
-    token: token,
-    operationAreaId: operationAreaId,
-  };
-
-  useEffect(() => {
-    sessionStorage.setItem("authUser", JSON.stringify(userContext));
-  }, [token, operationAreaId]);
-
   return (
-    <AuthContext.Provider value={{ userContext, login, logout, setUserContext }}>
+    <AuthContext.Provider
+      value={{ userContext, login, logout, setUserContext, isReady }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-
   return context;
 };

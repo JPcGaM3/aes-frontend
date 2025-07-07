@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { FormField, FormSection } from "@/interfaces/interfaces";
+import { FormSection } from "@/interfaces/interfaces";
 import { AlertComponentProps } from "@/interfaces/props";
 
 import { useAuth } from "@/providers/AuthContext";
@@ -13,9 +13,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
 
-import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { LoginParams } from "@/libs/userAPI";
-import { OperationArea } from "@/interfaces/schema";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,31 +21,11 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { setIsLoading } = useLoading();
 
-  const [operationAreas, setOperationAreas] = useState<OperationArea[]>([]);
   const [alert, setAlert] = useState<AlertComponentProps>({
     title: "",
     description: "",
     isVisible: false,
   });
-
-  // TODO: core fetch function
-  useEffect(() => {
-    const fetchOperationAreas = async () => {
-      try {
-        const data = await getOperationAreas({ paramData: {} });
-        setOperationAreas(data || []);
-      } catch (err: any) {
-        setAlert({
-          title: "โหลดข้อมูลพื้นที่ปฏิบัติงานล้มเหลว",
-          description: err.message || "Unknown error occurred",
-          color: "danger",
-          isVisible: true,
-        });
-      }
-    };
-
-    fetchOperationAreas();
-  }, []);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -57,8 +35,8 @@ export default function LoginPage() {
         params: {
           username: values.username,
           password: values.password,
+          ae_area_id: values.ae_id,
         } as LoginParams,
-        operationAreaId: Number(values.operation_area_id),
       });
 
       router.push("/home");
@@ -69,6 +47,7 @@ export default function LoginPage() {
         color: "danger",
         isVisible: true,
       });
+      setIsLoading(false);
     }
   };
 
@@ -78,21 +57,25 @@ export default function LoginPage() {
         {
           type: "text",
           name: "username",
+          label: "ชื่อผู้ใช้งาน",
           isRequired: true,
         },
         {
           type: "password",
           name: "password",
+          label: "รหัสผ่าน",
           isRequired: true,
         },
         {
           type: "dropdown",
-          name: "operation_area_id",
+          name: "ae_id",
+          label: "พื้นที่ปฏิบัติงาน",
           isRequired: true,
-          options: operationAreas.map((area: OperationArea) => ({
-            value: area.id,
-            label: `${area.operation_area} (${area.ae_area?.name || "-"})`,
-          })),
+          options: [
+            { label: "CT0", value: 1 },
+            { label: "NE1", value: 2 },
+            { label: "NE2", value: 3 },
+          ],
         },
       ],
     },
@@ -101,6 +84,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center w-full">
       <FormComponent
+        isCompact={true}
         sections={sections}
         title="ยินดีต้อนรับ"
         subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
@@ -111,6 +95,7 @@ export default function LoginPage() {
       {/* Alert */}
       {alert.isVisible && (
         <AlertComponent
+          isCompact={true}
           title={alert.title}
           description={alert.description}
           color={alert.color}

@@ -32,7 +32,7 @@ import {
 import FormComponent from "@/components/FormComponent";
 import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
-import { getAeAreas } from "@/libs/aeAreaAPI";
+import { getAeArea } from "@/libs/aeAreaAPI";
 import { getUsers } from "@/libs/userAPI";
 
 export default function RequestManagementPage({
@@ -79,19 +79,13 @@ export default function RequestManagementPage({
           const user = await getUsers({
             token: token,
           });
-          const ae_area = await getAeAreas({ token: token });
+          const ae_area = await getAeArea({ token: token });
           const customer_type = await getCustomerTypes({ token: token });
           const operation_area = await getOperationAreasUser({ token: token });
           const request: RequestOrder = await getRequestOrderWithTask({
             token: token,
             requestId: requestId,
           });
-
-          console.log("User Data:", user);
-          console.log("AE Area Data:", ae_area);
-          console.log("Customer Type Data:", customer_type);
-          console.log("Operation Area Data:", operation_area);
-          console.log("Request Data:", request);
 
           setUsersData(user);
           setAeAreasData(ae_area);
@@ -396,19 +390,6 @@ export default function RequestManagementPage({
           className="flex flex-col items-center justify-center w-full gap-20"
         >
           <FormComponent
-            title="แก้ไขใบสั่งงาน"
-            subtitle={`@${requestData.work_order_number}`}
-            subtitleClassName={clsx(
-              "mt-1 text-sm text-gray-600 font-mono",
-              fontMono.variable
-            )}
-            values={requestData}
-            sections={formSection}
-            onSubmit={() => {}}
-          />
-
-          <FormComponent
-            isCompact
             title="แก้ไขใบสั่งงาน"
             subtitle={`@${requestData.work_order_number}`}
             subtitleClassName={clsx(

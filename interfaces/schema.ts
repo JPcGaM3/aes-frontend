@@ -218,7 +218,6 @@ export interface RequestOrder {
   run_number?: string;
   phone?: string;
   customer_type_id?: number;
-  customer_operation_area_id?: number;
   operation_area_id?: number;
   quota_number?: string;
   company_farm_id?: number;

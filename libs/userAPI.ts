@@ -1,30 +1,23 @@
 import axios from "axios";
 
-export interface LoginParams {
-  username: string;
-  password: string;
-  ae_area_id: number | null;
+export interface LoginProps {
+  params: {
+    ae_id: number | null;
+  };
+  body:
+    | { email: string; password: string }
+    | { username: string; password: string };
 }
 
-export async function LoginUser({
-  username,
-  password,
-  ae_area_id,
-}: LoginParams): Promise<any> {
+export async function LoginUser({ params, body }: LoginProps): Promise<any> {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-  const isEmail = username.includes("@mitrphol.com");
-  const body = isEmail
-    ? { email: username, password: password }
-    : { username: username, password: password };
-
-  const queryParams = ae_area_id ? `?ae_id=${ae_area_id}` : "";
 
   try {
     const response = await axios.post(
-      `${apiUrl}/api/v1/mitr-portal/login${queryParams}`,
+      `${apiUrl}/api/v1/mitr-portal/login`,
       body,
       {
+        params: params,
         headers: {
           "Content-Type": "application/json",
         },

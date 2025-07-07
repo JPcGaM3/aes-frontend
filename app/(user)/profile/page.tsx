@@ -19,6 +19,7 @@ import { AlertComponentProps } from "@/interfaces/props";
 
 import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
+import { FieldSection } from "@/interfaces/interfaces";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -73,42 +74,42 @@ export default function ProfilePage() {
     router.push("/login");
   };
 
-  const profileSections = [
+  const profileSections: FieldSection[] = [
     {
       title: "ข้อมูลส่วนตัว",
       fields: [
-        { label: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
-        { label: "อีเมล", value: profile?.user_result.email ?? "-" },
+        { name: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
+        { name: "อีเมล", value: profile?.user_result.email ?? "-" },
         {
-          label: "ชื่อ-สกุล (TH)",
+          name: "ชื่อ-สกุล (TH)",
           value: profile?.profile.employeeName?.th ?? "-",
         },
         {
-          label: "ชื่อ-สกุล (EN)",
+          name: "ชื่อ-สกุล (EN)",
           value: profile?.profile.employeeName?.en ?? "-",
         },
-        { label: "เบอร์โทรศัพท์", value: profile?.user_result.phone ?? "-" },
-        { label: "ที่อยู่", value: "-" },
+        { name: "เบอร์โทรศัพท์", value: profile?.user_result.phone ?? "-" },
+        { name: "ที่อยู่", value: "-" },
       ],
     },
     {
       title: "ข้อมูลการทำงาน",
       fields: [
         {
-          label: "ตำแหน่ง",
+          name: "ตำแหน่ง",
           value: profile?.user_result.role?.length
             ? profile.user_result.role.join(", ")
             : "-",
         },
-        { label: "ระดับ", value: profile?.profile.level?.name ?? "-" },
+        { name: "ระดับ", value: profile?.profile.level?.name ?? "-" },
         {
-          label: "แผนก",
+          name: "แผนก",
           value:
             profile?.profile.department?.name?.en?.replace(/ Section$/i, "") ??
             "-",
         },
         {
-          label: "สังกัด AE",
+          name: "สังกัด AE",
           value: profile?.user_result.ae_area?.name ?? "-",
         },
       ],
@@ -142,7 +143,7 @@ export default function ProfilePage() {
           />
         )}
 
-        <div className="flex flex-col items-center justify-center gap-1">
+        <div className="flex flex-col items-center justify-center gap-4">
           <div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
             {profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-"}
           </div>

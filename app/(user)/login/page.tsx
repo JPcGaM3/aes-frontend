@@ -13,8 +13,6 @@ import { useLoading } from "@/providers/LoadingContext";
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
 
-import { LoginParams } from "@/libs/userAPI";
-
 export default function LoginPage() {
   const router = useRouter();
 
@@ -28,15 +26,22 @@ export default function LoginPage() {
   });
 
   const handleSubmit = async (values: any) => {
+    const isEmail = values.username.includes("@mitrphol.com");
+
+    const body = isEmail
+      ? { email: values.username, password: values.password }
+      : { username: values.username, password: values.password };
+
     try {
       setIsLoading(true);
 
       await login({
         params: {
-          username: values.username,
-          password: values.password,
-          ae_area_id: values.ae_id,
-        } as LoginParams,
+          ae_id: values.ae_id,
+        },
+        body: {
+          ...body,
+        },
       });
 
       router.push("/home");
@@ -95,7 +100,8 @@ export default function LoginPage() {
       {/* Alert */}
       {alert.isVisible && (
         <AlertComponent
-          isCompact={true}
+          size="compact"
+          placement="top"
           title={alert.title}
           description={alert.description}
           color={alert.color}

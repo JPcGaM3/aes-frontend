@@ -288,7 +288,7 @@ export const ChevronDownIcon = (
 export const ChevronUpIcon = (
   props: IconSvgProps & { strokeWidth?: number }
 ) => {
-  const { fill, size = 24, width, height, strokeWidth = 1.5, ...rest } = props;
+  const { fill, size = 24, width, height, strokeWidth = 2, ...rest } = props;
   return (
     <svg
       fill={fill ? fill : "none"}

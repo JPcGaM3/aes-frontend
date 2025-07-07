@@ -3,61 +3,63 @@ import React, { useEffect, useState } from "react";
 import type { AlertComponentProps } from "@/interfaces/props";
 
 export default function AlertComponent({
-  title,
-  description,
-  size = "expanded",
-  color = "default",
-  variant = "faded",
-  placement = "top",
-  isVisible = true,
-  handleClose,
+    title,
+    description,
+    size = "expanded",
+    color = "default",
+    variant = "faded",
+    placement = "top",
+    isVisible = true,
+    handleClose,
 }: AlertComponentProps) {
-  const [visible, setVisible] = useState(isVisible);
+    const [visible, setVisible] = useState(isVisible);
 
-  useEffect(() => {
-    setVisible(isVisible);
-  }, [isVisible]);
+    useEffect(() => {
+        setVisible(isVisible);
+    }, [isVisible]);
 
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(
-        () => handleClose?.(),
-        color == "success" ? 3000 : 5000
-      );
-      return () => clearTimeout(timer);
+    useEffect(() => {
+        if (visible) {
+            const timer = setTimeout(
+                () => handleClose?.(),
+                color == "success" ? 3000 : 5000
+            );
+            return () => clearTimeout(timer);
+        }
+    }, [visible]);
+
+    let computedClassName = "";
+    if (size === "compact") {
+        computedClassName =
+            "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+    } else if (size === "expanded") {
+        computedClassName =
+            "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+    } else {
+        computedClassName = "w-full";
     }
-  }, [visible]);
 
-  let computedClassName = "";
-  if (size === "compact") {
-    computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
-  } else if (size === "expanded") {
-    computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
-  } else {
-    computedClassName = "w-full";
-  }
+    const placementClass =
+        placement === "bottom"
+            ? "fixed left-0 right-0 bottom-0 z-50 flex items-center justify-center w-full p-3"
+            : "fixed left-0 right-0 top-16 z-50 flex items-center justify-center w-full p-3 ";
 
-  const placementClass =
-    placement === "bottom"
-      ? "fixed left-0 right-0 bottom-0 z-50 flex items-center justify-center w-full p-3"
-      : "fixed left-0 right-0 top-16 z-50 flex items-center justify-center w-full p-3 ";
-
-  return (
-    <div className={placementClass}>
-      <Alert
-        isClosable={true}
-        isVisible={visible}
-        title={title}
-        description={description}
-        radius="sm"
-        color={color}
-        variant={variant}
-        className={computedClassName}
-        onClose={() => {
-          setVisible(false);
-          handleClose?.();
-        }}
-      />
-    </div>
-  );
+    return (
+        <div className={placementClass}>
+            <Alert
+                isClosable={true}
+                isVisible={visible}
+                title={title}
+                description={description}
+                radius="sm"
+                color={color}
+                variant={variant}
+                className={computedClassName}
+                onClose={() => {
+                    setVisible(false);
+                    handleClose?.();
+                }}
+            />
+        </div>
+    );
 }

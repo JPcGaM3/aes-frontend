@@ -22,156 +22,164 @@ import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { setIsLoading } = useLoading();
-  const { userContext, logout } = useAuth();
+    const router = useRouter();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { setIsLoading } = useLoading();
+    const { userContext, logout } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
-    null
-  );
-  const [alert, setAlert] = useState<AlertComponentProps>({
-    title: "",
-    description: "",
-    isVisible: false,
-  });
+    const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
+        null
+    );
+    const [alert, setAlert] = useState<AlertComponentProps>({
+        title: "",
+        description: "",
+        isVisible: false,
+    });
 
-  // TODO: core fetch function
-  useEffect(() => {
-    if (userContext.token) {
-      const fetchProfile = async ({ token }: { token: string }) => {
-        try {
-          setIsLoading(true);
-          const response = await getProfile({ token });
+    // TODO: core fetch function
+    useEffect(() => {
+        if (userContext.token) {
+            const fetchProfile = async ({ token }: { token: string }) => {
+                try {
+                    setIsLoading(true);
+                    const response = await getProfile({ token });
 
-          setProfile(response);
-        } catch (error: any) {
-          setAlert({
-            title: "Failed to load user profile",
-            description: error.message,
-            color: "danger",
-            isVisible: true,
-          });
-        } finally {
-          setIsLoading(false);
+                    setProfile(response);
+                } catch (error: any) {
+                    setAlert({
+                        title: "Failed to load user profile",
+                        description: error.message,
+                        color: "danger",
+                        isVisible: true,
+                    });
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            fetchProfile({ token: userContext!.token ?? "" });
         }
-      };
+    }, [userContext]);
 
-      fetchProfile({ token: userContext!.token ?? "" });
-    }
-  }, [userContext]);
+    const handleLogout = () => {
+        onOpen();
+    };
 
-  const handleLogout = () => {
-    onOpen();
-  };
+    const handleConfirmLogout = () => {
+        setIsLoading(true);
 
-  const handleConfirmLogout = () => {
-    setIsLoading(true);
+        logout();
+        onClose();
 
-    logout();
-    onClose();
+        router.push("/login");
+    };
 
-    router.push("/login");
-  };
-
-  const profileSections: FieldSection[] = [
-    {
-      title: "ข้อมูลส่วนตัว",
-      fields: [
-        { name: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
-        { name: "อีเมล", value: profile?.user_result.email ?? "-" },
+    const profileSections: FieldSection[] = [
         {
-          name: "ชื่อ-สกุล (TH)",
-          value: profile?.profile.employeeName?.th ?? "-",
+            title: "ข้อมูลส่วนตัว",
+            fields: [
+                { name: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
+                { name: "อีเมล", value: profile?.user_result.email ?? "-" },
+                {
+                    name: "ชื่อ-สกุล (TH)",
+                    value: profile?.profile.employeeName?.th ?? "-",
+                },
+                {
+                    name: "ชื่อ-สกุล (EN)",
+                    value: profile?.profile.employeeName?.en ?? "-",
+                },
+                {
+                    name: "เบอร์โทรศัพท์",
+                    value: profile?.user_result.phone ?? "-",
+                },
+                { name: "ที่อยู่", value: "-" },
+            ],
         },
         {
-          name: "ชื่อ-สกุล (EN)",
-          value: profile?.profile.employeeName?.en ?? "-",
+            title: "ข้อมูลการทำงาน",
+            fields: [
+                {
+                    name: "ตำแหน่ง",
+                    value: profile?.user_result.role?.length
+                        ? profile.user_result.role.join(", ")
+                        : "-",
+                },
+                { name: "ระดับ", value: profile?.profile.level?.name ?? "-" },
+                {
+                    name: "แผนก",
+                    value:
+                        profile?.profile.department?.name?.en?.replace(
+                            / Section$/i,
+                            ""
+                        ) ?? "-",
+                },
+                {
+                    name: "สังกัด AE",
+                    value: profile?.user_result.ae_area?.name ?? "-",
+                },
+            ],
         },
-        { name: "เบอร์โทรศัพท์", value: profile?.user_result.phone ?? "-" },
-        { name: "ที่อยู่", value: "-" },
-      ],
-    },
-    {
-      title: "ข้อมูลการทำงาน",
-      fields: [
-        {
-          name: "ตำแหน่ง",
-          value: profile?.user_result.role?.length
-            ? profile.user_result.role.join(", ")
-            : "-",
-        },
-        { name: "ระดับ", value: profile?.profile.level?.name ?? "-" },
-        {
-          name: "แผนก",
-          value:
-            profile?.profile.department?.name?.en?.replace(/ Section$/i, "") ??
-            "-",
-        },
-        {
-          name: "สังกัด AE",
-          value: profile?.user_result.ae_area?.name ?? "-",
-        },
-      ],
-    },
-  ];
+    ];
 
-  const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
+    const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
 
-  return (
-    <div className="flex items-center justify-center pt-3">
-      <div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
-        {isOpen && (
-          <AlertModal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="ออกจากระบบ"
-            message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
-            confirmText="ยืนยัน"
-            cancelText="ยกเลิก"
-            onConfirm={handleConfirmLogout}
-          />
-        )}
+    return (
+        <div className="flex items-center justify-center pt-3">
+            <div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+                {isOpen && (
+                    <AlertModal
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        title="ออกจากระบบ"
+                        message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
+                        confirmText="ยืนยัน"
+                        cancelText="ยกเลิก"
+                        onConfirm={handleConfirmLogout}
+                    />
+                )}
 
-        {alert.isVisible && (
-          <AlertComponent
-            title={alert.title}
-            description={alert.description}
-            color={alert.color}
-            isVisible={alert.isVisible}
-            handleClose={() => setAlert({ ...alert, isVisible: false })}
-          />
-        )}
+                {alert.isVisible && (
+                    <AlertComponent
+                        title={alert.title}
+                        description={alert.description}
+                        color={alert.color}
+                        isVisible={alert.isVisible}
+                        handleClose={() =>
+                            setAlert({ ...alert, isVisible: false })
+                        }
+                    />
+                )}
 
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
-            {profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-"}
-          </div>
+                <div className="flex flex-col items-center justify-center gap-4">
+                    <div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+                        {profile?.user_result.email?.charAt(0)?.toUpperCase() ??
+                            "-"}
+                    </div>
 
-          <Header
-            title={firstname}
-            subtitle={`employee_id: ${profile?.profile.id ? `@${profile?.profile.id}` : "-"}`}
-            subtitleClassName={clsx(
-              "mt-1 text-sm text-gray-600 font-mono",
-              fontMono.variable
-            )}
-            hasBorder={false}
-          />
+                    <Header
+                        title={firstname}
+                        subtitle={`employee_id: ${profile?.profile.id ? `@${profile?.profile.id}` : "-"}`}
+                        subtitleClassName={clsx(
+                            "mt-1 text-sm text-gray-600 font-mono",
+                            fontMono.variable
+                        )}
+                        hasBorder={false}
+                    />
+                </div>
+
+                <FieldValueDisplayer sections={profileSections} />
+
+                <Button
+                    size="lg"
+                    radius="sm"
+                    color="danger"
+                    variant="flat"
+                    className="w-full font-semibold"
+                    onPress={() => handleLogout()}
+                >
+                    ออกจากระบบ
+                </Button>
+            </div>
         </div>
-
-        <FieldValueDisplayer sections={profileSections} />
-
-        <Button
-          size="lg"
-          radius="sm"
-          color="danger"
-          variant="flat"
-          className="w-full font-semibold"
-          onPress={() => handleLogout()}
-        >
-          ออกจากระบบ
-        </Button>
-      </div>
-    </div>
-  );
+    );
 }

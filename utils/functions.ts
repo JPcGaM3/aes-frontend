@@ -6,10 +6,10 @@
  * @returns The translated value, or the original value if no translation is found.
  */
 export function translateEnumValue<T extends string>(
-  value: T,
-  translationMap: Record<string, string>
+    value: T,
+    translationMap: Record<string, string>
 ): string {
-  return translationMap[value] || value;
+    return translationMap[value] || value;
 }
 
 /**
@@ -20,5 +20,5 @@ export function translateEnumValue<T extends string>(
  * @returns The value at the specified path, or undefined if not found.
  */
 export function getNestedValue(obj: Record<string, any>, path: string): any {
-  return path.split(".").reduce((acc, part) => acc && acc[part], obj);
-};
+    return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+}

@@ -13,12 +13,8 @@ export async function getCars({ token }: { token: string }) {
 
     return response.data.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
-      );
-    }
-
-    throw error;
+    throw new Error(
+      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
+    );
   }
 }

@@ -1,4 +1,9 @@
-import { USERROLE, USERSTATUS, REQUESTORDERSTATUS, TASKORDERSTATUS } from "@/utils/enum";
+import {
+  USERROLE,
+  USERSTATUS,
+  REQUESTORDERSTATUS,
+  TASKORDERSTATUS,
+} from "@/utils/enum";
 
 export interface UserProfileResponse {
   success: boolean;
@@ -214,6 +219,7 @@ export interface CustomerType {
 
 export interface RequestOrder {
   id: number;
+  work_order_number: string;
   run_number?: string;
   phone?: string;
   customer_type_id?: number;

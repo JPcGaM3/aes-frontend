@@ -7,6 +7,7 @@ export default function AlertComponent({
   description,
   color = "default",
   variant = "faded",
+  isCompact = false,
   isVisible = true,
   handleClose,
 }: AlertComponentProps) {
@@ -26,8 +27,12 @@ export default function AlertComponent({
     }
   }, [visible]);
 
+  const computedClassName = isCompact
+    ? "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
+    : "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+
   return (
-    <div className="fixed left-0 right-0 top-16 flex justify-center items-center z-50 w-full p-3">
+    <div className="top-16 right-0 left-0 z-50 fixed flex justify-center items-center p-3 w-full">
       <Alert
         title={title}
         description={description}
@@ -40,7 +45,7 @@ export default function AlertComponent({
           setVisible(false);
           handleClose?.();
         }}
-        className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md"
+        className={computedClassName}
       />
     </div>
   );

@@ -3,12 +3,13 @@ import axios from "axios";
 export interface LoginParams {
   username: string;
   password: string;
-  operation_area_id: number | null;
+  ae_area_id: number | null;
 }
 
 export async function LoginUser({
   username,
   password,
+  ae_area_id,
 }: LoginParams): Promise<any> {
   const apiUrl = process.env.API_URL || "http://localhost:8080";
 
@@ -17,9 +18,11 @@ export async function LoginUser({
     ? { email: username, password: password }
     : { username: username, password: password };
 
+  const queryParams = ae_area_id ? `?ae_id=${ae_area_id}` : "";
+
   try {
     const response = await axios.post(
-      `${apiUrl}/api/v1/mitr-portal/login`,
+      `${apiUrl}/api/v1/mitr-portal/login${queryParams}`,
       body,
       {
         headers: {
@@ -31,12 +34,8 @@ export async function LoginUser({
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        throw new Error("Invalid username or password.");
-      }
-
       throw new Error(
-        `Failed to fetch token: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -58,14 +57,8 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
     return response.data.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        throw new Error("Unauthorized access - please log in.");
-      } else if (error.response?.status === 404) {
-        throw new Error("User profile not found.");
-      }
-
       throw new Error(
-        `Failed to fetch user profile: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 
@@ -88,7 +81,7 @@ export async function getUsers({ token }: { token: string }) {
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        `Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
       );
     }
 

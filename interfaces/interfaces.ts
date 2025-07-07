@@ -1,26 +1,40 @@
 import { ClassValue } from "clsx";
 import { ColorType } from "@/types";
+import { OperationArea } from "./schema";
 
 export interface BaseInputConfig {
+  /** Field name (used as key in values object) */
   name: string;
-  label?: string;
+  /** Dot-separated path for nested value, e.g. "user.address.city" */
+  path?: string;
+  /** Optional default value for the field */
+  defaultValue?: any;
+  /** Pass extra props to the input component */
+  props?: Record<string, any>;
+
+  /** Label configuration */
   hasLabel?: boolean;
-  labelPlacement?: "inside" | "outside" | "outside-left";
-  translator?: Record<string, string>;
-  placeholder?: string | number | boolean;
+  /** Custom label for the field (overrides name/translation) */
+  label?: string;
   hasPlaceholder?: boolean;
-  size?: "sm" | "md" | "lg";
-  description?: React.ReactNode;
-  startContent?: React.ReactNode;
-  endContent?: React.ReactNode;
+  labelTranslator?: Record<string, string>;
+  labelPlacement?: "inside" | "outside" | "outside-left";
+
+  /** Common input properties */
+  isReadOnly?: boolean;
   isRequired?: boolean;
-  isInvalid?: boolean;
-  errorMessage?: React.ReactNode;
-  className?: string;
+  size?: "sm" | "md" | "lg";
+  className?: ClassValue;
 }
 
 export interface TextInputConfig extends BaseInputConfig {
-  type: "text" | "email" | "password" | "textarea";
+  type: "text" | "email" | "password";
+}
+
+export interface TextAreaInputConfig extends BaseInputConfig {
+  type: "textarea";
+  minRows?: number;
+  maxRows?: number;
 }
 
 export interface NumberInputConfig extends BaseInputConfig {
@@ -50,6 +64,7 @@ export interface DateRangeInputConfig extends BaseInputConfig {
 
 type InputConfig =
   | TextInputConfig
+  | TextAreaInputConfig
   | NumberInputConfig
   | DropdownInputConfig
   | DateInputConfig
@@ -58,6 +73,11 @@ export type { InputConfig };
 
 export type FormField = InputConfig | InputConfig[];
 
+export type FormSection = {
+  title?: string;
+  fields: FormField[];
+};
+
 export interface StatusConfig {
   colorMap: Record<string, ColorType>;
   translation?: Record<string, string>;
@@ -65,6 +85,7 @@ export interface StatusConfig {
 
 export interface FieldConfig {
   key: string;
+  path?: string;
   label?: string;
   formatter?: (value: any) => string;
   className?: string;
@@ -100,8 +121,10 @@ export interface TableHeader {
 }
 
 export interface FieldValue {
-  label: string;
+  name: string;
+  labelTranslator?: Record<string, string>;
   value: React.ReactNode;
+  translator?: Record<string, string>;
   highlight?: boolean;
   className?: string;
 }
@@ -109,4 +132,8 @@ export interface FieldValue {
 export interface FieldSection {
   title?: string;
   fields: FieldValue[];
+}
+
+export interface OperationAreaResponse {
+  operation_area: OperationArea;
 }

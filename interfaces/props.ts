@@ -1,6 +1,24 @@
+import type {
+  FieldSection,
+  InputConfig,
+  UploadedFile,
+  StatusConfig,
+  FieldConfig,
+  ActionConfig,
+  FormSection,
+} from "@/interfaces/interfaces";
+
+import type { PressEvent } from "@react-types/shared";
+import type { ColorType } from "../types";
+import type { ClassValue } from "clsx";
+import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
+import type { SwitchProps } from "@heroui/switch";
+import { extend } from "dayjs";
+
 export interface AlertComponentProps {
   title: string;
   description: string;
+  isCompact?: boolean;
   isVisible?: boolean;
   handleClose?: () => void;
   variant?: "solid" | "bordered" | "flat" | "faded";
@@ -31,27 +49,11 @@ export interface DrawerComponentProps {
   children: React.ReactNode;
 }
 
-import type { FieldSection } from "@/interfaces/interfaces";
 export interface FieldValueDisplayerProps {
   className?: string;
   sections: FieldSection[];
 }
 
-import type { FormField } from "@/interfaces/interfaces";
-export interface FilterModalProps {
-  isOpen: boolean;
-  title: string;
-  subtitle?: string;
-  fields: FormField[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  onClose?: () => void;
-  onSubmit: (e: React.FormEvent) => void;
-  initialValues?: Record<string, any>;
-}
-
-import type { PressEvent } from "@react-types/shared";
-import type { ColorType } from "../types";
 export interface FormButtonsProps {
   onSubmit?: (e: PressEvent) => void;
   onCancel?: (e: PressEvent) => void;
@@ -66,28 +68,32 @@ export interface FormButtonsProps {
 }
 
 export interface FormFieldsProps {
-  fields: FormField[];
-  values?: Record<string, any>;
+  sections: FormSection[];
   onValueChange?: (name: string, value: any) => void;
+  values?: any;
+  isCompact?: boolean;
 }
 
-import { InputConfig } from "@/interfaces/interfaces";
 export interface InputRendererProps {
-  inputConfig: InputConfig;
-  onValueChange?: (name: string, value: any) => void;
   value?: any;
+  type:
+    | "text"
+    | "email"
+    | "textarea"
+    | "password"
+    | "dropdown"
+    | "date"
+    | "date-range"
+    | "number";
+  commonProps: any;
+  onValueChange?: (name: string, value: any) => void;
 }
 
-export interface FormComponentProps {
+export interface FormComponentProps
+  extends HeaderProps,
+    FormFieldsProps,
+    FormButtonsProps {
   hasHeader?: boolean;
-  title?: string;
-  subtitle?: string;
-  fields: FormField[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  isSubmitting?: boolean;
-  isCanceling?: boolean;
-  initialValues?: Record<string, any>;
   className?: string;
   children?: React.ReactNode;
   onCancel?: () => void;
@@ -95,24 +101,39 @@ export interface FormComponentProps {
   onChange?: (values: any) => void;
 }
 
-import type { ClassValue } from "clsx";
+export interface FilterModalProps extends FormComponentProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 export interface HeaderProps {
-  title: string;
+  // Text Props
+  title?: string;
   subtitle?: string;
+
+  // Boolean Props
   hasBorder?: boolean;
+
+  // Style Props
+  orientation?: "horizontal" | "vertical";
+
+  // Class Props
   className?: ClassValue;
   titleClassName?: ClassValue;
   subtitleClassName?: ClassValue;
+  headerContainerClassName?: ClassValue;
+  childrenContainerClassName?: ClassValue;
+  borderClassName?: string;
+
+  // Children Props
   children?: React.ReactNode;
 }
 
-import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
 export interface AccordionComponentProps {
   requestOrder: RequestOrder;
   taskOrders?: TaskOrder[];
 }
 
-import type { UploadedFile } from "@/interfaces/interfaces";
 export interface UploadComponentProps {
   maxFiles?: number;
   isUploading?: boolean;
@@ -123,11 +144,6 @@ export interface UploadComponentProps {
   onCancel?: () => void;
 }
 
-import type {
-  StatusConfig,
-  FieldConfig,
-  ActionConfig,
-} from "@/interfaces/interfaces";
 export interface CardComponentProps<T> {
   items: T[];
   statusConfig?: StatusConfig;
@@ -138,7 +154,6 @@ export interface CardComponentProps<T> {
   cardClassName?: string;
 }
 
-import type { SwitchProps } from "@heroui/switch";
 export interface ThemeSwitchProps {
   className?: string;
   classNames?: SwitchProps["classNames"];

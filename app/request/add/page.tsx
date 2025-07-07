@@ -10,9 +10,14 @@ import {
   RequestOrderTranslation,
   TaskOrderTranslation,
 } from "@/utils/constants";
-import { Activity, OperationArea, RequestOrder, ToolType } from "@/interfaces/schema";
+import { Activity, RequestOrder, ToolType } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
-import { DropdownOption, FormField, UploadedFile } from "@/interfaces/interfaces";
+import {
+  DropdownOption,
+  FormSection,
+  OperationAreaResponse,
+  UploadedFile,
+} from "@/interfaces/interfaces";
 
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
@@ -35,10 +40,6 @@ interface TaskFormType {
   tool_type_name: string;
 }
 
-interface OperationAreaResponse {
-  operation_area: OperationArea;
-}
-
 export default function AddRequestPage() {
   // const value & react hook -------------------------------------------------------------------------------------
   // * For key-in form
@@ -47,16 +48,21 @@ export default function AddRequestPage() {
   const currentYear = now.getFullYear();
   const currentMonth = monthList[now.getMonth()].value;
 
-  const [operationAreaOptions, setOperationAreaOptions] = useState<OperationAreaResponse[]>([]);
-  const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
-  const [activityOptions, setActivityOptions] = useState<DropdownOption[]>([]);
-  const [tasks, setTasks] = useState<TaskFormType[]>([]);
-  const [formValues, setFormValues] = useState<FormType>({
+  const defaultTask: TaskFormType = { activity_name: "", tool_type_name: "" };
+  const defaultFormValues: FormType = {
     activities: "",
     tool_types: "",
     ap_year: currentYear,
     ap_month: currentMonth,
-  } as FormType);
+  } as FormType;
+
+  const [operationAreaOptions, setOperationAreaOptions] = useState<
+    OperationAreaResponse[]
+  >([]);
+  const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
+  const [activityOptions, setActivityOptions] = useState<DropdownOption[]>([]);
+  const [tasks, setTasks] = useState<TaskFormType[]>([defaultTask]);
+  const [formValues, setFormValues] = useState<FormType>(defaultFormValues);
 
   // * For file upload
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -108,7 +114,7 @@ export default function AddRequestPage() {
 
       fetchDropDownOptions({
         token: userContext.token,
-        operation_area_id: userContext.operationAreaId,
+        operation_area_id: Number(userContext.operationAreaId),
       });
     }
   }, [userContext]);
@@ -187,8 +193,6 @@ export default function AddRequestPage() {
   };
 
   const handleSubmitKeyIn = async () => {
-    console.log("Tasks : ", tasks);
-
     const activities = tasks.map((t) => t.activity_name).join("+");
     const tool_types = tasks.map((t) => t.tool_type_name).join("+");
 
@@ -222,13 +226,24 @@ export default function AddRequestPage() {
     } finally {
       setTimeout(() => {
         setIsAdding(false);
-        setFormValues({} as FormType);
+
+        setTasks([defaultTask]);
+        setFormValues({
+          ...defaultFormValues,
+          operation_area_id: formValues.operation_area_id,
+          customer_operation_area_id: formValues.customer_operation_area_id,
+        });
       }, 500);
     }
   };
 
   const handleCancelKeyIn = () => {
-    setFormValues({} as FormType);
+    setFormValues({
+      ...defaultFormValues,
+      operation_area_id: formValues.operation_area_id,
+      customer_operation_area_id: formValues.customer_operation_area_id,
+    });
+    setTasks([defaultTask]);
   };
 
   const handleAddTask = () => {
@@ -242,8 +257,6 @@ export default function AddRequestPage() {
   };
 
   const handleTaskChange = (index: number, changed: any) => {
-    console.log("Task changed: ", index, changed);
-
     const updatedTasks: TaskFormType[] = tasks.map((task, i) => {
       if (i === index) {
         if (
@@ -261,121 +274,171 @@ export default function AddRequestPage() {
   };
 
   // Field configurations ----------------------------------------------------------------------------------------
-  const requestOrderFields: FormField[] = [
+  const requestOrderFields: FormSection[] = [
     {
-      type: "text",
-      name: "phone",
-      translator: RequestOrderTranslation,
-    },
-    [
-      {
-        type: "dropdown",
-        name: "customer_operation_area_id",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-        options: [
-          ...operationAreaOptions.map((option: OperationAreaResponse) => ({
-            label: option.operation_area.operation_area ?? "",
-            value: option.operation_area.id,
-          })),
+      fields: [
+        {
+          type: "text",
+          name: "phone",
+          labelTranslator: RequestOrderTranslation,
+        },
+        [
+          {
+            type: "dropdown",
+            name: "customer_operation_area_id",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+            options: [
+              ...operationAreaOptions.map((option: OperationAreaResponse) => ({
+                label: option.operation_area.operation_area ?? "",
+                value: option.operation_area.id,
+              })),
+            ],
+          },
+          {
+            type: "text",
+            name: "zone",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+          },
         ],
-      },
-      {
-        type: "text",
-        name: "zone",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-      },
-    ],
-    [
-      {
-        type: "text",
-        name: "quota_number",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-      },
-      {
-        type: "text",
-        name: "farmer_name",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-      },
-    ],
-    [
-      {
-        type: "dropdown",
-        name: "ap_year",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-1/3",
-        options: yearList,
-      },
-      {
-        type: "dropdown",
-        name: "ap_month",
-        isRequired: true,
-        translator: RequestOrderTranslation,
-        className: "w-2/3",
-        options: monthList,
-      },
-    ],
-    {
-      type: "text",
-      name: "supervisor_name",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "number",
-      name: "target_area",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "text",
-      name: "land_number",
-      isRequired: true,
-      translator: RequestOrderTranslation,
-    },
-    {
-      type: "textarea",
-      name: "location_xy",
-      isRequired: false,
-      translator: RequestOrderTranslation,
+        [
+          {
+            type: "text",
+            name: "quota_number",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+          },
+          {
+            type: "text",
+            name: "farmer_name",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+          },
+        ],
+        [
+          {
+            type: "dropdown",
+            name: "ap_year",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-1/3",
+            options: yearList,
+          },
+          {
+            type: "dropdown",
+            name: "ap_month",
+            isRequired: true,
+            labelTranslator: RequestOrderTranslation,
+            className: "w-2/3",
+            options: monthList,
+          },
+        ],
+        {
+          type: "text",
+          name: "supervisor_name",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "number",
+          name: "target_area",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "text",
+          name: "land_number",
+          isRequired: true,
+          labelTranslator: RequestOrderTranslation,
+        },
+        {
+          type: "textarea",
+          name: "location_xy",
+          isRequired: false,
+          labelTranslator: RequestOrderTranslation,
+        },
+      ],
     },
   ];
 
+  // Task Section Fields (dynamic)
+  const getTaskFields = () =>
+    tasks.map((task, idx) => [
+      {
+        type: "dropdown" as const,
+        name: `activity_name_${idx}`,
+        label: "activity_name",
+        isRequired: true,
+        labelTranslator: TaskOrderTranslation,
+        options: activityOptions,
+        value: task.activity_name,
+      },
+      {
+        type: "dropdown" as const,
+        name: `tool_type_name_${idx}`,
+        label: "tool_type_name",
+        isRequired: true,
+        labelTranslator: TaskOrderTranslation,
+        options:
+          activityWithTools
+            .find((a) => String(a.name) === task.activity_name)
+            ?.tool_types?.map((t: ToolType) => ({
+              label: t.tool_type_name,
+              value: t.tool_type_name,
+            })) || [],
+        value: task.tool_type_name,
+      },
+    ]);
+
+  const handleTaskFieldsChange = (values: any) => {
+    const updatedTasks = tasks.map((task, idx) => {
+      const activity = values[`activity_name_${idx}`] ?? task.activity_name;
+      let toolType = values[`tool_type_name_${idx}`] ?? task.tool_type_name;
+
+      if (activity !== task.activity_name) {
+        toolType = "";
+      }
+      return {
+        activity_name: activity,
+        tool_type_name: toolType,
+      };
+    });
+    setTasks(updatedTasks);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div className="flex flex-col justify-center items-center w-full">
       <Tabs
         aria-label="TabOptions"
         radius="sm"
-        className="flex flex-col items-center justify-center w-full p-0 font-semibold"
+        className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
       >
         {/* Key-in tab ------------------------------------------------------------------------------------------- */}
         <Tab
           key="key-in"
           title="Key-in"
-          className="flex flex-col items-center justify-center w-full"
+          className="flex flex-col justify-center items-center w-full"
         >
           <FormComponent
-            fields={requestOrderFields}
+            isCompact={true}
+            sections={requestOrderFields}
             title="สร้างใบสั่งงาน"
             subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-            initialValues={formValues}
+            values={formValues}
             isSubmitting={isAdding}
             onCancel={handleCancelKeyIn}
             onSubmit={handleSubmitKeyIn}
             onChange={handleRequestOrderChange}
           >
-            <div className="flex flex-col items-center justify-center w-full gap-4">
+            <div className="flex flex-col justify-center items-center gap-4 w-full">
               {/* Task Header */}
-              <div className="flex items-center w-full gap-5">
-                <span className="text-xl font-semibold text-gray-700">
+              <div className="flex items-center gap-5 w-full">
+                <span className="font-semibold text-gray-700 text-xl">
                   กิจกรรม
                 </span>
 
@@ -404,48 +467,24 @@ export default function AddRequestPage() {
               </div>
 
               {/* Task Fields */}
-              {tasks.map((task, idx) => {
-                const selectedActivity: Activity | undefined = activityWithTools.find(
-                  (activity) => String(activity.name) === task.activity_name
-                );
-
-                const toolTypeOptions =
-                  selectedActivity && selectedActivity.tool_types
-                    ? selectedActivity.tool_types.map((t: ToolType) => ({
-                        label: t.tool_type_name,
-                        value: t.tool_type_name,
-                      }))
-                    : [];
-
-                return (
-                  <FormComponent
-                    key={idx + "-" + (task.activity_name || "")}
-                    hasHeader={false}
-                    initialValues={task}
-                    onChange={(changed: any) => handleTaskChange(idx, changed)}
-                    fields={[
-                      [
-                        {
-                          type: "dropdown",
-                          name: "activity_name",
-                          isRequired: true,
-                          translator: TaskOrderTranslation,
-                          options: activityOptions,
-                          className: "w-1/2",
-                        },
-                        {
-                          type: "dropdown",
-                          name: "tool_type_name",
-                          isRequired: true,
-                          translator: TaskOrderTranslation,
-                          options: toolTypeOptions,
-                          className: "w-1/2",
-                        },
-                      ],
-                    ]}
-                  />
-                );
-              })}
+              <FormComponent
+                isCompact={true}
+                hasHeader={false}
+                sections={[
+                  {
+                    fields: getTaskFields(),
+                  },
+                ]}
+                onChange={handleTaskFieldsChange}
+                values={tasks.reduce(
+                  (acc, t, idx) => ({
+                    ...acc,
+                    [`activity_name_${idx}`]: t.activity_name,
+                    [`tool_type_name_${idx}`]: t.tool_type_name,
+                  }),
+                  {}
+                )}
+              />
             </div>
           </FormComponent>
         </Tab>
@@ -454,7 +493,7 @@ export default function AddRequestPage() {
         <Tab
           key="upload"
           title="Upload"
-          className="flex flex-col items-center justify-center w-full"
+          className="flex flex-col justify-center items-center w-full"
         >
           <UploadComponent
             maxFiles={5}

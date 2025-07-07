@@ -2,37 +2,38 @@ import React, { useState, useEffect } from "react";
 import { Form } from "@heroui/react";
 
 import Header from "./Header";
-import FormFields from "./FormFields";
+import FormFields from "./FormFieldsComponent";
 import FormButtons from "./FormButtons";
 
-import type { FormField } from "@/interfaces/interfaces";
 import type { FormComponentProps } from "@/interfaces/props";
 
 export default function FormComponent({
   hasHeader = true,
   title,
   subtitle,
-  fields,
+  sections,
   submitLabel,
   cancelLabel,
   isSubmitting,
   isCanceling,
-  initialValues = {},
+  values = {},
   children = null,
-  className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
+  className,
+  subtitleClassName,
   onCancel,
   onSubmit,
   onChange,
-}: FormComponentProps) {
-  const [values, setValues] = useState<any>(initialValues);
+  isCompact = false,
+}: FormComponentProps & { isCompact?: boolean }) {
+  const [formValues, setFormValues] = useState<any>(values);
 
   useEffect(() => {
-    setValues(initialValues);
-  }, [JSON.stringify(initialValues)]);
+    setFormValues(values);
+  }, [JSON.stringify(values)]);
 
   const handleValueChange = (name: string, value: any) => {
-    const newValues = { ...values, [name]: value };
-    setValues(newValues);
+    const newValues = { ...formValues, [name]: value };
+    setFormValues(newValues);
 
     if (onChange) {
       onChange(newValues);
@@ -43,24 +44,37 @@ export default function FormComponent({
     e.preventDefault();
 
     if (onSubmit) {
-      (onSubmit as any)(values);
+      (onSubmit as any)(formValues);
     }
   };
 
+  const computedClassName =
+    className ||
+    (isCompact
+      ? "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
+      : "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl");
+
   return (
-    <div className={className}>
+    <div className={computedClassName}>
       {onSubmit ? (
         <Form
-          className="flex flex-col gap-8 w-full max-w-xl"
+          className={"flex flex-col w-full gap-8"}
           validationBehavior="aria"
           onSubmit={handleSubmit}
         >
-          {hasHeader && <Header subtitle={subtitle} title={title as string} />}
+          {hasHeader && (
+            <Header
+              subtitle={subtitle}
+              title={title}
+              subtitleClassName={subtitleClassName}
+            />
+          )}
 
           <FormFields
-            fields={fields}
+            sections={sections}
             onValueChange={handleValueChange}
-            values={values}
+            values={formValues}
+            isCompact={isCompact}
           />
 
           {children}
@@ -74,13 +88,20 @@ export default function FormComponent({
           />
         </Form>
       ) : (
-        <div className="flex flex-col gap-8 w-full max-w-xl">
-          {hasHeader && <Header subtitle={subtitle} title={title as string} />}
+        <div className="flex flex-col gap-8 w-full">
+          {hasHeader && (
+            <Header
+              subtitle={subtitle}
+              title={title as string}
+              subtitleClassName={subtitleClassName}
+            />
+          )}
 
           <FormFields
-            fields={fields}
+            sections={sections}
             onValueChange={handleValueChange}
-            values={values}
+            values={formValues}
+            isCompact={isCompact}
           />
 
           {children}

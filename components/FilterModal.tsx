@@ -6,17 +6,17 @@ import type { FilterModalProps } from "@/interfaces/props";
 
 export default function FilterModal({
   isOpen,
+  onClose,
   title,
   subtitle,
-  fields,
+  sections,
   submitLabel,
   cancelLabel,
-  onClose,
   onSubmit,
-  initialValues = {},
+  values,
 }: FilterModalProps) {
   return (
-    <div className="fixed left-0 right-0 top-16 flex justify-center items-center w-full p-3">
+    <div className="top-16 right-0 left-0 fixed flex justify-center items-center p-3 w-full">
       <div className="flex justify-center items-center w-full">
         <Modal
           isOpen={isOpen}
@@ -24,19 +24,20 @@ export default function FilterModal({
           onOpenChange={onClose}
           size="sm"
           radius="sm"
-          className="w-full max-w-sm sm:max-w-md shadow-md p-4"
+          className="shadow-md p-4 w-full max-w-sm sm:max-w-md"
         >
           <ModalContent>
             {(onClose) => (
               <FormComponent
+                isCompact={true}
                 title={title}
                 subtitle={subtitle}
-                fields={fields}
+                sections={sections}
                 submitLabel={submitLabel}
                 cancelLabel={cancelLabel}
                 onSubmit={onSubmit}
                 onCancel={onClose}
-                initialValues={initialValues}
+                values={values}
               />
             )}
           </ModalContent>

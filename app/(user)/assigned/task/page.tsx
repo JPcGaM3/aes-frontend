@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useMemo } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
@@ -13,23 +13,12 @@ import {
   RejectIcon,
 } from "@/utils/icons";
 import {
-  RequestOrderStatusColorMap,
-  RequestOrderStatusTranslation,
   RequestOrderTranslation,
   TaskOrderStatusColorMap,
   TaskOrderStatusTranslation,
   TaskOrderTranslation,
-  month,
-  monthList,
-  yearList,
-  yearMap,
 } from "@/utils/constants";
-import {
-  FieldConfig,
-  FormField,
-  RequestOrder,
-  TaskOrder,
-} from "@/interfaces/interfaces";
+import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 
@@ -37,18 +26,18 @@ import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 
-import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 import { getAssignedTask } from "@/libs/taskOrderAPI";
-import moment, { now } from "moment-timezone";
+import moment from "moment-timezone";
 import {
   parseDate,
   CalendarDate,
   BuddhistCalendar,
   toCalendar,
 } from "@internationalized/date";
+import { RequestOrder, TaskOrder } from "@/interfaces/schema";
 
 interface filterInterface {
   start_date?: CalendarDate;
@@ -149,7 +138,7 @@ export default function TaskPage() {
       className: "text-black text-lg font-bold",
       labelTranslator: TaskOrderTranslation,
       valueClassName: clsx(
-        "mt-1 text-sm text-gray-600 font-mono",
+        "mt-1 font-mono text-gray-600 text-sm",
         fontMono.variable
       ),
     },
@@ -183,33 +172,37 @@ export default function TaskPage() {
     },
   ];
 
-  const filterFields: FormField[] = [
+  const filterFields: FormSection[] = [
     {
-      type: "dropdown",
-      name: "status",
-      label: "สถานะ",
-      options: [
-        { label: "ทั้งหมด", value: "all" },
-        ...Object.entries(TaskOrderStatusTranslation).map(([value, label]) => ({
-          label: label as string,
-          value: value as string,
-        })),
+      fields: [
+        {
+          type: "dropdown",
+          name: "status",
+          label: "สถานะ",
+          options: [
+            { label: "ทั้งหมด", value: "all" },
+            ...Object.entries(TaskOrderStatusTranslation).map(
+              ([value, label]) => ({
+                label: label as string,
+                value: value as string,
+              })
+            ),
+          ],
+        },
+        {
+          type: "date",
+          name: "start_date",
+          label: "วันเริ่มต้น",
+          className: "w-2/3",
+        },
+        {
+          type: "date",
+          name: "end_date",
+          label: "วันสิ้นสุด",
+          className: "w-2/3",
+        },
       ],
     },
-    [
-      {
-        type: "date",
-        name: "start_date",
-        label: "วันเริ่มต้น",
-        className: "w-2/3",
-      },
-      {
-        type: "date",
-        name: "end_date",
-        label: "วันสิ้นสุด",
-        className: "w-2/3",
-      },
-    ],
   ];
 
   const statusConfig = {
@@ -319,23 +312,23 @@ export default function TaskPage() {
       <FilterModal
         isOpen={isOpenFilter}
         title="ฟิลเตอร์รายการงานย่อย"
-        fields={filterFields}
+        sections={filterFields}
         submitLabel="Apply Filters"
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={onCloseFilter}
-        initialValues={filterValues}
+        values={filterValues}
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการงานย่อย" className="w-full mb-6 text-left">
+      <Header title="รายการงานย่อย" className="mb-6 w-full text-left">
         <Button
           radius="sm"
           variant="flat"
           color="primary"
           endContent={<FilterIcon />}
           onPress={onOpenFilter}
-          className="hidden font-semibold sm:inline-flex"
+          className="hidden sm:inline-flex font-semibold"
         >
           Filter
         </Button>
@@ -358,7 +351,7 @@ export default function TaskPage() {
           color="primary"
           endContent={<PlusIcon />}
           onPress={() => handleNewPage({ params: { action: "add" } })}
-          className="hidden font-semibold sm:inline-flex"
+          className="hidden sm:inline-flex font-semibold"
         >
           Add
         </Button>
@@ -376,12 +369,12 @@ export default function TaskPage() {
 
       {/* Body ------------------------------------------------------------- */}
       {error ? (
-        <div className="my-8 font-medium text-center text-gray-500">
+        <div className="my-8 font-medium text-gray-500 text-center">
           {error}
         </div>
       ) : (
         <div>
-          <div className="mb-4 font-medium text-right text-gray-700">
+          <div className="mb-4 font-medium text-gray-700 text-right">
             {`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
           </div>
 

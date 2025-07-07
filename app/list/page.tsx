@@ -21,7 +21,7 @@ import {
   yearList,
   yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormField } from "@/interfaces/interfaces";
+import { FieldConfig, FormField, FormSection } from "@/interfaces/interfaces";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 
@@ -82,7 +82,7 @@ export default function ListPage() {
               ? filterValues.end_year.toString()
               : undefined,
             status: REQUESTORDERSTATUS.PendingApproval.toUpperCase(),
-            operation_area_id: userContext.operationAreaId,
+            ae_id: userContext.aeAreaId,
           }
         : undefined;
       setError(null);
@@ -211,39 +211,47 @@ export default function ListPage() {
     },
   ];
 
-  const filterFields: FormField[] = [
-    [
-      {
-        type: "dropdown",
-        name: "start_month",
-        label: "เดือนเริ่มต้น",
-        options: monthList,
-        className: "w-2/3",
-      },
-      {
-        type: "dropdown",
-        name: "start_year",
-        label: "ปีเริ่มต้น",
-        options: yearList,
-        className: "w-1/3",
-      },
-    ],
-    [
-      {
-        type: "dropdown",
-        name: "end_month",
-        label: "เดือนสิ้นสุด",
-        options: monthList,
-        className: "w-2/3",
-      },
-      {
-        type: "dropdown",
-        name: "end_year",
-        label: "ปีสิ้นสุด",
-        options: yearList,
-        className: "w-1/3",
-      },
-    ],
+  const filterFields: FormSection[] = [
+    {
+      fields: [
+        [
+          {
+            type: "dropdown",
+            name: "start_month",
+            label: "เดือนเริ่มต้น",
+            options: monthList,
+            className: "w-2/3",
+          },
+          {
+            type: "dropdown",
+            name: "start_year",
+            label: "ปีเริ่มต้น",
+            options: yearList,
+            className: "w-1/3",
+          },
+        ],
+      ],
+    },
+    {
+      fields: [
+        [
+          {
+            type: "dropdown",
+            name: "end_month",
+            label: "เดือนสิ้นสุด",
+            options: monthList,
+            className: "w-2/3",
+          },
+          {
+            type: "dropdown",
+            name: "end_year",
+            label: "ปีสิ้นสุด",
+            options: yearList,
+            className: "w-1/3",
+          },
+        ],
+      ],
+    },
   ];
 
   const statusConfig = {
@@ -290,12 +298,12 @@ export default function ListPage() {
       <FilterModal
         isOpen={isOpenFilter}
         title="ฟิลเตอร์รายการใบสั่งงาน"
-        fields={filterFields}
+        sections={filterFields}
         submitLabel="Apply Filters"
         cancelLabel="Cancel"
         onSubmit={handleApplyFilters}
         onClose={() => onCloseFilter()}
-        initialValues={filterValues}
+        values={filterValues}
       />
 
       {/* Header ----------------------------------------------------------- */}

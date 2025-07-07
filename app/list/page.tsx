@@ -21,7 +21,7 @@ import {
   yearList,
   yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormField, RequestOrder } from "@/interfaces/interfaces";
+import { FieldConfig, FormField } from "@/interfaces/interfaces";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 
@@ -34,6 +34,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { RequestOrder } from "@/interfaces/schema";
 
 interface filterInterface {
   operation_area_id?: number;
@@ -153,7 +154,7 @@ export default function ListPage() {
       className: "text-black text-lg font-bold",
       labelTranslator: RequestOrderTranslation,
       valueClassName: clsx(
-        "mt-1 text-sm text-gray-600 font-mono",
+        "mt-1 font-mono text-gray-600 text-sm",
         fontMono.variable
       ),
     },
@@ -182,7 +183,7 @@ export default function ListPage() {
         return `${aeArea}${opArea}${year + "/"}${run}`;
       },
       valueClassName: clsx(
-        "mt-1 text-sm text-gray-600 font-mono",
+        "mt-1 font-mono text-gray-600 text-sm",
         fontMono.variable
       ),
     },
@@ -298,14 +299,14 @@ export default function ListPage() {
       />
 
       {/* Header ----------------------------------------------------------- */}
-      <Header title="รายการใบสั่งงาน" className="w-full mb-6 text-left">
+      <Header title="รายการใบสั่งงาน" className="mb-6 w-full text-left">
         <Button
           radius="sm"
           variant="flat"
           color="primary"
           endContent={<FilterIcon />}
           onPress={onOpenFilter}
-          className="hidden font-semibold sm:inline-flex"
+          className="hidden sm:inline-flex font-semibold"
         >
           Filter
         </Button>
@@ -328,7 +329,7 @@ export default function ListPage() {
           color="primary"
           endContent={<PlusIcon />}
           onPress={() => handleNewPage({ params: { action: "add" } })}
-          className="hidden font-semibold sm:inline-flex"
+          className="hidden sm:inline-flex font-semibold"
         >
           Add
         </Button>
@@ -346,12 +347,12 @@ export default function ListPage() {
 
       {/* Body ------------------------------------------------------------- */}
       {error ? (
-        <div className="my-8 font-medium text-center text-gray-500">
+        <div className="my-8 font-medium text-gray-500 text-center">
           {error}
         </div>
       ) : (
         <div>
-          <div className="mb-4 font-medium text-right text-gray-700">
+          <div className="mb-4 font-medium text-gray-700 text-right">
             {`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
           </div>
 

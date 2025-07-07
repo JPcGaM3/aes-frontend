@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  useDisclosure,
+	Button,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownTrigger,
+	useDisclosure,
 } from "@heroui/react";
 
 import { VerticalDotsIcon } from "@/utils/icons";
@@ -20,161 +20,161 @@ import FormComponent from "@/components/FormComponent";
 import Header from "@/components/Header";
 
 export default function DrawerPage() {
-  const mockData: User = mock_users[0];
+	const mockData: User = mock_users[0];
 
-  const {
-    isOpen: isOpenView,
-    onOpen: onOpenView,
-    onClose: onCloseView,
-  } = useDisclosure();
+	const {
+		isOpen: isOpenView,
+		onOpen: onOpenView,
+		onClose: onCloseView,
+	} = useDisclosure();
 
-  const {
-    isOpen: isOpenEdit,
-    onOpen: onOpenEdit,
-    onClose: onCloseEdit,
-  } = useDisclosure();
+	const {
+		isOpen: isOpenEdit,
+		onOpen: onOpenEdit,
+		onClose: onCloseEdit,
+	} = useDisclosure();
 
-  const handleView = () => {
-    console.log("Viewing user");
+	const handleView = () => {
+		console.log("Viewing user");
 
-    onOpenView();
-  };
+		onOpenView();
+	};
 
-  const handleEdit = () => {
-    console.log("Editing user");
+	const handleEdit = () => {
+		console.log("Editing user");
 
-    onOpenEdit();
-  };
+		onOpenEdit();
+	};
 
-  const actions = [
-    {
-      key: "view",
-      label: "ดูรายละเอียด",
-      onClick: handleView,
-    },
-    {
-      key: "edit",
-      label: "แก้ไข",
-      onClick: handleEdit,
-    },
-  ];
+	const actions = [
+		{
+			key: "view",
+			label: "ดูรายละเอียด",
+			onClick: handleView,
+		},
+		{
+			key: "edit",
+			label: "แก้ไข",
+			onClick: handleEdit,
+		},
+	];
 
-  const formFields: FormField[] = [
-    {
-      type: "text",
-      name: "fullname",
-      label: "Full Name",
-      placeholder: mockData.fullname,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "email",
-      label: "Email",
-      placeholder: mockData.email,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "phone",
-      label: "Phone",
-      placeholder: mockData.phone,
-      isRequired: true,
-    },
-    {
-      type: "number",
-      name: "unit",
-      label: "Unit",
-      placeholder: mockData.unit,
-      isRequired: true,
-    },
-    {
-      type: "text",
-      name: "status",
-      label: "Status",
-      placeholder: mockData.status,
-      isRequired: true,
-    },
-  ];
+	const formFields: FormField[] = [
+		{
+			type: "text",
+			name: "fullname",
+			label: "Full Name",
+			placeholder: mockData.fullname,
+			isRequired: true,
+		},
+		{
+			type: "text",
+			name: "email",
+			label: "Email",
+			placeholder: mockData.email,
+			isRequired: true,
+		},
+		{
+			type: "text",
+			name: "phone",
+			label: "Phone",
+			placeholder: mockData.phone,
+			isRequired: true,
+		},
+		{
+			type: "number",
+			name: "unit",
+			label: "Unit",
+			placeholder: mockData.unit,
+			isRequired: true,
+		},
+		{
+			type: "text",
+			name: "status",
+			label: "Status",
+			placeholder: mockData.status,
+			isRequired: true,
+		},
+	];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submit the form");
-  };
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log("Submit the form");
+	};
 
-  const handleCancel = () => {
-    console.log("Cancel the form");
-  };
+	const handleCancel = () => {
+		console.log("Cancel the form");
+	};
 
-  return (
-    <div>
-      <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
-        <div>
-          <Header title="View User" subtitle="User details" />
+	return (
+		<div>
+			<DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
+				<div>
+					<Header title="View User" subtitle="User details" />
 
-          <div className="flex flex-col gap-2">
-            {Object.keys(mockData).map((key) => {
-              let value = (mockData as any)[key];
-              if (value === undefined || value === null) {
-                return null;
-              }
+					<div className="flex flex-col gap-2">
+						{Object.keys(mockData).map((key) => {
+							let value = (mockData as any)[key];
+							if (value === undefined || value === null) {
+								return null;
+							}
 
-              if (value instanceof Date) {
-                value = value.toLocaleString();
-              }
-              if (typeof value === "boolean") {
-                value = value.toString();
-              }
+							if (value instanceof Date) {
+								value = value.toLocaleString();
+							}
+							if (typeof value === "boolean") {
+								value = value.toString();
+							}
 
-              return (
-                <div key={key} className="flex flex-row items-center">
-                  <div className="w-1/3">{key}</div>
-                  <div className="w-2/3">: {value}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </DrawerComponent>
+							return (
+								<div key={key} className="flex flex-row items-center">
+									<div className="w-1/3">{key}</div>
+									<div className="w-2/3">: {value}</div>
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			</DrawerComponent>
 
-      <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
-        <div className="flex flex-col gap-4">
-          <FormComponent
-            fields={formFields}
-            title="Edit User"
-            subtitle="Edit user details"
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-          />
-        </div>
-      </DrawerComponent>
+			<DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
+				<div className="flex flex-col gap-4">
+					<FormComponent
+						fields={formFields}
+						title="Edit User"
+						subtitle="Edit user details"
+						onSubmit={handleSubmit}
+						onCancel={handleCancel}
+					/>
+				</div>
+			</DrawerComponent>
 
-      <div className="flex flex-col gap-4">
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              size="lg"
-              variant="flat"
-              color="primary"
-              radius="sm"
-              endContent={<VerticalDotsIcon />}
-            >
-              <span className="text-lg font-medium">Open actions menu</span>
-            </Button>
-          </DropdownTrigger>
+			<div className="flex flex-col gap-4">
+				<Dropdown>
+					<DropdownTrigger>
+						<Button
+							size="lg"
+							variant="flat"
+							color="primary"
+							radius="sm"
+							endContent={<VerticalDotsIcon />}
+						>
+							<span className="text-lg font-medium">Open actions menu</span>
+						</Button>
+					</DropdownTrigger>
 
-          <DropdownMenu>
-            {actions.map((action) => (
-              <DropdownItem
-                key={action.key}
-                onClick={() => action.onClick && action.onClick()}
-              >
-                {action.label}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-      </div>
-    </div>
-  );
+					<DropdownMenu>
+						{actions.map((action) => (
+							<DropdownItem
+								key={action.key}
+								onClick={() => action.onClick && action.onClick()}
+							>
+								{action.label}
+							</DropdownItem>
+						))}
+					</DropdownMenu>
+				</Dropdown>
+			</div>
+		</div>
+	);
 }

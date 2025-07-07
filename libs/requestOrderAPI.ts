@@ -3,205 +3,205 @@ import { UploadedFile } from "@/interfaces/interfaces";
 
 const apiUrl = process.env.API_URL || "http://localhost:8080";
 const numberKeys = [
-  "start_year",
-  "end_year",
-  "target_area",
-  "land_number",
-  "ap_year",
-  "customer_operation_area_id",
+	"start_year",
+	"end_year",
+	"target_area",
+	"land_number",
+	"ap_year",
+	"customer_operation_area_id",
 ];
 
 export async function getRequestOrders({
-  token,
-  paramData,
+	token,
+	paramData,
 }: {
-  token: string;
-  paramData?: Record<string, any>;
+	token: string;
+	paramData?: Record<string, any>;
 }) {
-  const params: Record<string, any> = {};
+	const params: Record<string, any> = {};
 
-  Object.entries(paramData || {}).forEach(([key, value]) => {
-    if (
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      value === "all"
-    ) {
-      params[key] = null;
-    } else if (numberKeys.includes(key)) {
-      const num = Number(value);
-      params[key] = isNaN(num) ? null : num;
-    } else {
-      params[key] = value;
-    }
-  });
+	Object.entries(paramData || {}).forEach(([key, value]) => {
+		if (
+			value === undefined ||
+			value === null ||
+			value === "" ||
+			value === "all"
+		) {
+			params[key] = null;
+		} else if (numberKeys.includes(key)) {
+			const num = Number(value);
+			params[key] = isNaN(num) ? null : num;
+		} else {
+			params[key] = value;
+		}
+	});
 
-  try {
-    const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
-      params,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+	try {
+		const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
+			params,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
 
-    return response.data.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
-      );
-    }
+		return response.data.data;
+	} catch (error: any) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+			);
+		}
 
-    throw error;
-  }
+		throw error;
+	}
 }
 
 export async function getRequestOrderWithTask({
-  token,
-  requestId,
+	token,
+	requestId,
 }: {
-  token: string;
-  requestId: number;
+	token: string;
+	requestId: number;
 }) {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/api/v1/request-orders/${requestId}/get-task`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+	try {
+		const response = await axios.get(
+			`${apiUrl}/api/v1/request-orders/${requestId}/get-task`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
-    return response.data.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        `${error.response?.statusText}: ${error.response?.data.message || error.message}`
-      );
-    }
+		return response.data.data;
+	} catch (error: any) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+			);
+		}
 
-    throw error;
-  }
+		throw error;
+	}
 }
 
 export async function uploadRequestOrder({
-  token,
-  uploadedFiles,
+	token,
+	uploadedFiles,
 }: {
-  token: string;
-  uploadedFiles: UploadedFile[];
+	token: string;
+	uploadedFiles: UploadedFile[];
 }) {
-  const formData = new FormData();
+	const formData = new FormData();
 
-  uploadedFiles.forEach((fileData) => {
-    formData.append("files", fileData.file);
-  });
+	uploadedFiles.forEach((fileData) => {
+		formData.append("files", fileData.file);
+	});
 
-  try {
-    const response = await axios.post(
-      `${apiUrl}/api/v1/request-orders/create/excel`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+	try {
+		const response = await axios.post(
+			`${apiUrl}/api/v1/request-orders/create/excel`,
+			formData,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "multipart/form-data",
+				},
+			}
+		);
 
-    return response.data.data;
-  } catch (error: any) {
-    throw new Error(
-      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
-    );
-  }
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
+	}
 }
 
 export async function KeyInRequestOrder({
-  token,
-  data,
+	token,
+	data,
 }: {
-  token: string;
-  data: Record<string, any>;
+	token: string;
+	data: Record<string, any>;
 }) {
-  const body: Record<string, any> = {};
+	const body: Record<string, any> = {};
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (
-      value === undefined ||
-      value === null ||
-      value === "" ||
-      value === "all"
-    ) {
-      body[key] = null;
-    } else if (numberKeys.includes(key)) {
-      const num = Number(value);
-      body[key] = isNaN(num) ? null : num;
-    } else {
-      body[key] = value;
-    }
-  });
+	Object.entries(data).forEach(([key, value]) => {
+		if (
+			value === undefined ||
+			value === null ||
+			value === "" ||
+			value === "all"
+		) {
+			body[key] = null;
+		} else if (numberKeys.includes(key)) {
+			const num = Number(value);
+			body[key] = isNaN(num) ? null : num;
+		} else {
+			body[key] = value;
+		}
+	});
 
-  try {
-    const response = await axios.post(
-      `${apiUrl}/api/v1/request-orders/create/key-in`,
-      body,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+	try {
+		const response = await axios.post(
+			`${apiUrl}/api/v1/request-orders/create/key-in`,
+			body,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
-    return response.data.data;
-  } catch (error: any) {
-    throw new Error(
-      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
-    );
-  }
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
+	}
 }
 
 export async function SetStatusRequestOrder({
-  token,
-  rid,
-  paramData,
+	token,
+	rid,
+	paramData,
 }: {
-  token: string;
-  rid: number;
-  paramData: {
-    status: string;
-    comment?: string;
-  };
+	token: string;
+	rid: number;
+	paramData: {
+		status: string;
+		comment?: string;
+	};
 }) {
-  const params: Record<string, any> = {};
-  const body: Record<string, any> = {};
+	const params: Record<string, any> = {};
+	const body: Record<string, any> = {};
 
-  if (paramData) {
-    if (paramData.status) body.status = paramData.status;
-    if (paramData.comment) body.comment = paramData.comment;
-  }
+	if (paramData) {
+		if (paramData.status) body.status = paramData.status;
+		if (paramData.comment) body.comment = paramData.comment;
+	}
 
-  try {
-    const response = await axios.patch(
-      `${apiUrl}/api/v1/request-orders/${rid}/set/status`,
-      body,
-      {
-        params,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+	try {
+		const response = await axios.patch(
+			`${apiUrl}/api/v1/request-orders/${rid}/set/status`,
+			body,
+			{
+				params,
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
-    return response.data.data;
-  } catch (error: any) {
-    throw new Error(
-      `${error.response?.statusText}: ${error.response?.data.message || error.message}`
-    );
-  }
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
+	}
 }

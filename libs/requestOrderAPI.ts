@@ -2,14 +2,6 @@ import axios from "axios";
 import { UploadedFile } from "@/interfaces/interfaces";
 
 const apiUrl = process.env.API_URL || "http://localhost:8080";
-const numberKeys = [
-	"start_year",
-	"end_year",
-	"target_area",
-	"land_number",
-	"ap_year",
-	"customer_operation_area_id",
-];
 
 export async function getRequestOrders({
 	token,
@@ -28,9 +20,6 @@ export async function getRequestOrders({
 			value === "all"
 		) {
 			params[key] = null;
-		} else if (numberKeys.includes(key)) {
-			const num = Number(value);
-			params[key] = isNaN(num) ? null : num;
 		} else {
 			params[key] = value;
 		}
@@ -48,9 +37,10 @@ export async function getRequestOrders({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -78,9 +68,10 @@ export async function getRequestOrderWithTask({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -112,7 +103,7 @@ export async function uploadRequestOrder({
 			}
 		);
 
-		return response.data.data;
+		return response.data;
 	} catch (error: any) {
 		throw new Error(
 			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
@@ -137,9 +128,6 @@ export async function KeyInRequestOrder({
 			value === "all"
 		) {
 			body[key] = null;
-		} else if (numberKeys.includes(key)) {
-			const num = Number(value);
-			body[key] = isNaN(num) ? null : num;
 		} else {
 			body[key] = value;
 		}

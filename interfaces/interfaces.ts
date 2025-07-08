@@ -133,7 +133,3 @@ export interface FieldSection {
 	title?: string;
 	fields: FieldValue[];
 }
-
-export interface OperationAreaResponse {
-	operation_area: OperationArea;
-}

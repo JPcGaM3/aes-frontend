@@ -1,13 +1,13 @@
-import type { PressEvent } from "@react-types/shared";
-import type { ColorType } from "../types";
 import type { FormButtonsProps } from "@/interfaces/props";
 
 import React from "react";
 import { Button } from "@heroui/button";
 
-const FormButtons: React.FC<FormButtonsProps> = ({
+export default function FormButtons({
 	onSubmit,
 	onCancel,
+	size = "compact",
+	buttonSize = "lg",
 	hasBorder = true,
 	submitLabel = "Submit",
 	cancelLabel = "Cancel",
@@ -15,53 +15,70 @@ const FormButtons: React.FC<FormButtonsProps> = ({
 	cancelColor = "default",
 	isSubmitting = false,
 	isCanceling = false,
-	className = "w-full text-center flex flex-col",
-}) => (
-	<div className={className}>
-		{hasBorder && <hr className="mb-6 border-gray-200" />}
+	isSubmitDisabled = false,
+	isCancelDisabled = false,
+	className = "flex flex-col text-center",
+}: FormButtonsProps) {
+	let computedClassName = "";
+	if (size === "compact") {
+		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+	} else if (size === "expanded") {
+		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	} else {
+		computedClassName = "w-full";
+	}
 
-		<div className="flex gap-2 w-full">
-			{onCancel && (
-				<Button
-					className="w-full font-semibold text-gray-500"
-					color={cancelColor}
-					size="lg"
-					radius="sm"
-					variant="flat"
-					isLoading={isCanceling}
-					onPress={onCancel}
-				>
-					{cancelLabel}
-				</Button>
-			)}
+	return (
+		<div className={`${computedClassName} ${className}`}>
+			{hasBorder && <hr className="mb-6 border-gray-200" />}
 
-			{onSubmit ? (
-				<Button
-					className="w-full font-bold"
-					color={submitColor}
-					size="lg"
-					radius="sm"
-					variant="flat"
-					isLoading={isSubmitting}
-					onPress={onSubmit}
-				>
-					{submitLabel}
-				</Button>
-			) : (
-				<Button
-					className="w-full font-bold"
-					color={submitColor}
-					size="lg"
-					radius="sm"
-					variant="flat"
-					isLoading={isSubmitting}
-					type="submit"
-				>
-					{submitLabel}
-				</Button>
-			)}
+			<div className="flex w-full gap-2">
+				{onCancel && (
+					<Button
+						className="w-full font-semibold text-gray-500"
+						color={cancelColor}
+						size={buttonSize}
+						radius="sm"
+						variant="flat"
+						isLoading={isCanceling}
+						isDisabled={isCancelDisabled}
+						disableAnimation={isCancelDisabled}
+						onPress={onCancel}
+					>
+						{cancelLabel}
+					</Button>
+				)}
+
+				{onSubmit ? (
+					<Button
+						className="w-full font-bold"
+						color={submitColor}
+						size={buttonSize}
+						radius="sm"
+						variant="flat"
+						isLoading={isSubmitting}
+						isDisabled={isSubmitDisabled}
+						disableAnimation={isSubmitDisabled}
+						onPress={onSubmit}
+					>
+						{submitLabel}
+					</Button>
+				) : (
+					<Button
+						className="w-full font-bold"
+						color={submitColor}
+						size={buttonSize}
+						radius="sm"
+						variant="flat"
+						isLoading={isSubmitting}
+						isDisabled={isSubmitDisabled}
+						disableAnimation={isSubmitDisabled}
+						type="submit"
+					>
+						{submitLabel}
+					</Button>
+				)}
+			</div>
 		</div>
-	</div>
-);
-
-export default FormButtons;
+	);
+}

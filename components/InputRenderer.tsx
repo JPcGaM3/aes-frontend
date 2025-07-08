@@ -162,7 +162,7 @@ export default function InputRenderer({
 					{...commonProps}
 					type={isVisible ? "text" : "password"}
 					value={value}
-					autocomplete="current-password"
+					autoComplete="off"
 					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 					endContent={
 						<Button
@@ -171,7 +171,7 @@ export default function InputRenderer({
 							radius="full"
 							variant="light"
 							onPress={() => setIsVisible((state) => !state)}
-							className="-mx-2 p-0 text-default-400 text-2xl"
+							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
 								isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />
 							}
@@ -185,6 +185,7 @@ export default function InputRenderer({
 			return (
 				<Select
 					{...commonProps}
+					placement="bottom"
 					selectedKeys={
 						value !== undefined && value !== null && value !== ""
 							? new Set([String(value)])
@@ -199,9 +200,7 @@ export default function InputRenderer({
 					}}
 				>
 					{(commonProps.options || []).length === 0 ? (
-						<SelectItem key="no-option" isDisabled>
-							No option.
-						</SelectItem>
+						<SelectItem key="no-option">No option.</SelectItem>
 					) : (
 						(commonProps.options || []).map((option: DropdownOption) => {
 							const isSelected =
@@ -216,7 +215,11 @@ export default function InputRenderer({
 									classNames={{
 										base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
 									}}
-									className={clsx("font-mono", fontMono.variable)}
+									className={clsx(
+										/^[\u0E00-\u0E7F]/.test(option.label)
+											? undefined
+											: ["font-mono", fontMono.variable]
+									)}
 								>
 									{option.label}
 								</SelectItem>

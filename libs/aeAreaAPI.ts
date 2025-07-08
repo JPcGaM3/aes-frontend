@@ -1,11 +1,12 @@
 import axios from "axios";
 
-export async function getAeAreaAll() {
+export async function getAeAreaAll({ token }: { token: string }) {
 	const apiUrl = process.env.API_URL || "http://localhost:8080";
 
 	try {
 		const response = await axios.get(`${apiUrl}/api/v1/ae-areas`, {
 			headers: {
+				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",
 			},
 		});

@@ -8,19 +8,18 @@ import React, {
 	ReactNode,
 } from "react";
 
-import { LoginParams, LoginUser } from "@/libs/userAPI";
+import { LoginProps, LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
-	operationAreaId: string;
 	token: string;
 	id: number;
 	role: string[];
-	aeAreaId: number;
+	ae_id: number;
 }
 
 interface AuthContextType {
 	userContext: UserContextType;
-	login: ({ params }: { params: LoginParams }) => Promise<void>;
+	login: ({ ...props }: LoginProps) => Promise<void>;
 	logout: () => void;
 	setUserContext: (context: Partial<UserContextType>) => void;
 	isReady: boolean;
@@ -32,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [token, setToken] = useState<string>("");
 	const [id, setId] = useState<number>(NaN);
 	const [role, setRole] = useState<string[]>([]);
-	const [aeAreaId, setAeAreaId] = useState<number>(NaN);
+	const [ae_id, setae_id] = useState<number>(NaN);
 	const [isReady, setIsReady] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -44,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 					token: parsed.token ?? "",
 					id: parsed.id,
 					role: parsed.role ?? [],
-					aeAreaId: parsed.aeAreaId,
+					ae_id: parsed.ae_id,
 				});
 			} catch {
 				sessionStorage.removeItem("authUser");
@@ -57,36 +56,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		token,
 		id,
 		role,
-		aeAreaId,
-		operationAreaId: "RDC0",
+		ae_id,
 	};
 
 	useEffect(() => {
 		const isValid =
-			token !== "" && !isNaN(id) && !isNaN(aeAreaId) && role.length > 0;
+			token !== "" && !isNaN(id) && !isNaN(ae_id) && role.length > 0;
 
 		if (isValid) {
 			sessionStorage.setItem("authUser", JSON.stringify(userContext));
 		}
-	}, [token, id, aeAreaId, role]);
+	}, [token, id, ae_id, role]);
 
 	const setUserContext = (context: Partial<UserContextType>) => {
 		if (context.token !== undefined) setToken(context.token);
 		if (context.id !== undefined) setId(context.id);
 		if (context.role !== undefined) setRole(context.role);
-		if (context.aeAreaId !== undefined) setAeAreaId(context.aeAreaId);
+		if (context.ae_id !== undefined) setae_id(context.ae_id);
 	};
 
-	const login = async ({ params }: { params: LoginParams }) => {
+	const login = async ({ ...props }: LoginProps) => {
 		try {
-			const result = await LoginUser(params);
+			const result = await LoginUser(props);
 
 			if (result) {
 				const newUserContext = {
 					token: result.token ?? "",
 					id: result.id,
 					role: result.role,
-					aeAreaId: params.ae_area_id ?? NaN,
+					ae_id: props.params.ae_id ?? NaN,
 				};
 
 				setUserContext(newUserContext);
@@ -102,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			token: "",
 			id: NaN,
 			role: [],
-			aeAreaId: NaN,
+			ae_id: NaN,
 		};
 
 		setUserContext(newUserContext);

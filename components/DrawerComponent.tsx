@@ -37,7 +37,7 @@ export default function DrawerComponent({
 					{(onClose) => (
 						<div>
 							{placement === "right" && (
-								<DrawerHeader className="top-0 inset-x-0 flex flex-row gap-2 px-2 py-2 border-b justify-between">
+								<DrawerHeader className="inset-x-0 top-0 flex flex-row justify-between gap-2 px-2 py-2 border-b">
 									<Button
 										isIconOnly
 										size="sm"

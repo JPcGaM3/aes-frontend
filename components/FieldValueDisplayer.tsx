@@ -6,26 +6,36 @@ import type { FieldValueDisplayerProps } from "@/interfaces/props";
 import { translateEnumValue } from "@/utils/functions";
 
 export default function FieldValueDisplayer({
-	className = "flex flex-col w-full gap-4",
+	size = "compact",
 	sections,
+	className = "flex flex-col w-full gap-4",
 }: FieldValueDisplayerProps) {
+	let computedClassName = "";
+	if (size === "compact") {
+		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+	} else if (size === "expanded") {
+		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	} else {
+		computedClassName = "w-full";
+	}
+
 	return (
-		<div className={className}>
+		<div className={`${computedClassName} ${className}`}>
 			{sections.map((section, idx) => (
-				<div key={idx} className="flex flex-col gap-2 w-full">
+				<div key={idx} className="flex flex-col w-full gap-2">
 					{/* Title ----------------------------------------------------------------------------------------------------------------------- */}
 					{section.title && (
-						<div className="flex items-center gap-5 w-full">
-							<span className="font-semibold text-primary text-lg">
+						<div className="flex items-center w-full gap-5">
+							<span className="text-lg font-semibold text-primary">
 								{section.title}
 							</span>
 
-							<Divider className="flex-1 bg-primary w-full" />
+							<Divider className="flex-1 w-full bg-primary" />
 						</div>
 					)}
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-					<div className="gap-x-1 gap-y-2 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] w-full">
+					<div className="grid w-full grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-x-1 gap-y-2">
 						{section.fields.map((field, i) => (
 							<div
 								key={i}
@@ -44,7 +54,7 @@ export default function FieldValueDisplayer({
 									})()}
 								</span>
 
-								<span className="text-gray-800 text-sm break-all">
+								<span className="text-sm text-gray-800 break-all">
 									:{" "}
 									{(() => {
 										let displayValue =

@@ -86,7 +86,7 @@ export default function FormFields({
 			isDisabled: isReadOnly || false,
 			isRequired: isRequired || false,
 			labelPlacement: resolvedLabelPlacement,
-			className: clsx("p-0 min-w-[100px]", className),
+			className: clsx("min-w-[100px] p-0", className),
 			classNames: {
 				label: "min-w-[100px] p-0",
 				mainWrapper: "w-full min-w-0",
@@ -97,27 +97,27 @@ export default function FormFields({
 	}, []);
 
 	return (
-		<div className="flex flex-col gap-6 w-full">
+		<div className="flex flex-col w-full gap-6">
 			{sections.map((section, idx) => (
-				<div key={idx} className="flex flex-col gap-3 w-full">
+				<div key={idx} className="flex flex-col w-full gap-3">
 					{/* Title ----------------------------------------------------------------------------------------------------------------------- */}
 					{section.title && (
-						<div className="flex items-center gap-5 w-full">
-							<span className="font-semibold text-primary text-lg">
+						<div className="flex items-center w-full gap-5">
+							<span className="text-lg font-semibold text-primary">
 								{section.title}
 							</span>
 
-							<Divider className="flex-1 bg-primary w-full" />
+							<Divider className="flex-1 w-full bg-primary" />
 						</div>
 					)}
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
 					<div
-						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-2"}`}
+						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
 					>
 						{section.fields.map((field, i) =>
 							Array.isArray(field) ? (
-								<div key={i} className="flex flex-row gap-2 w-full">
+								<div key={i} className="flex flex-row w-full gap-2">
 									{field.map(
 										(subField, subIndex) =>
 											subField && (
@@ -133,7 +133,7 @@ export default function FormFields({
 								</div>
 							) : (
 								field && (
-									<div key={i} className="col-span-1 w-full">
+									<div key={i} className="w-full col-span-1">
 										<InputRenderer
 											type={field.type}
 											value={getValue(field)}

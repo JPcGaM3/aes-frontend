@@ -117,16 +117,16 @@ export interface Activity {
 	name: string;
 	created_at?: string | Date;
 	updated_at?: string | Date;
-	created_by: number;
-	updated_by: number;
-	activity_number: number;
+	created_by?: number;
+	updated_by?: number;
+	activity_number?: number;
 	tool_types?: ToolType[];
 	taskorders?: TaskOrder[];
 }
 
 export interface ToolType {
 	id: number;
-	activity_id: number;
+	activity_id?: number;
 	price_ct_fm?: number;
 	price_ct_rdc?: number;
 	price_ne1_fm?: number;
@@ -136,8 +136,8 @@ export interface ToolType {
 	tool_type_number?: number;
 	created_at?: string | Date;
 	updated_at?: string | Date;
-	created_by: number;
-	updated_by: number;
+	created_by?: number;
+	updated_by?: number;
 	activities?: Activity;
 	tools?: Tool[];
 	taskorders?: TaskOrder[];
@@ -223,7 +223,6 @@ export interface RequestOrder {
 	run_number?: string;
 	phone?: string;
 	customer_type_id?: number;
-	customer_operation_area_id?: number;
 	operation_area_id?: number;
 	quota_number?: string;
 	company_farm_id?: number;

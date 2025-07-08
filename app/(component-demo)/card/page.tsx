@@ -11,7 +11,7 @@ import {
 	UserStatusTranslation,
 } from "@/utils/constants";
 
-import { FieldConfig, FormField } from "@/interfaces/interfaces";
+import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import { User } from "@/interfaces/schema";
 
 import Header from "@/components/Header";
@@ -136,97 +136,101 @@ export default function Card() {
 		},
 	];
 
-	const editFields: FormField[] = [
+	const editSection: FormSection[] = [
 		{
-			type: "dropdown",
-			name: "quota_number",
-			label: "Quota Number",
-			options: [
-				{ label: "Option 1", value: "option1" },
-				{ label: "Option 2", value: "option2" },
+			title: "Edit User",
+			fields: [
+				{
+					type: "dropdown",
+					name: "quota_number",
+					label: "Quota Number",
+					options: [
+						{ label: "Option 1", value: "option1" },
+						{ label: "Option 2", value: "option2" },
+					],
+				},
+				{
+					type: "text",
+					name: "fullname",
+					label: "Full Name",
+				},
+				{
+					type: "text",
+					name: "email",
+					label: "Email",
+				},
+				{
+					type: "text",
+					name: "phone",
+					label: "Phone",
+				},
+				{
+					type: "number",
+					name: "unit",
+					label: "Unit",
+				},
+				{
+					type: "text",
+					name: "status",
+					label: "Status",
+				},
 			],
-		},
-		{
-			type: "text",
-			name: "fullname",
-			label: "Full Name",
-			placeholder: selectedUser?.fullname,
-		},
-		{
-			type: "text",
-			name: "email",
-			label: "Email",
-			placeholder: selectedUser?.email,
-		},
-		{
-			type: "text",
-			name: "phone",
-			label: "Phone",
-			placeholder: selectedUser?.phone,
-		},
-		{
-			type: "number",
-			name: "unit",
-			label: "Unit",
-			placeholder: selectedUser?.unit,
-		},
-		{
-			type: "text",
-			name: "status",
-			label: "Status",
-			placeholder: selectedUser?.status,
 		},
 	];
 
-	const filterFields: FormField[] = [
+	const filterSection: FormSection[] = [
 		{
-			type: "dropdown",
-			name: "status",
-			label: "สถานะใบสั่งงาน",
-			options: [
-				{ label: "All", value: "all" },
-				{ label: "Active", value: "active" },
-				{ label: "Inactive", value: "inactive" },
-			],
-		},
-		{
-			type: "dropdown",
-			name: "ae",
-			label: "สังกัด",
-			options: [
-				{ label: "All", value: "all" },
-				{ label: "CT", value: "ct" },
-				{ label: "NE1", value: "ne1" },
-				{ label: "NE2", value: "ne2" },
-			],
-		},
-		[
-			{
-				type: "date",
-				name: "start_date",
-				label: "วันที่เริ่มต้น",
-				hasPlaceholder: false,
-			},
-			{
-				type: "date",
-				name: "end_date",
-				label: "วันที่สิ้นสุด",
-				hasPlaceholder: false,
-			},
-		],
-		{
-			type: "date-range",
-			name: "date_range",
-			label: "ช่วงวันที่",
-			hasPlaceholder: false,
-		},
-		{
-			type: "dropdown",
-			name: "sort",
-			label: "เรียงลำดับตาม",
-			options: [
-				{ label: "วันที่ น้อยไปมาก", value: "date_asc" },
-				{ label: "วันที่ มากไปน้อย", value: "date_desc" },
+			fields: [
+				{
+					type: "dropdown",
+					name: "status",
+					label: "สถานะใบสั่งงาน",
+					options: [
+						{ label: "All", value: "all" },
+						{ label: "Active", value: "active" },
+						{ label: "Inactive", value: "inactive" },
+					],
+				},
+				{
+					type: "dropdown",
+					name: "ae",
+					label: "สังกัด",
+					options: [
+						{ label: "All", value: "all" },
+						{ label: "CT", value: "ct" },
+						{ label: "NE1", value: "ne1" },
+						{ label: "NE2", value: "ne2" },
+					],
+				},
+				[
+					{
+						type: "date",
+						name: "start_date",
+						label: "วันที่เริ่มต้น",
+						hasPlaceholder: false,
+					},
+					{
+						type: "date",
+						name: "end_date",
+						label: "วันที่สิ้นสุด",
+						hasPlaceholder: false,
+					},
+				],
+				{
+					type: "date-range",
+					name: "date_range",
+					label: "ช่วงวันที่",
+					hasPlaceholder: false,
+				},
+				{
+					type: "dropdown",
+					name: "sort",
+					label: "เรียงลำดับตาม",
+					options: [
+						{ label: "วันที่ น้อยไปมาก", value: "date_asc" },
+						{ label: "วันที่ มากไปน้อย", value: "date_desc" },
+					],
+				},
 			],
 		},
 	];
@@ -272,7 +276,7 @@ export default function Card() {
 			<DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
 				<div className="flex flex-col gap-4">
 					<FormComponent
-						fields={editFields}
+						sections={editSection}
 						title="Edit User"
 						subtitle="Edit user details"
 						onSubmit={handleSaveEdit}
@@ -296,16 +300,20 @@ export default function Card() {
 				isOpen={isOpenFilter}
 				title="Filter Users"
 				subtitle="Apply filters to user list"
-				fields={filterFields}
+				sections={filterSection}
 				submitLabel="Apply Filters"
 				cancelLabel="Cancel"
 				onSubmit={handleApplyFilters}
 				onClose={() => onCloseFilter()}
-				initialValues={{ status: "all", ae: "all", sort: "date_asc" }}
+				values={{ status: "all", ae: "all", sort: "date_asc" }}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}
-			<Header title="User Management" className="w-full mb-6 text-left">
+			<Header
+				title="User Management"
+				orientation="horizontal"
+				className="w-full mb-6 text-left"
+			>
 				<Button
 					radius="sm"
 					variant="flat"

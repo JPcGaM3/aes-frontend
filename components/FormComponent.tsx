@@ -9,6 +9,8 @@ import type { FormComponentProps } from "@/interfaces/props";
 
 export default function FormComponent({
 	hasHeader = true,
+	hasBorder = true,
+	size = "compact",
 	title,
 	subtitle,
 	sections,
@@ -23,7 +25,6 @@ export default function FormComponent({
 	onCancel,
 	onSubmit,
 	onChange,
-	isCompact = false,
 }: FormComponentProps & { isCompact?: boolean }) {
 	const [formValues, setFormValues] = useState<any>(values);
 
@@ -48,11 +49,14 @@ export default function FormComponent({
 		}
 	};
 
-	const computedClassName =
-		className ||
-		(isCompact
-			? "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
-			: "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl");
+	let computedClassName = "";
+	if (size === "compact") {
+		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+	} else if (size === "expanded") {
+		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	} else {
+		computedClassName = "w-full";
+	}
 
 	return (
 		<div className={computedClassName}>
@@ -64,8 +68,9 @@ export default function FormComponent({
 				>
 					{hasHeader && (
 						<Header
-							subtitle={subtitle}
 							title={title}
+							subtitle={subtitle}
+							hasBorder={hasBorder}
 							subtitleClassName={subtitleClassName}
 						/>
 					)}
@@ -74,25 +79,28 @@ export default function FormComponent({
 						sections={sections}
 						onValueChange={handleValueChange}
 						values={formValues}
-						isCompact={isCompact}
+						isCompact={size === "compact"}
 					/>
 
 					{children}
 
 					<FormButtons
+						size={size}
 						submitLabel={submitLabel}
 						cancelLabel={cancelLabel}
 						isSubmitting={isSubmitting}
 						isCanceling={isCanceling}
+						hasBorder={hasBorder}
 						onCancel={onCancel}
 					/>
 				</Form>
 			) : (
-				<div className="flex flex-col gap-8 w-full">
+				<div className="flex flex-col w-full gap-8">
 					{hasHeader && (
 						<Header
+							title={title}
 							subtitle={subtitle}
-							title={title as string}
+							hasBorder={hasBorder}
 							subtitleClassName={subtitleClassName}
 						/>
 					)}
@@ -101,7 +109,7 @@ export default function FormComponent({
 						sections={sections}
 						onValueChange={handleValueChange}
 						values={formValues}
-						isCompact={isCompact}
+						isCompact={size === "compact"}
 					/>
 
 					{children}

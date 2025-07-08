@@ -6,6 +6,12 @@ export enum USERROLE {
 	Farmpro = "FARMPRO",
 	CaneMIS = "CANEMIS",
 	SongSirm = "SONG_SIRM",
+	Manager = "MANAGER",
+	SubManager = "SUB_MANAGER",
+	Commander = "COMMANDER",
+	SubCommander = "SUB_COMMANDER",
+	Accountant = "ACCOUNTANT",
+	Maintenance = "MAINTENANCE",
 }
 
 export enum USERSTATUS {
@@ -24,6 +30,7 @@ export enum REQUESTORDERSTATUS {
 	PendingConfirm = "PENDING_CONFIRM",
 	Completed = "COMPLETED",
 	Rejected = "REJECTED",
+	Cancelled = "CANCELLED",
 }
 
 export enum TASKORDERSTATUS {
@@ -32,4 +39,5 @@ export enum TASKORDERSTATUS {
 	InProgress = "IN_PROGRESS",
 	OnHold = "ON_HOLD",
 	Completed = "COMPLETED",
+	Cancelled = "CANCELLED",
 }

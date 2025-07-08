@@ -5,10 +5,6 @@ import {
 	Button,
 	Chip,
 	Divider,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownTrigger,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -16,17 +12,9 @@ import {
 
 import type { CardComponentProps } from "@/interfaces/props";
 import { VerticalDotsIcon } from "@/utils/icons";
-import { translateEnumValue } from "@/utils/functions";
+import { getNestedValue, translateEnumValue } from "@/utils/functions";
 import { clsx } from "clsx";
-
-function getNestedValue(obj: any, path: string) {
-	return path
-		.split(".")
-		.reduce(
-			(acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined),
-			obj
-		);
-}
+import { FieldConfig } from "@/interfaces/interfaces";
 
 export default function CardComponent<T extends { id: number | string }>({
 	items,
@@ -40,36 +28,57 @@ export default function CardComponent<T extends { id: number | string }>({
 		null
 	);
 
+	const getFieldValue = useCallback((item: any, config: FieldConfig) => {
+		if (config.path) {
+			return getNestedValue(item, config.path);
+		}
+		if (config.key) {
+			return item[config.key];
+		}
+
+		return undefined;
+	}, []);
+
 	const renderCell = useCallback(
 		(item: T) => (
 			<div key={item.id} className={cardClassName}>
 				{/* header */}
 				<div className="gap-1 px-4 text-left">
-					<Chip
-						size="sm"
-						radius="sm"
-						variant="flat"
-						className="p-3 mt-4 mb-2 tracking-wide w-fit"
-						color={statusConfig?.colorMap?.[(item as any).status] || "default"}
-					>
-						<span className="font-semibold">
-							{translateEnumValue(
-								(item as any).status,
-								statusConfig?.translation || {}
-							)}
-						</span>
-					</Chip>
+					{(item as any).status && (
+						<Chip
+							size="sm"
+							radius="sm"
+							variant="flat"
+							className="p-3 mt-4 mb-2 tracking-wide w-fit"
+							color={
+								statusConfig?.colorMap?.[(item as any).status] || "default"
+							}
+						>
+							<span className="font-semibold">
+								{translateEnumValue(
+									(item as any).status,
+									statusConfig?.translation || {}
+								)}
+							</span>
+						</Chip>
+					)}
 
 					{headerFields?.map((field) => {
 						const label = field.label
 							? field.label
 							: translateEnumValue(field.key, field.labelTranslator || {});
 
-						const nested = getNestedValue(item, field.key);
-						const value =
-							nested == null
+						const rawValue = getFieldValue(item, field);
+						let value =
+							rawValue == null
 								? "N/A"
-								: translateEnumValue(nested, field.valueTranslator || {});
+								: translateEnumValue(rawValue, field.valueTranslator || {});
+						if (
+							typeof value === "string" &&
+							(value.length > 20 || value.includes("\n"))
+						) {
+							value = value.slice(0, 20) + "...";
+						}
 
 						return (
 							<div key={field.key} className={field.className || "w-fit"}>
@@ -90,11 +99,17 @@ export default function CardComponent<T extends { id: number | string }>({
 						if (field.valueFunction) {
 							value = field.valueFunction(item);
 						} else {
-							const nested = getNestedValue(item, field.key);
+							const rawValue = getFieldValue(item, field);
 							value =
-								nested == null
+								rawValue == null
 									? "N/A"
-									: translateEnumValue(nested, field.valueTranslator || {});
+									: translateEnumValue(rawValue, field.valueTranslator || {});
+						}
+						if (
+							typeof value === "string" &&
+							(value.length > 20 || value.includes("\n"))
+						) {
+							value = value.slice(0, 20) + "...";
 						}
 
 						return (
@@ -173,6 +188,7 @@ export default function CardComponent<T extends { id: number | string }>({
 			actions,
 			cardClassName,
 			openPopoverId,
+			getFieldValue,
 		]
 	);
 

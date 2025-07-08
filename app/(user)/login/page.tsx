@@ -12,8 +12,7 @@ import { useLoading } from "@/providers/LoadingContext";
 
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
-
-import { LoginParams } from "@/libs/userAPI";
+import { RequestOrderTranslation } from "@/utils/constants";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -28,15 +27,22 @@ export default function LoginPage() {
 	});
 
 	const handleSubmit = async (values: any) => {
+		const isEmail = values.username.includes("@mitrphol.com");
+
+		const body = isEmail
+			? { email: values.username, password: values.password }
+			: { username: values.username, password: values.password };
+
 		try {
 			setIsLoading(true);
 
 			await login({
 				params: {
-					username: values.username,
-					password: values.password,
-					ae_area_id: values.ae_id,
-				} as LoginParams,
+					ae_id: values.ae_id,
+				},
+				body: {
+					...body,
+				},
 			});
 
 			router.push("/home");
@@ -69,7 +75,7 @@ export default function LoginPage() {
 				{
 					type: "dropdown",
 					name: "ae_id",
-					label: "พื้นที่ปฏิบัติงาน",
+					labelTranslator: RequestOrderTranslation,
 					isRequired: true,
 					options: [
 						{ label: "CT0", value: 1 },
@@ -82,7 +88,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex justify-center items-center w-full">
+		<div className="flex items-center justify-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
@@ -95,7 +101,8 @@ export default function LoginPage() {
 			{/* Alert */}
 			{alert.isVisible && (
 				<AlertComponent
-					isCompact={true}
+					size="compact"
+					placement="top"
 					title={alert.title}
 					description={alert.description}
 					color={alert.color}

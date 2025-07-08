@@ -26,20 +26,20 @@ export default function AlertModal({
 			onOpenChange={onClose}
 			size="sm"
 			radius="sm"
-			className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md p-3"
+			className="w-full max-w-sm p-3 shadow-md sm:max-w-md md:max-w-lg lg:max-w-xl"
 		>
 			<ModalContent>
 				{(onClose) => (
-					<div className="flex flex-col items-center justify-center w-full p-0 gap-4">
-						<ModalHeader className="flex flex-col items-center w-full text-center text-2xl p-0">
+					<div className="flex flex-col items-center justify-center w-full gap-4 p-0">
+						<ModalHeader className="flex flex-col items-center w-full p-0 text-2xl text-center">
 							{title}
 						</ModalHeader>
 
-						<ModalBody className="w-full flex justify-center p-0 min-h-16">
-							<p className="text-center w-full">{message}</p>
+						<ModalBody className="flex justify-center w-full p-0 min-h-16">
+							<p className="w-full text-center">{message}</p>
 						</ModalBody>
 
-						<ModalFooter className="flex gap-2 w-full p-0">
+						<ModalFooter className="flex w-full gap-2 p-0">
 							<Button
 								radius="sm"
 								color="danger"

@@ -51,6 +51,7 @@ export interface DrawerComponentProps {
 }
 
 export interface FieldValueDisplayerProps {
+	size?: "compact" | "expanded" | "full";
 	className?: string;
 	sections: FieldSection[];
 }
@@ -58,6 +59,8 @@ export interface FieldValueDisplayerProps {
 export interface FormButtonsProps {
 	onSubmit?: (e: PressEvent) => void;
 	onCancel?: (e: PressEvent) => void;
+	size?: "compact" | "expanded" | "full";
+	buttonSize?: "sm" | "md" | "lg";
 	hasBorder?: boolean;
 	submitLabel?: string;
 	cancelLabel?: string;
@@ -65,6 +68,8 @@ export interface FormButtonsProps {
 	cancelColor?: ColorType;
 	isSubmitting?: boolean;
 	isCanceling?: boolean;
+	isSubmitDisabled?: boolean;
+	isCancelDisabled?: boolean;
 	className?: string;
 }
 
@@ -94,6 +99,7 @@ export interface FormComponentProps
 	extends HeaderProps,
 		FormFieldsProps,
 		FormButtonsProps {
+	size?: "compact" | "expanded" | "full";
 	hasHeader?: boolean;
 	className?: string;
 	children?: React.ReactNode;

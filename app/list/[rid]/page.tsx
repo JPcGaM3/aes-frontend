@@ -51,7 +51,7 @@ export default function RequestManagementPage({
 		description: "",
 		isVisible: false,
 	});
-	const [formValues, setFormValues] = useState<{
+	const [commentValues, setCommentValues] = useState<{
 		comment: string;
 	}>({
 		comment: "",
@@ -202,7 +202,7 @@ export default function RequestManagementPage({
 		},
 	];
 
-	const inputFields: FormSection[] = [
+	const commentSections: FormSection[] = [
 		{
 			fields: [
 				[
@@ -231,13 +231,16 @@ export default function RequestManagementPage({
 		}
 	};
 
-	const handleFormValueChange = (newValues: typeof formValues) => {
-		setFormValues(newValues);
+	const handleCommentValueChange = (newValues: typeof commentValues) => {
+		setCommentValues(newValues);
 	};
 
-	const handleCancel = () => setFormValues({ comment: "" });
+	const handleCancel = () => {
+		setCommentValues({ comment: "" });
+		router.back();
+	};
 
-	const handleSubmit = async (status: REQUESTORDERSTATUS): Promise<any> => {
+	const handleComment = async (status: REQUESTORDERSTATUS): Promise<any> => {
 		if (
 			isReady &&
 			userContext.id &&
@@ -247,7 +250,7 @@ export default function RequestManagementPage({
 			rid
 		) {
 			setIsLoading(true);
-			if (!formValues.comment.trim()) {
+			if (!commentValues.comment.trim()) {
 				setAlert({
 					title: "Alert",
 					description: `Detail: กรุณาระบุเหตุผล`,
@@ -260,7 +263,7 @@ export default function RequestManagementPage({
 			try {
 				const paramData = {
 					status: (status as REQUESTORDERSTATUS) || undefined,
-					comment: (formValues.comment as string) || undefined,
+					comment: (commentValues.comment as string) || undefined,
 				};
 				await SetStatusRequestOrder({
 					token: userContext.token,
@@ -269,7 +272,7 @@ export default function RequestManagementPage({
 				});
 				setAlert({
 					title: "Success",
-					description: `Detail: ${formValues.comment}`,
+					description: `Detail: ${commentValues.comment}`,
 					color: "success",
 					isVisible: true,
 				});
@@ -367,15 +370,15 @@ export default function RequestManagementPage({
 					/>
 					<FormComponent
 						isCompact={true}
-						sections={inputFields}
+						sections={commentSections}
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"
 						onSubmit={() => {
-							handleSubmit(REQUESTORDERSTATUS.PendingEdit);
+							handleComment(REQUESTORDERSTATUS.PendingEdit);
 						}}
 						onCancel={handleCancel}
-						values={formValues}
-						onChange={handleFormValueChange}
+						values={commentValues}
+						onChange={handleCommentValueChange}
 					/>
 				</Tab>
 
@@ -396,15 +399,15 @@ export default function RequestManagementPage({
 					/>
 					<FormComponent
 						isCompact={true}
-						sections={inputFields}
+						sections={commentSections}
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"
 						onSubmit={() => {
-							handleSubmit(REQUESTORDERSTATUS.Rejected);
+							handleComment(REQUESTORDERSTATUS.Rejected);
 						}}
 						onCancel={handleCancel}
-						values={formValues}
-						onChange={handleFormValueChange}
+						values={commentValues}
+						onChange={handleCommentValueChange}
 					/>
 				</Tab>
 			</Tabs>

@@ -11,7 +11,7 @@ import { Button, Tab, Tabs } from "@heroui/react";
 
 import Header from "@/components/Header";
 import { useLoading } from "@/providers/LoadingContext";
-import { FormSection } from "@/interfaces/interfaces";
+import { FieldSection, FormSection } from "@/interfaces/interfaces";
 import { RequestOrder } from "@/interfaces/schema";
 import { useAuth } from "@/providers/AuthContext";
 import {
@@ -22,6 +22,11 @@ import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
+import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
+import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import moment from "moment-timezone";
+
+moment.locale("th");
 
 export default function RequestManagementPage({
 	params,
@@ -100,6 +105,102 @@ export default function RequestManagementPage({
 			fetchData();
 		}
 	}, [userContext, isReady, rid]);
+
+	const dataSection: FieldSection[] = [
+		{
+			fields: [
+				{
+					name: "customer_type",
+					value: requestData?.customer_type?.name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "created_at",
+					value: requestData?.created_at
+						? moment(requestData.created_at).tz("Asia/Bangkok").format("LLL")
+						: "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "ae_name",
+					value: requestData?.ae_area?.name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "users",
+					value: requestData?.users?.fullname || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "supervisor_name",
+					value: requestData?.supervisor_name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "phone",
+					value: requestData?.phone || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "ap_month",
+					value: requestData?.ap_month || "-",
+					labelTranslator: RequestOrderTranslation,
+					translator: month,
+				},
+				{
+					name: "ap_year",
+					value: String(requestData?.ap_year) || "-",
+					labelTranslator: RequestOrderTranslation,
+					translator: yearMap,
+				},
+			],
+		},
+		{
+			title: "สถานที่ปฏิบัติงาน",
+			fields: [
+				{
+					name: "quota_number",
+					value: requestData?.quota_number || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "farmer_name",
+					value: requestData?.farmer_name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "land_number",
+					value: requestData?.land_number || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "operation_area",
+					value: requestData?.operation_area?.operation_area || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "location_xy",
+					value: requestData?.location_xy || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "target_area",
+					value: requestData?.target_area || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+			],
+		},
+		{
+			title: "กิจกรรมและเครื่องมือ",
+			fields: [
+				{
+					name: "count",
+					value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
+					labelTranslator: RequestOrderTranslation,
+				},
+			],
+		},
+	];
 
 	const inputFields: FormSection[] = [
 		{
@@ -203,7 +304,7 @@ export default function RequestManagementPage({
 		<div className="flex flex-col justify-center items-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
-					isCompact={true}
+					size="compact"
 					title={alert.title}
 					description={alert.description}
 					color={alert.color}
@@ -233,7 +334,7 @@ export default function RequestManagementPage({
 						)}
 						hasBorder={false}
 					/>
-
+					<FieldValueDisplayer sections={dataSection} />
 					<Button
 						size="lg"
 						radius="sm"

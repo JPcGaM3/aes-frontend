@@ -2,16 +2,11 @@
 
 import React from "react";
 import { Divider } from "@heroui/react";
-import clsx from "clsx";
-import { fontMono } from "@/config/fonts";
-import type {
-	FieldValue,
-	FieldSection,
-	FieldValueDisplayerProps,
-} from "@/interfaces/props";
+import type { FieldValueDisplayerProps } from "@/interfaces/props";
+import { translateEnumValue } from "@/utils/functions";
 
 export default function FieldValueDisplayer({
-	className = "flex flex-col gap-3 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl",
+	className = "flex flex-col w-full gap-4",
 	sections,
 }: FieldValueDisplayerProps) {
 	return (
@@ -21,7 +16,7 @@ export default function FieldValueDisplayer({
 					{/* Title ----------------------------------------------------------------------------------------------------------------------- */}
 					{section.title && (
 						<div className="flex items-center gap-5 w-full">
-							<span className="font-semibold text-lg text-primary">
+							<span className="font-semibold text-primary text-lg">
 								{section.title}
 							</span>
 
@@ -30,19 +25,42 @@ export default function FieldValueDisplayer({
 					)}
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-x-1 gap-y-2">
+					<div className="gap-x-1 gap-y-2 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] w-full">
 						{section.fields.map((field, i) => (
 							<div
 								key={i}
 								className={`flex items-start gap-2 ${field.className || ""}`}
 							>
 								<span
-									className={`text-sm font-semibold min-w-[80px] ${field.highlight ? "text-blue-600" : ""}`}
+									className={`text-sm font-semibold min-w-[100px] ${field.highlight ? "text-blue-600" : ""}`}
 								>
-									{field.label}
+									{(() => {
+										let displayLabel =
+											typeof field.name === "string" && field.labelTranslator
+												? translateEnumValue(field.name, field.labelTranslator)
+												: field.name;
+
+										return displayLabel;
+									})()}
 								</span>
-								<span className="text-gray-800 break-all text-sm">
-									: {field.value}
+
+								<span className="text-gray-800 text-sm break-all">
+									:{" "}
+									{(() => {
+										let displayValue =
+											typeof field.value === "string" && field.translator
+												? translateEnumValue(field.value, field.translator)
+												: field.value;
+
+										if (
+											typeof displayValue === "string" &&
+											(displayValue.length > 30 || displayValue.includes("\n"))
+										) {
+											displayValue = displayValue.slice(0, 30) + "...";
+										}
+
+										return displayValue;
+									})()}
 								</span>
 							</div>
 						))}

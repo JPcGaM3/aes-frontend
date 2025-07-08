@@ -5,9 +5,10 @@ import type { AlertComponentProps } from "@/interfaces/props";
 export default function AlertComponent({
 	title,
 	description,
+	size = "expanded",
 	color = "default",
 	variant = "faded",
-	isCompact = false,
+	placement = "top",
 	isVisible = true,
 	handleClose,
 }: AlertComponentProps) {
@@ -27,25 +28,35 @@ export default function AlertComponent({
 		}
 	}, [visible]);
 
-	const computedClassName = isCompact
-		? "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
-		: "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	let computedClassName = "";
+	if (size === "compact") {
+		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+	} else if (size === "expanded") {
+		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	} else {
+		computedClassName = "w-full";
+	}
+
+	const placementClass =
+		placement === "bottom"
+			? "fixed left-0 right-0 bottom-0 z-50 flex items-center justify-center w-full p-3"
+			: "fixed left-0 right-0 top-16 z-50 flex items-center justify-center w-full p-3 ";
 
 	return (
-		<div className="top-16 right-0 left-0 z-50 fixed flex justify-center items-center p-3 w-full">
+		<div className={placementClass}>
 			<Alert
+				isClosable={true}
+				isVisible={visible}
 				title={title}
 				description={description}
 				radius="sm"
 				color={color}
 				variant={variant}
-				isVisible={visible}
-				isClosable={true}
+				className={computedClassName}
 				onClose={() => {
 					setVisible(false);
 					handleClose?.();
 				}}
-				className={computedClassName}
 			/>
 		</div>
 	);

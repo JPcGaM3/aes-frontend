@@ -15,7 +15,10 @@ import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import { useLoading } from "@/providers/LoadingContext";
 import { useAuth } from "@/providers/AuthContext";
 
-import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
+import {
+	getRequestOrderWithTask,
+	SetStatusRequestOrder,
+} from "@/libs/requestOrderAPI";
 import {
 	FieldSection,
 	FormSection,
@@ -34,6 +37,9 @@ import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { getUsers } from "@/libs/userAPI";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { AlertComponentProps } from "@/interfaces/props";
+import AlertComponent from "@/components/AlertComponent";
 
 export default function RequestManagementPage({
 	params,
@@ -42,7 +48,7 @@ export default function RequestManagementPage({
 }) {
 	// const and hooks -------------------------------------------------------------------------------------------
 	const { rid } = use(params);
-	const { userContext } = useAuth();
+	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
 
 	const searchParams = useSearchParams();
@@ -62,6 +68,16 @@ export default function RequestManagementPage({
 	const [requestData, setRequestData] = useState<RequestOrder>(
 		{} as RequestOrder
 	);
+	const [formValues, setFormValues] = useState<{
+		comment: string;
+	}>({
+		comment: "",
+	});
+	const [alert, setAlert] = useState<AlertComponentProps>({
+		title: "",
+		description: "",
+		isVisible: false,
+	});
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -345,8 +361,104 @@ export default function RequestManagementPage({
 		},
 	];
 
+	const inputFields: FormSection[] = [
+		{
+			fields: [
+				[
+					{
+						type: "textarea",
+						name: "comment",
+						label: "กรุณาระบุเหตุผล",
+						isRequired: true,
+						minRows: 5,
+						maxRows: 8,
+					},
+				],
+			],
+		},
+	];
+
+	const handleSubmit = async (status: REQUESTORDERSTATUS): Promise<any> => {
+		if (
+			isReady &&
+			userContext.id &&
+			userContext.token &&
+			userContext.role &&
+			userContext.operationAreaId &&
+			rid
+		) {
+			setIsLoading(true);
+			if (!formValues.comment.trim()) {
+				setAlert({
+					title: "Alert",
+					description: `Detail: กรุณาระบุเหตุผล`,
+					color: "warning",
+					isVisible: true,
+				});
+				setIsLoading(false);
+				return;
+			}
+			try {
+				const paramData = {
+					status: (status as REQUESTORDERSTATUS) || undefined,
+					comment: (formValues.comment as string) || undefined,
+				};
+				await SetStatusRequestOrder({
+					token: userContext.token,
+					rid: Number(rid),
+					paramData: paramData,
+				});
+				setAlert({
+					title: "Success",
+					description: `Detail: ${formValues.comment}`,
+					color: "success",
+					isVisible: true,
+				});
+				setTimeout(() => {
+					router.push(`/request`);
+				}, 1000);
+			} catch (err: any) {
+				setAlert({
+					title: "Fail",
+					description: err.message || "Unknown error occurred",
+					color: "danger",
+					isVisible: true,
+				});
+			} finally {
+				setIsLoading(false);
+			}
+		} else {
+			setAlert({
+				title: "Failed to load user profile",
+				description: "Please login and try again.",
+				color: "danger",
+				isVisible: true,
+			});
+			setTimeout(() => {
+				setIsLoading(false);
+				router.push(`/login`);
+			}, 1000);
+		}
+	};
+
+	const handleCancel = () => setFormValues({ comment: "" });
+
+	const handleFormValueChange = (newValues: typeof formValues) => {
+		setFormValues(newValues);
+	};
+
 	return (
 		<div className="flex flex-col justify-center items-center w-full">
+			{alert.isVisible && (
+				<AlertComponent
+					size="compact"
+					title={alert.title}
+					description={alert.description}
+					color={alert.color}
+					isVisible={alert.isVisible}
+					handleClose={() => setAlert({ ...alert, isVisible: false })}
+				/>
+			)}
 			<Tabs
 				aria-label="TabOptions"
 				radius="sm"
@@ -411,7 +523,29 @@ export default function RequestManagementPage({
 					key="reject"
 					title="ยกเลิก"
 					className="flex flex-col justify-center items-center w-full"
-				></Tab>
+				>
+					<Header
+						title="สาเหตุการปฏิเสธงาน"
+						subtitle={requestData.work_order_number}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						hasBorder={false}
+					/>
+					<FormComponent
+						isCompact={true}
+						sections={inputFields}
+						submitLabel="ส่งความคิดเห็น"
+						cancelLabel="ยกเลิก"
+						onSubmit={() => {
+							handleSubmit(REQUESTORDERSTATUS.Rejected);
+						}}
+						onCancel={handleCancel}
+						values={formValues}
+						onChange={handleFormValueChange}
+					/>
+				</Tab>
 			</Tabs>
 		</div>
 	);

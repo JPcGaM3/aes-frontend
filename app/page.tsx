@@ -16,9 +16,7 @@ export default function Home() {
 		setIsLoading(true);
 
 		{
-			userContext.token
-				? router.replace("/home")
-				: router.replace("/login");
+			userContext.token ? router.replace("/home") : router.replace("/login");
 		}
 	}, [userContext, router]);
 

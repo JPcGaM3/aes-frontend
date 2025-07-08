@@ -191,10 +191,7 @@ export const UserIcon = (props: IconSvgProps) => {
 				d="M11.845 21.662C8.153 21.662 5 21.088 5 18.787s3.133-4.425 6.845-4.425c3.692 0 6.845 2.1 6.845 4.4s-3.134 2.9-6.845 2.9z"
 				data-name="Stroke 1"
 			/>
-			<path
-				d="M11.837 11.174a4.372 4.372 0 10-.031 0z"
-				data-name="Stroke 3"
-			/>
+			<path d="M11.837 11.174a4.372 4.372 0 10-.031 0z" data-name="Stroke 3" />
 		</svg>
 	);
 };
@@ -264,14 +261,7 @@ export const VerticalDotsIcon = (props: IconSvgProps) => {
 export const ChevronDownIcon = (
 	props: IconSvgProps & { strokeWidth?: number }
 ) => {
-	const {
-		fill,
-		size = 24,
-		width,
-		height,
-		strokeWidth = 1.5,
-		...rest
-	} = props;
+	const { fill, size = 24, width, height, strokeWidth = 1.5, ...rest } = props;
 	return (
 		<svg
 			fill={fill ? fill : "none"}
@@ -498,22 +488,8 @@ export const DocumentIcon = (props: IconSvgProps) => {
 			viewBox="0 0 52 52"
 			{...rest}
 		>
-			<rect
-				fill="none"
-				height="4.8"
-				rx="1.6"
-				width="27.2"
-				x="12.4"
-				y="26"
-			/>
-			<rect
-				fill="none"
-				height="4.8"
-				rx="1.6"
-				width="24"
-				x="12.4"
-				y="35.6"
-			/>
+			<rect fill="none" height="4.8" rx="1.6" width="27.2" x="12.4" y="26" />
+			<rect fill="none" height="4.8" rx="1.6" width="24" x="12.4" y="35.6" />
 			<g>
 				<path
 					d="m36.4 14.8h8.48a1.09 1.09 0 0 0 1.12-1.12 1 1 0 0 0 -.32-.8l-10.56-10.56a1 1 0 0 0 -.8-.32 1.09 1.09 0 0 0 -1.12 1.12v8.48a3.21 3.21 0 0 0 3.2 3.2z"

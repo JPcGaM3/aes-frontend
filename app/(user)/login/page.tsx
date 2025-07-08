@@ -12,6 +12,7 @@ import { useLoading } from "@/providers/LoadingContext";
 
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
+import { RequestOrderTranslation } from "@/utils/constants";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -74,7 +75,7 @@ export default function LoginPage() {
 				{
 					type: "dropdown",
 					name: "ae_id",
-					label: "พื้นที่ปฏิบัติงาน",
+					labelTranslator: RequestOrderTranslation,
 					isRequired: true,
 					options: [
 						{ label: "CT0", value: 1 },

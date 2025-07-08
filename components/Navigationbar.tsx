@@ -199,15 +199,11 @@ export default function Navbar() {
 											isDropdownOpen ? (
 												<ChevronUpIcon />
 											) : (
-												<ChevronDownIcon
-													strokeWidth={2}
-												/>
+												<ChevronDownIcon strokeWidth={2} />
 											)
 										}
 										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-20 w-fit"
-										onPress={() =>
-											setIsDropdownOpen(!isDropdownOpen)
-										}
+										onPress={() => setIsDropdownOpen(!isDropdownOpen)}
 									>
 										{getAeAreaLabel(userContext.ae_id)}
 									</Button>
@@ -224,9 +220,7 @@ export default function Navbar() {
 													radius="sm"
 													className="justify-start w-full p-2 font-medium text-left"
 													onPress={() =>
-														handleDropdownSelect(
-															option.ae_area.id
-														)
+														handleDropdownSelect(option.ae_area.id)
 													}
 												>
 													{option.ae_area.name}
@@ -251,9 +245,7 @@ export default function Navbar() {
 							variant="flat"
 							color={isMenuOpen ? "default" : "primary"}
 							isIconOnly
-							endContent={
-								isMenuOpen ? <CancelIcon /> : <HamburgerIcon />
-							}
+							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
 							className="h-full p-0"
 							onPress={() => setIsMenuOpen(!isMenuOpen)}
 						/>

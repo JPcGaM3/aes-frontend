@@ -126,10 +126,7 @@ export default function DrawerPage() {
 							}
 
 							return (
-								<div
-									key={key}
-									className="flex flex-row items-center"
-								>
+								<div key={key} className="flex flex-row items-center">
 									<div className="w-1/3">{key}</div>
 									<div className="w-2/3">: {value}</div>
 								</div>
@@ -161,9 +158,7 @@ export default function DrawerPage() {
 							radius="sm"
 							endContent={<VerticalDotsIcon />}
 						>
-							<span className="text-lg font-medium">
-								Open actions menu
-							</span>
+							<span className="text-lg font-medium">Open actions menu</span>
 						</Button>
 					</DropdownTrigger>
 
@@ -171,9 +166,7 @@ export default function DrawerPage() {
 						{actions.map((action) => (
 							<DropdownItem
 								key={action.key}
-								onClick={() =>
-									action.onClick && action.onClick()
-								}
+								onClick={() => action.onClick && action.onClick()}
 							>
 								{action.label}
 							</DropdownItem>

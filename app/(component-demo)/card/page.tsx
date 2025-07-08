@@ -263,10 +263,7 @@ export default function Card() {
 								}
 
 								return (
-									<div
-										key={key}
-										className="flex flex-row items-center"
-									>
+									<div key={key} className="flex flex-row items-center">
 										<div className="w-1/3">{key}</div>
 										<div className="w-2/3">: {value}</div>
 									</div>

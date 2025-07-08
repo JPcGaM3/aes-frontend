@@ -87,8 +87,7 @@ export default function FormPage() {
 				onChange={(changed: any) => {
 					const loggedValues = { ...changed };
 					if (loggedValues.dateField) {
-						loggedValues.dateField =
-							loggedValues.dateField.toString();
+						loggedValues.dateField = loggedValues.dateField.toString();
 					}
 					if (loggedValues.dateRangeField) {
 						loggedValues.dateRangeField = {
@@ -111,8 +110,7 @@ export default function FormPage() {
 				onChange={(changed: any) => {
 					const loggedValues = { ...changed };
 					if (loggedValues.dateField) {
-						loggedValues.dateField =
-							loggedValues.dateField.toString();
+						loggedValues.dateField = loggedValues.dateField.toString();
 					}
 					if (loggedValues.dateRangeField) {
 						loggedValues.dateRangeField = {

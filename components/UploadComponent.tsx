@@ -169,9 +169,7 @@ export default function UploadComponent({
 						onDragLeave={handleDragLeave}
 						onDragOver={handleDragOver}
 						onDrop={handleDrop}
-						onClick={() =>
-							!isUploading && fileInputRef.current?.click()
-						}
+						onClick={() => !isUploading && fileInputRef.current?.click()}
 					>
 						{/* Hidden File Input */}
 						<input
@@ -207,14 +205,10 @@ export default function UploadComponent({
 							{uploadedFiles.map((file) => (
 								<div
 									key={file.name}
-									onClick={() =>
-										handleDownloadUploadedFile(file)
-									}
+									onClick={() => handleDownloadUploadedFile(file)}
 									className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 rounded-xl hover:bg-gray-100"
 								>
-									<span className="text-gray-700 truncate">
-										{file.name}
-									</span>
+									<span className="text-gray-700 truncate">{file.name}</span>
 
 									<Button
 										size="sm"
@@ -224,9 +218,7 @@ export default function UploadComponent({
 										isIconOnly
 										endContent={<DeleteIcon />}
 										className="p-1 text-gray-400 hover:text-red-500"
-										onPress={() =>
-											handleDeleteFile(file.name)
-										}
+										onPress={() => handleDeleteFile(file.name)}
 									/>
 								</div>
 							))}

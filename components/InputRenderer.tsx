@@ -130,9 +130,7 @@ export default function InputRenderer({
 					{...commonProps}
 					type={type}
 					value={value}
-					onValueChange={
-						onValueChange ? handleUnifiedValueChange : undefined
-					}
+					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
 		}
@@ -143,9 +141,7 @@ export default function InputRenderer({
 					{...commonProps}
 					minRows={commonProps.minRows || 3}
 					value={value}
-					onValueChange={
-						onValueChange ? handleUnifiedValueChange : undefined
-					}
+					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
 		}
@@ -155,9 +151,7 @@ export default function InputRenderer({
 				<NumberInput
 					{...commonProps}
 					value={value}
-					onValueChange={
-						onValueChange ? handleUnifiedValueChange : undefined
-					}
+					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
 		}
@@ -168,10 +162,8 @@ export default function InputRenderer({
 					{...commonProps}
 					type={isVisible ? "text" : "password"}
 					value={value}
-					autocomplete="current-password"
-					onValueChange={
-						onValueChange ? handleUnifiedValueChange : undefined
-					}
+					autoComplete="off"
+					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 					endContent={
 						<Button
 							isIconOnly
@@ -181,11 +173,7 @@ export default function InputRenderer({
 							onPress={() => setIsVisible((state) => !state)}
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
-								isVisible ? (
-									<EyeSlashFilledIcon />
-								) : (
-									<EyeFilledIcon />
-								)
+								isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />
 							}
 						/>
 					}
@@ -214,36 +202,29 @@ export default function InputRenderer({
 					{(commonProps.options || []).length === 0 ? (
 						<SelectItem key="no-option">No option.</SelectItem>
 					) : (
-						(commonProps.options || []).map(
-							(option: DropdownOption) => {
-								const isSelected =
-									value !== undefined &&
-									value !== null &&
-									value !== "" &&
-									String(option.value) === String(value);
+						(commonProps.options || []).map((option: DropdownOption) => {
+							const isSelected =
+								value !== undefined &&
+								value !== null &&
+								value !== "" &&
+								String(option.value) === String(value);
 
-								return (
-									<SelectItem
-										key={String(option.value)}
-										classNames={{
-											base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
-										}}
-										className={clsx(
-											/^[\u0E00-\u0E7F]/.test(
-												option.label
-											)
-												? undefined
-												: [
-														"font-mono",
-														fontMono.variable,
-													]
-										)}
-									>
-										{option.label}
-									</SelectItem>
-								);
-							}
-						)
+							return (
+								<SelectItem
+									key={String(option.value)}
+									classNames={{
+										base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
+									}}
+									className={clsx(
+										/^[\u0E00-\u0E7F]/.test(option.label)
+											? undefined
+											: ["font-mono", fontMono.variable]
+									)}
+								>
+									{option.label}
+								</SelectItem>
+							);
+						})
 					)}
 				</Select>
 			);
@@ -255,9 +236,7 @@ export default function InputRenderer({
 					{...commonProps}
 					value={value}
 					showMonthAndYearPickers
-					onChange={
-						onValueChange ? handleUnifiedValueChange : undefined
-					}
+					onChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
 		}
@@ -270,9 +249,7 @@ export default function InputRenderer({
 						value={value}
 						showMonthAndYearPickers
 						visibleMonths={getVisibleMonths()}
-						onChange={
-							onValueChange ? handleUnifiedValueChange : undefined
-						}
+						onChange={onValueChange ? handleUnifiedValueChange : undefined}
 					/>
 				</div>
 			);

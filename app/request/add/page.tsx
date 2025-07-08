@@ -86,11 +86,7 @@ export default function AddRequestPage() {
 			userContext.token &&
 			userContext.ae_id
 		) {
-			const fetchDropDownOptions = async ({
-				token,
-			}: {
-				token: string;
-			}) => {
+			const fetchDropDownOptions = async ({ token }: { token: string }) => {
 				const activity = await getActivities({ token });
 				const operation_area = await getOperationAreas({ token });
 
@@ -142,7 +138,6 @@ export default function AddRequestPage() {
 				title: "Upload Error",
 				description: "Please upload files before confirming.",
 			});
-
 			return;
 		}
 
@@ -154,11 +149,35 @@ export default function AddRequestPage() {
 				uploadedFiles: uploadedFiles,
 			});
 
+			let totalRows = 0;
+			let validRows = 0;
+			let errorRows = 0;
+			if (response && response.data && Array.isArray(response.data)) {
+				response.data.forEach((file: any) => {
+					totalRows += file.totalRows || 0;
+					validRows += file.validRows || 0;
+					errorRows += file.errorRows || 0;
+				});
+			}
+
+			let alertTitle = "";
+			let alertColor: "success" | "danger" | "warning" = "success";
+			if (validRows === totalRows && totalRows > 0) {
+				alertTitle = "Upload Successful";
+				alertColor = "success";
+			} else if (validRows === 0) {
+				alertTitle = "Upload Fail";
+				alertColor = "danger";
+			} else {
+				alertTitle = "Upload success with partial error";
+				alertColor = "warning";
+			}
+
 			setAlert({
 				isVisible: true,
-				color: "success",
-				title: "Upload Successful",
-				description: "Upload successful!",
+				color: alertColor,
+				title: alertTitle,
+				description: `total row: ${totalRows} , valid row: ${validRows} , error row: ${errorRows}`,
 			});
 		} catch (error) {
 			setAlert({
@@ -196,9 +215,10 @@ export default function AddRequestPage() {
 	};
 
 	const handleSubmitKeyIn = async () => {
+		setIsAdding(true);
+
 		const activities = tasks.map((t) => t.activity_name).join("+");
 		const tool_types = tasks.map((t) => t.tool_type_name).join("+");
-
 		const submitValue = {
 			...formValues,
 			activities,
@@ -220,6 +240,12 @@ export default function AddRequestPage() {
 				description: "Add request order successful!",
 				color: "success",
 			});
+
+			setTasks([defaultTask]);
+			setFormValues({
+				...defaultFormValues,
+				ae_id: userContext.ae_id,
+			});
 		} catch (error) {
 			setAlert({
 				isVisible: true,
@@ -230,12 +256,6 @@ export default function AddRequestPage() {
 		} finally {
 			setTimeout(() => {
 				setIsAdding(false);
-
-				setTasks([defaultTask]);
-				setFormValues({
-					...defaultFormValues,
-					ae_id: userContext.ae_id,
-				});
 			}, 500);
 		}
 	};
@@ -359,7 +379,7 @@ export default function AddRequestPage() {
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "text",
+					type: "number",
 					name: "land_number",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
@@ -424,8 +444,8 @@ export default function AddRequestPage() {
 	return (
 		<div className="flex flex-col items-center justify-center w-full">
 			<Tabs
-				aria-label="TabOptions"
 				radius="sm"
+				aria-label="TabOptions"
 				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 			>
 				{/* Key-in tab ------------------------------------------------------------------------------------------- */}

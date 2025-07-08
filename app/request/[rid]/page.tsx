@@ -86,12 +86,10 @@ export default function RequestManagementPage({
 					const operation_area = await getOperationAreasUser({
 						token: token,
 					});
-					const request: RequestOrder = await getRequestOrderWithTask(
-						{
-							token: token,
-							requestId: requestId,
-						}
-					);
+					const request: RequestOrder = await getRequestOrderWithTask({
+						token: token,
+						requestId: requestId,
+					});
 
 					setUsersData(user);
 					setAeAreasData(ae_area);
@@ -120,9 +118,7 @@ export default function RequestManagementPage({
 		if (typeof key === "string") {
 			setSelectedTab(key);
 
-			const newSearchParams = new URLSearchParams(
-				searchParams.toString()
-			);
+			const newSearchParams = new URLSearchParams(searchParams.toString());
 			newSearchParams.delete("action");
 
 			const newQuery = newSearchParams.toString();

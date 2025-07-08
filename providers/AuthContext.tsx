@@ -88,10 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				};
 
 				setUserContext(newUserContext);
-				sessionStorage.setItem(
-					"authUser",
-					JSON.stringify(newUserContext)
-				);
+				sessionStorage.setItem("authUser", JSON.stringify(newUserContext));
 			}
 		} catch (error) {
 			throw error;

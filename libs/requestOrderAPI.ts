@@ -103,7 +103,7 @@ export async function uploadRequestOrder({
 			}
 		);
 
-		return response.data.data;
+		return response.data;
 	} catch (error: any) {
 		throw new Error(
 			`${error.response?.statusText}: ${error.response?.data.message || error.message}`

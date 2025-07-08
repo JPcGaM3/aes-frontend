@@ -51,6 +51,7 @@ export interface DrawerComponentProps {
 }
 
 export interface FieldValueDisplayerProps {
+	size?: "compact" | "expanded" | "full";
 	className?: string;
 	sections: FieldSection[];
 }
@@ -94,6 +95,7 @@ export interface FormComponentProps
 	extends HeaderProps,
 		FormFieldsProps,
 		FormButtonsProps {
+	size?: "compact" | "expanded" | "full";
 	hasHeader?: boolean;
 	className?: string;
 	children?: React.ReactNode;

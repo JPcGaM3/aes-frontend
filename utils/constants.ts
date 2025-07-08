@@ -76,7 +76,7 @@ const RequestOrderTranslation: Record<string, string> = {
 	zone: "รหัสไร่",
 	ap_month: "เดือนปฏิบัติงาน",
 	ap_year: "ปีปฏิบัติงาน",
-	ae_name: "สังกัด",
+	ae_id: "สังกัด",
 	target_area: "พื้นที่เป้าหมาย",
 	actual_area: "พื้นที่จริง",
 	active: "สถานะใช้งาน",

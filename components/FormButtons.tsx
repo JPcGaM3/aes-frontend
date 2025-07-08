@@ -15,7 +15,8 @@ export default function FormButtons({
 	cancelColor = "default",
 	isSubmitting = false,
 	isCanceling = false,
-	isDisabled = false,
+	isSubmitDisabled = false,
+	isCancelDisabled = false,
 	className = "flex flex-col text-center",
 }: FormButtonsProps) {
 	let computedClassName = "";
@@ -40,8 +41,8 @@ export default function FormButtons({
 						radius="sm"
 						variant="flat"
 						isLoading={isCanceling}
-						disabled={isDisabled}
-						disableAnimation={isDisabled}
+						isDisabled={isCancelDisabled}
+						disableAnimation={isCancelDisabled}
 						onPress={onCancel}
 					>
 						{cancelLabel}
@@ -56,8 +57,8 @@ export default function FormButtons({
 						radius="sm"
 						variant="flat"
 						isLoading={isSubmitting}
-						disabled={isDisabled}
-						disableAnimation={isDisabled}
+						isDisabled={isSubmitDisabled}
+						disableAnimation={isSubmitDisabled}
 						onPress={onSubmit}
 					>
 						{submitLabel}
@@ -70,8 +71,8 @@ export default function FormButtons({
 						radius="sm"
 						variant="flat"
 						isLoading={isSubmitting}
-						disabled={isDisabled}
-						disableAnimation={isDisabled}
+						isDisabled={isSubmitDisabled}
+						disableAnimation={isSubmitDisabled}
 						type="submit"
 					>
 						{submitLabel}

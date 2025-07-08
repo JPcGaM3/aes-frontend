@@ -152,3 +152,44 @@ export async function KeyInRequestOrder({
 		);
 	}
 }
+
+export async function SetStatusRequestOrder({
+	token,
+	rid,
+	paramData,
+}: {
+	token: string;
+	rid: number;
+	paramData: {
+		status: string;
+		comment?: string;
+	};
+}) {
+	const params: Record<string, any> = {};
+	const body: Record<string, any> = {};
+
+	if (paramData) {
+		if (paramData.status) body.status = paramData.status;
+		if (paramData.comment) body.comment = paramData.comment;
+	}
+
+	try {
+		const response = await axios.patch(
+			`${apiUrl}/api/v1/request-orders/${rid}/set/status`,
+			body,
+			{
+				params,
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
+	}
+}

@@ -113,7 +113,7 @@ export default function FormFields({
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
 					<div
-						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-2"}`}
+						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
 					>
 						{section.fields.map((field, i) =>
 							Array.isArray(field) ? (

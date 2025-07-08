@@ -28,7 +28,13 @@ export interface BaseInputConfig {
 }
 
 export interface TextInputConfig extends BaseInputConfig {
-	type: "text" | "email" | "password" | "textarea";
+	type: "text" | "email" | "password";
+}
+
+export interface TextAreaInputConfig extends BaseInputConfig {
+	type: "textarea";
+	minRows?: number;
+	maxRows?: number;
 }
 
 export interface NumberInputConfig extends BaseInputConfig {
@@ -58,6 +64,7 @@ export interface DateRangeInputConfig extends BaseInputConfig {
 
 type InputConfig =
 	| TextInputConfig
+	| TextAreaInputConfig
 	| NumberInputConfig
 	| DropdownInputConfig
 	| DateInputConfig

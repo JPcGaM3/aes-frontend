@@ -8,9 +8,10 @@ import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 
 import Header from "@/components/Header";
+import FormButtons from "@/components/FormButtons";
 import FormComponent from "@/components/FormComponent";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
-import { Button, Tab, Tabs, user } from "@heroui/react";
+import { Alert, Tab, Tabs } from "@heroui/react";
 
 import { useLoading } from "@/providers/LoadingContext";
 import { useAuth } from "@/providers/AuthContext";
@@ -31,13 +32,18 @@ import {
 	RequestOrderTranslation,
 } from "@/utils/constants";
 
-import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
-import { getOperationAreasUser } from "@/libs/operationAreaAPI";
+import {
+	getRequestOrderWithTask,
+	SetStatusRequestOrder,
+} from "@/libs/requestOrderAPI";
+import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
-import { getAeArea } from "@/libs/aeAreaAPI";
+import { getAeAreaAll } from "@/libs/aeAreaAPI";
 import { getUsers } from "@/libs/userAPI";
 import moment from "moment-timezone";
-import FormButtons from "@/components/FormButtons";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { AlertComponentProps } from "@/interfaces/props";
+import AlertComponent from "@/components/AlertComponent";
 
 moment.locale("th");
 
@@ -65,6 +71,18 @@ export default function RequestManagementPage({
 		{} as RequestOrder
 	);
 
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [commentValues, setCommentValues] = useState<{
+		comment: string;
+	}>({
+		comment: "",
+	});
+	const [alert, setAlert] = useState<AlertComponentProps>({
+		title: "",
+		description: "",
+		isVisible: false,
+	});
+
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
 		if (
@@ -88,17 +106,26 @@ export default function RequestManagementPage({
 					const user = await getUsers({
 						token: token,
 					});
-					const ae_area = await getAeArea({ token: token });
+					const ae_area = await getAeAreaAll({
+						token: token,
+					});
 					const customer_type = await getCustomerTypes({
 						token: token,
 					});
-					const operation_area = await getOperationAreasUser({
+					const operation_area = await getOperationAreas({
 						token: token,
 					});
 					const request: RequestOrder = await getRequestOrderWithTask({
 						token: token,
 						requestId: requestId,
 					});
+
+					console.log("User Options:", user);
+					console.log("AE Area Options:", ae_area);
+					console.log("Customer Type Options:", customer_type);
+					console.log("Operation Area Options:", operation_area);
+
+					console.log("Request Data:", request);
 
 					setUsersOptions(user);
 					setAeOptions(ae_area);
@@ -135,8 +162,90 @@ export default function RequestManagementPage({
 		}
 	};
 
+	const handleCancel = () => {
+		setIsLoading(true);
+		router.back();
+	};
+
+	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
+		if (
+			rid ||
+			isReady ||
+			userContext.id ||
+			userContext.role ||
+			userContext.token ||
+			userContext.ae_id
+		) {
+			setIsSubmitting(true);
+
+			if (
+				!commentValues.comment.trim() &&
+				status !== REQUESTORDERSTATUS.PendingApproval
+			) {
+				setAlert({
+					title: "Warning!!",
+					description: "คำอธิบาย: กรุณาระบุเหตุผล",
+					color: "warning",
+					isVisible: true,
+				});
+
+				setIsSubmitting(false);
+				return;
+			}
+
+			try {
+				const paramData = {
+					status: (status as REQUESTORDERSTATUS) || undefined,
+					comment: (commentValues.comment as string) || undefined,
+				};
+
+				await SetStatusRequestOrder({
+					token: userContext.token,
+					rid: Number(rid),
+					paramData: paramData,
+				});
+
+				setAlert({
+					title: "ยกเลิกใบสั่งงานสำเร็จ",
+					description: `ยกเลิกใบสั่งงานเลขที่ ${requestData.work_order_number} แล้ว`,
+					color: "success",
+					isVisible: true,
+				});
+
+				setTimeout(() => {
+					router.back();
+				}, 2000);
+			} catch (err: any) {
+				setAlert({
+					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
+					description: err.message || "Unknown error occurred",
+					color: "danger",
+					isVisible: true,
+				});
+			} finally {
+				setIsSubmitting(false);
+			}
+		} else {
+			setAlert({
+				title: "Failed to load user profile",
+				description: "Please login and try again.",
+				color: "danger",
+				isVisible: true,
+			});
+
+			setTimeout(() => {
+				setIsLoading(false);
+				router.push("/login");
+			}, 1000);
+		}
+	};
+
+	const handleStatusValueChange = (newValues: typeof commentValues) => {
+		setCommentValues(newValues);
+	};
+
 	// Field config ----------------------------------------------------------------------------------------------
-	const dataSection: FieldSection[] = [
+	const dataSections: FieldSection[] = [
 		{
 			fields: [
 				{
@@ -232,13 +341,12 @@ export default function RequestManagementPage({
 		},
 	];
 
-	const formSection: FormSection[] = [
+	const formSections: FormSection[] = [
 		{
 			fields: [
 				{
 					type: "dropdown",
-					name: "customer_type",
-					path: "customer_type_id",
+					name: "customer_type_id",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,
 					options: customerOptions.map((type) => ({
@@ -254,8 +362,7 @@ export default function RequestManagementPage({
 				},
 				{
 					type: "dropdown",
-					name: "ae_name",
-					path: "ae_id",
+					name: "ae_id",
 					labelTranslator: RequestOrderTranslation,
 					options: aeOptions.map((ae) => ({
 						label: ae.name || "-",
@@ -320,8 +427,8 @@ export default function RequestManagementPage({
 				},
 				{
 					type: "dropdown",
-					name: "operation_area",
-					path: "customer_operation_area_id",
+					name: "operation_area_id",
+					path: "operation_area_id",
 					labelTranslator: RequestOrderTranslation,
 					options: opOption.map((area) => ({
 						label: area.operation_area || "-",
@@ -356,8 +463,34 @@ export default function RequestManagementPage({
 		},
 	];
 
+	const commentSections: FormSection[] = [
+		{
+			fields: [
+				[
+					{
+						type: "textarea",
+						name: "comment",
+						label: "กรุณาระบุเหตุผล",
+						labelPlacement: "outside",
+						isRequired: true,
+						minRows: 5,
+						maxRows: 8,
+					},
+				],
+			],
+		},
+	];
+
 	return (
 		<div className="flex flex-col items-center justify-center w-full">
+			{alert.isVisible && (
+				<AlertComponent
+					{...alert}
+					size="expanded"
+					handleClose={() => setAlert({ ...alert, isVisible: false })}
+				/>
+			)}
+
 			<Tabs
 				aria-label="TabOptions"
 				radius="sm"
@@ -381,25 +514,34 @@ export default function RequestManagementPage({
 						hasBorder={false}
 					/>
 
-					<FormButtons
-						size="expanded"
-						buttonSize="md"
-						submitLabel={`หมายเหตุ : ${requestData.comment || "-"}`}
-						submitColor="warning"
-						isDisabled={true}
-					/>
+					{requestData.comment && (
+						<Alert
+							title="หมายเหตุ"
+							description={requestData.comment || "-"}
+							isVisible={true}
+							variant="faded"
+							className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+							color={
+								requestData.status === REQUESTORDERSTATUS.Rejected
+									? "danger"
+									: "warning"
+							}
+						/>
+					)}
 
-					<FieldValueDisplayer size="expanded" sections={dataSection} />
+					<FieldValueDisplayer size="expanded" sections={dataSections} />
 
 					<FormButtons
 						size="expanded"
 						hasBorder={false}
-						submitLabel="ยกเลิก"
-						submitColor="danger"
-						onSubmit={() => {
-							setIsLoading(true);
-							router.back();
-						}}
+						cancelLabel="ยกเลิก"
+						submitLabel="ส่งคำขออนุมัติ"
+						isSubmitting={isSubmitting}
+						onCancel={handleCancel}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingApproval)}
+						isSubmitDisabled={
+							requestData.status === REQUESTORDERSTATUS.PendingApproval
+						}
 					/>
 				</Tab>
 
@@ -409,17 +551,23 @@ export default function RequestManagementPage({
 					title="แก้ไข"
 					className="flex flex-col items-center justify-center w-full gap-20"
 				>
-					{/* <FormComponent
+					<FormComponent
 						title="แก้ไขใบสั่งงาน"
 						subtitle={`@${requestData.work_order_number}`}
 						subtitleClassName={clsx(
 							"mt-1 text-sm text-gray-600 font-mono",
 							fontMono.variable
 						)}
+						size="expanded"
+						hasBorder={false}
 						values={requestData}
-						sections={formSection}
+						sections={formSections}
+						cancelLabel="ยกเลิก"
+						submitLabel="บันทึก"
+						isSubmitting={isSubmitting}
+						onCancel={handleCancel}
 						onSubmit={() => {}}
-					/> */}
+					/>
 				</Tab>
 
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
@@ -427,7 +575,24 @@ export default function RequestManagementPage({
 					key="reject"
 					title="ยกเลิก"
 					className="flex flex-col items-center justify-center w-full"
-				></Tab>
+				>
+					<FormComponent
+						title="สาเหตุการปฏิเสธงาน"
+						subtitle={requestData.work_order_number}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						size="expanded"
+						sections={commentSections}
+						submitLabel="ส่งความคิดเห็น"
+						cancelLabel="ยกเลิก"
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
+						onCancel={handleCancel}
+						values={commentValues}
+						onChange={handleStatusValueChange}
+					/>
+				</Tab>
 			</Tabs>
 		</div>
 	);

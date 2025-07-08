@@ -68,7 +68,8 @@ export interface FormButtonsProps {
 	cancelColor?: ColorType;
 	isSubmitting?: boolean;
 	isCanceling?: boolean;
-	isDisabled?: boolean;
+	isSubmitDisabled?: boolean;
+	isCancelDisabled?: boolean;
 	className?: string;
 }
 

@@ -85,10 +85,12 @@ export default function FormComponent({
 					{children}
 
 					<FormButtons
+						size={size}
 						submitLabel={submitLabel}
 						cancelLabel={cancelLabel}
 						isSubmitting={isSubmitting}
 						isCanceling={isCanceling}
+						hasBorder={hasBorder}
 						onCancel={onCancel}
 					/>
 				</Form>

@@ -6,9 +6,9 @@ import { mock_users } from "@/utils/mock";
 import { FilterIcon } from "@/utils/icons";
 
 import {
-  UserRoleTranslation,
-  UserStatusColorMap,
-  UserStatusTranslation,
+	UserRoleTranslation,
+	UserStatusColorMap,
+	UserStatusTranslation,
 } from "@/utils/constants";
 
 import { FieldConfig, FormSection } from "@/interfaces/interfaces";
@@ -23,316 +23,319 @@ import CardComponent from "@/components/CardComponent";
 import DrawerComponent from "@/components/DrawerComponent";
 
 export default function Card() {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  // useState for modal and drawer visibility ------------------------------
-  const {
-    isOpen: isOpenView,
-    onOpen: onOpenView,
-    onClose: onCloseView,
-  } = useDisclosure();
+	// useState for modal and drawer visibility ------------------------------
+	const {
+		isOpen: isOpenView,
+		onOpen: onOpenView,
+		onClose: onCloseView,
+	} = useDisclosure();
 
-  const {
-    isOpen: isOpenEdit,
-    onOpen: onOpenEdit,
-    onClose: onCloseEdit,
-  } = useDisclosure();
+	const {
+		isOpen: isOpenEdit,
+		onOpen: onOpenEdit,
+		onClose: onCloseEdit,
+	} = useDisclosure();
 
-  const {
-    isOpen: isOpenDelete,
-    onOpen: onOpenDelete,
-    onClose: onCloseDelete,
-  } = useDisclosure();
+	const {
+		isOpen: isOpenDelete,
+		onOpen: onOpenDelete,
+		onClose: onCloseDelete,
+	} = useDisclosure();
 
-  const {
-    isOpen: isOpenFilter,
-    onOpen: onOpenFilter,
-    onClose: onCloseFilter,
-  } = useDisclosure();
+	const {
+		isOpen: isOpenFilter,
+		onOpen: onOpenFilter,
+		onClose: onCloseFilter,
+	} = useDisclosure();
 
-  // Handlers for modal and drawer actions ---------------------------------
-  const handleView = (user: User) => {
-    setSelectedUser(user);
-    onOpenView();
-  };
+	// Handlers for modal and drawer actions ---------------------------------
+	const handleView = (user: User) => {
+		setSelectedUser(user);
+		onOpenView();
+	};
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    onOpenEdit();
-  };
+	const handleEdit = (user: User) => {
+		setSelectedUser(user);
+		onOpenEdit();
+	};
 
-  const handleDelete = (user: User) => {
-    setSelectedUser(user);
-    onOpenDelete();
-  };
+	const handleDelete = (user: User) => {
+		setSelectedUser(user);
+		onOpenDelete();
+	};
 
-  const handleConfirmDelete = () => {
-    onCloseDelete();
-  };
+	const handleConfirmDelete = () => {
+		onCloseDelete();
+	};
 
-  const handleSaveEdit = (values: any) => {
-    console.log("Form values: ", values);
-    onCloseEdit();
-  };
+	const handleSaveEdit = (values: any) => {
+		console.log("Form values: ", values);
+		onCloseEdit();
+	};
 
-  const handleApplyFilters = (values: any) => {
-    console.log("Filter values: ", values);
-    onCloseFilter();
-  };
+	const handleApplyFilters = (values: any) => {
+		console.log("Filter values: ", values);
+		onCloseFilter();
+	};
 
-  // Field configurations --------------------------------------------------
-  const actions = [
-    {
-      key: "view",
-      label: "ดูรายละเอียด",
-      onClick: handleView,
-    },
-    {
-      key: "edit",
-      label: "แก้ไข",
-      onClick: handleEdit,
-    },
-    {
-      key: "delete",
-      label: "ลบ",
-      onClick: handleDelete,
-    },
-  ];
+	// Field configurations --------------------------------------------------
+	const actions = [
+		{
+			key: "view",
+			label: "ดูรายละเอียด",
+			onClick: handleView,
+		},
+		{
+			key: "edit",
+			label: "แก้ไข",
+			onClick: handleEdit,
+		},
+		{
+			key: "delete",
+			label: "ลบ",
+			onClick: handleDelete,
+		},
+	];
 
-  const headerFields: FieldConfig[] = [
-    {
-      key: "quota_number",
-      label: "Quota Number",
-      className: "text-black text-lg font-bold",
-    },
-  ];
+	const headerFields: FieldConfig[] = [
+		{
+			key: "quota_number",
+			label: "Quota Number",
+			className: "text-black text-lg font-bold",
+		},
+	];
 
-  const bodyFields: FieldConfig[] = [
-    {
-      key: "fullname",
-      label: "Full Name",
-      className: "text-black text-md font-bold",
-    },
-    {
-      key: "role",
-      label: "Role",
-      className: "text-gray-600 text-md font-semibold pb-2",
-      valueTranslator: UserRoleTranslation,
-    },
-    {
-      key: "phone",
-      label: "Phone",
-      className: "text-gray-500 text-sm",
-    },
-    {
-      key: "unit",
-      label: "Unit",
-      className: "text-gray-500 text-sm",
-    },
-    {
-      key: "zone",
-      label: "Zone",
-      className: "text-gray-500 text-sm",
-    },
-  ];
+	const bodyFields: FieldConfig[] = [
+		{
+			key: "fullname",
+			label: "Full Name",
+			className: "text-black text-md font-bold",
+		},
+		{
+			key: "role",
+			label: "Role",
+			className: "text-gray-600 text-md font-semibold pb-2",
+			valueTranslator: UserRoleTranslation,
+		},
+		{
+			key: "phone",
+			label: "Phone",
+			className: "text-gray-500 text-sm",
+		},
+		{
+			key: "unit",
+			label: "Unit",
+			className: "text-gray-500 text-sm",
+		},
+		{
+			key: "zone",
+			label: "Zone",
+			className: "text-gray-500 text-sm",
+		},
+	];
 
-  const editSection: FormSection[] = [
-    {
-      title: "Edit User",
-      fields: [
-        {
-          type: "dropdown",
-          name: "quota_number",
-          label: "Quota Number",
-          options: [
-            { label: "Option 1", value: "option1" },
-            { label: "Option 2", value: "option2" },
-          ],
-        },
-        {
-          type: "text",
-          name: "fullname",
-          label: "Full Name",
-        },
-        {
-          type: "text",
-          name: "email",
-          label: "Email",
-        },
-        {
-          type: "text",
-          name: "phone",
-          label: "Phone",
-        },
-        {
-          type: "number",
-          name: "unit",
-          label: "Unit",
-        },
-        {
-          type: "text",
-          name: "status",
-          label: "Status",
-        },
-      ],
-    },
-  ];
+	const editSection: FormSection[] = [
+		{
+			title: "Edit User",
+			fields: [
+				{
+					type: "dropdown",
+					name: "quota_number",
+					label: "Quota Number",
+					options: [
+						{ label: "Option 1", value: "option1" },
+						{ label: "Option 2", value: "option2" },
+					],
+				},
+				{
+					type: "text",
+					name: "fullname",
+					label: "Full Name",
+				},
+				{
+					type: "text",
+					name: "email",
+					label: "Email",
+				},
+				{
+					type: "text",
+					name: "phone",
+					label: "Phone",
+				},
+				{
+					type: "number",
+					name: "unit",
+					label: "Unit",
+				},
+				{
+					type: "text",
+					name: "status",
+					label: "Status",
+				},
+			],
+		},
+	];
 
-  const filterSection: FormSection[] = [
-    {
-      fields: [
-        {
-          type: "dropdown",
-          name: "status",
-          label: "สถานะใบสั่งงาน",
-          options: [
-            { label: "All", value: "all" },
-            { label: "Active", value: "active" },
-            { label: "Inactive", value: "inactive" },
-          ],
-        },
-        {
-          type: "dropdown",
-          name: "ae",
-          label: "สังกัด",
-          options: [
-            { label: "All", value: "all" },
-            { label: "CT", value: "ct" },
-            { label: "NE1", value: "ne1" },
-            { label: "NE2", value: "ne2" },
-          ],
-        },
-        [
-          {
-            type: "date",
-            name: "start_date",
-            label: "วันที่เริ่มต้น",
-            hasPlaceholder: false,
-          },
-          {
-            type: "date",
-            name: "end_date",
-            label: "วันที่สิ้นสุด",
-            hasPlaceholder: false,
-          },
-        ],
-        {
-          type: "date-range",
-          name: "date_range",
-          label: "ช่วงวันที่",
-          hasPlaceholder: false,
-        },
-        {
-          type: "dropdown",
-          name: "sort",
-          label: "เรียงลำดับตาม",
-          options: [
-            { label: "วันที่ น้อยไปมาก", value: "date_asc" },
-            { label: "วันที่ มากไปน้อย", value: "date_desc" },
-          ],
-        },
-      ],
-    },
-  ];
+	const filterSection: FormSection[] = [
+		{
+			fields: [
+				{
+					type: "dropdown",
+					name: "status",
+					label: "สถานะใบสั่งงาน",
+					options: [
+						{ label: "All", value: "all" },
+						{ label: "Active", value: "active" },
+						{ label: "Inactive", value: "inactive" },
+					],
+				},
+				{
+					type: "dropdown",
+					name: "ae",
+					label: "สังกัด",
+					options: [
+						{ label: "All", value: "all" },
+						{ label: "CT", value: "ct" },
+						{ label: "NE1", value: "ne1" },
+						{ label: "NE2", value: "ne2" },
+					],
+				},
+				[
+					{
+						type: "date",
+						name: "start_date",
+						label: "วันที่เริ่มต้น",
+						hasPlaceholder: false,
+					},
+					{
+						type: "date",
+						name: "end_date",
+						label: "วันที่สิ้นสุด",
+						hasPlaceholder: false,
+					},
+				],
+				{
+					type: "date-range",
+					name: "date_range",
+					label: "ช่วงวันที่",
+					hasPlaceholder: false,
+				},
+				{
+					type: "dropdown",
+					name: "sort",
+					label: "เรียงลำดับตาม",
+					options: [
+						{ label: "วันที่ น้อยไปมาก", value: "date_asc" },
+						{ label: "วันที่ มากไปน้อย", value: "date_desc" },
+					],
+				},
+			],
+		},
+	];
 
-  const statusConfig = {
-    colorMap: UserStatusColorMap,
-    translation: UserStatusTranslation,
-  };
+	const statusConfig = {
+		colorMap: UserStatusColorMap,
+		translation: UserStatusTranslation,
+	};
 
-  return (
-    <div>
-      {/* Drawer ----------------------------------------------------------- */}
-      <DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
-        <div className="flex flex-col gap-4">
-          <Header title="View User" subtitle="User details" />
+	return (
+		<div>
+			{/* Drawer ----------------------------------------------------------- */}
+			<DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
+				<div className="flex flex-col gap-4">
+					<Header title="View User" subtitle="User details" />
 
-          <div className="flex flex-col gap-2">
-            {selectedUser &&
-              Object.keys(selectedUser).map((key) => {
-                let value = (selectedUser as any)[key];
-                if (value === undefined || value === null) {
-                  return null;
-                }
+					<div className="flex flex-col gap-2">
+						{selectedUser &&
+							Object.keys(selectedUser).map((key) => {
+								let value = (selectedUser as any)[key];
+								if (value === undefined || value === null) {
+									return null;
+								}
 
-                if (value instanceof Date) {
-                  value = value.toLocaleString();
-                }
-                if (typeof value === "boolean") {
-                  value = value.toString();
-                }
+								if (value instanceof Date) {
+									value = value.toLocaleString();
+								}
+								if (typeof value === "boolean") {
+									value = value.toString();
+								}
 
-                return (
-                  <div key={key} className="flex flex-row items-center">
-                    <div className="w-1/3">{key}</div>
-                    <div className="w-2/3">: {value}</div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
-      </DrawerComponent>
+								return (
+									<div
+										key={key}
+										className="flex flex-row items-center"
+									>
+										<div className="w-1/3">{key}</div>
+										<div className="w-2/3">: {value}</div>
+									</div>
+								);
+							})}
+					</div>
+				</div>
+			</DrawerComponent>
 
-      <DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
-        <div className="flex flex-col gap-4">
-          <FormComponent
-            sections={editSection}
-            title="Edit User"
-            subtitle="Edit user details"
-            onSubmit={handleSaveEdit}
-            onCancel={() => onCloseEdit()}
-          />
-        </div>
-      </DrawerComponent>
+			<DrawerComponent isOpen={isOpenEdit} onClose={onCloseEdit}>
+				<div className="flex flex-col gap-4">
+					<FormComponent
+						sections={editSection}
+						title="Edit User"
+						subtitle="Edit user details"
+						onSubmit={handleSaveEdit}
+						onCancel={() => onCloseEdit()}
+					/>
+				</div>
+			</DrawerComponent>
 
-      {/* Modal ------------------------------------------------------------- */}
-      <AlertModal
-        isOpen={isOpenDelete}
-        onClose={() => onCloseDelete()}
-        onConfirm={() => handleConfirmDelete()}
-        title="Confirm Deletion"
-        message="Are you sure you want to delete this user?"
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
+			{/* Modal ------------------------------------------------------------- */}
+			<AlertModal
+				isOpen={isOpenDelete}
+				onClose={() => onCloseDelete()}
+				onConfirm={() => handleConfirmDelete()}
+				title="Confirm Deletion"
+				message="Are you sure you want to delete this user?"
+				confirmText="Delete"
+				cancelText="Cancel"
+			/>
 
-      <FilterModal
-        isOpen={isOpenFilter}
-        title="Filter Users"
-        subtitle="Apply filters to user list"
-        sections={filterSection}
-        submitLabel="Apply Filters"
-        cancelLabel="Cancel"
-        onSubmit={handleApplyFilters}
-        onClose={() => onCloseFilter()}
-        values={{ status: "all", ae: "all", sort: "date_asc" }}
-      />
+			<FilterModal
+				isOpen={isOpenFilter}
+				title="Filter Users"
+				subtitle="Apply filters to user list"
+				sections={filterSection}
+				submitLabel="Apply Filters"
+				cancelLabel="Cancel"
+				onSubmit={handleApplyFilters}
+				onClose={() => onCloseFilter()}
+				values={{ status: "all", ae: "all", sort: "date_asc" }}
+			/>
 
-      {/* Header ----------------------------------------------------------- */}
-      <Header
-        title="User Management"
-        orientation="horizontal"
-        className="w-full mb-6 text-left"
-      >
-        <Button
-          radius="sm"
-          variant="flat"
-          color="primary"
-          endContent={<FilterIcon />}
-          onPress={onOpenFilter}
-        >
-          Filter User
-        </Button>
-      </Header>
+			{/* Header ----------------------------------------------------------- */}
+			<Header
+				title="User Management"
+				orientation="horizontal"
+				className="w-full mb-6 text-left"
+			>
+				<Button
+					radius="sm"
+					variant="flat"
+					color="primary"
+					endContent={<FilterIcon />}
+					onPress={onOpenFilter}
+				>
+					Filter User
+				</Button>
+			</Header>
 
-      {/* Body ------------------------------------------------------------- */}
-      <CardComponent<User>
-        actions={actions}
-        bodyFields={bodyFields}
-        headerFields={headerFields}
-        items={mock_users}
-        statusConfig={statusConfig}
-      />
-    </div>
-  );
+			{/* Body ------------------------------------------------------------- */}
+			<CardComponent<User>
+				actions={actions}
+				bodyFields={bodyFields}
+				headerFields={headerFields}
+				items={mock_users}
+				statusConfig={statusConfig}
+			/>
+		</div>
+	);
 }

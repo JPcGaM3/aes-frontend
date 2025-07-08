@@ -378,7 +378,7 @@ export default function RequestManagementPage({
 		},
 	];
 
-	const handleComment = async (status: REQUESTORDERSTATUS): Promise<any> => {
+	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
 		if (
 			isReady &&
 			userContext.id &&
@@ -542,7 +542,7 @@ export default function RequestManagementPage({
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"
 						onSubmit={() => {
-							handleComment(REQUESTORDERSTATUS.Rejected);
+							handleStatus(REQUESTORDERSTATUS.Rejected);
 						}}
 						onCancel={handleCancel}
 						values={commentValues}

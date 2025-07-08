@@ -3,8 +3,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/providers/AuthContext";
+import { Button, Divider, useDisclosure } from "@heroui/react";
+import clsx from "clsx";
 
+import { useAuth } from "@/providers/AuthContext";
 import {
 	EditIcon,
 	FilterIcon,
@@ -23,17 +25,12 @@ import {
 } from "@/utils/constants";
 import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
-
-import { Button, Divider, useDisclosure } from "@heroui/react";
-
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 import AlertComponent from "@/components/AlertComponent";
-
 import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
-import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 import { AlertComponentProps } from "@/interfaces/props";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
@@ -127,6 +124,7 @@ export default function RequestPage() {
 							token,
 							paramData: params,
 						});
+
 						setReqOrders(data);
 					} catch (err: any) {
 						if (err.status === 404) {
@@ -194,7 +192,6 @@ export default function RequestPage() {
 				break;
 
 			default:
-				console.log(`Action triggered: ${params.action}`);
 				setIsLoading(false);
 				break;
 		}
@@ -323,6 +320,7 @@ export default function RequestPage() {
 				const opArea = item.operation_area?.operation_area || "";
 				const year = item.ap_year ? Number(item.ap_year) + 543 : "";
 				const run = item.run_number || "";
+
 				return `${aeArea}${opArea}${year + "/"}${run}`;
 			},
 			valueClassName: clsx(
@@ -364,65 +362,65 @@ export default function RequestPage() {
 		<div>
 			{/* Modal ------------------------------------------------------------- */}
 			<FilterModal
+				cancelLabel="Cancel"
 				isOpen={isOpenFilter}
-				title="ฟิลเตอร์รายการใบสั่งงาน"
 				sections={filterSections}
 				submitLabel="Apply Filters"
-				cancelLabel="Cancel"
-				onSubmit={handleApplyFilters}
-				onClose={() => onCloseFilter()}
+				title="ฟิลเตอร์รายการใบสั่งงาน"
 				values={filter}
+				onClose={() => onCloseFilter()}
+				onSubmit={handleApplyFilters}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				title="รายการใบสั่งงาน"
-				subtitle="ใบสั่งงานทั้งหมด"
-				orientation="horizontal"
 				className="w-full mb-6 text-left"
+				orientation="horizontal"
+				subtitle="ใบสั่งงานทั้งหมด"
+				title="รายการใบสั่งงาน"
 			>
 				<Button
-					radius="sm"
-					variant="flat"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
 					onPress={onOpenFilter}
-					className="hidden font-semibold sm:inline-flex"
 				>
 					Filter
 				</Button>
 
 				<Button
 					isIconOnly
-					radius="sm"
-					variant="flat"
+					className="sm:hidden"
 					color="primary"
 					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
 					onPress={onOpenFilter}
-					className="sm:hidden"
 				/>
 
-				<Divider orientation="vertical" className="w-[1px] h-10" />
+				<Divider className="w-[1px] h-10" orientation="vertical" />
 
 				<Button
-					radius="sm"
-					variant="solid"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<PlusIcon />}
+					radius="sm"
+					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}
-					className="hidden font-semibold sm:inline-flex"
 				>
 					Add
 				</Button>
 
 				<Button
 					isIconOnly
-					radius="sm"
-					variant="solid"
+					className="sm:hidden"
 					color="primary"
 					endContent={<PlusIcon />}
+					radius="sm"
+					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}
-					className="sm:hidden"
 				/>
 			</Header>
 
@@ -430,10 +428,10 @@ export default function RequestPage() {
 			{alert ? (
 				<AlertComponent
 					{...alert}
-					size="full"
-					placement="bottom"
-					isVisible={alert != null}
 					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
+					placement="bottom"
+					size="full"
 				/>
 			) : (
 				<div>

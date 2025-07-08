@@ -2,15 +2,15 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/providers/AuthContext";
+import { Tab, Tabs, Divider, Button } from "@heroui/react";
 
+import { useAuth } from "@/providers/AuthContext";
 import {
 	yearList,
 	monthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
 import { AddIcon, MinusIcon } from "@/utils/icons";
-
 import {
 	Activity,
 	OperationArea,
@@ -23,13 +23,9 @@ import {
 	UploadedFile,
 } from "@/interfaces/interfaces";
 import { AlertComponentProps } from "@/interfaces/props";
-
-import { Tab, Tabs, Divider, Button } from "@heroui/react";
-
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
 import AlertComponent from "@/components/AlertComponent";
-
 import { getActivities } from "@/libs/activityAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
@@ -138,6 +134,7 @@ export default function AddRequestPage() {
 				title: "Upload Error",
 				description: "Please upload files before confirming.",
 			});
+
 			return;
 		}
 
@@ -152,6 +149,7 @@ export default function AddRequestPage() {
 			let totalRows = 0;
 			let validRows = 0;
 			let errorRows = 0;
+
 			if (response && response.data && Array.isArray(response.data)) {
 				response.data.forEach((file: any) => {
 					totalRows += file.totalRows || 0;
@@ -162,6 +160,7 @@ export default function AddRequestPage() {
 
 			let alertTitle = "";
 			let alertColor: "success" | "danger" | "warning" = "success";
+
 			if (validRows === totalRows && totalRows > 0) {
 				alertTitle = "Upload Successful";
 				alertColor = "success";
@@ -226,7 +225,6 @@ export default function AddRequestPage() {
 		};
 
 		setFormValues(submitValue);
-		console.log("Submitting:", submitValue);
 
 		try {
 			await KeyInRequestOrder({
@@ -236,8 +234,8 @@ export default function AddRequestPage() {
 
 			setAlert({
 				isVisible: true,
-				title: "Add Request Order Successful",
-				description: "Add request order successful!",
+				title: "สำเร็จ!!",
+				description: "เพิ่มรายการคำขอสำเร็จ",
 				color: "success",
 			});
 
@@ -246,11 +244,11 @@ export default function AddRequestPage() {
 				...defaultFormValues,
 				ae_id: userContext.ae_id,
 			});
-		} catch (error) {
+		} catch (error: any) {
 			setAlert({
 				isVisible: true,
-				title: "Add Request Order Failed",
-				description: "Add order failed!",
+				title: "เพิ่มรายการคำขอล้มเหลว",
+				description: error.message || "เกิดข้อผิดพลาด",
 				color: "danger",
 			});
 		} finally {
@@ -283,11 +281,13 @@ export default function AddRequestPage() {
 
 	const handleTaskFormChange = (values: Record<string, string>) => {
 		const newTasks: TaskFormType[] = [];
+
 		for (let i = 0; i < tasks.length; i++) {
 			const activity = values[`activity_name_${i}`] || "";
 			const prevActivity = tasks[i]?.activity_name || "";
 
 			let toolType = values[`tool_type_name_${i}`] || "";
+
 			if (activity !== prevActivity) {
 				toolType = "";
 			}
@@ -407,6 +407,7 @@ export default function AddRequestPage() {
 
 	const getToolTypeOptions = (activityName: string) => {
 		const activity = activityWithTools.find((a) => a.name === activityName);
+
 		if (!activity || !activity.tool_types) {
 			return [];
 		}
@@ -444,28 +445,28 @@ export default function AddRequestPage() {
 	return (
 		<div className="flex flex-col items-center justify-center w-full">
 			<Tabs
-				radius="sm"
 				aria-label="TabOptions"
 				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+				radius="sm"
 			>
 				{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="key-in"
-					title="Key-in"
 					className="flex flex-col items-center justify-center w-full"
+					title="Key-in"
 				>
 					<FormComponent
-						isCompact={true}
-						sections={requestOrderFields}
-						title="สร้างใบสั่งงาน"
-						subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-						values={formValues}
-						isSubmitting={isAdding}
 						cancelLabel="ยกเลิก"
+						isCompact={true}
+						isSubmitting={isAdding}
+						sections={requestOrderFields}
 						submitLabel="ยืนยัน"
+						subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+						title="สร้างใบสั่งงาน"
+						values={formValues}
 						onCancel={handleCancelKeyIn}
-						onSubmit={handleSubmitKeyIn}
 						onChange={handleRequestOrderChange}
+						onSubmit={handleSubmitKeyIn}
 					>
 						<div className="flex flex-col items-center justify-center w-full gap-4">
 							<div className="flex items-center w-full gap-5">
@@ -478,31 +479,31 @@ export default function AddRequestPage() {
 								<div className="flex flex-row gap-2">
 									<Button
 										isIconOnly
-										size="sm"
-										radius="sm"
 										color="default"
-										variant="flat"
-										startContent={<AddIcon />}
-										onPress={handleAddTask}
 										isDisabled={tasks.length >= 5}
+										radius="sm"
+										size="sm"
+										startContent={<AddIcon />}
+										variant="flat"
+										onPress={handleAddTask}
 									/>
 									<Button
 										isIconOnly
-										size="sm"
-										radius="sm"
 										color="default"
-										variant="flat"
-										startContent={<MinusIcon />}
-										onPress={handleRemoveTask}
 										isDisabled={tasks.length <= 1}
+										radius="sm"
+										size="sm"
+										startContent={<MinusIcon />}
+										variant="flat"
+										onPress={handleRemoveTask}
 									/>
 								</div>
 							</div>
 
 							<FormComponent
-								isCompact={true}
 								hasBorder={false}
 								hasHeader={false}
+								isCompact={true}
 								sections={getTaskFormSection()}
 								values={getTaskFormValues()}
 								onChange={handleTaskFormChange}
@@ -514,17 +515,17 @@ export default function AddRequestPage() {
 				{/* Upload tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="upload"
-					title="Upload"
 					className="flex flex-col items-center justify-center w-full"
+					title="Upload"
 				>
 					<UploadComponent
-						maxFiles={5}
 						isUploading={isAdding}
-						uploadedFiles={uploadedFiles}
+						maxFiles={5}
 						setUploadedFiles={setUploadedFiles}
-						onSubmit={handleSubmitUpload}
+						uploadedFiles={uploadedFiles}
 						onCancel={handleCancelUpload}
 						onDownloadTemplate={handleDownloadTemplate}
+						onSubmit={handleSubmitUpload}
 					/>
 				</Tab>
 			</Tabs>
@@ -532,13 +533,13 @@ export default function AddRequestPage() {
 			{/* Alert */}
 			{alert.isVisible && (
 				<AlertComponent
-					title={alert.title}
-					description={alert.description}
-					size="compact"
-					placement="top"
 					color={alert.color}
-					isVisible={alert.isVisible}
+					description={alert.description}
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					isVisible={alert.isVisible}
+					placement="top"
+					size="compact"
+					title={alert.title}
 				/>
 			)}
 		</div>

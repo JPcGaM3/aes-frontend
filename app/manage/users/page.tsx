@@ -1,15 +1,13 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+
 import TableComponent from "@/app/(component-demo)/table/page";
-import CardComponent from "@/components/CardComponent";
-import { FieldConfig, TableHeader } from "@/interfaces/interfaces";
-import { getCars } from "@/libs/carAPI";
+import { FieldConfig } from "@/interfaces/interfaces";
 import { getUsers } from "@/libs/userAPI";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { DeleteIcon, EditIcon, InfoIcon, RejectIcon } from "@/utils/icons";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { DeleteIcon, EditIcon } from "@/utils/icons";
 
 export default function ManageCarsPage() {
 	const { setIsLoading } = useLoading();
@@ -30,23 +28,18 @@ export default function ManageCarsPage() {
 		switch (params.action) {
 			case "view":
 			case "edit":
-				console.log(`Action triggered: ${params.action} ${params.id}`);
 				setIsLoading(false);
-				// router.push(`/manage/cars/${params.id}?action=${params.action}`);
 				break;
+
 			case "reject":
 			case "add":
-				console.log(`Action triggered: ${params.action}`);
-				// router.push("/manage/cars/add");
 				break;
+
 			case "delete":
-				console.log(`Action triggered: ${params.action} ${params.id}`);
 				setIsLoading(false);
-				// router.push("/manage/cars/delete");
 				break;
 
 			default:
-				console.log(`Action triggered: ${params.action}`);
 				setIsLoading(false);
 				break;
 		}
@@ -55,11 +48,14 @@ export default function ManageCarsPage() {
 	const fetchData = async () => {
 		try {
 			var users = await getUsers({ token: userContext.token });
+
 			users = users.map((user: any) => {
 				const roles: string[] = [];
+
 				user.user_role.forEach((role: any) => {
 					roles.push(role.role.name as string);
 				});
+
 				return {
 					...user,
 					ae_area: user.ae_area.name,
@@ -118,9 +114,9 @@ export default function ManageCarsPage() {
 	return (
 		<>
 			<TableComponent
-				headers={tableHeaderFields}
-				datas={user}
 				actions={actions}
+				datas={user}
+				headers={tableHeaderFields}
 			/>
 			{/* <CardComponent
         actions={actions}

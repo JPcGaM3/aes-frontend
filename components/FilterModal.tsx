@@ -1,8 +1,10 @@
 "use client";
 
-import { Modal, ModalContent, Button } from "@heroui/react";
-import FormComponent from "./FormComponent";
 import type { FilterModalProps } from "@/interfaces/props";
+
+import { Modal, ModalContent } from "@heroui/react";
+
+import FormComponent from "./FormComponent";
 
 export default function FilterModal({
 	isOpen,
@@ -17,25 +19,25 @@ export default function FilterModal({
 }: FilterModalProps) {
 	return (
 		<Modal
+			className="w-full p-4 pt-6 m-3 shadow-md"
 			isOpen={isOpen}
 			placement="center"
-			onOpenChange={onClose}
-			size="sm"
 			radius="sm"
-			className="w-full p-4 pt-6 m-3 shadow-md"
+			size="sm"
+			onOpenChange={onClose}
 		>
 			<ModalContent>
 				{(onClose) => (
 					<FormComponent
+						cancelLabel={cancelLabel}
 						isCompact={true}
-						title={title}
-						subtitle={subtitle}
 						sections={sections}
 						submitLabel={submitLabel}
-						cancelLabel={cancelLabel}
-						onSubmit={onSubmit}
-						onCancel={onClose}
+						subtitle={subtitle}
+						title={title}
 						values={values}
+						onCancel={onClose}
+						onSubmit={onSubmit}
 					/>
 				)}
 			</ModalContent>

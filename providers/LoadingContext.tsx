@@ -2,10 +2,10 @@
 
 import React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-
-import { ColorType } from "@/types";
 import { Spinner } from "@heroui/react";
 import { usePathname } from "next/navigation";
+
+import { ColorType } from "@/types";
 
 interface LoadingContextType {
 	isLoading: boolean;

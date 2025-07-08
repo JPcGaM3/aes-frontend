@@ -3,8 +3,17 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/providers/AuthContext";
+import { Button, Divider, useDisclosure } from "@heroui/react";
+import clsx from "clsx";
+import moment from "moment-timezone";
+import {
+	parseDate,
+	CalendarDate,
+	BuddhistCalendar,
+	toCalendar,
+} from "@internationalized/date";
 
+import { useAuth } from "@/providers/AuthContext";
 import {
 	EditIcon,
 	FilterIcon,
@@ -19,24 +28,12 @@ import {
 	TaskOrderTranslation,
 } from "@/utils/constants";
 import { FieldConfig, FormSection } from "@/interfaces/interfaces";
-
-import { Button, Divider, useDisclosure } from "@heroui/react";
-
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
-
 import { useLoading } from "@/providers/LoadingContext";
-import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 import { getAssignedTask } from "@/libs/taskOrderAPI";
-import moment from "moment-timezone";
-import {
-	parseDate,
-	CalendarDate,
-	BuddhistCalendar,
-	toCalendar,
-} from "@internationalized/date";
 import { RequestOrder, TaskOrder } from "@/interfaces/schema";
 
 interface filterInterface {
@@ -94,8 +91,10 @@ export default function TaskPage() {
 							: undefined,
 					}
 				: undefined;
+
 			setError(null);
 			const data = await getAssignedTask({ token, user_id, params });
+
 			if (!data) {
 				setTaskOrders([]);
 			}
@@ -108,12 +107,7 @@ export default function TaskPage() {
 
 	useEffect(() => {
 		setIsLoading(true);
-		if (
-			isReady &&
-			userContext.id &&
-			userContext.token &&
-			userContext.operationAreaId
-		) {
+		if (isReady && userContext.id && userContext.ae_id && userContext.token) {
 			const fetchData = async (): Promise<any> => {
 				try {
 					setTaskOrders([]);
@@ -238,6 +232,7 @@ export default function TaskPage() {
 	const handleApplyFilters = (values: any) => {
 		try {
 			let startDate;
+
 			if (!values.start_date) {
 				startDate = startDateValue;
 			} else if (typeof values.start_date === "string") {
@@ -250,6 +245,7 @@ export default function TaskPage() {
 			}
 
 			let endDate;
+
 			if (!values.end_date) {
 				endDate = endDateValue;
 			} else if (typeof values.end_date === "string") {
@@ -262,6 +258,7 @@ export default function TaskPage() {
 			}
 
 			let status;
+
 			if (values.status === "all") {
 				status = undefined;
 			} else {
@@ -300,7 +297,6 @@ export default function TaskPage() {
 			case "add":
 
 			default:
-				console.log(`Action triggered: ${params.action}`);
 				setIsLoading(false);
 				break;
 		}
@@ -310,71 +306,71 @@ export default function TaskPage() {
 		<div>
 			{/* Modal ------------------------------------------------------------- */}
 			<FilterModal
+				cancelLabel="Cancel"
 				isOpen={isOpenFilter}
-				title="ฟิลเตอร์รายการงานย่อย"
 				sections={filterFields}
 				submitLabel="Apply Filters"
-				cancelLabel="Cancel"
-				onSubmit={handleApplyFilters}
-				onClose={onCloseFilter}
+				title="ฟิลเตอร์รายการงานย่อย"
 				values={filterValues}
+				onClose={onCloseFilter}
+				onSubmit={handleApplyFilters}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}
-			<Header title="รายการงานย่อย" className="mb-6 w-full text-left">
+			<Header className="w-full mb-6 text-left" title="รายการงานย่อย">
 				<Button
-					radius="sm"
-					variant="flat"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
 					onPress={onOpenFilter}
-					className="hidden sm:inline-flex font-semibold"
 				>
 					Filter
 				</Button>
 
 				<Button
 					isIconOnly
-					radius="sm"
-					variant="flat"
+					className="sm:hidden"
 					color="primary"
 					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
 					onPress={onOpenFilter}
-					className="sm:hidden"
 				/>
 
-				<Divider orientation="vertical" className="w-[1px]" />
+				<Divider className="w-[1px]" orientation="vertical" />
 
 				<Button
-					radius="sm"
-					variant="solid"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<PlusIcon />}
+					radius="sm"
+					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}
-					className="hidden sm:inline-flex font-semibold"
 				>
 					Add
 				</Button>
 
 				<Button
 					isIconOnly
-					radius="sm"
-					variant="solid"
+					className="sm:hidden"
 					color="primary"
 					endContent={<PlusIcon />}
+					radius="sm"
+					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}
-					className="sm:hidden"
 				/>
 			</Header>
 
 			{/* Body ------------------------------------------------------------- */}
 			{error ? (
-				<div className="my-8 font-medium text-gray-500 text-center">
+				<div className="my-8 font-medium text-center text-gray-500">
 					{error}
 				</div>
 			) : (
 				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
+					<div className="mb-4 font-medium text-right text-gray-700">
 						{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 					</div>
 

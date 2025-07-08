@@ -1,5 +1,6 @@
-import { Accordion, AccordionItem, Code } from "@heroui/react";
 import type { AccordionComponentProps } from "@/interfaces/props";
+
+import { Accordion, AccordionItem, Code } from "@heroui/react";
 
 import {
 	RequestOrderStatusColorMap,

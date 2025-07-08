@@ -20,6 +20,7 @@ export default function FormButtons({
 	className = "flex flex-col text-center",
 }: FormButtonsProps) {
 	let computedClassName = "";
+
 	if (size === "compact") {
 		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {
@@ -37,12 +38,12 @@ export default function FormButtons({
 					<Button
 						className="w-full font-semibold text-gray-500"
 						color={cancelColor}
-						size={buttonSize}
-						radius="sm"
-						variant="flat"
-						isLoading={isCanceling}
-						isDisabled={isCancelDisabled}
 						disableAnimation={isCancelDisabled}
+						isDisabled={isCancelDisabled}
+						isLoading={isCanceling}
+						radius="sm"
+						size={buttonSize}
+						variant="flat"
 						onPress={onCancel}
 					>
 						{cancelLabel}
@@ -53,12 +54,12 @@ export default function FormButtons({
 					<Button
 						className="w-full font-bold"
 						color={submitColor}
-						size={buttonSize}
-						radius="sm"
-						variant="flat"
-						isLoading={isSubmitting}
-						isDisabled={isSubmitDisabled}
 						disableAnimation={isSubmitDisabled}
+						isDisabled={isSubmitDisabled}
+						isLoading={isSubmitting}
+						radius="sm"
+						size={buttonSize}
+						variant="flat"
 						onPress={onSubmit}
 					>
 						{submitLabel}
@@ -67,13 +68,13 @@ export default function FormButtons({
 					<Button
 						className="w-full font-bold"
 						color={submitColor}
-						size={buttonSize}
-						radius="sm"
-						variant="flat"
-						isLoading={isSubmitting}
-						isDisabled={isSubmitDisabled}
 						disableAnimation={isSubmitDisabled}
+						isDisabled={isSubmitDisabled}
+						isLoading={isSubmitting}
+						radius="sm"
+						size={buttonSize}
 						type="submit"
+						variant="flat"
 					>
 						{submitLabel}
 					</Button>

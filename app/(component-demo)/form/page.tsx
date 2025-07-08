@@ -67,14 +67,9 @@ export default function FormPage() {
 		},
 	];
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		console.log("Submit the form");
-	};
+	const handleSubmit = () => {};
 
-	const handleCancel = () => {
-		console.log("Cancel the form");
-	};
+	const handleCancel = () => {};
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-20">
@@ -83,9 +78,9 @@ export default function FormPage() {
 				subtitle="Please fill out the form below."
 				title="Request Order Form"
 				onCancel={handleCancel}
-				onSubmit={handleSubmit}
 				onChange={(changed: any) => {
 					const loggedValues = { ...changed };
+
 					if (loggedValues.dateField) {
 						loggedValues.dateField = loggedValues.dateField.toString();
 					}
@@ -95,9 +90,8 @@ export default function FormPage() {
 							end: loggedValues.dateRangeField.end?.toString(),
 						};
 					}
-
-					console.log("Form values changed: ", loggedValues);
 				}}
+				onSubmit={handleSubmit}
 			/>
 
 			<FormComponent
@@ -106,9 +100,9 @@ export default function FormPage() {
 				subtitle="Please fill out the form below."
 				title="Request Order Form"
 				onCancel={handleCancel}
-				onSubmit={handleSubmit}
 				onChange={(changed: any) => {
 					const loggedValues = { ...changed };
+
 					if (loggedValues.dateField) {
 						loggedValues.dateField = loggedValues.dateField.toString();
 					}
@@ -118,9 +112,8 @@ export default function FormPage() {
 							end: loggedValues.dateRangeField.end?.toString(),
 						};
 					}
-
-					console.log("Form values changed: ", loggedValues);
 				}}
+				onSubmit={handleSubmit}
 			/>
 		</div>
 	);

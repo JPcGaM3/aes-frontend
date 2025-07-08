@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { UploadedFile } from "@/interfaces/interfaces";
 
 const apiUrl = process.env.API_URL || "http://localhost:8080";

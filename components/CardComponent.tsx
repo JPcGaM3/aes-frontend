@@ -1,5 +1,7 @@
 "use client";
 
+import type { CardComponentProps } from "@/interfaces/props";
+
 import React, { useCallback, useState } from "react";
 import {
 	Button,
@@ -9,11 +11,10 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@heroui/react";
+import { clsx } from "clsx";
 
-import type { CardComponentProps } from "@/interfaces/props";
 import { VerticalDotsIcon } from "@/utils/icons";
 import { getNestedValue, translateEnumValue } from "@/utils/functions";
-import { clsx } from "clsx";
 import { FieldConfig } from "@/interfaces/interfaces";
 
 export default function CardComponent<T extends { id: number | string }>({
@@ -46,13 +47,13 @@ export default function CardComponent<T extends { id: number | string }>({
 				<div className="gap-1 px-4 text-left">
 					{(item as any).status && (
 						<Chip
-							size="sm"
-							radius="sm"
-							variant="flat"
 							className="p-3 mt-4 mb-2 tracking-wide w-fit"
 							color={
 								statusConfig?.colorMap?.[(item as any).status] || "default"
 							}
+							radius="sm"
+							size="sm"
+							variant="flat"
 						>
 							<span className="font-semibold">
 								{translateEnumValue(
@@ -73,6 +74,7 @@ export default function CardComponent<T extends { id: number | string }>({
 							rawValue == null
 								? "N/A"
 								: translateEnumValue(rawValue, field.valueTranslator || {});
+
 						if (
 							typeof value === "string" &&
 							(value.length > 20 || value.includes("\n"))
@@ -96,10 +98,12 @@ export default function CardComponent<T extends { id: number | string }>({
 							: translateEnumValue(field.key, field.labelTranslator || {});
 
 						let value;
+
 						if (field.valueFunction) {
 							value = field.valueFunction(item);
 						} else {
 							const rawValue = getFieldValue(item, field);
+
 							value =
 								rawValue == null
 									? "N/A"
@@ -136,8 +140,8 @@ export default function CardComponent<T extends { id: number | string }>({
 							<div className="text-sm text-gray-500">More actions.</div>
 
 							<Popover
-								placement="bottom-end"
 								isOpen={openPopoverId === item.id}
+								placement="bottom-end"
 								onOpenChange={(isOpen) =>
 									setOpenPopoverId(isOpen ? item.id : null)
 								}
@@ -155,13 +159,13 @@ export default function CardComponent<T extends { id: number | string }>({
 										{actions.map((action) => (
 											<Button
 												key={action.key}
-												variant="light"
-												size="md"
-												radius="sm"
-												startContent={action.icon}
 												className={`w-full justify-start text-left p-2 ${
 													action.className || ""
 												}`}
+												radius="sm"
+												size="md"
+												startContent={action.icon}
+												variant="light"
 												onPress={() => {
 													action.onClick &&
 														action.onClick({

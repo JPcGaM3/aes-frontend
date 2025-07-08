@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 export default function HomePage() {
 	return (
 		<div>
-			<Header title="หน้าหลัก" subtitle="ยินดีต้อนรับสู่ AE Service" />
+			<Header subtitle="ยินดีต้อนรับสู่ AE Service" title="หน้าหลัก" />
 		</div>
 	);
 }

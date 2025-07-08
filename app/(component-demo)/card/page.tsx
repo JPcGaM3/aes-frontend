@@ -1,23 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import { Button, useDisclosure } from "@heroui/react";
 
 import { mock_users } from "@/utils/mock";
 import { FilterIcon } from "@/utils/icons";
-
 import {
 	UserRoleTranslation,
 	UserStatusColorMap,
 	UserStatusTranslation,
 } from "@/utils/constants";
-
 import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import { User } from "@/interfaces/schema";
-
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import AlertModal from "@/components/AlertModal";
-import { Button, useDisclosure } from "@heroui/react";
 import FormComponent from "@/components/FormComponent";
 import CardComponent from "@/components/CardComponent";
 import DrawerComponent from "@/components/DrawerComponent";
@@ -70,13 +67,11 @@ export default function Card() {
 		onCloseDelete();
 	};
 
-	const handleSaveEdit = (values: any) => {
-		console.log("Form values: ", values);
+	const handleSaveEdit = () => {
 		onCloseEdit();
 	};
 
-	const handleApplyFilters = (values: any) => {
-		console.log("Filter values: ", values);
+	const handleApplyFilters = () => {
 		onCloseFilter();
 	};
 
@@ -245,12 +240,13 @@ export default function Card() {
 			{/* Drawer ----------------------------------------------------------- */}
 			<DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
 				<div className="flex flex-col gap-4">
-					<Header title="View User" subtitle="User details" />
+					<Header subtitle="User details" title="View User" />
 
 					<div className="flex flex-col gap-2">
 						{selectedUser &&
 							Object.keys(selectedUser).map((key) => {
 								let value = (selectedUser as any)[key];
+
 								if (value === undefined || value === null) {
 									return null;
 								}
@@ -277,48 +273,48 @@ export default function Card() {
 				<div className="flex flex-col gap-4">
 					<FormComponent
 						sections={editSection}
-						title="Edit User"
 						subtitle="Edit user details"
-						onSubmit={handleSaveEdit}
+						title="Edit User"
 						onCancel={() => onCloseEdit()}
+						onSubmit={handleSaveEdit}
 					/>
 				</div>
 			</DrawerComponent>
 
 			{/* Modal ------------------------------------------------------------- */}
 			<AlertModal
+				cancelText="Cancel"
+				confirmText="Delete"
 				isOpen={isOpenDelete}
+				message="Are you sure you want to delete this user?"
+				title="Confirm Deletion"
 				onClose={() => onCloseDelete()}
 				onConfirm={() => handleConfirmDelete()}
-				title="Confirm Deletion"
-				message="Are you sure you want to delete this user?"
-				confirmText="Delete"
-				cancelText="Cancel"
 			/>
 
 			<FilterModal
+				cancelLabel="Cancel"
 				isOpen={isOpenFilter}
-				title="Filter Users"
-				subtitle="Apply filters to user list"
 				sections={filterSection}
 				submitLabel="Apply Filters"
-				cancelLabel="Cancel"
-				onSubmit={handleApplyFilters}
-				onClose={() => onCloseFilter()}
+				subtitle="Apply filters to user list"
+				title="Filter Users"
 				values={{ status: "all", ae: "all", sort: "date_asc" }}
+				onClose={() => onCloseFilter()}
+				onSubmit={handleApplyFilters}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				title="User Management"
-				orientation="horizontal"
 				className="w-full mb-6 text-left"
+				orientation="horizontal"
+				title="User Management"
 			>
 				<Button
-					radius="sm"
-					variant="flat"
 					color="primary"
 					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
 					onPress={onOpenFilter}
 				>
 					Filter User

@@ -6,10 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { FormSection } from "@/interfaces/interfaces";
 import { AlertComponentProps } from "@/interfaces/props";
-
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
@@ -92,22 +90,22 @@ export default function LoginPage() {
 			<FormComponent
 				isCompact={true}
 				sections={sections}
-				title="ยินดีต้อนรับ"
-				subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
 				submitLabel="ยืนยัน"
+				subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
+				title="ยินดีต้อนรับ"
 				onSubmit={handleSubmit}
 			/>
 
 			{/* Alert */}
 			{alert.isVisible && (
 				<AlertComponent
-					size="compact"
-					placement="top"
-					title={alert.title}
-					description={alert.description}
 					color={alert.color}
-					isVisible={alert.isVisible}
+					description={alert.description}
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					isVisible={alert.isVisible}
+					placement="top"
+					size="compact"
+					title={alert.title}
 				/>
 			)}
 		</div>

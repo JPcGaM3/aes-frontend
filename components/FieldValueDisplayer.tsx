@@ -1,8 +1,10 @@
 "use client";
 
+import type { FieldValueDisplayerProps } from "@/interfaces/props";
+
 import React from "react";
 import { Divider } from "@heroui/react";
-import type { FieldValueDisplayerProps } from "@/interfaces/props";
+
 import { translateEnumValue } from "@/utils/functions";
 
 export default function FieldValueDisplayer({
@@ -11,6 +13,7 @@ export default function FieldValueDisplayer({
 	className = "flex flex-col w-full gap-4",
 }: FieldValueDisplayerProps) {
 	let computedClassName = "";
+
 	if (size === "compact") {
 		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {

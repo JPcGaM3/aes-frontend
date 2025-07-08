@@ -1,15 +1,14 @@
 import React from "react";
 import { useRef, useState, ChangeEvent, DragEvent } from "react";
-
-import { UploadedFile } from "@/interfaces/interfaces";
-import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
-import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
-
 import { Button } from "@heroui/button";
 
 import Header from "./Header";
 import FormButtons from "./FormButtons";
 import AlertComponent from "./AlertComponent";
+
+import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
+import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
+import { UploadedFile } from "@/interfaces/interfaces";
 
 export default function UploadComponent({
 	maxFiles = 5,
@@ -54,12 +53,14 @@ export default function UploadComponent({
 		setIsDragOver(false);
 
 		const files = Array.from(e.dataTransfer.files);
+
 		handleFiles(files);
 	};
 
 	const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
 		if (e.target.files) {
 			const files = Array.from(e.target.files);
+
 			handleFiles(files);
 			e.target.value = "";
 		}
@@ -136,8 +137,8 @@ export default function UploadComponent({
 		<div className="flex flex-col items-center justify-center w-full max-w-sm gap-6 sm:max-w-md md:max-w-lg lg:max-w-xl">
 			{/* Header ------------------------------------------------------------------------------------------------------- */}
 			<Header
-				title="อัปโหลดไฟล์ใบสั่งงาน"
 				subtitle="กรุณาอัปโหลดไฟล์ที่รองรับ (.xlsx, .csv)"
+				title="อัปโหลดไฟล์ใบสั่งงาน"
 			/>
 
 			{/* Upload Component --------------------------------------------------------------------------------------------- */}
@@ -145,12 +146,12 @@ export default function UploadComponent({
 				{/* Download Template Button -------------------------------------------------------------------------------------- */}
 				<div className="flex justify-end">
 					<Button
-						size="sm"
-						radius="sm"
-						variant="flat"
-						color="primary"
 						className="p-3"
+						color="primary"
+						radius="sm"
+						size="sm"
 						startContent={<DownloadIcon />}
+						variant="flat"
 						onPress={onDownloadTemplate}
 					>
 						Download Template
@@ -160,24 +161,33 @@ export default function UploadComponent({
 				{/* Drag and Drop Area -------------------------------------------------------------------------------------------- */}
 				<div className="flex justify-center w-full">
 					<div
+						aria-disabled={isUploading}
 						className={`border-dashed border-2 rounded-2xl justify-center text-center transition-all duration-200 min-h-60 w-full
-                        ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300"} 
-                        ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300"} 
+        ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+						role="button"
+						tabIndex={0}
+						onClick={() => !isUploading && fileInputRef.current?.click()}
 						onDragEnter={handleDragEnter}
 						onDragLeave={handleDragLeave}
 						onDragOver={handleDragOver}
 						onDrop={handleDrop}
-						onClick={() => !isUploading && fileInputRef.current?.click()}
+						onKeyDown={(e) => {
+							if (!isUploading && (e.key === "Enter" || e.key === " ")) {
+								e.preventDefault();
+								fileInputRef.current?.click();
+							}
+						}}
 					>
 						{/* Hidden File Input */}
 						<input
-							type="file"
 							ref={fileInputRef}
-							className="hidden"
-							accept=".xlsx,.csv"
 							multiple
-							onChange={handleFileInputChange}
+							accept=".xlsx,.csv"
+							className="hidden"
 							disabled={isUploading}
+							type="file"
+							onChange={handleFileInputChange}
 						/>
 
 						<div className="flex flex-col items-center justify-center h-full py-8">
@@ -203,19 +213,27 @@ export default function UploadComponent({
 							{uploadedFiles.map((file) => (
 								<div
 									key={file.name}
-									onClick={() => handleDownloadUploadedFile(file)}
+									aria-disabled={isUploading}
 									className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 rounded-xl hover:bg-gray-100"
+									role="button"
+									tabIndex={0}
+									onClick={() => handleDownloadUploadedFile(file)}
+									onKeyDown={(e) => {
+										if (!isUploading && (e.key === "Enter" || e.key === " ")) {
+											e.preventDefault();
+											handleDownloadUploadedFile(file);
+										}
+									}}
 								>
 									<span className="text-gray-700 truncate">{file.name}</span>
-
 									<Button
-										size="sm"
-										radius="sm"
-										variant="light"
-										disabled={isUploading}
 										isIconOnly
-										endContent={<DeleteIcon />}
 										className="p-1 text-gray-400 hover:text-red-500"
+										disabled={isUploading}
+										endContent={<DeleteIcon />}
+										radius="sm"
+										size="sm"
+										variant="light"
 										onPress={() => handleDeleteFile(file.name)}
 									/>
 								</div>
@@ -227,20 +245,20 @@ export default function UploadComponent({
 
 			{/* Button ------------------------------------------------------------------------------------------------------- */}
 			<FormButtons
-				size="compact"
-				submitLabel="ยืนยัน"
 				cancelLabel="ยกเลิก"
 				isSubmitting={isUploading}
-				onSubmit={onSubmit}
+				size="compact"
+				submitLabel="ยืนยัน"
 				onCancel={onCancel}
+				onSubmit={onSubmit}
 			/>
 
 			{/* Alert */}
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
-					size="compact"
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					size="compact"
 				/>
 			)}
 		</div>

@@ -3,9 +3,9 @@ import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
-import { siteConfig } from "@/config/site";
-import { fontSans, fontKanit, fontNoto } from "@/config/fonts";
 
+import { siteConfig } from "@/config/site";
+import { fontNoto } from "@/config/fonts";
 import Navbar from "@/components/Navigationbar";
 
 export const metadata: Metadata = {

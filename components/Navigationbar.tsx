@@ -2,13 +2,8 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-
-import { useAuth } from "@/providers/AuthContext";
-import { useLoading } from "@/providers/LoadingContext";
-
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-
 import {
 	Navbar as HeroUINavbar,
 	NavbarBrand,
@@ -19,11 +14,14 @@ import {
 } from "@heroui/navbar";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { Button } from "@heroui/button";
+import { clsx } from "clsx";
 
+import AlertComponent from "./AlertComponent";
+
+import { useAuth } from "@/providers/AuthContext";
+import { useLoading } from "@/providers/LoadingContext";
 import {
 	HomeIcon,
-	CardIcon,
-	DrawerIcon,
 	RequestIcon,
 	HamburgerIcon,
 	SettingIcon,
@@ -33,14 +31,10 @@ import {
 	ChevronDownIcon,
 	ChevronUpIcon,
 } from "@/utils/icons";
-
-import { clsx } from "clsx";
 import { getAeArea } from "@/libs/aeAreaAPI";
-
 import { fontMono } from "@/config/fonts";
 import { AeArea } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
-import AlertComponent from "./AlertComponent";
 
 export default function Navbar() {
 	// const value & react hook -------------------------------------------------------------------------------------
@@ -85,6 +79,7 @@ export default function Navbar() {
 			const fetchAeArea = async ({ token }: { token: string }) => {
 				try {
 					const response = await getAeArea({ token: token });
+
 					setAeAreas(response);
 				} catch (error: any) {
 					setAlert({
@@ -115,6 +110,7 @@ export default function Navbar() {
 
 	const getAeAreaLabel = (id: number) => {
 		const found = aeAreas.find((area) => area.ae_area.id === id);
+
 		return found ? found.ae_area.name : "AE_AREA";
 	};
 
@@ -141,36 +137,36 @@ export default function Navbar() {
 		<>
 			{alert.isVisible && (
 				<AlertComponent
-					title={alert.title}
 					description={alert.description}
-					isVisible={alert.isVisible}
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					isVisible={alert.isVisible}
+					title={alert.title}
 				/>
 			)}
 
 			<HeroUINavbar
-				maxWidth="full"
-				position="sticky"
-				shouldHideOnScroll={false}
-				isMenuOpen={isMenuOpen}
-				onMenuOpenChange={setIsMenuOpen}
 				className="z-50 flex items-center p-0 shadow-md h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
+				isMenuOpen={isMenuOpen}
+				maxWidth="full"
+				position="sticky"
+				shouldHideOnScroll={false}
+				onMenuOpenChange={setIsMenuOpen}
 			>
 				<NavbarContent className="items-center justify-start w-full gap-2">
 					{/* Logo */}
 					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
 						<div className="relative h-full aspect-[1/1]">
 							<Image
-								src="/pictures/logo.png"
-								alt="Logo"
 								fill
-								quality={100}
 								priority
+								alt="Logo"
 								className="object-contain"
+								quality={100}
 								sizes="(max-height: 4828px) 48px"
+								src="/pictures/logo.png"
 							/>
 						</div>
 					</NavbarBrand>
@@ -185,15 +181,13 @@ export default function Navbar() {
 						>
 							<Popover
 								className={clsx("font-mono", fontMono.variable)}
-								placement="bottom-end"
 								isOpen={isDropdownOpen}
+								placement="bottom-end"
 								onOpenChange={setIsDropdownOpen}
 							>
 								<PopoverTrigger>
 									<Button
-										size="lg"
-										radius="sm"
-										variant="light"
+										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-20 w-fit"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -202,7 +196,9 @@ export default function Navbar() {
 												<ChevronDownIcon strokeWidth={2} />
 											)
 										}
-										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-20 w-fit"
+										radius="sm"
+										size="lg"
+										variant="light"
 										onPress={() => setIsDropdownOpen(!isDropdownOpen)}
 									>
 										{getAeAreaLabel(userContext.ae_id)}
@@ -215,10 +211,10 @@ export default function Navbar() {
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													variant="light"
-													size="md"
-													radius="sm"
 													className="justify-start w-full p-2 font-medium text-left"
+													radius="sm"
+													size="md"
+													variant="light"
 													onPress={() =>
 														handleDropdownSelect(option.ae_area.id)
 													}
@@ -240,13 +236,13 @@ export default function Navbar() {
 					{/* Menu Toggle */}
 					<NavbarItem className="flex items-center justify-end h-full md:hidden">
 						<Button
-							size="lg"
-							radius="sm"
-							variant="flat"
-							color={isMenuOpen ? "default" : "primary"}
 							isIconOnly
-							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
 							className="h-full p-0"
+							color={isMenuOpen ? "default" : "primary"}
+							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
+							radius="sm"
+							size="lg"
+							variant="flat"
 							onPress={() => setIsMenuOpen(!isMenuOpen)}
 						/>
 					</NavbarItem>
@@ -259,13 +255,13 @@ export default function Navbar() {
 							return (
 								<Button
 									key={item.name}
-									variant={isActive ? "solid" : "light"}
-									color={isActive ? "primary" : "default"}
-									size="md"
-									radius="sm"
-									disabled={!userContext?.token && !isActive}
 									className={`font-semibold px-2 flex justify-center items-center gap-2 h-full
                     ${!(userContext?.token || isActive) ? "opacity-50 cursor-not-allowed" : ""}`}
+									color={isActive ? "primary" : "default"}
+									disabled={!userContext?.token && !isActive}
+									radius="sm"
+									size="md"
+									variant={isActive ? "solid" : "light"}
 									onPress={() => handleNav(item.path)}
 								>
 									{isActive && item.icon}
@@ -283,14 +279,14 @@ export default function Navbar() {
 						return (
 							<NavbarMenuItem key={item.name} isActive={isActive}>
 								<Button
-									variant={isActive ? "flat" : "light"}
+									disableAnimation
+									className={`w-full justify-start text-left p-3 font-semibold ${!userContext?.token && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
 									color={isActive ? "primary" : "default"}
 									disabled={!userContext?.token && !isActive}
-									size="md"
 									radius="sm"
-									disableAnimation
+									size="md"
 									startContent={item.icon}
-									className={`w-full justify-start text-left p-3 font-semibold ${!userContext?.token && !isActive ? "opacity-50 cursor-not-allowed" : ""}`}
+									variant={isActive ? "flat" : "light"}
 									onPress={() => handleNav(item.path)}
 								>
 									{item.name}

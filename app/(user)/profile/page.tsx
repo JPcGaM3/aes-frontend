@@ -4,19 +4,16 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
-
-import { Button, useDisclosure } from "@heroui/react";
+import { useDisclosure } from "@heroui/react";
 
 import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import AlertComponent from "@/components/AlertComponent";
-
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
-
 import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
@@ -127,23 +124,23 @@ export default function ProfilePage() {
 			<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
 				{isOpen && (
 					<AlertModal
-						isOpen={isOpen}
-						onClose={onClose}
-						title="ออกจากระบบ"
-						message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
-						confirmText="ยืนยัน"
 						cancelText="ยกเลิก"
+						confirmText="ยืนยัน"
+						isOpen={isOpen}
+						message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
+						title="ออกจากระบบ"
+						onClose={onClose}
 						onConfirm={handleConfirmLogout}
 					/>
 				)}
 
 				{alert.isVisible && (
 					<AlertComponent
-						title={alert.title}
-						description={alert.description}
 						color={alert.color}
-						isVisible={alert.isVisible}
+						description={alert.description}
 						handleClose={() => setAlert({ ...alert, isVisible: false })}
+						isVisible={alert.isVisible}
+						title={alert.title}
 					/>
 				)}
 
@@ -153,23 +150,23 @@ export default function ProfilePage() {
 					</div>
 
 					<Header
-						title={firstname}
+						hasBorder={false}
 						subtitle={`employee_id: ${profile?.profile.id ? `@${profile?.profile.id}` : "-"}`}
 						subtitleClassName={clsx(
 							"mt-1 text-sm text-gray-600 font-mono",
 							fontMono.variable
 						)}
-						hasBorder={false}
+						title={firstname}
 					/>
 				</div>
 
 				<FieldValueDisplayer sections={profileSections} />
 
 				<FormButtons
-					size="compact"
 					hasBorder={false}
-					submitLabel="ออกจากระบบ"
+					size="compact"
 					submitColor="danger"
+					submitLabel="ออกจากระบบ"
 					onSubmit={handleLogout}
 				/>
 			</div>

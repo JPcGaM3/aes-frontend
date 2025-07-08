@@ -1,11 +1,11 @@
+import type { FormComponentProps } from "@/interfaces/props";
+
 import React, { useState, useEffect } from "react";
 import { Form } from "@heroui/react";
 
 import Header from "./Header";
 import FormFields from "./FormFieldsComponent";
 import FormButtons from "./FormButtons";
-
-import type { FormComponentProps } from "@/interfaces/props";
 
 export default function FormComponent({
 	hasHeader = true,
@@ -34,6 +34,7 @@ export default function FormComponent({
 
 	const handleValueChange = (name: string, value: any) => {
 		const newValues = { ...formValues, [name]: value };
+
 		setFormValues(newValues);
 
 		if (onChange) {
@@ -50,6 +51,7 @@ export default function FormComponent({
 	};
 
 	let computedClassName = "";
+
 	if (size === "compact") {
 		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {
@@ -59,7 +61,7 @@ export default function FormComponent({
 	}
 
 	return (
-		<div className={computedClassName}>
+		<div className={`${computedClassName} ${className}`}>
 			{onSubmit ? (
 				<Form
 					className={"flex flex-col w-full gap-8"}
@@ -68,29 +70,29 @@ export default function FormComponent({
 				>
 					{hasHeader && (
 						<Header
-							title={title}
-							subtitle={subtitle}
 							hasBorder={hasBorder}
+							subtitle={subtitle}
 							subtitleClassName={subtitleClassName}
+							title={title}
 						/>
 					)}
 
 					<FormFields
-						sections={sections}
-						onValueChange={handleValueChange}
-						values={formValues}
 						isCompact={size === "compact"}
+						sections={sections}
+						values={formValues}
+						onValueChange={handleValueChange}
 					/>
 
 					{children}
 
 					<FormButtons
+						cancelLabel={cancelLabel}
+						hasBorder={hasBorder}
+						isCanceling={isCanceling}
+						isSubmitting={isSubmitting}
 						size={size}
 						submitLabel={submitLabel}
-						cancelLabel={cancelLabel}
-						isSubmitting={isSubmitting}
-						isCanceling={isCanceling}
-						hasBorder={hasBorder}
 						onCancel={onCancel}
 					/>
 				</Form>
@@ -98,18 +100,18 @@ export default function FormComponent({
 				<div className="flex flex-col w-full gap-8">
 					{hasHeader && (
 						<Header
-							title={title}
-							subtitle={subtitle}
 							hasBorder={hasBorder}
+							subtitle={subtitle}
 							subtitleClassName={subtitleClassName}
+							title={title}
 						/>
 					)}
 
 					<FormFields
-						sections={sections}
-						onValueChange={handleValueChange}
-						values={formValues}
 						isCompact={size === "compact"}
+						sections={sections}
+						values={formValues}
+						onValueChange={handleValueChange}
 					/>
 
 					{children}

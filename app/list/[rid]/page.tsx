@@ -3,12 +3,11 @@
 import React, { useEffect } from "react";
 import { use, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-
 import clsx from "clsx";
+import { Tab, Tabs } from "@heroui/react";
+import moment from "moment-timezone";
+
 import { fontMono } from "@/config/fonts";
-
-import { Button, Tab, Tabs } from "@heroui/react";
-
 import Header from "@/components/Header";
 import { useLoading } from "@/providers/LoadingContext";
 import { FieldSection, FormSection } from "@/interfaces/interfaces";
@@ -24,7 +23,6 @@ import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
-import moment from "moment-timezone";
 import FormButtons from "@/components/FormButtons";
 
 moment.locale("th");
@@ -114,9 +112,11 @@ export default function RequestManagementPage({
 			setSelectedTab(key);
 
 			const newSearchParams = new URLSearchParams(searchParams.toString());
+
 			newSearchParams.set("action", key);
 
 			const newQuery = newSearchParams.toString();
+
 			router.replace(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
 		}
 	};
@@ -153,6 +153,7 @@ export default function RequestManagementPage({
 				});
 
 				setIsSubmitting(false);
+
 				return;
 			}
 
@@ -161,6 +162,7 @@ export default function RequestManagementPage({
 					status: (status as REQUESTORDERSTATUS) || undefined,
 					comment: (commentValues.comment as string) || undefined,
 				};
+
 				await SetStatusRequestOrder({
 					token: userContext.token,
 					rid: Number(rid),
@@ -322,41 +324,41 @@ export default function RequestManagementPage({
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
-					size="expanded"
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					size="expanded"
 				/>
 			)}
 
 			<Tabs
 				aria-label="TabOptions"
+				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
-				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 			>
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
-					title="รายละเอียด"
 					className="flex flex-col items-center justify-center w-full gap-8"
+					title="รายละเอียด"
 				>
 					<Header
-						title="ดูรายละเอียดใบสั่งงาน"
+						hasBorder={false}
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						hasBorder={false}
+						title="ดูรายละเอียดใบสั่งงาน"
 					/>
 
-					<FieldValueDisplayer size="expanded" sections={dataSections} />
+					<FieldValueDisplayer sections={dataSections} size="expanded" />
 
 					<FormButtons
-						size="expanded"
 						hasBorder={false}
-						submitLabel="ยกเลิก"
+						size="expanded"
 						submitColor="default"
+						submitLabel="ยกเลิก"
 						onSubmit={handleCancel}
 					/>
 				</Tab>
@@ -364,48 +366,50 @@ export default function RequestManagementPage({
 				{/* Edit tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
-					title="แก้ไข"
 					className="flex flex-col items-center justify-center w-full"
+					title="แก้ไข"
 				>
 					<FormComponent
-						title="สาเหตุการปฏิเสธงาน"
+						cancelLabel="ยกเลิก"
+						isSubmitting={isSubmitting}
+						sections={commentSections}
+						size="expanded"
+						submitLabel="ส่งความคิดเห็น"
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						size="expanded"
-						sections={commentSections}
-						submitLabel="ส่งความคิดเห็น"
-						cancelLabel="ยกเลิก"
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingEdit)}
-						onCancel={handleCancel}
+						title="สาเหตุการปฏิเสธงาน"
 						values={commentValues}
+						onCancel={handleCancel}
 						onChange={handleCommentChange}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingEdit)}
 					/>
 				</Tab>
 
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="reject"
-					title="ยกเลิก"
 					className="flex flex-col items-center justify-center w-full"
+					title="ยกเลิก"
 				>
 					<FormComponent
-						title="สาเหตุการปฏิเสธงาน"
+						cancelLabel="ยกเลิก"
+						isSubmitting={isSubmitting}
+						sections={commentSections}
+						size="expanded"
+						submitLabel="ส่งความคิดเห็น"
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						size="expanded"
-						sections={commentSections}
-						submitLabel="ส่งความคิดเห็น"
-						cancelLabel="ยกเลิก"
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
-						onCancel={handleCancel}
+						title="สาเหตุการปฏิเสธงาน"
 						values={commentValues}
+						onCancel={handleCancel}
 						onChange={handleCommentChange}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
 					/>
 				</Tab>
 			</Tabs>

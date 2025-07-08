@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
-import { InputRendererProps } from "@/interfaces/props";
-
 import { Input, Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "@/utils/icons";
-import { DropdownOption } from "@/interfaces/interfaces";
 import {
 	CalendarDate,
 	DatePicker,
@@ -14,8 +9,12 @@ import {
 	Select,
 	SelectItem,
 } from "@heroui/react";
-import { fontMono } from "@/config/fonts";
 import clsx from "clsx";
+
+import { InputRendererProps } from "@/interfaces/props";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "@/utils/icons";
+import { DropdownOption } from "@/interfaces/interfaces";
+import { fontMono } from "@/config/fonts";
 
 export default function InputRenderer({
 	type,
@@ -100,6 +99,7 @@ export default function InputRenderer({
 							: v;
 
 					let selectedValue = selected;
+
 					if (
 						optionType === "number" &&
 						selected !== undefined &&
@@ -107,6 +107,7 @@ export default function InputRenderer({
 						selected !== ""
 					) {
 						const num = Number(selected);
+
 						selectedValue = isNaN(num) ? selected : num;
 					}
 
@@ -160,23 +161,23 @@ export default function InputRenderer({
 			return (
 				<Input
 					{...commonProps}
-					type={isVisible ? "text" : "password"}
-					value={value}
 					autoComplete="off"
-					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 					endContent={
 						<Button
 							isIconOnly
-							size="sm"
-							radius="full"
-							variant="light"
-							onPress={() => setIsVisible((state) => !state)}
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
 								isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />
 							}
+							radius="full"
+							size="sm"
+							variant="light"
+							onPress={() => setIsVisible((state) => !state)}
 						/>
 					}
+					type={isVisible ? "text" : "password"}
+					value={value}
+					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
 		}
@@ -185,6 +186,10 @@ export default function InputRenderer({
 			return (
 				<Select
 					{...commonProps}
+					classNames={{
+						...commonProps.classNames,
+						popoverContent: "rounded-lg p-0",
+					}}
 					placement="bottom"
 					selectedKeys={
 						value !== undefined && value !== null && value !== ""
@@ -194,10 +199,6 @@ export default function InputRenderer({
 					onSelectionChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
-					classNames={{
-						...commonProps.classNames,
-						popoverContent: "rounded-lg p-0",
-					}}
 				>
 					{(commonProps.options || []).length === 0 ? (
 						<SelectItem key="no-option">No option.</SelectItem>
@@ -212,14 +213,14 @@ export default function InputRenderer({
 							return (
 								<SelectItem
 									key={String(option.value)}
-									classNames={{
-										base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
-									}}
 									className={clsx(
 										/^[\u0E00-\u0E7F]/.test(option.label)
 											? undefined
 											: ["font-mono", fontMono.variable]
 									)}
+									classNames={{
+										base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
+									}}
 								>
 									{option.label}
 								</SelectItem>
@@ -234,8 +235,8 @@ export default function InputRenderer({
 			return (
 				<DatePicker
 					{...commonProps}
-					value={value}
 					showMonthAndYearPickers
+					value={value}
 					onChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
 			);
@@ -246,8 +247,8 @@ export default function InputRenderer({
 				<div ref={containerRef}>
 					<DateRangePicker
 						{...commonProps}
-						value={value}
 						showMonthAndYearPickers
+						value={value}
 						visibleMonths={getVisibleMonths()}
 						onChange={onValueChange ? handleUnifiedValueChange : undefined}
 					/>

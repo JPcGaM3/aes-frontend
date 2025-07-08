@@ -1,14 +1,12 @@
 import { useCallback } from "react";
-
 import { Divider } from "@heroui/react";
+import { clsx } from "clsx";
+
+import InputRenderer from "./InputRenderer";
 
 import { InputConfig } from "@/interfaces/interfaces";
 import { FormFieldsProps } from "@/interfaces/props";
-
 import { getNestedValue, translateEnumValue } from "@/utils/functions";
-
-import InputRenderer from "./InputRenderer";
-import { clsx } from "clsx";
 
 export default function FormFields({
 	sections = [],
@@ -29,6 +27,7 @@ export default function FormFields({
 				if (config.name && typeof values === "object" && values !== null) {
 					return values[config.name] ?? config.defaultValue ?? null;
 				}
+
 				return config.defaultValue ?? null;
 			} else {
 				if (config.path) {
@@ -123,9 +122,9 @@ export default function FormFields({
 											subField && (
 												<InputRenderer
 													key={subIndex}
+													commonProps={commonProp(subField)}
 													type={subField.type}
 													value={getValue(subField)}
-													commonProps={commonProp(subField)}
 													onValueChange={onValueChange}
 												/>
 											)
@@ -135,9 +134,9 @@ export default function FormFields({
 								field && (
 									<div key={i} className="w-full col-span-1">
 										<InputRenderer
+											commonProps={commonProp(field)}
 											type={field.type}
 											value={getValue(field)}
-											commonProps={commonProp(field)}
 											onValueChange={onValueChange}
 										/>
 									</div>

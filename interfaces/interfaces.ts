@@ -1,6 +1,6 @@
 import { ClassValue } from "clsx";
+
 import { ColorType } from "@/types";
-import { OperationArea } from "./schema";
 
 export interface BaseInputConfig {
 	/** Field name (used as key in values object) */

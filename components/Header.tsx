@@ -1,8 +1,8 @@
 import React from "react";
 import { clsx } from "clsx";
+import { Divider } from "@heroui/react";
 
 import { HeaderProps } from "@/interfaces/props";
-import { Divider } from "@heroui/react";
 
 export default function Header({
 	title,

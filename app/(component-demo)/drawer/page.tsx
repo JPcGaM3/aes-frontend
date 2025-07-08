@@ -11,10 +11,8 @@ import {
 
 import { VerticalDotsIcon } from "@/utils/icons";
 import { mock_users } from "@/utils/mock";
-
 import { FormSection } from "@/interfaces/interfaces";
 import { User } from "@/interfaces/schema";
-
 import DrawerComponent from "@/components/DrawerComponent";
 import FormComponent from "@/components/FormComponent";
 import Header from "@/components/Header";
@@ -35,14 +33,10 @@ export default function DrawerPage() {
 	} = useDisclosure();
 
 	const handleView = () => {
-		console.log("Viewing user");
-
 		onOpenView();
 	};
 
 	const handleEdit = () => {
-		console.log("Editing user");
-
 		onOpenEdit();
 	};
 
@@ -96,24 +90,20 @@ export default function DrawerPage() {
 		},
 	];
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		console.log("Submit the form");
-	};
+	const handleSubmit = () => {};
 
-	const handleCancel = () => {
-		console.log("Cancel the form");
-	};
+	const handleCancel = () => {};
 
 	return (
 		<div>
 			<DrawerComponent isOpen={isOpenView} onClose={onCloseView}>
 				<div>
-					<Header title="View User" subtitle="User details" />
+					<Header subtitle="User details" title="View User" />
 
 					<div className="flex flex-col gap-2">
 						{Object.keys(mockData).map((key) => {
 							let value = (mockData as any)[key];
+
 							if (value === undefined || value === null) {
 								return null;
 							}
@@ -140,10 +130,10 @@ export default function DrawerPage() {
 				<div className="flex flex-col gap-4">
 					<FormComponent
 						sections={formSections}
-						title="Edit User"
 						subtitle="Edit user details"
-						onSubmit={handleSubmit}
+						title="Edit User"
 						onCancel={handleCancel}
+						onSubmit={handleSubmit}
 					/>
 				</div>
 			</DrawerComponent>
@@ -152,11 +142,11 @@ export default function DrawerPage() {
 				<Dropdown>
 					<DropdownTrigger>
 						<Button
+							color="primary"
+							endContent={<VerticalDotsIcon />}
+							radius="sm"
 							size="lg"
 							variant="flat"
-							color="primary"
-							radius="sm"
-							endContent={<VerticalDotsIcon />}
 						>
 							<span className="text-lg font-medium">Open actions menu</span>
 						</Button>

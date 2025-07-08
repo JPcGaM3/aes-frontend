@@ -36,9 +36,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		const storedUser = sessionStorage.getItem("authUser");
+
 		if (storedUser) {
 			try {
 				const parsed = JSON.parse(storedUser);
+
 				setUserContext({
 					token: parsed.token ?? "",
 					id: parsed.id,
@@ -118,8 +120,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
 	const context = useContext(AuthContext);
+
 	if (!context) {
 		throw new Error("useAuth must be used within an AuthProvider");
 	}
+
 	return context;
 };

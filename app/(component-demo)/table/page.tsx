@@ -1,5 +1,6 @@
-import { ActionConfig, FieldConfig } from "@/interfaces/interfaces";
 import React from "react";
+
+import { ActionConfig, FieldConfig } from "@/interfaces/interfaces";
 
 export default function TableComponent({
 	headers,
@@ -53,8 +54,8 @@ export default function TableComponent({
 													className="px-2 py-1 text-sm whitespace-nowrap"
 												>
 													<button
-														onClick={action.onClick}
 														className="text-blue-500 hover:underline"
+														onClick={action.onClick}
 													>
 														{action.icon}
 													</button>

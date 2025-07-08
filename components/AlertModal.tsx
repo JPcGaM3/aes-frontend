@@ -1,5 +1,7 @@
 "use client";
 
+import type { AlertModalProps } from "@/interfaces/props";
+
 import {
 	Modal,
 	ModalContent,
@@ -8,7 +10,6 @@ import {
 	ModalFooter,
 	Button,
 } from "@heroui/react";
-import type { AlertModalProps } from "@/interfaces/props";
 
 export default function AlertModal({
 	isOpen,
@@ -21,12 +22,12 @@ export default function AlertModal({
 }: AlertModalProps) {
 	return (
 		<Modal
+			className="w-full max-w-sm p-3 shadow-md sm:max-w-md md:max-w-lg lg:max-w-xl"
 			isOpen={isOpen}
 			placement="center"
-			onOpenChange={onClose}
-			size="sm"
 			radius="sm"
-			className="w-full max-w-sm p-3 shadow-md sm:max-w-md md:max-w-lg lg:max-w-xl"
+			size="sm"
+			onOpenChange={onClose}
 		>
 			<ModalContent>
 				{(onClose) => (
@@ -41,10 +42,10 @@ export default function AlertModal({
 
 						<ModalFooter className="flex w-full gap-2 p-0">
 							<Button
-								radius="sm"
-								color="danger"
-								variant="flat"
 								className="w-full font-semibold"
+								color="danger"
+								radius="sm"
+								variant="flat"
 								onPress={onClose}
 							>
 								{cancelText}
@@ -52,10 +53,10 @@ export default function AlertModal({
 
 							{confirmText && (
 								<Button
-									radius="sm"
-									color="primary"
-									variant="solid"
 									className="w-full font-semibold"
+									color="primary"
+									radius="sm"
+									variant="solid"
 									onPress={onConfirm}
 								>
 									{confirmText}

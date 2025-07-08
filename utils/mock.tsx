@@ -1,11 +1,11 @@
-import { RequestOrder, TaskOrder, User } from "@/interfaces/schema";
-
 import {
 	REQUESTORDERSTATUS,
 	TASKORDERSTATUS,
 	USERROLE,
 	USERSTATUS,
 } from "./enum";
+
+import { RequestOrder, TaskOrder, User } from "@/interfaces/schema";
 
 export const mock_users: User[] = [
 	{

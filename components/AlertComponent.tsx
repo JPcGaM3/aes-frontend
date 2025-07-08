@@ -1,6 +1,7 @@
+import type { AlertComponentProps } from "@/interfaces/props";
+
 import { Alert } from "@heroui/react";
 import React, { useEffect, useState } from "react";
-import type { AlertComponentProps } from "@/interfaces/props";
 
 export default function AlertComponent({
 	title,
@@ -24,11 +25,13 @@ export default function AlertComponent({
 				() => handleClose?.(),
 				color == "success" ? 3000 : 5000
 			);
+
 			return () => clearTimeout(timer);
 		}
 	}, [visible]);
 
 	let computedClassName = "";
+
 	if (size === "compact") {
 		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {
@@ -45,14 +48,14 @@ export default function AlertComponent({
 	return (
 		<div className={placementClass}>
 			<Alert
+				className={computedClassName}
+				color={color}
+				description={description}
 				isClosable={true}
 				isVisible={visible}
-				title={title}
-				description={description}
 				radius="sm"
-				color={color}
+				title={title}
 				variant={variant}
-				className={computedClassName}
 				onClose={() => {
 					setVisible(false);
 					handleClose?.();

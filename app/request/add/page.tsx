@@ -461,6 +461,8 @@ export default function AddRequestPage() {
 						subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
 						values={formValues}
 						isSubmitting={isAdding}
+						cancelLabel="ยกเลิก"
+						submitLabel="ยืนยัน"
 						onCancel={handleCancelKeyIn}
 						onSubmit={handleSubmitKeyIn}
 						onChange={handleRequestOrderChange}

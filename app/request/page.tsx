@@ -24,7 +24,7 @@ import {
 import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
 
-import { Button, Divider, useDisclosure, user } from "@heroui/react";
+import { Button, Divider, useDisclosure } from "@heroui/react";
 
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
@@ -371,7 +371,7 @@ export default function RequestPage() {
 				cancelLabel="Cancel"
 				onSubmit={handleApplyFilters}
 				onClose={() => onCloseFilter()}
-				values={filter as any}
+				values={filter}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}

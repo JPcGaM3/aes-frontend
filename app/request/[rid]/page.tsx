@@ -120,13 +120,6 @@ export default function RequestManagementPage({
 						requestId: requestId,
 					});
 
-					console.log("User Options:", user);
-					console.log("AE Area Options:", ae_area);
-					console.log("Customer Type Options:", customer_type);
-					console.log("Operation Area Options:", operation_area);
-
-					console.log("Request Data:", request);
-
 					setUsersOptions(user);
 					setAeOptions(ae_area);
 					setCustomerOptions(customer_type);
@@ -135,8 +128,13 @@ export default function RequestManagementPage({
 						...request,
 						work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
 					});
-				} catch (error) {
-					console.error("Error fetching data:", error);
+				} catch (error: any) {
+					setAlert({
+						title: "Failed to fetch",
+						description: error.message || "Unknown error occurred",
+						color: "danger",
+						isVisible: true,
+					});
 				} finally {
 					setIsLoading(false);
 				}
@@ -155,15 +153,16 @@ export default function RequestManagementPage({
 			setSelectedTab(key);
 
 			const newSearchParams = new URLSearchParams(searchParams.toString());
-			newSearchParams.set("action", key); // set action to the selected tab
+			newSearchParams.set("action", key);
 
 			const newQuery = newSearchParams.toString();
-			router.replace(`${pathname}${newQuery ? `?${newQuery}` : ""}`); // use replace instead of push
+			router.replace(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
 		}
 	};
 
 	const handleCancel = () => {
 		setIsLoading(true);
+		setCommentValues({ comment: "" });
 		router.back();
 	};
 
@@ -226,8 +225,8 @@ export default function RequestManagementPage({
 			}
 		} else {
 			setAlert({
-				title: "Failed to load user profile",
-				description: "Please login and try again.",
+				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
+				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
 				isVisible: true,
 			});
@@ -235,7 +234,7 @@ export default function RequestManagementPage({
 			setTimeout(() => {
 				setIsLoading(false);
 				router.push("/login");
-			}, 1000);
+			}, 2000);
 		}
 	};
 

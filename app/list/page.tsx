@@ -21,7 +21,7 @@ import {
 	yearList,
 	yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormField, FormSection } from "@/interfaces/interfaces";
+import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 
 import { Button, Divider, useDisclosure } from "@heroui/react";
 
@@ -34,10 +34,13 @@ import { useLoading } from "@/providers/LoadingContext";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
-import { RequestOrder } from "@/interfaces/schema";
+import { CustomerType, RequestOrder } from "@/interfaces/schema";
+import { AlertComponentProps } from "@/interfaces/props";
+import AlertComponent from "@/components/AlertComponent";
+import { getCustomerTypes } from "@/libs/customerTypeAPI";
 
 interface filterInterface {
-	operation_area_id?: number;
+	customer_type_id?: number;
 	start_month?: string;
 	start_year?: string;
 	end_month?: string;
@@ -59,72 +62,105 @@ export default function ListPage() {
 	const currentMonth = monthList[now.getMonth()].value;
 
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [filterValues, setFilterValues] = useState<filterInterface>({
-		start_month: currentMonth,
-		start_year: currentYear,
-	});
-
-	const fetchRequestOrderData = async ({ token }: { token: string }) => {
-		try {
-			const params = filterValues
-				? {
-						start_month: filterValues.start_month
-							? filterValues.start_month.toString()
-							: undefined,
-						start_year: filterValues.start_year
-							? filterValues.start_year.toString()
-							: undefined,
-						end_month: filterValues.end_month
-							? filterValues.end_month.toString()
-							: undefined,
-						end_year: filterValues.end_year
-							? filterValues.end_year.toString()
-							: undefined,
-						status: REQUESTORDERSTATUS.PendingApproval.toUpperCase(),
-						ae_id: userContext.aeAreaId,
-					}
-				: undefined;
-			setError(null);
-			const data = await getRequestOrders({
-				token: token,
-				paramData: params,
-			});
-			if (!data) {
-				setReqOrders([]);
-			}
-			setReqOrders(data || []);
-		} catch (error: any) {
-			setError(error.message || "Unknown error");
-			setReqOrders([]);
-		}
-	};
+	const [customerOptions, setCustomerOptions] = useState<CustomerType[]>([]);
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
+	const [filter, setFilter] = useState<filterInterface | null>(null);
 
 	useEffect(() => {
-		setIsLoading(true);
 		if (
 			isReady &&
+			userContext &&
 			userContext.id &&
 			userContext.token &&
-			userContext.role &&
-			userContext.operationAreaId
+			userContext.ae_id
 		) {
-			const fetchData = async (): Promise<any> => {
-				try {
-					setReqOrders([]);
-					await fetchRequestOrderData({
-						token: userContext.token,
-					});
-				} catch (error) {
-					console.error("Failed to fetch:", error);
-				} finally {
-					setIsLoading(false);
+			const fetchDropdownData = async ({ token }: { token: string }) => {
+				if (token) {
+					try {
+						setCustomerOptions([]);
+						setFilter(null);
+
+						const customer_type = await getCustomerTypes({
+							token: token,
+						});
+
+						setCustomerOptions(customer_type);
+						setFilter({
+							start_month: currentMonth,
+							start_year: currentYear,
+						});
+					} catch (err: any) {
+						setAlert({
+							title: "Failed to fetch dropdown",
+							description: err.message,
+							color: "danger",
+						});
+					}
 				}
 			};
 
-			fetchData();
+			fetchDropdownData({ token: userContext.token });
 		}
-	}, [userContext, filterValues, isReady]);
+	}, [userContext, isReady]);
+
+	useEffect(() => {
+		setIsLoading(true);
+
+		if (
+			isReady &&
+			userContext &&
+			userContext.id &&
+			userContext.token &&
+			userContext.ae_id
+		) {
+			const fetchReqOrderData = async ({
+				token,
+				params,
+			}: {
+				token: string;
+				params: any;
+			}) => {
+				if (token && params) {
+					try {
+						setAlert(null);
+						setReqOrders([]);
+
+						const data = await getRequestOrders({
+							token,
+							paramData: params,
+						});
+						setReqOrders(data);
+					} catch (err: any) {
+						if (err.status === 404) {
+							setAlert({
+								title: "ไม่พบรายการใบสั่งงานในขณะนี้",
+								description: err.message,
+								color: "default",
+							});
+						} else {
+							setAlert({
+								title: "Failed to fetch",
+								description: err.message,
+								color: "danger",
+							});
+						}
+
+						setReqOrders([]);
+					} finally {
+						setIsLoading(false);
+					}
+				}
+			};
+
+			const params = {
+				...filter,
+				ae_id: userContext.ae_id,
+				status: REQUESTORDERSTATUS.PendingApproval,
+			};
+
+			fetchReqOrderData({ token: userContext.token, params: params });
+		}
+	}, [userContext, filter, isReady]);
 
 	const actions = [
 		{
@@ -170,7 +206,8 @@ export default function ListPage() {
 
 	const bodyFields: FieldConfig[] = [
 		{
-			key: "customer_type.name",
+			key: "customer_type_id",
+			path: "customer_type.name",
 			className: "text-gray-600 text-md font-semibold",
 			labelTranslator: RequestOrderTranslation,
 		},
@@ -196,7 +233,8 @@ export default function ListPage() {
 			labelTranslator: RequestOrderTranslation,
 		},
 		{
-			key: "_count.taskorders",
+			key: "count",
+			path: "_count.taskorders",
 			className: "text-gray-500 text-sm",
 			labelTranslator: RequestOrderTranslation,
 		},
@@ -214,9 +252,20 @@ export default function ListPage() {
 		},
 	];
 
-	const filterFields: FormSection[] = [
+	const filterSections: FormSection[] = [
 		{
 			fields: [
+				{
+					type: "dropdown",
+					name: "customer_type_id",
+					labelTranslator: RequestOrderTranslation,
+					options: [
+						...customerOptions.map((option) => ({
+							label: option.name || "-",
+							value: option.id,
+						})),
+					],
+				},
 				[
 					{
 						type: "dropdown",
@@ -233,10 +282,6 @@ export default function ListPage() {
 						className: "w-1/3",
 					},
 				],
-			],
-		},
-		{
-			fields: [
 				[
 					{
 						type: "dropdown",
@@ -263,7 +308,7 @@ export default function ListPage() {
 	};
 
 	const handleApplyFilters = (values: any) => {
-		setFilterValues(values);
+		setFilter(values);
 		onCloseFilter();
 	};
 
@@ -301,23 +346,27 @@ export default function ListPage() {
 			<FilterModal
 				isOpen={isOpenFilter}
 				title="ฟิลเตอร์รายการใบสั่งงาน"
-				sections={filterFields}
+				sections={filterSections}
 				submitLabel="Apply Filters"
 				cancelLabel="Cancel"
 				onSubmit={handleApplyFilters}
 				onClose={() => onCloseFilter()}
-				values={filterValues}
+				values={filter}
 			/>
-
 			{/* Header ----------------------------------------------------------- */}
-			<Header title="รายการใบสั่งงาน" className="mb-6 w-full text-left">
+			<Header
+				title="รายการใบสั่งงาน"
+				subtitle="ใบสั่งงานทั้งหมด"
+				orientation="horizontal"
+				className="w-full mb-6 text-left"
+			>
 				<Button
 					radius="sm"
 					variant="flat"
 					color="primary"
 					endContent={<FilterIcon />}
 					onPress={onOpenFilter}
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 				>
 					Filter
 				</Button>
@@ -332,7 +381,7 @@ export default function ListPage() {
 					className="sm:hidden"
 				/>
 
-				<Divider orientation="vertical" className="w-[1px]" />
+				<Divider orientation="vertical" className="w-[1px] h-10" />
 
 				<Button
 					radius="sm"
@@ -340,7 +389,7 @@ export default function ListPage() {
 					color="primary"
 					endContent={<PlusIcon />}
 					onPress={() => handleNewPage({ params: { action: "add" } })}
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 				>
 					Add
 				</Button>
@@ -357,13 +406,17 @@ export default function ListPage() {
 			</Header>
 
 			{/* Body ------------------------------------------------------------- */}
-			{error ? (
-				<div className="my-8 font-medium text-gray-500 text-center">
-					{error}
-				</div>
+			{alert ? (
+				<AlertComponent
+					{...alert}
+					size="full"
+					placement="bottom"
+					isVisible={alert != null}
+					handleClose={() => setAlert(null)}
+				/>
 			) : (
 				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
+					<div className="mb-4 font-medium text-right text-gray-700">
 						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 					</div>
 

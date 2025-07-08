@@ -3,8 +3,7 @@ import { useRef, useState, ChangeEvent, DragEvent } from "react";
 
 import { UploadedFile } from "@/interfaces/interfaces";
 import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
-import type { UploadComponentProps } from "@/interfaces/props";
-import type { AlertComponentProps } from "@/interfaces/props";
+import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
 
 import { Button } from "@heroui/button";
 
@@ -97,7 +96,6 @@ export default function UploadComponent({
 			}
 		}
 
-		// Show duplicate alert first if any, else show skipped alert if any
 		if (duplicateFiles.length > 0) {
 			setAlert({
 				isVisible: true,
@@ -229,6 +227,7 @@ export default function UploadComponent({
 
 			{/* Button ------------------------------------------------------------------------------------------------------- */}
 			<FormButtons
+				size="compact"
 				submitLabel="ยืนยัน"
 				cancelLabel="ยกเลิก"
 				isSubmitting={isUploading}
@@ -239,10 +238,8 @@ export default function UploadComponent({
 			{/* Alert */}
 			{alert.isVisible && (
 				<AlertComponent
-					title={alert.title}
-					description={alert.description}
-					color={alert.color}
-					isVisible={alert.isVisible}
+					{...alert}
+					size="compact"
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
 				/>
 			)}

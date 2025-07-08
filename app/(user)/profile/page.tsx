@@ -20,6 +20,7 @@ import { AlertComponentProps } from "@/interfaces/props";
 import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
+import FormButtons from "@/components/FormButtons";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -164,16 +165,13 @@ export default function ProfilePage() {
 
 				<FieldValueDisplayer sections={profileSections} />
 
-				<Button
-					size="lg"
-					radius="sm"
-					color="danger"
-					variant="flat"
-					className="w-full font-semibold"
-					onPress={() => handleLogout()}
-				>
-					ออกจากระบบ
-				</Button>
+				<FormButtons
+					size="compact"
+					hasBorder={false}
+					submitLabel="ออกจากระบบ"
+					submitColor="danger"
+					onSubmit={handleLogout}
+				/>
 			</div>
 		</div>
 	);

@@ -25,13 +25,14 @@ import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import moment from "moment-timezone";
+import FormButtons from "@/components/FormButtons";
 
 moment.locale("th");
 
 export default function RequestManagementPage({
 	params,
 }: {
-	params: Promise<{ rid: string }>;
+	params: Promise<{ rid: number }>;
 }) {
 	const { rid } = use(params);
 	const { setIsLoading } = useLoading();
@@ -46,71 +47,167 @@ export default function RequestManagementPage({
 	const [requestData, setRequestData] = useState<RequestOrder>(
 		{} as RequestOrder
 	);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [commentValues, setCommentValues] = useState<{
 		comment: string;
 	}>({
 		comment: "",
 	});
+	const [alert, setAlert] = useState<AlertComponentProps>({
+		title: "",
+		description: "",
+		isVisible: false,
+	});
 
-	const fetchRequestWithTask = async ({
-		token,
-		requestId,
-	}: {
-		token: string;
-		requestId: number;
-	}) => {
-		try {
-			const request: RequestOrder = await getRequestOrderWithTask({
-				token: token,
-				requestId: requestId,
-			});
-			setRequestData({
-				...request,
-				work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
-			});
-		} catch (error) {
-			console.error("Failed to fetch request with task:", error);
-		}
-	};
-
+	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		setIsLoading(true);
 		if (
+			rid &&
 			isReady &&
+			userContext &&
 			userContext.id &&
 			userContext.token &&
-			userContext.role &&
-			userContext.operationAreaId &&
-			rid
+			userContext.ae_id
 		) {
-			const fetchData = async (): Promise<any> => {
+			const fetchData = async ({
+				token,
+				requestId,
+			}: {
+				token: string;
+				requestId: number;
+			}) => {
+				setIsLoading(true);
+
 				try {
-					setRequestData({} as RequestOrder);
-					await fetchRequestWithTask({
-						token: userContext.token,
-						requestId: Number(rid),
+					const request: RequestOrder = await getRequestOrderWithTask({
+						token: token,
+						requestId: requestId,
 					});
-				} catch (error) {
-					console.error("Failed to fetch:", error);
+
+					setRequestData({
+						...request,
+						work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
+					});
+				} catch (error: any) {
+					setAlert({
+						title: "Failed to fetch",
+						description: error.message || "Unknown error occurred",
+						color: "danger",
+						isVisible: true,
+					});
 				} finally {
 					setIsLoading(false);
 				}
 			};
 
-			fetchData();
+			fetchData({
+				token: userContext.token,
+				requestId: rid,
+			});
 		}
 	}, [userContext, isReady, rid]);
 
-	const dataSection: FieldSection[] = [
+	// Handler ---------------------------------------------------------------------------------------------------
+	const handleTabChange = (key: React.Key) => {
+		if (typeof key === "string") {
+			setSelectedTab(key);
+
+			const newSearchParams = new URLSearchParams(searchParams.toString());
+			newSearchParams.set("action", key);
+
+			const newQuery = newSearchParams.toString();
+			router.replace(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
+		}
+	};
+
+	const handleCommentChange = (newValues: typeof commentValues) => {
+		setCommentValues(newValues);
+	};
+
+	const handleCancel = () => {
+		setCommentValues({ comment: "" });
+		router.back();
+	};
+
+	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
+		if (
+			rid ||
+			isReady ||
+			userContext.id ||
+			userContext.role ||
+			userContext.token ||
+			userContext.ae_id
+		) {
+			setIsSubmitting(true);
+
+			if (
+				!commentValues.comment.trim() &&
+				status !== REQUESTORDERSTATUS.PendingApproval
+			) {
+				setAlert({
+					title: "Warning!!",
+					description: "คำอธิบาย: กรุณาระบุเหตุผล",
+					color: "warning",
+					isVisible: true,
+				});
+
+				setIsSubmitting(false);
+				return;
+			}
+
+			try {
+				const paramData = {
+					status: (status as REQUESTORDERSTATUS) || undefined,
+					comment: (commentValues.comment as string) || undefined,
+				};
+				await SetStatusRequestOrder({
+					token: userContext.token,
+					rid: Number(rid),
+					paramData: paramData,
+				});
+
+				setAlert({
+					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
+					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} แล้ว`,
+					color: "success",
+					isVisible: true,
+				});
+
+				setTimeout(() => {
+					router.back();
+				}, 2000);
+			} catch (err: any) {
+				setAlert({
+					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
+					description: err.message || "Unknown error occurred",
+					color: "danger",
+					isVisible: true,
+				});
+			} finally {
+				setIsSubmitting(false);
+			}
+		} else {
+			setAlert({
+				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
+				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
+				color: "danger",
+				isVisible: true,
+			});
+
+			setTimeout(() => {
+				setIsLoading(false);
+				router.push("/login");
+			}, 2000);
+		}
+	};
+
+	// Field config ----------------------------------------------------------------------------------------------
+	const dataSections: FieldSection[] = [
 		{
 			fields: [
 				{
-					name: "customer_type",
+					name: "customer_type_id",
 					value: requestData?.customer_type?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -122,12 +219,12 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "ae_name",
+					name: "ae_id",
 					value: requestData?.ae_area?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "users",
+					name: "unit_head",
 					value: requestData?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -174,7 +271,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "operation_area",
+					name: "operation_area_id",
 					value: requestData?.operation_area?.operation_area || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -210,6 +307,7 @@ export default function RequestManagementPage({
 						type: "textarea",
 						name: "comment",
 						label: "กรุณาระบุเหตุผล",
+						labelPlacement: "outside",
 						isRequired: true,
 						minRows: 5,
 						maxRows: 8,
@@ -219,114 +317,28 @@ export default function RequestManagementPage({
 		},
 	];
 
-	const handleTabChange = (key: React.Key) => {
-		if (typeof key === "string") {
-			setSelectedTab(key);
-
-			const newSearchParams = new URLSearchParams(searchParams.toString());
-			newSearchParams.delete("action");
-
-			const newQuery = newSearchParams.toString();
-			router.push(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
-		}
-	};
-
-	const handleCommentValueChange = (newValues: typeof commentValues) => {
-		setCommentValues(newValues);
-	};
-
-	const handleCancel = () => {
-		setCommentValues({ comment: "" });
-		router.back();
-	};
-
-	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
-		if (
-			isReady &&
-			userContext.id &&
-			userContext.token &&
-			userContext.role &&
-			userContext.operationAreaId &&
-			rid
-		) {
-			setIsLoading(true);
-			if (!commentValues.comment.trim()) {
-				setAlert({
-					title: "Alert",
-					description: `Detail: กรุณาระบุเหตุผล`,
-					color: "warning",
-					isVisible: true,
-				});
-				setIsLoading(false);
-				return;
-			}
-			try {
-				const paramData = {
-					status: (status as REQUESTORDERSTATUS) || undefined,
-					comment: (commentValues.comment as string) || undefined,
-				};
-				await SetStatusRequestOrder({
-					token: userContext.token,
-					rid: Number(rid),
-					paramData: paramData,
-				});
-				setAlert({
-					title: "Success",
-					description: `Detail: ${commentValues.comment}`,
-					color: "success",
-					isVisible: true,
-				});
-				setTimeout(() => {
-					router.push(`/list`);
-				}, 1000);
-			} catch (err: any) {
-				setAlert({
-					title: "Fail",
-					description: err.message || "Unknown error occurred",
-					color: "danger",
-					isVisible: true,
-				});
-			} finally {
-				setIsLoading(false);
-			}
-		} else {
-			setAlert({
-				title: "Failed to load user profile",
-				description: "Please login and try again.",
-				color: "danger",
-				isVisible: true,
-			});
-			setTimeout(() => {
-				setIsLoading(false);
-				router.push(`/login`);
-			}, 1000);
-		}
-	};
-
 	return (
-		<div className="flex flex-col justify-center items-center w-full">
+		<div className="flex flex-col items-center justify-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
-					size="compact"
-					title={alert.title}
-					description={alert.description}
-					color={alert.color}
-					isVisible={alert.isVisible}
+					{...alert}
+					size="expanded"
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
 				/>
 			)}
+
 			<Tabs
 				aria-label="TabOptions"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
-				className="flex flex-col justify-center items-center p-0 w-full font-semibold"
+				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 			>
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
 					title="รายละเอียด"
-					className="flex flex-col justify-center items-center gap-8 w-full"
+					className="flex flex-col items-center justify-center w-full gap-8"
 				>
 					<Header
 						title="ดูรายละเอียดใบสั่งงาน"
@@ -337,46 +349,39 @@ export default function RequestManagementPage({
 						)}
 						hasBorder={false}
 					/>
-					<FieldValueDisplayer sections={dataSection} />
-					<Button
-						size="lg"
-						radius="sm"
-						color="danger"
-						variant="flat"
-						className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl font-semibold"
-						onPress={() => {
-							setIsLoading(true);
-							router.push(`/list`);
-						}}
-					>
-						ย้อนกลับ
-					</Button>
+
+					<FieldValueDisplayer size="expanded" sections={dataSections} />
+
+					<FormButtons
+						size="expanded"
+						hasBorder={false}
+						submitLabel="ยกเลิก"
+						submitColor="default"
+						onSubmit={handleCancel}
+					/>
 				</Tab>
 
 				{/* Edit tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
 					title="แก้ไข"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 				>
 					<FormComponent
-						isCompact={true}
 						title="สาเหตุการปฏิเสธงาน"
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						hasBorder={false}
+						size="expanded"
 						sections={commentSections}
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"
-						onSubmit={() => {
-							handleStatus(REQUESTORDERSTATUS.PendingEdit);
-						}}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingEdit)}
 						onCancel={handleCancel}
 						values={commentValues}
-						onChange={handleCommentValueChange}
+						onChange={handleCommentChange}
 					/>
 				</Tab>
 
@@ -384,37 +389,26 @@ export default function RequestManagementPage({
 				<Tab
 					key="reject"
 					title="ยกเลิก"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 				>
 					<FormComponent
-						isCompact={true}
 						title="สาเหตุการปฏิเสธงาน"
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						hasBorder={false}
+						size="expanded"
 						sections={commentSections}
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"
-						onSubmit={() => {
-							handleStatus(REQUESTORDERSTATUS.Rejected);
-						}}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
 						onCancel={handleCancel}
 						values={commentValues}
-						onChange={handleCommentValueChange}
+						onChange={handleCommentChange}
 					/>
 				</Tab>
 			</Tabs>
 		</div>
 	);
-}
-function setAlert(arg0: {
-	title: string;
-	description: any;
-	color: string;
-	isVisible: boolean;
-}) {
-	throw new Error("Function not implemented.");
 }

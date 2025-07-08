@@ -8,6 +8,7 @@ import { translateEnumValue } from "@/utils/functions";
 export default function FieldValueDisplayer({
 	size = "compact",
 	sections,
+	className = "flex flex-col w-full gap-4",
 }: FieldValueDisplayerProps) {
 	let computedClassName = "";
 	if (size === "compact") {
@@ -19,7 +20,7 @@ export default function FieldValueDisplayer({
 	}
 
 	return (
-		<div className={computedClassName}>
+		<div className={`${computedClassName} ${className}`}>
 			{sections.map((section, idx) => (
 				<div key={idx} className="flex flex-col w-full gap-2">
 					{/* Title ----------------------------------------------------------------------------------------------------------------------- */}

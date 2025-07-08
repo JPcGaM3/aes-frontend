@@ -6,6 +6,8 @@ import { Button } from "@heroui/button";
 export default function FormButtons({
 	onSubmit,
 	onCancel,
+	size = "compact",
+	buttonSize = "lg",
 	hasBorder = true,
 	submitLabel = "Submit",
 	cancelLabel = "Cancel",
@@ -13,10 +15,20 @@ export default function FormButtons({
 	cancelColor = "default",
 	isSubmitting = false,
 	isCanceling = false,
-	className = "flex flex-col w-full text-center",
+	isDisabled = false,
+	className = "flex flex-col text-center",
 }: FormButtonsProps) {
+	let computedClassName = "";
+	if (size === "compact") {
+		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+	} else if (size === "expanded") {
+		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+	} else {
+		computedClassName = "w-full";
+	}
+
 	return (
-		<div className={className}>
+		<div className={`${computedClassName} ${className}`}>
 			{hasBorder && <hr className="mb-6 border-gray-200" />}
 
 			<div className="flex w-full gap-2">
@@ -24,10 +36,12 @@ export default function FormButtons({
 					<Button
 						className="w-full font-semibold text-gray-500"
 						color={cancelColor}
-						size="lg"
+						size={buttonSize}
 						radius="sm"
 						variant="flat"
 						isLoading={isCanceling}
+						disabled={isDisabled}
+						disableAnimation={isDisabled}
 						onPress={onCancel}
 					>
 						{cancelLabel}
@@ -38,10 +52,12 @@ export default function FormButtons({
 					<Button
 						className="w-full font-bold"
 						color={submitColor}
-						size="lg"
+						size={buttonSize}
 						radius="sm"
 						variant="flat"
 						isLoading={isSubmitting}
+						disabled={isDisabled}
+						disableAnimation={isDisabled}
 						onPress={onSubmit}
 					>
 						{submitLabel}
@@ -50,10 +66,12 @@ export default function FormButtons({
 					<Button
 						className="w-full font-bold"
 						color={submitColor}
-						size="lg"
+						size={buttonSize}
 						radius="sm"
 						variant="flat"
 						isLoading={isSubmitting}
+						disabled={isDisabled}
+						disableAnimation={isDisabled}
 						type="submit"
 					>
 						{submitLabel}

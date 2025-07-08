@@ -7,21 +7,22 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
 import { fontMono } from "@/config/fonts";
 
-import { Button, Tab, Tabs, user } from "@heroui/react";
-
 import Header from "@/components/Header";
+import FormComponent from "@/components/FormComponent";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import { Button, Tab, Tabs, user } from "@heroui/react";
 
 import { useLoading } from "@/providers/LoadingContext";
 import { useAuth } from "@/providers/AuthContext";
 
-import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
+import { FieldSection, FormSection } from "@/interfaces/interfaces";
 import {
-	FieldSection,
-	FormSection,
-	OperationAreaResponse,
-} from "@/interfaces/interfaces";
-import { AeArea, CustomerType, RequestOrder, User } from "@/interfaces/schema";
+	AeArea,
+	CustomerType,
+	OperationArea,
+	RequestOrder,
+	User,
+} from "@/interfaces/schema";
 import {
 	month,
 	monthList,
@@ -29,11 +30,16 @@ import {
 	yearList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
-import FormComponent from "@/components/FormComponent";
+
+import { getRequestOrderWithTask } from "@/libs/requestOrderAPI";
 import { getOperationAreasUser } from "@/libs/operationAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { getUsers } from "@/libs/userAPI";
+import moment from "moment-timezone";
+import FormButtons from "@/components/FormButtons";
+
+moment.locale("th");
 
 export default function RequestManagementPage({
 	params,
@@ -42,7 +48,7 @@ export default function RequestManagementPage({
 }) {
 	// const and hooks -------------------------------------------------------------------------------------------
 	const { rid } = use(params);
-	const { userContext } = useAuth();
+	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
 
 	const searchParams = useSearchParams();
@@ -51,21 +57,24 @@ export default function RequestManagementPage({
 	const action = searchParams.get("action") || "view";
 
 	const [selectedTab, setSelectedTab] = useState(action);
-	const [usersData, setUsersData] = useState<User[]>([]);
-	const [aeAreasData, setAeAreasData] = useState<AeArea[]>([]);
-	const [customerTypesData, setCustomerTypesData] = useState<CustomerType[]>(
-		[]
-	);
-	const [operationAreasData, setOperationAreasData] = useState<
-		OperationAreaResponse[]
-	>([]);
+	const [usersOptions, setUsersOptions] = useState<User[]>([]);
+	const [aeOptions, setAeOptions] = useState<AeArea[]>([]);
+	const [customerOptions, setCustomerOptions] = useState<CustomerType[]>([]);
+	const [opOption, setOpOption] = useState<OperationArea[]>([]);
 	const [requestData, setRequestData] = useState<RequestOrder>(
 		{} as RequestOrder
 	);
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (rid && userContext.token) {
+		if (
+			rid &&
+			isReady &&
+			userContext &&
+			userContext.id &&
+			userContext.token &&
+			userContext.ae_id
+		) {
 			const fetchData = async ({
 				token,
 				requestId,
@@ -91,10 +100,10 @@ export default function RequestManagementPage({
 						requestId: requestId,
 					});
 
-					setUsersData(user);
-					setAeAreasData(ae_area);
-					setCustomerTypesData(customer_type);
-					setOperationAreasData(operation_area);
+					setUsersOptions(user);
+					setAeOptions(ae_area);
+					setCustomerOptions(customer_type);
+					setOpOption(operation_area);
 					setRequestData({
 						...request,
 						work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
@@ -111,7 +120,7 @@ export default function RequestManagementPage({
 				requestId: rid,
 			});
 		}
-	}, [rid, userContext.token]);
+	}, [userContext, isReady, rid]);
 
 	// Handler ---------------------------------------------------------------------------------------------------
 	const handleTabChange = (key: React.Key) => {
@@ -119,10 +128,10 @@ export default function RequestManagementPage({
 			setSelectedTab(key);
 
 			const newSearchParams = new URLSearchParams(searchParams.toString());
-			newSearchParams.delete("action");
+			newSearchParams.set("action", key); // set action to the selected tab
 
 			const newQuery = newSearchParams.toString();
-			router.push(`${pathname}${newQuery ? `?${newQuery}` : ""}`);
+			router.replace(`${pathname}${newQuery ? `?${newQuery}` : ""}`); // use replace instead of push
 		}
 	};
 
@@ -131,22 +140,24 @@ export default function RequestManagementPage({
 		{
 			fields: [
 				{
-					name: "customer_type",
+					name: "customer_type_id",
 					value: requestData?.customer_type?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "created_at",
-					value: requestData?.created_at?.toLocaleString() || "-",
+					value: requestData?.created_at
+						? moment(requestData.created_at).tz("Asia/Bangkok").format("LLL")
+						: "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "ae_name",
+					name: "ae_id",
 					value: requestData?.ae_area?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "users",
+					name: "unit_head",
 					value: requestData?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -193,7 +204,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "operation_area",
+					name: "operation_area_id",
 					value: requestData?.operation_area?.operation_area || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -230,7 +241,7 @@ export default function RequestManagementPage({
 					path: "customer_type_id",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,
-					options: customerTypesData.map((type) => ({
+					options: customerOptions.map((type) => ({
 						label: type.name || "-",
 						value: type.id,
 					})),
@@ -246,7 +257,7 @@ export default function RequestManagementPage({
 					name: "ae_name",
 					path: "ae_id",
 					labelTranslator: RequestOrderTranslation,
-					options: aeAreasData.map((ae) => ({
+					options: aeOptions.map((ae) => ({
 						label: ae.name || "-",
 						value: ae.id,
 					})),
@@ -256,7 +267,7 @@ export default function RequestManagementPage({
 					name: "unit_head",
 					path: "unit_head_id",
 					labelTranslator: RequestOrderTranslation,
-					options: usersData.map((user) => ({
+					options: usersOptions.map((user) => ({
 						label:
 							`${user.username?.charAt(0).toUpperCase()}${user.username?.slice(1).toLowerCase()}` ||
 							"-",
@@ -312,9 +323,9 @@ export default function RequestManagementPage({
 					name: "operation_area",
 					path: "customer_operation_area_id",
 					labelTranslator: RequestOrderTranslation,
-					options: operationAreasData.map((area) => ({
-						label: area.operation_area.operation_area || "-",
-						value: area.operation_area.id,
+					options: opOption.map((area) => ({
+						label: area.operation_area || "-",
+						value: area.id,
 					})),
 				},
 				{
@@ -358,7 +369,7 @@ export default function RequestManagementPage({
 				<Tab
 					key="view"
 					title="รายละเอียด"
-					className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+					className="flex flex-col items-center justify-center w-full gap-8"
 				>
 					<Header
 						title="ดูรายละเอียดใบสั่งงาน"
@@ -370,21 +381,26 @@ export default function RequestManagementPage({
 						hasBorder={false}
 					/>
 
-					<FieldValueDisplayer sections={dataSection} />
+					<FormButtons
+						size="expanded"
+						buttonSize="md"
+						submitLabel={`หมายเหตุ : ${requestData.comment || "-"}`}
+						submitColor="warning"
+						isDisabled={true}
+					/>
 
-					<Button
-						size="lg"
-						radius="sm"
-						color="danger"
-						variant="flat"
-						className="w-full font-semibold"
-						onPress={() => {
+					<FieldValueDisplayer size="expanded" sections={dataSection} />
+
+					<FormButtons
+						size="expanded"
+						hasBorder={false}
+						submitLabel="ยกเลิก"
+						submitColor="danger"
+						onSubmit={() => {
 							setIsLoading(true);
-							router.push(`/request`);
+							router.back();
 						}}
-					>
-						ย้อนกลับ
-					</Button>
+					/>
 				</Tab>
 
 				{/* Edit tab ------------------------------------------------------------------------------------------- */}
@@ -393,7 +409,7 @@ export default function RequestManagementPage({
 					title="แก้ไข"
 					className="flex flex-col items-center justify-center w-full gap-20"
 				>
-					<FormComponent
+					{/* <FormComponent
 						title="แก้ไขใบสั่งงาน"
 						subtitle={`@${requestData.work_order_number}`}
 						subtitleClassName={clsx(
@@ -403,7 +419,7 @@ export default function RequestManagementPage({
 						values={requestData}
 						sections={formSection}
 						onSubmit={() => {}}
-					/>
+					/> */}
 				</Tab>
 
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}

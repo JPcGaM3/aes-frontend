@@ -59,6 +59,8 @@ export interface FieldValueDisplayerProps {
 export interface FormButtonsProps {
 	onSubmit?: (e: PressEvent) => void;
 	onCancel?: (e: PressEvent) => void;
+	size?: "compact" | "expanded" | "full";
+	buttonSize?: "sm" | "md" | "lg";
 	hasBorder?: boolean;
 	submitLabel?: string;
 	cancelLabel?: string;
@@ -66,6 +68,7 @@ export interface FormButtonsProps {
 	cancelColor?: ColorType;
 	isSubmitting?: boolean;
 	isCanceling?: boolean;
+	isDisabled?: boolean;
 	className?: string;
 }
 

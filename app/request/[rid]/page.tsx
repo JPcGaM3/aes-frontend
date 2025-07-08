@@ -527,7 +527,8 @@ export default function RequestManagementPage({
 					title="ยกเลิก"
 					className="flex flex-col justify-center items-center w-full"
 				>
-					<Header
+					<FormComponent
+						isCompact={true}
 						title="สาเหตุการปฏิเสธงาน"
 						subtitle={requestData.work_order_number}
 						subtitleClassName={clsx(
@@ -535,9 +536,6 @@ export default function RequestManagementPage({
 							fontMono.variable
 						)}
 						hasBorder={false}
-					/>
-					<FormComponent
-						isCompact={true}
 						sections={commentSections}
 						submitLabel="ส่งความคิดเห็น"
 						cancelLabel="ยกเลิก"

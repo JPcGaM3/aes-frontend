@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { FormSection } from "@/interfaces/interfaces";
 import { AlertComponentProps } from "@/interfaces/props";
 import { useAuth } from "@/providers/AuthContext";
-import { useLoading } from "@/providers/LoadingContext";
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
@@ -16,7 +15,6 @@ export default function LoginPage() {
 	const router = useRouter();
 
 	const { login } = useAuth();
-	const { setIsLoading } = useLoading();
 
 	const [alert, setAlert] = useState<AlertComponentProps>({
 		title: "",
@@ -32,8 +30,6 @@ export default function LoginPage() {
 			: { username: values.username, password: values.password };
 
 		try {
-			setIsLoading(true);
-
 			await login({
 				params: {
 					ae_id: values.ae_id,
@@ -51,7 +47,6 @@ export default function LoginPage() {
 				color: "danger",
 				isVisible: true,
 			});
-			setIsLoading(false);
 		}
 	};
 
@@ -86,7 +81,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex items-center justify-center w-full">
+		<div className="flex justify-center items-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}

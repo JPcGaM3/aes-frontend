@@ -1,3 +1,11 @@
+import { AlertComponentProps } from "@/interfaces/props";
+import { CustomerType, RequestOrder } from "@/interfaces/schema";
+import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import {
+	getRequestOrders,
+	getRequestOrderWithTask,
+} from "@/libs/requestOrderAPI";
+
 /**
  * Translates an enum value using a translation map.
  *
@@ -21,4 +29,111 @@ export function translateEnumValue<T extends string>(
  */
 export function getNestedValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+}
+
+export async function fetchCustomerType({
+	token,
+	setCustomerTypes,
+	setAlert,
+}: {
+	token: string;
+	setCustomerTypes: (options: CustomerType[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+}) {
+	if (token) {
+		try {
+			const customer_type = await getCustomerTypes({
+				token: token,
+			});
+
+			setCustomerTypes(customer_type);
+		} catch (err: any) {
+			setAlert({
+				title: "Failed to fetch customer types",
+				description: err.message,
+				color: "danger",
+			});
+		}
+	}
+}
+
+export async function fetchReqOrderData({
+	token,
+	params,
+	setReqOrders,
+	setAlert,
+}: {
+	token: string;
+	params: any;
+	setReqOrders: (orders: RequestOrder[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+}) {
+	if (token && params) {
+		try {
+			const data = await getRequestOrders({
+				token,
+				paramData: params,
+			});
+
+			setReqOrders(data);
+		} catch (err: any) {
+			if (err.status === 404) {
+				setAlert({
+					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
+					description: err.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: err.message,
+					color: "danger",
+				});
+			}
+
+			setReqOrders([]);
+		}
+	}
+}
+
+export async function fetchReqOrderWithTaskData({
+	token,
+	requestId,
+	setReqOrder,
+	setAlert,
+}: {
+	token: string;
+	requestId: number;
+	setReqOrder: (order: RequestOrder) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+}) {
+	if (token && requestId) {
+		try {
+			const data = await getRequestOrderWithTask({
+				token,
+				requestId,
+			});
+
+			setReqOrder({
+				...data,
+				work_order_number: `${data.ae_area?.name}${data.operation_area?.operation_area}${data.ap_year ? Number(data.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${data.run_number || ""}`,
+			});
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: error.message,
+					color: "danger",
+				});
+			}
+
+			setReqOrder({} as RequestOrder);
+		}
+	}
 }

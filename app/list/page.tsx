@@ -27,14 +27,13 @@ import { FieldConfig, FormSection } from "@/interfaces/interfaces";
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
-import { getRequestOrders } from "@/libs/requestOrderAPI";
 import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
-import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import { fetchCustomerType, fetchReqOrderData } from "@/utils/functions";
 
 interface filterInterface {
 	customer_type_id?: number;
@@ -59,106 +58,63 @@ export default function ListPage() {
 	const currentMonth = monthList[now.getMonth()].value;
 
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
-	const [customerOptions, setCustomerOptions] = useState<CustomerType[]>([]);
+	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
 	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
-	const [filter, setFilter] = useState<filterInterface | null>(null);
+	const [filter, setFilter] = useState<filterInterface | null>({
+		start_month: currentMonth,
+		start_year: currentYear,
+	});
 
 	useEffect(() => {
-		if (
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchDropdownData = async ({ token }: { token: string }) => {
-				if (token) {
-					try {
-						setCustomerOptions([]);
-						setFilter(null);
-
-						const customer_type = await getCustomerTypes({
-							token: token,
-						});
-
-						setCustomerOptions(customer_type);
-						setFilter({
-							start_month: currentMonth,
-							start_year: currentYear,
-						});
-					} catch (err: any) {
-						setAlert({
-							title: "Failed to fetch dropdown",
-							description: err.message,
-							color: "danger",
-						});
-					}
-				}
-			};
-
-			fetchDropdownData({ token: userContext.token });
+		if (isReady && userContext?.ae_id && filter !== null) {
+			setFilter({
+				start_month: currentMonth,
+				start_year: currentYear,
+			});
 		}
-	}, [userContext, isReady]);
+	}, [userContext?.ae_id, isReady]);
 
 	useEffect(() => {
 		setIsLoading(true);
 
-		if (
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchReqOrderData = async ({
-				token,
-				params,
-			}: {
-				token: string;
-				params: any;
-			}) => {
-				if (token && params) {
-					try {
-						setAlert(null);
-						setReqOrders([]);
-
-						const data = await getRequestOrders({
-							token,
-							paramData: params,
+		if (isReady && userContext?.ae_id) {
+			const fetchData = async () => {
+				try {
+					if (customerTypes.length < 1) {
+						await fetchCustomerType({
+							token: userContext.token,
+							setCustomerTypes,
+							setAlert,
 						});
-
-						setReqOrders(data);
-					} catch (err: any) {
-						if (err.status === 404) {
-							setAlert({
-								title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-								description: err.message,
-								color: "default",
-							});
-						} else {
-							setAlert({
-								title: "Failed to fetch",
-								description: err.message,
-								color: "danger",
-							});
-						}
-
-						setReqOrders([]);
-					} finally {
-						setIsLoading(false);
 					}
+
+					const params = {
+						...filter,
+						ae_id: userContext?.ae_id,
+						status: REQUESTORDERSTATUS.PendingApproval,
+					};
+
+					await fetchReqOrderData({
+						token: userContext.token,
+						params: params,
+						setReqOrders,
+						setAlert,
+					});
+				} catch (error: any) {
+					setAlert({
+						title: "Failed to fetch",
+						description: error.message || "Unknown error occurred",
+						color: "danger",
+						isVisible: true,
+					});
+				} finally {
+					setIsLoading(false);
 				}
 			};
 
-			const params = {
-				...filter,
-				ae_id: userContext.ae_id,
-				status: REQUESTORDERSTATUS.PendingApproval,
-			};
-
-			fetchReqOrderData({ token: userContext.token, params: params });
+			fetchData();
 		}
-	}, [userContext, filter, isReady]);
+	}, [filter, isReady, userContext?.ae_id]);
 
 	const actions = [
 		{
@@ -259,7 +215,7 @@ export default function ListPage() {
 					name: "customer_type_id",
 					labelTranslator: RequestOrderTranslation,
 					options: [
-						...customerOptions.map((option) => ({
+						...customerTypes.map((option) => ({
 							label: option.name || "-",
 							value: option.id,
 						})),
@@ -353,13 +309,13 @@ export default function ListPage() {
 			/>
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="w-full mb-6 text-left"
+				className="mb-6 w-full text-left"
 				orientation="horizontal"
 				subtitle="ใบสั่งงานทั้งหมด"
 				title="รายการใบสั่งงาน"
 			>
 				<Button
-					className="hidden font-semibold sm:inline-flex"
+					className="hidden sm:inline-flex font-semibold"
 					color="primary"
 					endContent={<FilterIcon />}
 					radius="sm"
@@ -382,7 +338,7 @@ export default function ListPage() {
 				<Divider className="w-[1px] h-10" orientation="vertical" />
 
 				<Button
-					className="hidden font-semibold sm:inline-flex"
+					className="hidden sm:inline-flex font-semibold"
 					color="primary"
 					endContent={<PlusIcon />}
 					radius="sm"
@@ -414,7 +370,7 @@ export default function ListPage() {
 				/>
 			) : (
 				<div>
-					<div className="mb-4 font-medium text-right text-gray-700">
+					<div className="mb-4 font-medium text-gray-700 text-right">
 						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 					</div>
 

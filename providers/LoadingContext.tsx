@@ -38,16 +38,16 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 		return () => clearInterval(intervalId);
 	}, [isLoading]);
 
-	useEffect(() => {
-		setIsLoading(true);
+	// useEffect(() => {
+	// 	setIsLoading(true);
 
-		// TODO: Remove timeout
-		const timeout = setTimeout(() => {
-			setIsLoading(false);
-		}, 500);
+	// 	// TODO: Remove timeout
+	// 	const timeout = setTimeout(() => {
+	// 		setIsLoading(false);
+	// 	}, 1000);
 
-		return () => clearTimeout(timeout);
-	}, [pathname]);
+	// 	return () => clearTimeout(timeout);
+	// }, [pathname]);
 
 	return (
 		<LoadingContext.Provider value={{ isLoading, setIsLoading }}>

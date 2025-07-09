@@ -42,7 +42,7 @@ export default function Navbar() {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	const { setIsLoading } = useLoading();
+	// const { setIsLoading } = useLoading();
 	const { userContext, setUserContext, isReady } = useAuth();
 
 	const [hasMounted, setHasMounted] = useState(false);
@@ -74,7 +74,7 @@ export default function Navbar() {
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		setIsLoading(true);
+		// setIsLoading(true);
 
 		if (isReady && userContext && userContext.token && userContext.ae_id) {
 			const fetchAeArea = async ({ token }: { token: string }) => {
@@ -117,14 +117,14 @@ export default function Navbar() {
 
 	// Handler ------------------------------------------------------------------------------------------------------
 	const handleNav = (path: string) => {
-		setIsLoading(true);
+		// setIsLoading(true);
 		setIsMenuOpen(false);
 
-		if (path === pathname) {
-			window.location.reload();
-		} else {
-			router.push(path);
-		}
+		// if (path === pathname) {
+		// window.location.reload();
+		// } else {
+		router.push(path);
+		// }
 	};
 
 	const handleDropdownSelect = (value: number) => {
@@ -146,7 +146,7 @@ export default function Navbar() {
 			)}
 
 			<HeroUINavbar
-				className="z-50 flex items-center p-0 shadow-md h-18"
+				className="z-50 flex items-center shadow-md p-0 h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
@@ -156,9 +156,9 @@ export default function Navbar() {
 				shouldHideOnScroll={false}
 				onMenuOpenChange={setIsMenuOpen}
 			>
-				<NavbarContent className="items-center justify-start w-full gap-2">
+				<NavbarContent className="justify-start items-center gap-2 w-full">
 					{/* Logo */}
-					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
+					<NavbarBrand className="flex justify-start items-center p-0 w-full h-full">
 						<div className="relative h-full aspect-[1/1]">
 							<Image
 								fill
@@ -176,7 +176,7 @@ export default function Navbar() {
 					{userContext.token && hasMounted && (
 						<NavbarItem
 							className={clsx(
-								"h-full justify-end items-center font-mono  bg-default-100 rounded-lg w-fit",
+								"justify-end items-center bg-default-100 rounded-lg w-fit h-full font-mono",
 								fontMono.variable
 							)}
 						>
@@ -188,7 +188,7 @@ export default function Navbar() {
 							>
 								<PopoverTrigger>
 									<Button
-										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-24 w-fit"
+										className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -206,13 +206,13 @@ export default function Navbar() {
 									</Button>
 								</PopoverTrigger>
 
-								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
-									<div className="flex flex-col w-full text-sm font-semibold">
+								<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
+									<div className="flex flex-col w-full font-semibold text-sm">
 										{aeAreas.length > 0 ? (
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													className="justify-between w-full p-2 font-medium text-left text-md"
+													className="justify-between p-2 w-full font-medium text-md text-left"
 													color={
 														userContext.ae_id === option.ae_area.id
 															? "primary"
@@ -238,7 +238,7 @@ export default function Navbar() {
 												</Button>
 											))
 										) : (
-											<div className="p-2 text-center text-gray-400">
+											<div className="p-2 text-gray-400 text-center">
 												No options available
 											</div>
 										)}
@@ -249,10 +249,10 @@ export default function Navbar() {
 					)}
 
 					{/* Menu Toggle */}
-					<NavbarItem className="flex items-center justify-end h-full md:hidden">
+					<NavbarItem className="md:hidden flex justify-end items-center h-full">
 						<Button
 							isIconOnly
-							className="h-full p-0"
+							className="p-0 h-full"
 							color={isMenuOpen ? "default" : "primary"}
 							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
 							radius="sm"
@@ -263,7 +263,7 @@ export default function Navbar() {
 					</NavbarItem>
 
 					{/* Nav bar desktop */}
-					<NavbarItem className="hidden md:flex h-full p-[4px] bg-default-100 rounded-lg flex-row items-center ">
+					<NavbarItem className="hidden md:flex flex-row items-center bg-default-100 p-[4px] rounded-lg h-full">
 						{dynamicMenuItems.map((item) => {
 							const isActive = pathname === item.path;
 

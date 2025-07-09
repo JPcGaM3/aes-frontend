@@ -13,10 +13,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import { FieldSection, FormSection } from "@/interfaces/interfaces";
 import { RequestOrder } from "@/interfaces/schema";
 import { useAuth } from "@/providers/AuthContext";
-import {
-	getRequestOrderWithTask,
-	SetStatusRequestOrder,
-} from "@/libs/requestOrderAPI";
+import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
 import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
@@ -24,6 +21,7 @@ import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
+import { fetchReqOrderWithTaskData } from "@/utils/functions";
 
 moment.locale("th");
 
@@ -42,9 +40,7 @@ export default function RequestManagementPage({
 	const action = searchParams.get("action") || "view";
 
 	const [selectedTab, setSelectedTab] = useState(action);
-	const [requestData, setRequestData] = useState<RequestOrder>(
-		{} as RequestOrder
-	);
+	const [reqOrder, setReqOrder] = useState<RequestOrder>({} as RequestOrder);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [commentValues, setCommentValues] = useState<{
@@ -60,32 +56,15 @@ export default function RequestManagementPage({
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (
-			rid &&
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchData = async ({
-				token,
-				requestId,
-			}: {
-				token: string;
-				requestId: number;
-			}) => {
-				setIsLoading(true);
-
+		if (rid && isReady) {
+			setIsLoading(true);
+			const fetchData = async () => {
 				try {
-					const request: RequestOrder = await getRequestOrderWithTask({
-						token: token,
-						requestId: requestId,
-					});
-
-					setRequestData({
-						...request,
-						work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
+					await fetchReqOrderWithTaskData({
+						token: userContext.token,
+						requestId: rid,
+						setReqOrder: setReqOrder,
+						setAlert: setAlert,
 					});
 				} catch (error: any) {
 					setAlert({
@@ -99,12 +78,9 @@ export default function RequestManagementPage({
 				}
 			};
 
-			fetchData({
-				token: userContext.token,
-				requestId: rid,
-			});
+			fetchData();
 		}
-	}, [userContext, isReady, rid]);
+	}, [isReady, rid]);
 
 	// Handler ---------------------------------------------------------------------------------------------------
 	const handleTabChange = (key: React.Key) => {
@@ -171,7 +147,7 @@ export default function RequestManagementPage({
 
 				setAlert({
 					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
-					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} แล้ว`,
+					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${reqOrder.work_order_number} แล้ว`,
 					color: "success",
 					isVisible: true,
 				});
@@ -210,45 +186,45 @@ export default function RequestManagementPage({
 			fields: [
 				{
 					name: "customer_type_id",
-					value: requestData?.customer_type?.name || "-",
+					value: reqOrder?.customer_type?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "created_at",
-					value: requestData?.created_at
-						? moment(requestData.created_at).tz("Asia/Bangkok").format("LLL")
+					value: reqOrder?.created_at
+						? moment(reqOrder.created_at).tz("Asia/Bangkok").format("LLL")
 						: "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "ae_id",
-					value: requestData?.ae_area?.name || "-",
+					value: reqOrder?.ae_area?.name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "unit_head",
-					value: requestData?.users?.fullname || "-",
+					value: reqOrder?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "supervisor_name",
-					value: requestData?.supervisor_name || "-",
+					value: reqOrder?.supervisor_name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "phone",
-					value: requestData?.phone || "-",
+					value: reqOrder?.phone || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "ap_month",
-					value: requestData?.ap_month || "-",
+					value: reqOrder?.ap_month || "-",
 					labelTranslator: RequestOrderTranslation,
 					translator: month,
 				},
 				{
 					name: "ap_year",
-					value: String(requestData?.ap_year) || "-",
+					value: String(reqOrder?.ap_year) || "-",
 					labelTranslator: RequestOrderTranslation,
 					translator: yearMap,
 				},
@@ -259,32 +235,32 @@ export default function RequestManagementPage({
 			fields: [
 				{
 					name: "quota_number",
-					value: requestData?.quota_number || "-",
+					value: reqOrder?.quota_number || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "farmer_name",
-					value: requestData?.farmer_name || "-",
+					value: reqOrder?.farmer_name || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "land_number",
-					value: requestData?.land_number || "-",
+					value: reqOrder?.land_number || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "operation_area_id",
-					value: requestData?.operation_area?.operation_area || "-",
+					value: reqOrder?.operation_area?.operation_area || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "location_xy",
-					value: requestData?.location_xy || "-",
+					value: reqOrder?.location_xy || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					name: "target_area",
-					value: requestData?.target_area || "-",
+					value: reqOrder?.target_area || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -294,7 +270,7 @@ export default function RequestManagementPage({
 			fields: [
 				{
 					name: "count",
-					value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
+					value: `${reqOrder?.taskorders?.length || 0} กิจกรรม`,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -320,7 +296,7 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
+		<div className="flex flex-col justify-center items-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
@@ -331,7 +307,7 @@ export default function RequestManagementPage({
 
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
+				className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -339,12 +315,12 @@ export default function RequestManagementPage({
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
+					className="flex flex-col justify-center items-center gap-8 w-full"
 					title="รายละเอียด"
 				>
 					<Header
 						hasBorder={false}
-						subtitle={requestData.work_order_number}
+						subtitle={reqOrder.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
@@ -366,7 +342,7 @@ export default function RequestManagementPage({
 				{/* Edit tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					title="แก้ไข"
 				>
 					<FormComponent
@@ -375,7 +351,7 @@ export default function RequestManagementPage({
 						sections={commentSections}
 						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={requestData.work_order_number}
+						subtitle={reqOrder.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
@@ -391,7 +367,7 @@ export default function RequestManagementPage({
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="reject"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					title="ยกเลิก"
 				>
 					<FormComponent
@@ -400,7 +376,7 @@ export default function RequestManagementPage({
 						sections={commentSections}
 						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={requestData.work_order_number}
+						subtitle={reqOrder.work_order_number}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable

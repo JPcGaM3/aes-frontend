@@ -21,7 +21,12 @@ import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
-import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
+import {
+	RequestOrderTranslation,
+	TaskOrderTranslation,
+	month,
+	yearMap,
+} from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 
@@ -143,7 +148,7 @@ export default function RequestManagementPage({
 
 			if (
 				!commentValues.comment.trim() &&
-				status !== REQUESTORDERSTATUS.PendingApproval
+				status !== REQUESTORDERSTATUS.Pending
 			) {
 				setAlert({
 					title: "Warning!!",
@@ -252,6 +257,11 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 					translator: yearMap,
 				},
+				{
+					name: "count",
+					value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
+					labelTranslator: RequestOrderTranslation,
+				},
 			],
 		},
 		{
@@ -289,16 +299,41 @@ export default function RequestManagementPage({
 				},
 			],
 		},
-		{
-			title: "กิจกรรมและเครื่องมือ",
+		...(requestData?.taskorders || []).map((task, idx) => ({
+			title: `กิจกรรมที่ ${idx + 1}`,
 			fields: [
 				{
-					name: "count",
-					value: `${requestData?.taskorders?.length || 0} กิจกรรม`,
-					labelTranslator: RequestOrderTranslation,
+					name: "activity_id",
+					value: task.activities?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "car_id",
+					value: task.cars?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "tool_type",
+					value: task.tool_type?.tool_type_name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "tool_id",
+					value: task.tools?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "user_id",
+					value: task.users?.username || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "target_area",
+					value: task.target_area ?? "-",
+					labelTranslator: TaskOrderTranslation,
 				},
 			],
-		},
+		})),
 	];
 
 	const commentSections: FormSection[] = [
@@ -355,11 +390,13 @@ export default function RequestManagementPage({
 					<FieldValueDisplayer sections={dataSections} size="expanded" />
 
 					<FormButtons
+						cancelLabel="ยกเลิก"
 						hasBorder={false}
+						isSubmitting={isSubmitting}
 						size="expanded"
-						submitColor="default"
-						submitLabel="ยกเลิก"
-						onSubmit={handleCancel}
+						submitLabel="อนุมัติใบสั่งงาน"
+						onCancel={handleCancel}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Pending)}
 					/>
 				</Tab>
 

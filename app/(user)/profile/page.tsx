@@ -140,6 +140,7 @@ export default function ProfilePage() {
 						description={alert.description}
 						handleClose={() => setAlert({ ...alert, isVisible: false })}
 						isVisible={alert.isVisible}
+						size="compact"
 						title={alert.title}
 					/>
 				)}

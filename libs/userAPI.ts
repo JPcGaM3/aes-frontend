@@ -59,7 +59,13 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
 	}
 }
 
-export async function getUsers({ token }: { token: string }) {
+export async function getUsers({
+	token,
+	params,
+}: {
+	token: string;
+	params?: any;
+}) {
 	const apiUrl = process.env.API_URL || "http://localhost:8080";
 
 	try {
@@ -68,6 +74,7 @@ export async function getUsers({ token }: { token: string }) {
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",
 			},
+			params: params,
 		});
 
 		return response.data.data;

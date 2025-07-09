@@ -30,6 +30,7 @@ import {
 	CancelIcon,
 	ChevronDownIcon,
 	ChevronUpIcon,
+	CheckIcon,
 } from "@/utils/icons";
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { fontMono } from "@/config/fonts";
@@ -187,7 +188,7 @@ export default function Navbar() {
 							>
 								<PopoverTrigger>
 									<Button
-										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-20 w-fit"
+										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold min-w-24 w-fit"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -205,16 +206,30 @@ export default function Navbar() {
 									</Button>
 								</PopoverTrigger>
 
-								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-20">
+								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
 									<div className="flex flex-col w-full text-sm font-semibold">
 										{aeAreas.length > 0 ? (
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													className="justify-start w-full p-2 font-medium text-left"
+													className="justify-between w-full p-2 font-medium text-left text-md"
+													color={
+														userContext.ae_id === option.ae_area.id
+															? "primary"
+															: "default"
+													}
+													endContent={
+														userContext.ae_id === option.ae_area.id ? (
+															<CheckIcon />
+														) : null
+													}
 													radius="sm"
 													size="md"
-													variant="light"
+													variant={
+														userContext.ae_id === option.ae_area.id
+															? "flat"
+															: "light"
+													}
 													onPress={() =>
 														handleDropdownSelect(option.ae_area.id)
 													}

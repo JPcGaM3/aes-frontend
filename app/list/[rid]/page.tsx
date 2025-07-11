@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { use, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -39,6 +39,7 @@ export default function RequestManagementPage({
 	const pathname = usePathname();
 	const action = searchParams.get("action") || "view";
 
+	const hasFetched = useRef(false);
 	const [selectedTab, setSelectedTab] = useState(action);
 	const [reqOrder, setReqOrder] = useState<RequestOrder>({} as RequestOrder);
 
@@ -56,15 +57,16 @@ export default function RequestManagementPage({
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (rid && isReady) {
-			setIsLoading(true);
+		if (rid && isReady && !hasFetched.current) {
+			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
 					await fetchReqOrderWithTaskData({
 						token: userContext.token,
 						requestId: rid,
-						setReqOrder: setReqOrder,
-						setAlert: setAlert,
+						setReqOrder,
+						setAlert,
+						setIsLoading,
 					});
 				} catch (error: any) {
 					setAlert({
@@ -356,7 +358,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="สาเหตุการปฏิเสธงาน"
+						title="แก้ไขใบสั่งงาน"
 						values={commentValues}
 						onCancel={handleCancel}
 						onChange={handleCommentChange}
@@ -381,7 +383,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="สาเหตุการปฏิเสธงาน"
+						title="ปฏิเสธใบสั่งงาน"
 						values={commentValues}
 						onCancel={handleCancel}
 						onChange={handleCommentChange}

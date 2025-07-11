@@ -42,8 +42,8 @@ export default function AlertComponent({
 
 	const placementClass =
 		placement === "bottom"
-			? "fixed left-0 right-0 bottom-0 z-50 flex items-center justify-center w-full p-3"
-			: "fixed left-0 right-0 top-16 z-50 flex items-center justify-center w-full p-3 ";
+			? "fixed left-0 right-0 bottom-0 z-[1500] flex items-center justify-center w-full p-3"
+			: "fixed left-0 right-0 top-16 z-[1500] flex items-center justify-center w-full p-3 ";
 
 	return (
 		<div className={placementClass}>

@@ -33,13 +33,16 @@ import {
 	getRequestOrderWithTask,
 	SetStatusRequestOrder,
 } from "@/libs/requestOrderAPI";
-import { getOperationAreas } from "@/libs/operationAreaAPI";
-import { getCustomerTypes } from "@/libs/customerTypeAPI";
-import { getAeAreaAll } from "@/libs/aeAreaAPI";
-import { getUsers } from "@/libs/userAPI";
-import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
+import {
+	fetchAE,
+	fetchCustomerTypes,
+	fetchOperationAreas,
+	fetchReqOrderWithTaskData,
+	fetchUsers,
+} from "@/utils/functions";
 
 moment.locale("th");
 
@@ -81,48 +84,40 @@ export default function RequestManagementPage({
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (
-			rid &&
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchData = async ({
-				token,
-				requestId,
-			}: {
-				token: string;
-				requestId: number;
-			}) => {
-				setIsLoading(true);
-
+		if (rid && isReady) {
+			const fetchData = async () => {
 				try {
-					const user = await getUsers({
-						token: token,
+					await fetchUsers({
+						token: userContext.token,
+						role: [USERROLE.UnitHead],
+						setUsers: setUsersOptions,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
 					});
-					const ae_area = await getAeAreaAll({
-						token: token,
+					await fetchAE({
+						token: userContext.token,
+						setAE: setAeOptions,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
 					});
-					const customer_type = await getCustomerTypes({
-						token: token,
+					await fetchCustomerTypes({
+						token: userContext.token,
+						setCustomerTypes: setCustomerOptions,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
 					});
-					const operation_area = await getOperationAreas({
-						token: token,
+					await fetchOperationAreas({
+						token: userContext.token,
+						setOpArea: setOpOption,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
 					});
-					const request: RequestOrder = await getRequestOrderWithTask({
-						token: token,
-						requestId: requestId,
-					});
-
-					setUsersOptions(user);
-					setAeOptions(ae_area);
-					setCustomerOptions(customer_type);
-					setOpOption(operation_area);
-					setRequestData({
-						...request,
-						work_order_number: `${request.ae_area?.name}${request.operation_area?.operation_area}${request.ap_year ? Number(request.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${request.run_number || ""}`,
+					await fetchReqOrderWithTaskData({
+						token: userContext.token,
+						requestId: rid,
+						setReqOrder: setRequestData,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
 					});
 				} catch (error: any) {
 					setAlert({
@@ -136,12 +131,9 @@ export default function RequestManagementPage({
 				}
 			};
 
-			fetchData({
-				token: userContext.token,
-				requestId: rid,
-			});
+			fetchData();
 		}
-	}, [userContext, isReady, rid]);
+	}, [isReady, rid]);
 
 	// Handler ---------------------------------------------------------------------------------------------------
 	const handleTabChange = (key: React.Key) => {
@@ -480,7 +472,7 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
+		<div className="flex flex-col justify-center items-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
@@ -491,7 +483,7 @@ export default function RequestManagementPage({
 
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+				className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -499,14 +491,14 @@ export default function RequestManagementPage({
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
+					className="flex flex-col justify-center items-center gap-8 w-full"
 					title="รายละเอียด"
 				>
 					<Header
 						hasBorder={false}
 						subtitle={`@${requestData.work_order_number}`}
 						subtitleClassName={clsx(
-							"mt-1 text-sm text-gray-600 font-mono",
+							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
 						title="ดูรายละเอียดใบสั่งงาน"
@@ -546,7 +538,7 @@ export default function RequestManagementPage({
 				{/* Edit tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
-					className="flex flex-col items-center justify-center w-full gap-20"
+					className="flex flex-col justify-center items-center gap-20 w-full"
 					title="แก้ไข"
 				>
 					<FormComponent
@@ -558,7 +550,7 @@ export default function RequestManagementPage({
 						submitLabel="บันทึก"
 						subtitle={`@${requestData.work_order_number}`}
 						subtitleClassName={clsx(
-							"mt-1 text-sm text-gray-600 font-mono",
+							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
 						title="แก้ไขใบสั่งงาน"
@@ -571,7 +563,7 @@ export default function RequestManagementPage({
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="reject"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					title="ยกเลิก"
 				>
 					<FormComponent
@@ -584,7 +576,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="สาเหตุการปฏิเสธงาน"
+						title="ปฏิเสธใบสั่งงาน"
 						values={commentValues}
 						onCancel={handleCancel}
 						onChange={handleCommentChange}

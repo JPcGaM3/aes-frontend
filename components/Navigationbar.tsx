@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
@@ -19,7 +19,6 @@ import { clsx } from "clsx";
 import AlertComponent from "./AlertComponent";
 
 import { useAuth } from "@/providers/AuthContext";
-import { useLoading } from "@/providers/LoadingContext";
 import {
 	HomeIcon,
 	RequestIcon,
@@ -45,7 +44,7 @@ export default function Navbar() {
 	// const { setIsLoading } = useLoading();
 	const { userContext, setUserContext, isReady } = useAuth();
 
-	const [hasMounted, setHasMounted] = useState(false);
+	const hasFetched = useRef(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
@@ -94,7 +93,7 @@ export default function Navbar() {
 			fetchAeArea({ token: userContext!.token });
 		}
 
-		setHasMounted(true);
+		hasFetched.current = true;
 	}, [userContext, isReady]);
 
 	const dynamicMenuItems = menuItems.map((item) => {
@@ -173,7 +172,7 @@ export default function Navbar() {
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
-					{userContext.token && hasMounted && (
+					{userContext.token && hasFetched.current && (
 						<NavbarItem
 							className={clsx(
 								"justify-end items-center bg-default-100 rounded-lg w-fit h-full font-mono",

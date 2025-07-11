@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Divider, useDisclosure } from "@heroui/react";
@@ -33,7 +33,7 @@ import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
-import { fetchCustomerType, fetchReqOrderData } from "@/utils/functions";
+import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
 
 interface filterInterface {
 	customer_type_id?: number;
@@ -57,6 +57,8 @@ export default function ListPage() {
 	const currentYear = String(now.getFullYear());
 	const currentMonth = monthList[now.getMonth()].value;
 
+	const prevAeId = useRef<number | undefined>(undefined);
+	const hasFetched = useRef(false);
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
 	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
 	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
@@ -66,25 +68,32 @@ export default function ListPage() {
 	});
 
 	useEffect(() => {
-		if (isReady && userContext?.ae_id && filter !== null) {
+		if (
+			isReady &&
+			userContext?.ae_id &&
+			filter !== null &&
+			prevAeId.current !== userContext.ae_id
+		) {
+			prevAeId.current = userContext.ae_id;
+			hasFetched.current = false;
 			setFilter({
 				start_month: currentMonth,
 				start_year: currentYear,
 			});
 		}
-	}, [userContext?.ae_id, isReady]);
+	}, [userContext?.ae_id, isReady, filter, currentMonth, currentYear]);
 
 	useEffect(() => {
-		setIsLoading(true);
-
-		if (isReady && userContext?.ae_id) {
+		if (isReady && userContext?.ae_id && !hasFetched.current) {
+			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
 					if (customerTypes.length < 1) {
-						await fetchCustomerType({
+						await fetchCustomerTypes({
 							token: userContext.token,
 							setCustomerTypes,
 							setAlert,
+							setIsLoading,
 						});
 					}
 
@@ -99,6 +108,7 @@ export default function ListPage() {
 						params: params,
 						setReqOrders,
 						setAlert,
+						setIsLoading,
 					});
 				} catch (error: any) {
 					setAlert({
@@ -263,6 +273,7 @@ export default function ListPage() {
 	};
 
 	const handleApplyFilters = (values: any) => {
+		hasFetched.current = false;
 		setFilter(values);
 		onCloseFilter();
 	};
@@ -295,8 +306,17 @@ export default function ListPage() {
 	};
 
 	return (
-		<div>
+		<>
 			{/* Modal ------------------------------------------------------------- */}
+			{alert && reqOrders.length == 0 && (
+				<AlertComponent
+					{...alert}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
+					placement="bottom"
+					size="full"
+				/>
+			)}
 			<FilterModal
 				cancelLabel="Cancel"
 				isOpen={isOpenFilter}
@@ -307,6 +327,7 @@ export default function ListPage() {
 				onClose={() => onCloseFilter()}
 				onSubmit={handleApplyFilters}
 			/>
+
 			{/* Header ----------------------------------------------------------- */}
 			<Header
 				className="mb-6 w-full text-left"
@@ -360,29 +381,19 @@ export default function ListPage() {
 			</Header>
 
 			{/* Body ------------------------------------------------------------- */}
-			{alert ? (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert(null)}
-					isVisible={alert != null}
-					placement="bottom"
-					size="full"
-				/>
-			) : (
-				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
-						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
-					</div>
-
-					<CardComponent
-						actions={actions}
-						bodyFields={bodyFields}
-						headerFields={headerFields}
-						items={reqOrders}
-						statusConfig={statusConfig}
-					/>
+			<div>
+				<div className="mb-4 font-medium text-gray-700 text-right">
+					{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 				</div>
-			)}
-		</div>
+
+				<CardComponent
+					actions={actions}
+					bodyFields={bodyFields}
+					headerFields={headerFields}
+					items={reqOrders}
+					statusConfig={statusConfig}
+				/>
+			</div>
+		</>
 	);
 }

@@ -79,7 +79,6 @@ export default function FormFields({
 			name: name,
 			label: labelValue,
 			placeholder: placeholder,
-			"aria-label": name,
 			radius: "sm",
 			size: size || "md",
 			isDisabled: isReadOnly || false,

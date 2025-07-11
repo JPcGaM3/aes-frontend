@@ -129,6 +129,7 @@ export default function InputRenderer({
 			return (
 				<Input
 					{...commonProps}
+					aria-label={commonProps.label}
 					type={type}
 					value={value}
 					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
@@ -140,6 +141,7 @@ export default function InputRenderer({
 			return (
 				<Textarea
 					{...commonProps}
+					aria-label={commonProps.label}
 					minRows={commonProps.minRows || 3}
 					value={value}
 					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
@@ -151,6 +153,7 @@ export default function InputRenderer({
 			return (
 				<NumberInput
 					{...commonProps}
+					aria-label={commonProps.label}
 					value={value}
 					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
@@ -161,6 +164,7 @@ export default function InputRenderer({
 			return (
 				<Input
 					{...commonProps}
+					aria-label={commonProps.label}
 					autoComplete="off"
 					endContent={
 						<Button
@@ -186,6 +190,7 @@ export default function InputRenderer({
 			return (
 				<Select
 					{...commonProps}
+					aria-label={commonProps.label}
 					classNames={{
 						...commonProps.classNames,
 						popoverContent: "rounded-lg p-0",
@@ -196,6 +201,8 @@ export default function InputRenderer({
 							? new Set([String(value)])
 							: new Set()
 					}
+					shouldCloseOnBlur={true}
+					shouldCloseOnInteractOutside={true}
 					onSelectionChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -236,6 +243,7 @@ export default function InputRenderer({
 				<DatePicker
 					{...commonProps}
 					showMonthAndYearPickers
+					aria-label={commonProps.label}
 					value={value}
 					onChange={onValueChange ? handleUnifiedValueChange : undefined}
 				/>
@@ -248,6 +256,7 @@ export default function InputRenderer({
 					<DateRangePicker
 						{...commonProps}
 						showMonthAndYearPickers
+						aria-label={commonProps.label}
 						value={value}
 						visibleMonths={getVisibleMonths()}
 						onChange={onValueChange ? handleUnifiedValueChange : undefined}

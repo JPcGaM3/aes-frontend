@@ -75,6 +75,7 @@ export default function FormPage() {
 		<div className="flex flex-col items-center justify-center gap-20">
 			<FormComponent
 				sections={sections}
+				size="compact"
 				subtitle="Please fill out the form below."
 				title="Request Order Form"
 				onCancel={handleCancel}
@@ -95,8 +96,8 @@ export default function FormPage() {
 			/>
 
 			<FormComponent
-				isCompact
 				sections={sections}
+				size="expanded"
 				subtitle="Please fill out the form below."
 				title="Request Order Form"
 				onCancel={handleCancel}

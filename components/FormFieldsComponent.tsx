@@ -122,18 +122,10 @@ export default function FormFields({
 											subField && (
 												<InputRenderer
 													key={subIndex}
-													commonProps={commonProp(field)}
+													commonProps={commonProp(subField)}
 													type={subField.type}
 													value={getValue(subField)}
-													onValueChange={
-														onValueChange
-															? (name, value) =>
-																	onValueChange(
-																		subField.path || subField.name,
-																		value
-																	)
-															: undefined
-													}
+													onValueChange={onValueChange}
 												/>
 											)
 									)}
@@ -142,16 +134,10 @@ export default function FormFields({
 								field && (
 									<div key={i} className="w-full col-span-1">
 										<InputRenderer
-											key={i}
 											commonProps={commonProp(field)}
 											type={field.type}
 											value={getValue(field)}
-											onValueChange={
-												onValueChange
-													? (name, value) =>
-															onValueChange(field.path || field.name, value)
-													: undefined
-											}
+											onValueChange={onValueChange}
 										/>
 									</div>
 								)

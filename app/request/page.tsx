@@ -145,8 +145,6 @@ export default function RequestPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
-
 		switch (params.action) {
 			case "view":
 			case "edit":

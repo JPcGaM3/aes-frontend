@@ -7,8 +7,6 @@ import Header from "./Header";
 import FormFields from "./FormFieldsComponent";
 import FormButtons from "./FormButtons";
 
-import { setNestedValue } from "@/utils/functions";
-
 export default function FormComponent({
 	hasHeader = true,
 	hasBorder = true,
@@ -34,14 +32,13 @@ export default function FormComponent({
 		setFormValues(values);
 	}, [JSON.stringify(values)]);
 
-	const handleValueChange = (path: string, value: any) => {
-		const newValues = { ...formValues };
+	const handleValueChange = (name: string, value: any) => {
+		const newValues = { ...formValues, [name]: value };
 
-		setNestedValue(newValues, path, value);
 		setFormValues(newValues);
 
 		if (onChange) {
-			onChange({ [path]: value });
+			onChange(newValues);
 		}
 	};
 
@@ -67,7 +64,7 @@ export default function FormComponent({
 		<div className={`${computedClassName} ${className}`}>
 			{onSubmit ? (
 				<Form
-					className="flex flex-col w-full gap-8 sm"
+					className={"flex flex-col w-full gap-8"}
 					validationBehavior="aria"
 					onSubmit={handleSubmit}
 				>

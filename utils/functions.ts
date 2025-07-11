@@ -1,10 +1,19 @@
 import { AlertComponentProps } from "@/interfaces/props";
-import { CustomerType, RequestOrder } from "@/interfaces/schema";
+import {
+	AeArea,
+	CustomerType,
+	OperationArea,
+	RequestOrder,
+	User,
+} from "@/interfaces/schema";
+import { getAeAreaAll } from "@/libs/aeAreaAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import { getOperationAreas } from "@/libs/operationAreaAPI";
 import {
 	getRequestOrders,
 	getRequestOrderWithTask,
 } from "@/libs/requestOrderAPI";
+import { getUsers } from "@/libs/userAPI";
 
 /**
  * Translates an enum value using a translation map.
@@ -13,6 +22,7 @@ import {
  * @param translationMap - The map containing translations for each enum value.
  * @returns The translated value, or the original value if no translation is found.
  */
+
 export function translateEnumValue<T extends string>(
 	value: T,
 	translationMap: Record<string, string>
@@ -31,15 +41,18 @@ export function getNestedValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 }
 
-export async function fetchCustomerType({
+export async function fetchCustomerTypes({
 	token,
 	setCustomerTypes,
 	setAlert,
+	setIsLoading,
 }: {
 	token: string;
 	setCustomerTypes: (options: CustomerType[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
 }) {
+	setIsLoading(true);
 	if (token) {
 		try {
 			const customer_type = await getCustomerTypes({
@@ -62,12 +75,15 @@ export async function fetchReqOrderData({
 	params,
 	setReqOrders,
 	setAlert,
+	setIsLoading,
 }: {
 	token: string;
 	params: any;
 	setReqOrders: (orders: RequestOrder[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
 }) {
+	setIsLoading(true);
 	if (token && params) {
 		try {
 			const data = await getRequestOrders({
@@ -101,12 +117,15 @@ export async function fetchReqOrderWithTaskData({
 	requestId,
 	setReqOrder,
 	setAlert,
+	setIsLoading,
 }: {
 	token: string;
 	requestId: number;
 	setReqOrder: (order: RequestOrder) => void;
 	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
 }) {
+	setIsLoading(true);
 	if (token && requestId) {
 		try {
 			const data = await getRequestOrderWithTask({
@@ -134,6 +153,133 @@ export async function fetchReqOrderWithTaskData({
 			}
 
 			setReqOrder({} as RequestOrder);
+		}
+	}
+}
+
+export async function fetchUsers({
+	token,
+	ae_id,
+	role,
+	setUsers,
+	setAlert,
+	setIsLoading,
+}: {
+	token: string;
+	ae_id?: number;
+	role?: string[];
+	setUsers: (users: User[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
+}) {
+	setIsLoading(true);
+	if (token) {
+		try {
+			const paramData = {
+				...(ae_id && { ae_id }),
+				...(!(role!.length == 0) && { role }),
+			};
+
+			const data = await getUsers({
+				token,
+				paramData: paramData || {},
+			});
+
+			setUsers(data);
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบข้อมูลผู้ใช้ในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: error.message,
+					color: "danger",
+				});
+			}
+
+			setUsers([] as User[]);
+		}
+	}
+}
+
+export async function fetchAE({
+	token,
+	setAE,
+	setAlert,
+	setIsLoading,
+}: {
+	token: string;
+	setAE: (ae: AeArea[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
+}) {
+	setIsLoading(true);
+	if (token) {
+		try {
+			const data = await getAeAreaAll({
+				token,
+			});
+
+			setAE(data);
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบข้อมูลสังกัดในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: error.message,
+					color: "danger",
+				});
+			}
+
+			setAE([] as AeArea[]);
+		}
+	}
+}
+
+export async function fetchOperationAreas({
+	token,
+	setOpArea,
+	setAlert,
+	setIsLoading,
+}: {
+	token: string;
+	setOpArea: (op: OperationArea[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
+}) {
+	setIsLoading(true);
+	if (token) {
+		try {
+			const data = await getOperationAreas({
+				token,
+			});
+
+			setOpArea(data);
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบข้อมูลพื้นที่ปฏิบัติงานในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: error.message,
+					color: "danger",
+				});
+			}
+
+			setOpArea([] as OperationArea[]);
 		}
 	}
 }

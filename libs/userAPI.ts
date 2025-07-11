@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 
 export interface LoginProps {
 	params: {
@@ -59,11 +60,28 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
 	}
 }
 
-export async function getUsers({ token }: { token: string }) {
+export async function getUsers({
+	token,
+	paramData,
+}: {
+	token: string;
+	paramData?: { ae_id?: number; role?: string[] };
+}) {
 	const apiUrl = process.env.API_URL || "http://localhost:8080";
+	const params: Record<string, any> = {};
+
+	if (paramData) {
+		if (paramData.ae_id) params.ae_id = paramData.ae_id;
+		if (paramData.role && paramData.role.length > 0) {
+			params.role = paramData.role;
+		}
+	}
 
 	try {
 		const response = await axios.get(`${apiUrl}/api/v1/users`, {
+			params,
+			paramsSerializer: (params) =>
+				qs.stringify(params, { arrayFormat: "repeat" }),
 			headers: {
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",

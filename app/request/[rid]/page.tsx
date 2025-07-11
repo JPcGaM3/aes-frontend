@@ -32,6 +32,7 @@ import {
 	yearList,
 	RequestOrderTranslation,
 	TaskOrderTranslation,
+	RequestOrderStatusTranslation,
 } from "@/utils/constants";
 import {
 	getRequestOrderWithTask,
@@ -46,6 +47,7 @@ import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
 import { getActivities } from "@/libs/activityAPI";
 import { getCars } from "@/libs/carAPI";
+import { translateEnumValue } from "@/utils/functions";
 
 moment.locale("th");
 
@@ -89,6 +91,9 @@ export default function RequestManagementPage({
 		description: "",
 		isVisible: false,
 	});
+	const [changedValues, setChangedValues] = useState<RequestOrder>(
+		{} as RequestOrder
+	);
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -198,8 +203,8 @@ export default function RequestManagementPage({
 				status !== REQUESTORDERSTATUS.PendingApproval
 			) {
 				setAlert({
-					title: "Warning!!",
-					description: "คำอธิบาย: กรุณาระบุเหตุผล",
+					title: "คำเตือน!!",
+					description: "กรุณาระบุเหตุผล",
 					color: "warning",
 					isVisible: true,
 				});
@@ -222,8 +227,8 @@ export default function RequestManagementPage({
 				});
 
 				setAlert({
-					title: "ยกเลิกใบสั่งงานสำเร็จ",
-					description: `ยกเลิกใบสั่งงานเลขที่ ${requestData.work_order_number} แล้ว`,
+					title: "อัพเดตใบสั่งงานสำเร็จ",
+					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
 					color: "success",
 					isVisible: true,
 				});
@@ -258,6 +263,17 @@ export default function RequestManagementPage({
 
 	const handleCommentChange = (newValues: typeof commentValues) => {
 		setCommentValues(newValues);
+	};
+
+	const handleValueChange = (newValues: Partial<typeof changedValues>) => {
+		setChangedValues((prevValues) => ({
+			...prevValues,
+			...newValues,
+		}));
+	};
+
+	const handleSubmit = () => {
+		console.log("Changed values:", changedValues);
 	};
 
 	const getToolTypeData = (activity_id: number) => {
@@ -617,7 +633,7 @@ export default function RequestManagementPage({
 							"mt-1 text-sm text-gray-600 font-mono",
 							fontMono.variable
 						)}
-						title="ดูรายละเอียดใบสั่งงาน"
+						title="รายละเอียดใบสั่งงาน"
 					/>
 
 					{requestData.comment && (
@@ -641,7 +657,8 @@ export default function RequestManagementPage({
 						cancelLabel="ยกเลิก"
 						hasBorder={false}
 						isSubmitDisabled={
-							requestData.status === REQUESTORDERSTATUS.PendingApproval
+							requestData.status !== REQUESTORDERSTATUS.Created &&
+							requestData.status !== REQUESTORDERSTATUS.PendingEdit
 						}
 						isSubmitting={isSubmitting}
 						size="expanded"
@@ -655,6 +672,10 @@ export default function RequestManagementPage({
 				<Tab
 					key="edit"
 					className="flex flex-col items-center justify-center w-full gap-20"
+					isDisabled={
+						requestData.status === REQUESTORDERSTATUS.Rejected ||
+						requestData.status === REQUESTORDERSTATUS.PendingApproval
+					}
 					title="แก้ไข"
 				>
 					<FormComponent
@@ -670,9 +691,10 @@ export default function RequestManagementPage({
 							fontMono.variable
 						)}
 						title="แก้ไขใบสั่งงาน"
-						values={requestData}
+						values={{ ...requestData, ...changedValues }}
 						onCancel={handleCancel}
-						onSubmit={() => {}}
+						onChange={handleValueChange}
+						onSubmit={handleSubmit}
 					/>
 				</Tab>
 
@@ -680,6 +702,10 @@ export default function RequestManagementPage({
 				<Tab
 					key="reject"
 					className="flex flex-col items-center justify-center w-full"
+					isDisabled={
+						requestData.status === REQUESTORDERSTATUS.Rejected ||
+						requestData.status === REQUESTORDERSTATUS.PendingApproval
+					}
 					title="ยกเลิก"
 				>
 					<FormComponent

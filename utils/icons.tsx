@@ -845,6 +845,7 @@ export const DeleteIcon = (props: IconSvgProps) => {
 	return (
 		<svg
 			aria-hidden="true"
+			fill="none"
 			focusable="false"
 			height={size || height}
 			role="presentation"

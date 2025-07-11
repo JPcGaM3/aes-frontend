@@ -384,7 +384,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="ดูรายละเอียดใบสั่งงาน"
+						title="รายละเอียดใบสั่งงาน"
 					/>
 
 					<FieldValueDisplayer sections={dataSections} size="expanded" />
@@ -417,7 +417,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="สาเหตุการปฏิเสธงาน"
+						title="สาเหตุการแก้ไขใบสั่งงาน"
 						values={commentValues}
 						onCancel={handleCancel}
 						onChange={handleCommentChange}
@@ -442,7 +442,7 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="สาเหตุการปฏิเสธงาน"
+						title="ปฏิเสธใบสั่งงาน"
 						values={commentValues}
 						onCancel={handleCancel}
 						onChange={handleCommentChange}

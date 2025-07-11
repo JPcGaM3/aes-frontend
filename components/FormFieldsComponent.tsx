@@ -112,7 +112,7 @@ export default function FormFields({
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
 					<div
-						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(400px,1fr))]"}`}
+						className={`grid w-full ${isCompact ? "gap-y-4 grid-cols-1" : "gap-x-4 gap-y-2 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]"}`}
 					>
 						{section.fields.map((field, i) =>
 							Array.isArray(field) ? (
@@ -122,10 +122,18 @@ export default function FormFields({
 											subField && (
 												<InputRenderer
 													key={subIndex}
-													commonProps={commonProp(subField)}
+													commonProps={commonProp(field)}
 													type={subField.type}
 													value={getValue(subField)}
-													onValueChange={onValueChange}
+													onValueChange={
+														onValueChange
+															? (name, value) =>
+																	onValueChange(
+																		subField.path || subField.name,
+																		value
+																	)
+															: undefined
+													}
 												/>
 											)
 									)}
@@ -134,10 +142,16 @@ export default function FormFields({
 								field && (
 									<div key={i} className="w-full col-span-1">
 										<InputRenderer
+											key={i}
 											commonProps={commonProp(field)}
 											type={field.type}
 											value={getValue(field)}
-											onValueChange={onValueChange}
+											onValueChange={
+												onValueChange
+													? (name, value) =>
+															onValueChange(field.path || field.name, value)
+													: undefined
+											}
 										/>
 									</div>
 								)

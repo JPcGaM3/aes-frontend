@@ -34,6 +34,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { AlertComponentProps } from "@/interfaces/props";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
 	status?: string;
@@ -262,31 +263,6 @@ export default function RequestPage() {
 		},
 	];
 
-	const actions = [
-		{
-			key: "view",
-			label: "ดูรายละเอียด",
-			icon: <InfoIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "view" } }),
-		},
-		{
-			key: "edit",
-			label: "แก้ไข",
-			icon: <EditIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "edit" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
-
 	const headerFields: FieldConfig[] = [
 		{
 			key: "quota_number",
@@ -356,6 +332,41 @@ export default function RequestPage() {
 	const statusConfig = {
 		colorMap: RequestOrderStatusColorMap,
 		translation: RequestOrderStatusTranslation,
+	};
+
+	const getActions = (item: RequestOrder) => {
+		const actionList = [
+			{
+				key: "view",
+				label: "ดูรายละเอียด",
+				icon: <InfoIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "view" } }),
+			},
+		];
+
+		if (
+			item.status !== REQUESTORDERSTATUS.Rejected &&
+			item.status !== REQUESTORDERSTATUS.PendingApproval
+		) {
+			actionList.push({
+				key: "edit",
+				label: "แก้ไข",
+				icon: <EditIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "edit" } }),
+			});
+
+			actionList.push({
+				key: "reject",
+				label: "ปฏิเสธ",
+				icon: <RejectIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "reject" } }),
+			});
+		}
+
+		return actionList;
 	};
 
 	return (
@@ -440,7 +451,7 @@ export default function RequestPage() {
 					</div>
 
 					<CardComponent
-						actions={actions}
+						actions={(item: RequestOrder) => getActions(item)}
 						bodyFields={bodyFields}
 						headerFields={headerFields}
 						items={reqOrders}

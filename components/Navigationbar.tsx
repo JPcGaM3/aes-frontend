@@ -141,6 +141,7 @@ export default function Navbar() {
 					description={alert.description}
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
 					isVisible={alert.isVisible}
+					size="full"
 					title={alert.title}
 				/>
 			)}
@@ -159,7 +160,15 @@ export default function Navbar() {
 				<NavbarContent className="items-center justify-start w-full gap-2">
 					{/* Logo */}
 					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
-						<div className="relative h-full aspect-[1/1]">
+						<Button
+							isIconOnly
+							className="relative h-full p-0 aspect-[1/1]"
+							isDisabled={!userContext?.token}
+							radius="sm"
+							size="lg"
+							variant="light"
+							onPress={() => handleNav("/home")}
+						>
 							<Image
 								fill
 								priority
@@ -169,7 +178,7 @@ export default function Navbar() {
 								sizes="(max-height: 4828px) 48px"
 								src="/pictures/logo.png"
 							/>
-						</div>
+						</Button>
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
@@ -270,10 +279,9 @@ export default function Navbar() {
 							return (
 								<Button
 									key={item.name}
-									className={`font-semibold px-2 flex justify-center items-center gap-2 h-full
-                    ${!(userContext?.token || isActive) ? "opacity-50 cursor-not-allowed" : ""}`}
+									className="flex items-center justify-center h-full gap-2 px-2 font-semibold"
 									color={isActive ? "primary" : "default"}
-									disabled={!userContext?.token && !isActive}
+									isDisabled={!userContext?.token && !isActive}
 									radius="sm"
 									size="md"
 									variant={isActive ? "solid" : "light"}

@@ -22,7 +22,6 @@ import {
 	CustomerType,
 	OperationArea,
 	RequestOrder,
-	TaskOrder,
 	User,
 } from "@/interfaces/schema";
 import {
@@ -64,7 +63,6 @@ export default function RequestManagementPage({
 	const pathname = usePathname();
 	const action = searchParams.get("action") || "view";
 
-	const [tasks, setTasks] = useState<TaskOrder[]>([]);
 	const [selectedTab, setSelectedTab] = useState(action);
 	const [carData, setCarData] = useState<Car[]>([]);
 	const [aeData, setAeData] = useState<AeArea[]>([]);
@@ -102,6 +100,13 @@ export default function RequestManagementPage({
 						token: userContext.token,
 						role: [USERROLE.UnitHead],
 						setUsers: setUnitHeadData,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
+					});
+					await fetchUsers({
+						token: userContext.token,
+						role: [USERROLE.Driver],
+						setUsers: setDriverData,
 						setAlert: setAlert,
 						setIsLoading: setIsLoading,
 					});
@@ -507,7 +512,7 @@ export default function RequestManagementPage({
 				},
 			],
 		},
-		...tasks.map(
+		...(requestData.taskorders || []).map(
 			(task, idx): FormSection => ({
 				title: `กิจกรรมที่ ${idx + 1}`,
 				fields: [

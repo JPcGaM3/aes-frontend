@@ -153,7 +153,7 @@ export interface CardComponentProps<T> {
 	statusConfig?: StatusConfig;
 	headerFields?: FieldConfig[];
 	bodyFields: FieldConfig[];
-	actions?: ActionConfig[];
+	actions?: ((item: T) => ActionConfig[]) | ActionConfig[];
 	isActionsPage?: boolean;
 	cardClassName?: string;
 }

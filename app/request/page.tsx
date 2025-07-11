@@ -33,6 +33,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { AlertComponentProps } from "@/interfaces/props";
 import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
 	status?: string;
@@ -228,31 +229,6 @@ export default function RequestPage() {
 		},
 	];
 
-	const actions = [
-		{
-			key: "view",
-			label: "ดูรายละเอียด",
-			icon: <InfoIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "view" } }),
-		},
-		{
-			key: "edit",
-			label: "แก้ไข",
-			icon: <EditIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "edit" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
-
 	const headerFields: FieldConfig[] = [
 		{
 			key: "quota_number",
@@ -324,6 +300,41 @@ export default function RequestPage() {
 		translation: RequestOrderStatusTranslation,
 	};
 
+	const getActions = (item: RequestOrder) => {
+		const actionList = [
+			{
+				key: "view",
+				label: "ดูรายละเอียด",
+				icon: <InfoIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "view" } }),
+			},
+		];
+
+		if (
+			item.status !== REQUESTORDERSTATUS.Rejected &&
+			item.status !== REQUESTORDERSTATUS.PendingApproval
+		) {
+			actionList.push({
+				key: "edit",
+				label: "แก้ไข",
+				icon: <EditIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "edit" } }),
+			});
+
+			actionList.push({
+				key: "reject",
+				label: "ปฏิเสธ",
+				icon: <RejectIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "reject" } }),
+			});
+		}
+
+		return actionList;
+	};
+
 	return (
 		<>
 			{/* Modal ------------------------------------------------------------- */}
@@ -349,13 +360,13 @@ export default function RequestPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="mb-6 w-full text-left"
+				className="w-full mb-6 text-left"
 				orientation="horizontal"
 				subtitle="ใบสั่งงานทั้งหมด"
 				title="รายการใบสั่งงาน"
 			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon />}
 					radius="sm"
@@ -378,7 +389,7 @@ export default function RequestPage() {
 				<Divider className="w-[1px] h-10" orientation="vertical" />
 
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<PlusIcon />}
 					radius="sm"
@@ -402,12 +413,12 @@ export default function RequestPage() {
 			{/* Body ------------------------------------------------------------- */}
 
 			<div>
-				<div className="mb-4 font-medium text-gray-700 text-right">
+				<div className="mb-4 font-medium text-right text-gray-700">
 					{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 				</div>
 
 				<CardComponent
-					actions={actions}
+					actions={(item: RequestOrder) => getActions(item)}
 					bodyFields={bodyFields}
 					headerFields={headerFields}
 					items={reqOrders}

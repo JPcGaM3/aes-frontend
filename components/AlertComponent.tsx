@@ -33,11 +33,13 @@ export default function AlertComponent({
 	let computedClassName = "";
 
 	if (size === "compact") {
-		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+		computedClassName =
+			"relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {
-		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+		computedClassName =
+			"relative w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
 	} else {
-		computedClassName = "w-full";
+		computedClassName = "relative w-full";
 	}
 
 	const placementClass =

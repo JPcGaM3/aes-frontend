@@ -41,6 +41,28 @@ export function getNestedValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, part) => acc && acc[part], obj);
 }
 
+/**
+ * Sets a nested value in an object using a dot-separated path.
+ *
+ * @param obj - The object to modify.
+ * @param path - The dot-separated path to the desired value.
+ * @param value - The value to set.
+ */
+export function setNestedValue(obj: any, path: string, value: any) {
+	const keys = path.split(".");
+	const lastKey = keys.pop();
+	let temp = obj;
+
+	for (const key of keys) {
+		if (!temp[key]) temp[key] = {};
+		temp = temp[key];
+	}
+
+	if (lastKey) {
+		temp[lastKey] = value;
+	}
+}
+
 export async function fetchCustomerTypes({
 	token,
 	setCustomerTypes,

@@ -436,7 +436,7 @@ export default function AddRequestPage() {
 					options: getToolTypeOptions(task.activity_name),
 					isRequired: true,
 					className: "w-1/2",
-					isDisabled: !task.activity_name,
+					isReadOnly: !task.activity_name,
 				},
 			]),
 		},

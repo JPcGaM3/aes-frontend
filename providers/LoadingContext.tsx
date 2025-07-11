@@ -3,7 +3,6 @@
 import React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "@heroui/react";
-import { usePathname } from "next/navigation";
 
 import { ColorType } from "@/types";
 
@@ -22,7 +21,6 @@ export const useLoading = () => useContext(LoadingContext);
 export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	const pathname = usePathname();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [colorIndex, setColorIndex] = useState<number>(0);
 
@@ -37,17 +35,6 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 
 		return () => clearInterval(intervalId);
 	}, [isLoading]);
-
-	// useEffect(() => {
-	// 	setIsLoading(true);
-
-	// 	// TODO: Remove timeout
-	// 	const timeout = setTimeout(() => {
-	// 		setIsLoading(false);
-	// 	}, 1000);
-
-	// 	return () => clearTimeout(timeout);
-	// }, [pathname]);
 
 	return (
 		<LoadingContext.Provider value={{ isLoading, setIsLoading }}>

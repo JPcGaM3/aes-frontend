@@ -18,7 +18,12 @@ import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
-import { RequestOrderTranslation, month, yearMap } from "@/utils/constants";
+import {
+	RequestOrderTranslation,
+	TaskOrderTranslation,
+	month,
+	yearMap,
+} from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 import { fetchReqOrderWithTaskData } from "@/utils/functions";
@@ -121,7 +126,7 @@ export default function RequestManagementPage({
 
 			if (
 				!commentValues.comment.trim() &&
-				status !== REQUESTORDERSTATUS.PendingApproval
+				status !== REQUESTORDERSTATUS.Pending
 			) {
 				setAlert({
 					title: "Warning!!",
@@ -230,6 +235,11 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 					translator: yearMap,
 				},
+				{
+					name: "count",
+					value: `${reqOrder?.taskorders?.length || 0} กิจกรรม`,
+					labelTranslator: RequestOrderTranslation,
+				},
 			],
 		},
 		{
@@ -267,16 +277,41 @@ export default function RequestManagementPage({
 				},
 			],
 		},
-		{
-			title: "กิจกรรมและเครื่องมือ",
+		...(reqOrder?.taskorders || []).map((task, idx) => ({
+			title: `กิจกรรมที่ ${idx + 1}`,
 			fields: [
 				{
-					name: "count",
-					value: `${reqOrder?.taskorders?.length || 0} กิจกรรม`,
-					labelTranslator: RequestOrderTranslation,
+					name: "activity_id",
+					value: task.activities?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "car_id",
+					value: task.cars?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "tool_type",
+					value: task.tool_type?.tool_type_name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "tool_id",
+					value: task.tools?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "user_id",
+					value: task.users?.username || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "target_area",
+					value: task.target_area ?? "-",
+					labelTranslator: TaskOrderTranslation,
 				},
 			],
-		},
+		})),
 	];
 
 	const commentSections: FormSection[] = [
@@ -298,7 +333,7 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full">
+		<div className="flex flex-col items-center justify-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
@@ -309,7 +344,7 @@ export default function RequestManagementPage({
 
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -317,7 +352,7 @@ export default function RequestManagementPage({
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
-					className="flex flex-col justify-center items-center gap-8 w-full"
+					className="flex flex-col items-center justify-center w-full gap-8"
 					title="รายละเอียด"
 				>
 					<Header
@@ -327,24 +362,26 @@ export default function RequestManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="ดูรายละเอียดใบสั่งงาน"
+						title="รายละเอียดใบสั่งงาน"
 					/>
 
 					<FieldValueDisplayer sections={dataSections} size="expanded" />
 
 					<FormButtons
+						cancelLabel="ยกเลิก"
 						hasBorder={false}
+						isSubmitting={isSubmitting}
 						size="expanded"
-						submitColor="default"
-						submitLabel="ยกเลิก"
-						onSubmit={handleCancel}
+						submitLabel="อนุมัติใบสั่งงาน"
+						onCancel={handleCancel}
+						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Pending)}
 					/>
 				</Tab>
 
 				{/* Edit tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 					title="แก้ไข"
 				>
 					<FormComponent
@@ -369,7 +406,7 @@ export default function RequestManagementPage({
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="reject"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 					title="ยกเลิก"
 				>
 					<FormComponent

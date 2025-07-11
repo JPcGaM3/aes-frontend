@@ -140,12 +140,13 @@ export default function Navbar() {
 					description={alert.description}
 					handleClose={() => setAlert({ ...alert, isVisible: false })}
 					isVisible={alert.isVisible}
+					size="full"
 					title={alert.title}
 				/>
 			)}
 
 			<HeroUINavbar
-				className="z-50 flex items-center shadow-md p-0 h-18"
+				className="z-50 flex items-center p-0 shadow-md h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
@@ -155,10 +156,18 @@ export default function Navbar() {
 				shouldHideOnScroll={false}
 				onMenuOpenChange={setIsMenuOpen}
 			>
-				<NavbarContent className="justify-start items-center gap-2 w-full">
+				<NavbarContent className="items-center justify-start w-full gap-2">
 					{/* Logo */}
-					<NavbarBrand className="flex justify-start items-center p-0 w-full h-full">
-						<div className="relative h-full aspect-[1/1]">
+					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
+						<Button
+							isIconOnly
+							className="relative h-full p-0 aspect-[1/1]"
+							isDisabled={!userContext?.token}
+							radius="sm"
+							size="lg"
+							variant="light"
+							onPress={() => handleNav("/home")}
+						>
 							<Image
 								fill
 								priority
@@ -168,7 +177,7 @@ export default function Navbar() {
 								sizes="(max-height: 4828px) 48px"
 								src="/pictures/logo.png"
 							/>
-						</div>
+						</Button>
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
@@ -187,7 +196,7 @@ export default function Navbar() {
 							>
 								<PopoverTrigger>
 									<Button
-										className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
+										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold w-fit min-w-24"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -205,13 +214,13 @@ export default function Navbar() {
 									</Button>
 								</PopoverTrigger>
 
-								<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
-									<div className="flex flex-col w-full font-semibold text-sm">
+								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
+									<div className="flex flex-col w-full text-sm font-semibold">
 										{aeAreas.length > 0 ? (
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													className="justify-between p-2 w-full font-medium text-md text-left"
+													className="justify-between w-full p-2 font-medium text-left text-md"
 													color={
 														userContext.ae_id === option.ae_area.id
 															? "primary"
@@ -237,7 +246,7 @@ export default function Navbar() {
 												</Button>
 											))
 										) : (
-											<div className="p-2 text-gray-400 text-center">
+											<div className="p-2 text-center text-gray-400">
 												No options available
 											</div>
 										)}
@@ -248,10 +257,10 @@ export default function Navbar() {
 					)}
 
 					{/* Menu Toggle */}
-					<NavbarItem className="md:hidden flex justify-end items-center h-full">
+					<NavbarItem className="flex items-center justify-end h-full md:hidden">
 						<Button
 							isIconOnly
-							className="p-0 h-full"
+							className="h-full p-0"
 							color={isMenuOpen ? "default" : "primary"}
 							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
 							radius="sm"
@@ -269,10 +278,9 @@ export default function Navbar() {
 							return (
 								<Button
 									key={item.name}
-									className={`font-semibold px-2 flex justify-center items-center gap-2 h-full
-                    ${!(userContext?.token || isActive) ? "opacity-50 cursor-not-allowed" : ""}`}
+									className="flex items-center justify-center h-full gap-2 px-2 font-semibold"
 									color={isActive ? "primary" : "default"}
-									disabled={!userContext?.token && !isActive}
+									isDisabled={!userContext?.token && !isActive}
 									radius="sm"
 									size="md"
 									variant={isActive ? "solid" : "light"}

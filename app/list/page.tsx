@@ -136,7 +136,7 @@ export default function ListPage() {
 		},
 		{
 			key: "edit",
-			label: "แก้ไข",
+			label: "แจ้งแก้ไข",
 			icon: <EditIcon />,
 			onClick: ({ item }: { item: RequestOrder }) =>
 				handleNewPage({ params: { id: item.id, action: "edit" } }),

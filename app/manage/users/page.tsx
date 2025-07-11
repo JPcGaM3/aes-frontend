@@ -13,7 +13,6 @@ export default function ManageCarsPage() {
 	const { setIsLoading } = useLoading();
 	const { userContext } = useAuth();
 	const [user, setUser] = useState<any[]>([]);
-	// const router = useRouter();
 
 	const handleActions = ({
 		params,
@@ -86,13 +85,6 @@ export default function ManageCarsPage() {
 		{ label: "AE", key: "ae_area" },
 	];
 
-	// const cardHeaderFields = [{ label: "Asset", key: "asset" }];
-
-	// const cardBodyFields = [
-	//   { label: "Description", key: "asset_description" },
-	//   { label: "HP", key: "hp" },
-	// ];
-
 	const actions = [
 		{
 			key: "edit",
@@ -119,11 +111,11 @@ export default function ManageCarsPage() {
 				headers={tableHeaderFields}
 			/>
 			{/* <CardComponent
-        actions={actions}
-        bodyFields={cardBodyFields}
-        headerFields={cardHeaderFields}
-        items={car}
-      /> */}
+				actions={actions}
+				bodyFields={cardBodyFields}
+				headerFields={cardHeaderFields}
+				items={car}
+			/> */}
 		</>
 	);
 }

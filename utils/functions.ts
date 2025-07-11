@@ -1,12 +1,16 @@
 import { AlertComponentProps } from "@/interfaces/props";
 import {
+	Activity,
 	AeArea,
+	Car,
 	CustomerType,
 	OperationArea,
 	RequestOrder,
 	User,
 } from "@/interfaces/schema";
+import { getActivities } from "@/libs/activityAPI";
 import { getAeAreaAll } from "@/libs/aeAreaAPI";
+import { getCars } from "@/libs/carAPI";
 import { getCustomerTypes } from "@/libs/customerTypeAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import {
@@ -302,6 +306,86 @@ export async function fetchOperationAreas({
 			}
 
 			setOpArea([] as OperationArea[]);
+		}
+	}
+}
+
+export async function fetchCars({
+	token,
+	ae_id,
+	setCars,
+	setAlert,
+	setIsLoading,
+}: {
+	token: string;
+	ae_id?: number;
+	setCars: (cars: Car[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
+}) {
+	setIsLoading(true);
+	if (token) {
+		try {
+			const paramData = {
+				...(ae_id && { ae_id }),
+			};
+			const cars = await getCars({ token, paramData: paramData || {} });
+
+			setCars(cars);
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบข้อมูลรถในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch cars",
+					description: error.message,
+					color: "danger",
+				});
+			}
+			setCars([] as Car[]);
+		}
+	}
+}
+
+export async function fetchActivitiesWithToolTypes({
+	token,
+	setActivitiesWithToolTypes,
+	setAlert,
+	setIsLoading,
+}: {
+	token: string;
+	setActivitiesWithToolTypes: (activities: Activity[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+	setIsLoading: (loading: boolean) => void;
+}) {
+	setIsLoading(true);
+	if (token) {
+		try {
+			const data = await getActivities({
+				token,
+			});
+
+			setActivitiesWithToolTypes(data);
+		} catch (error: any) {
+			if (error.status === 404) {
+				setAlert({
+					title: "ไม่พบข้อมูลกิจกรรมในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: error.message,
+					color: "danger",
+				});
+			}
+
+			setActivitiesWithToolTypes([] as Activity[]);
 		}
 	}
 }

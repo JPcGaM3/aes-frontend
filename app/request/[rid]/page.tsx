@@ -38,7 +38,9 @@ import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
 import {
+	fetchActivitiesWithToolTypes,
 	fetchAE,
+	fetchCars,
 	fetchCustomerTypes,
 	fetchOperationAreas,
 	fetchReqOrderWithTaskData,
@@ -66,12 +68,13 @@ export default function RequestManagementPage({
 	const [selectedTab, setSelectedTab] = useState(action);
 	const [carData, setCarData] = useState<Car[]>([]);
 	const [aeData, setAeData] = useState<AeArea[]>([]);
-	const [actData, setActData] = useState<Activity[]>([]);
 	const [driverData, setDriverData] = useState<User[]>([]);
 	const [opData, setOpData] = useState<OperationArea[]>([]);
 	const [unitHeadData, setUnitHeadData] = useState<User[]>([]);
 	const [customerData, setCustomerData] = useState<CustomerType[]>([]);
-	const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
+	const [activityWithToolTypes, setActivityWithToolTypes] = useState<
+		Activity[]
+	>([]);
 	const [requestData, setRequestData] = useState<RequestOrder>(
 		{} as RequestOrder
 	);
@@ -125,6 +128,19 @@ export default function RequestManagementPage({
 					await fetchOperationAreas({
 						token: userContext.token,
 						setOpArea: setOpData,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
+					});
+					await fetchCars({
+						token: userContext.token,
+						ae_id: userContext.ae_id,
+						setCars: setCarData,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
+					});
+					await fetchActivitiesWithToolTypes({
+						token: userContext.token,
+						setActivitiesWithToolTypes: setActivityWithToolTypes,
 						setAlert: setAlert,
 						setIsLoading: setIsLoading,
 					});
@@ -262,7 +278,7 @@ export default function RequestManagementPage({
 	};
 
 	const getToolTypeData = (activity_id: number) => {
-		const activity = activityWithTools.find((a) => a.id === activity_id);
+		const activity = activityWithToolTypes.find((a) => a.id === activity_id);
 
 		if (!activity || !activity.tool_types) {
 			return [];
@@ -522,7 +538,7 @@ export default function RequestManagementPage({
 						path: `taskorders.${idx}.activities_id`,
 						label: "activities_id",
 						labelTranslator: TaskOrderTranslation,
-						options: actData.map((activity) => ({
+						options: activityWithToolTypes.map((activity) => ({
 							label: activity.name,
 							value: activity.id,
 						})),
@@ -589,7 +605,7 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
+		<div className="flex flex-col justify-center items-center w-full">
 			{alert.isVisible && (
 				<AlertComponent
 					{...alert}
@@ -600,7 +616,7 @@ export default function RequestManagementPage({
 
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+				className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -608,7 +624,7 @@ export default function RequestManagementPage({
 				{/* View tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
+					className="flex flex-col justify-center items-center gap-8 w-full"
 					title="รายละเอียด"
 				>
 					<Header
@@ -656,7 +672,7 @@ export default function RequestManagementPage({
 				{/* Edit tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="edit"
-					className="flex flex-col items-center justify-center w-full gap-20"
+					className="flex flex-col justify-center items-center gap-20 w-full"
 					isDisabled={
 						requestData.status === REQUESTORDERSTATUS.Rejected ||
 						requestData.status === REQUESTORDERSTATUS.PendingApproval
@@ -686,7 +702,7 @@ export default function RequestManagementPage({
 				{/* Reject tab ----------------------------------------------------------------------------------------- */}
 				<Tab
 					key="reject"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					isDisabled={
 						requestData.status === REQUESTORDERSTATUS.Rejected ||
 						requestData.status === REQUESTORDERSTATUS.PendingApproval

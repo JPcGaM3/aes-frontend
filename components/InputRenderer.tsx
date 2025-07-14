@@ -2,14 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
 import {
+	AutocompleteItem,
 	CalendarDate,
 	DatePicker,
 	DateRangePicker,
 	NumberInput,
-	Select,
-	SelectItem,
 } from "@heroui/react";
 import clsx from "clsx";
+
+import { PatchedAutocomplete } from "./PatchedAutocomplete";
 
 import { InputRendererProps } from "@/interfaces/props";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@/utils/icons";
@@ -188,7 +189,7 @@ export default function InputRenderer({
 
 		case "dropdown": {
 			return (
-				<Select
+				<PatchedAutocomplete
 					{...commonProps}
 					aria-label={commonProps.label}
 					classNames={{
@@ -208,7 +209,7 @@ export default function InputRenderer({
 					}
 				>
 					{(commonProps.options || []).length === 0 ? (
-						<SelectItem key="no-option">No option.</SelectItem>
+						<AutocompleteItem key="no-option">No option.</AutocompleteItem>
 					) : (
 						(commonProps.options || []).map((option: DropdownOption) => {
 							const isSelected =
@@ -218,7 +219,7 @@ export default function InputRenderer({
 								String(option.value) === String(value);
 
 							return (
-								<SelectItem
+								<AutocompleteItem
 									key={String(option.value)}
 									className={clsx(
 										/^[\u0E00-\u0E7F]/.test(option.label)
@@ -230,11 +231,11 @@ export default function InputRenderer({
 									}}
 								>
 									{option.label}
-								</SelectItem>
+								</AutocompleteItem>
 							);
 						})
 					)}
-				</Select>
+				</PatchedAutocomplete>
 			);
 		}
 

@@ -86,7 +86,7 @@ export default function FormFields({
 			labelPlacement: resolvedLabelPlacement,
 			className: clsx("min-w-[100px] p-0", className),
 			classNames: {
-				label: "min-w-[100px] p-0",
+				label: "min-w-[100px] p-0 text-start",
 				mainWrapper: "w-full min-w-0",
 				base: "min-w-0",
 			},

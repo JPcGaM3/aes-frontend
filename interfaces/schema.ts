@@ -79,11 +79,14 @@ export interface User {
 	email?: string;
 	fullname?: string;
 	employee_id?: string;
-	ae_area?: AeArea;
 	requestorders?: RequestOrder[];
 	taskorders?: TaskOrder[];
 	user_operation_area?: UserOperationArea[];
 	user_role?: UserRole[];
+	user_ae_area?: {
+		id: number;
+		ae_area: AeArea;
+	}[];
 }
 
 export interface Car {

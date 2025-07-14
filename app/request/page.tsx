@@ -23,7 +23,11 @@ import {
 	yearList,
 	yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormSection } from "@/interfaces/interfaces";
+import {
+	ActionConfig,
+	FieldConfig,
+	FormSection,
+} from "@/interfaces/interfaces";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
@@ -299,7 +303,7 @@ export default function RequestPage() {
 	};
 
 	const getActions = (item: RequestOrder) => {
-		const actionList = [
+		const actionList: ActionConfig[] = [
 			{
 				key: "view",
 				label: "ดูรายละเอียด",
@@ -325,6 +329,7 @@ export default function RequestPage() {
 				key: "reject",
 				label: "ปฏิเสธ",
 				icon: <RejectIcon />,
+				className: "text-danger-500",
 				onClick: () =>
 					handleNewPage({ params: { id: item.id, action: "reject" } }),
 			});

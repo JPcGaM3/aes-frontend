@@ -253,7 +253,6 @@ export interface RequestOrder {
 	updated_by: number;
 	customer_type?: CustomerType;
 	operation_area?: OperationArea;
-	customer_operation_area?: OperationArea;
 	company_farm?: CompanyFarm;
 	ae_area?: AeArea;
 	locations?: Location;

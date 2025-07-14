@@ -48,11 +48,7 @@ export default function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	const menuItems = [
 		// * Normal Page --------------------------------------------------
@@ -73,8 +69,6 @@ export default function Navbar() {
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		// setIsLoading(true);
-
 		if (isReady && userContext && userContext.token && userContext.ae_id) {
 			const fetchAeArea = async ({ token }: { token: string }) => {
 				try {
@@ -85,7 +79,6 @@ export default function Navbar() {
 					setAlert({
 						title: "Error fetching areas",
 						description: error.message,
-						isVisible: true,
 					});
 				}
 			};
@@ -135,13 +128,11 @@ export default function Navbar() {
 
 	return (
 		<>
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
+					{...alert}
+					handleClose={() => setAlert(null)}
 					size="full"
-					title={alert.title}
 				/>
 			)}
 

@@ -22,11 +22,7 @@ export default function UploadComponent({
 	// Const and State --------------------------------------------------------------------------------------------------------
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState<boolean>(false);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Handlers ---------------------------------------------------------------------------------------------------------------
 	const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
@@ -99,14 +95,12 @@ export default function UploadComponent({
 
 		if (duplicateFiles.length > 0) {
 			setAlert({
-				isVisible: true,
 				title: "Upload Warning",
 				description: `File(s) ${duplicateFiles.join(", ")} already in the list.`,
 				color: "warning",
 			});
 		} else if (filesSkipped > 0) {
 			setAlert({
-				isVisible: true,
 				title: "Upload Warning",
 				description: `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`,
 				color: "warning",
@@ -254,10 +248,11 @@ export default function UploadComponent({
 			/>
 
 			{/* Alert */}
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
 					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					size="compact"
 				/>
 			)}

@@ -28,11 +28,7 @@ export default function ProfilePage() {
 	const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
 		null
 	);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	useEffect(() => {
 		if (userContext.token && !hasFetched.current) {
@@ -48,7 +44,6 @@ export default function ProfilePage() {
 						title: "Failed to load user profile",
 						description: error.message,
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -136,14 +131,12 @@ export default function ProfilePage() {
 					/>
 				)}
 
-				{alert.isVisible && (
+				{alert && (
 					<AlertComponent
-						color={alert.color}
-						description={alert.description}
-						handleClose={() => setAlert({ ...alert, isVisible: false })}
-						isVisible={alert.isVisible}
+						{...alert}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
 						size="compact"
-						title={alert.title}
 					/>
 				)}
 

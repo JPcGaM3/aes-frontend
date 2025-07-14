@@ -20,25 +20,27 @@ export default function FormFields({
 				return "";
 			}
 
-			if (config.type === "date" || config.type === "date-range") {
-				if (config.path) {
-					return getNestedValue(values, config.path) ?? null;
-				}
-				if (config.name && typeof values === "object" && values !== null) {
-					return values[config.name] ?? config.defaultValue ?? null;
-				}
+			let value;
 
-				return config.defaultValue ?? null;
-			} else {
-				if (config.path) {
-					return getNestedValue(values, config.path) ?? "";
-				}
-				if (config.name && typeof values === "object" && values !== null) {
-					return values[config.name] ?? config.defaultValue ?? "";
-				}
+			// Get the value from path or name
+			if (config.path) {
+				value = getNestedValue(values, config.path);
+			} else if (config.name && typeof values === "object" && values !== null) {
+				value = values[config.name];
 			}
 
-			return config.defaultValue ?? "";
+			// Handle different input types with proper defaults
+			if (config.type === "date" || config.type === "date-range") {
+				// For date inputs, return null if no value, otherwise the value or default
+				return value !== undefined && value !== null && value !== ""
+					? value
+					: (config.defaultValue ?? null);
+			} else {
+				// For all other inputs, return empty string if no value
+				return value !== undefined && value !== null && value !== ""
+					? value
+					: (config.defaultValue ?? "");
+			}
 		},
 		[values]
 	);
@@ -85,11 +87,6 @@ export default function FormFields({
 			isRequired: isRequired || false,
 			labelPlacement: resolvedLabelPlacement,
 			className: clsx("min-w-[100px] p-0", className),
-			classNames: {
-				label: "min-w-[100px] p-0 text-start",
-				mainWrapper: "w-full min-w-0",
-				base: "min-w-0",
-			},
 			...restProps,
 		};
 	}, []);

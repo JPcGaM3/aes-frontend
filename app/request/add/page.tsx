@@ -26,9 +26,12 @@ import { AlertComponentProps } from "@/interfaces/props";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
 import AlertComponent from "@/components/AlertComponent";
-import { getActivities } from "@/libs/activityAPI";
-import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
+import { useLoading } from "@/providers/LoadingContext";
+import {
+	fetchActivitiesWithToolTypes,
+	fetchOperationAreas,
+} from "@/utils/functions";
 
 interface FormType extends RequestOrder {
 	activities: string;
@@ -41,9 +44,9 @@ interface TaskFormType {
 }
 
 export default function AddRequestPage() {
-	// const value & react hook -------------------------------------	------------------------------------------------
-	// * For key-in form
+	// const value & react hook ----------------------------------------------------------------------------------------
 	const { userContext, isReady } = useAuth();
+	const { setIsLoading } = useLoading();
 	const now = new Date();
 	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
@@ -61,58 +64,60 @@ export default function AddRequestPage() {
 	const [tasks, setTasks] = useState<TaskFormType[]>([defaultTask]);
 	const [formValues, setFormValues] = useState<FormType>(defaultFormValues);
 	const [opOptions, setOpOptions] = useState<OperationArea[]>([]);
-
-	// * For file upload
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-
-	// * Other
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchDropDownOptions = async ({ token }: { token: string }) => {
-				const activity = await getActivities({ token });
-				const operation_area = await getOperationAreas({ token });
+		if (isReady) {
+			const fetchData = async () => {
+				try {
+					await fetchOperationAreas({
+						token: userContext.token,
+						setOpArea: setOpOptions,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
+					});
+					await fetchActivitiesWithToolTypes({
+						token: userContext.token,
+						setActivitiesWithToolTypes: setActivityWithTools,
+						setAlert: setAlert,
+						setIsLoading: setIsLoading,
+					});
 
-				setOpOptions(operation_area);
-				setActivityWithTools(activity);
-				setActOptions(
-					activity.map((activity: Activity) => ({
-						label: activity.name,
-						value: activity.name,
-					}))
-				);
+					setActOptions(
+						activityWithTools.map((activity: Activity) => ({
+							label: activity.name,
+							value: activity.name,
+						}))
+					);
 
-				setFormValues({
-					...formValues,
-					ae_id: userContext.ae_id,
-				} as FormType);
+					setFormValues({
+						...formValues,
+						ae_id: userContext.ae_id,
+					} as FormType);
 
-				setTasks([
-					{
-						activity_name: "",
-						tool_type_name: "",
-					},
-				]);
+					setTasks([
+						{
+							activity_name: "",
+							tool_type_name: "",
+						},
+					]);
+				} catch (error: any) {
+					setAlert({
+						title: "Failed to fetch",
+						description: error.message || "Unknown error occurred",
+						color: "danger",
+					});
+				} finally {
+					setIsLoading(false);
+				}
 			};
 
-			fetchDropDownOptions({
-				token: userContext.token,
-			});
+			fetchData();
 		}
-	}, [userContext, isReady]);
+	}, [isReady]);
 
 	// Handler ------------------------------------------------------------------------------------------------------
 	const handleDownloadTemplate = (): void => {
@@ -129,7 +134,6 @@ export default function AddRequestPage() {
 	const handleSubmitUpload = async (_e?: any): Promise<void> => {
 		if (uploadedFiles.length === 0) {
 			setAlert({
-				isVisible: true,
 				color: "danger",
 				title: "Upload Error",
 				description: "Please upload files before confirming.",
@@ -173,14 +177,12 @@ export default function AddRequestPage() {
 			}
 
 			setAlert({
-				isVisible: true,
 				color: alertColor,
 				title: alertTitle,
 				description: `total row: ${totalRows} , valid row: ${validRows} , error row: ${errorRows}`,
 			});
 		} catch (error) {
 			setAlert({
-				isVisible: true,
 				color: "danger",
 				title: "Upload Failed",
 				description: "Upload failed!, error: " + error,
@@ -195,7 +197,6 @@ export default function AddRequestPage() {
 
 	const handleCancelUpload = (_e?: any): void => {
 		setAlert({
-			isVisible: true,
 			title: "Upload Cancelled",
 			description: "Cancelling upload, Clear form",
 			color: "warning",
@@ -233,7 +234,6 @@ export default function AddRequestPage() {
 			});
 
 			setAlert({
-				isVisible: true,
 				title: "สำเร็จ!!",
 				description: "เพิ่มรายการคำขอสำเร็จ",
 				color: "success",
@@ -246,7 +246,6 @@ export default function AddRequestPage() {
 			});
 		} catch (error: any) {
 			setAlert({
-				isVisible: true,
 				title: "เพิ่มรายการคำขอล้มเหลว",
 				description: error.message || "เกิดข้อผิดพลาด",
 				color: "danger",
@@ -314,7 +313,6 @@ export default function AddRequestPage() {
 					{
 						type: "dropdown",
 						name: "operation_area_id",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-1/3",
 						options: [
@@ -327,7 +325,6 @@ export default function AddRequestPage() {
 					{
 						type: "text",
 						name: "zone",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
 					},
@@ -336,14 +333,12 @@ export default function AddRequestPage() {
 					{
 						type: "text",
 						name: "quota_number",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-1/3",
 					},
 					{
 						type: "text",
 						name: "farmer_name",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
 					},
@@ -352,7 +347,6 @@ export default function AddRequestPage() {
 					{
 						type: "dropdown",
 						name: "ap_year",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-1/3",
 						options: yearList,
@@ -360,7 +354,6 @@ export default function AddRequestPage() {
 					{
 						type: "dropdown",
 						name: "ap_month",
-						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
 						options: monthList,
@@ -369,25 +362,21 @@ export default function AddRequestPage() {
 				{
 					type: "text",
 					name: "supervisor_name",
-					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "target_area",
-					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "land_number",
-					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "textarea",
 					name: "location_xy",
-					isRequired: false,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -426,7 +415,6 @@ export default function AddRequestPage() {
 					name: `activity_name_${idx}`,
 					label: "กิจกรรม",
 					options: actOptions,
-					isRequired: true,
 					className: "w-1/2",
 				},
 				{
@@ -434,7 +422,6 @@ export default function AddRequestPage() {
 					name: `tool_type_name_${idx}`,
 					label: "ประเภทเครื่องมือ",
 					options: getToolTypeOptions(task.activity_name),
-					isRequired: true,
 					className: "w-1/2",
 					isReadOnly: !task.activity_name,
 				},
@@ -531,15 +518,13 @@ export default function AddRequestPage() {
 			</Tabs>
 
 			{/* Alert */}
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
-					color={alert.color}
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
+					{...alert}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					placement="top"
 					size="compact"
-					title={alert.title}
 				/>
 			)}
 		</div>

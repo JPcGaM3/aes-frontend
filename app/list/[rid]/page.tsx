@@ -54,11 +54,7 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -78,7 +74,6 @@ export default function RequestManagementPage({
 						title: "Failed to fetch",
 						description: error.message || "Unknown error occurred",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -132,7 +127,6 @@ export default function RequestManagementPage({
 					title: "Warning!!",
 					description: "คำอธิบาย: กรุณาระบุเหตุผล",
 					color: "warning",
-					isVisible: true,
 				});
 
 				setIsSubmitting(false);
@@ -156,7 +150,6 @@ export default function RequestManagementPage({
 					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${reqOrder.work_order_number} แล้ว`,
 					color: "success",
-					isVisible: true,
 				});
 
 				setTimeout(() => {
@@ -167,7 +160,6 @@ export default function RequestManagementPage({
 					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
 					description: err.message || "Unknown error occurred",
 					color: "danger",
-					isVisible: true,
 				});
 			} finally {
 				setIsSubmitting(false);
@@ -177,7 +169,6 @@ export default function RequestManagementPage({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
-				isVisible: true,
 			});
 
 			setTimeout(() => {
@@ -334,10 +325,11 @@ export default function RequestManagementPage({
 
 	return (
 		<div className="flex flex-col items-center justify-center w-full">
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
 					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					size="expanded"
 				/>
 			)}

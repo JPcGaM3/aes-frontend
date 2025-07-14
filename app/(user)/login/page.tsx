@@ -16,11 +16,7 @@ export default function LoginPage() {
 
 	const { login } = useAuth();
 
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	const handleSubmit = async (values: any) => {
 		const isEmail = values.username.includes("@mitrphol.com");
@@ -45,7 +41,6 @@ export default function LoginPage() {
 				title: "Login Failed",
 				description: err.message || "Unknown error occurred",
 				color: "danger",
-				isVisible: true,
 			});
 		}
 	};
@@ -57,19 +52,16 @@ export default function LoginPage() {
 					type: "text",
 					name: "username",
 					label: "ชื่อผู้ใช้งาน",
-					isRequired: true,
 				},
 				{
 					type: "password",
 					name: "password",
 					label: "รหัสผ่าน",
-					isRequired: true,
 				},
 				{
 					type: "dropdown",
 					name: "ae_id",
 					labelTranslator: RequestOrderTranslation,
-					isRequired: true,
 					options: [
 						{ label: "CT0", value: 1 },
 						{ label: "NE1", value: 2 },
@@ -81,7 +73,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex justify-center items-center w-full">
+		<div className="flex items-center justify-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
@@ -92,15 +84,13 @@ export default function LoginPage() {
 			/>
 
 			{/* Alert */}
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
-					color={alert.color}
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
+					{...alert}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					placement="top"
 					size="compact"
-					title={alert.title}
 				/>
 			)}
 		</div>

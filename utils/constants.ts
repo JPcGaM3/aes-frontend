@@ -87,7 +87,7 @@ const RequestOrderTranslation: Record<string, string> = {
 	location_xy: "พิกัด",
 	activities: "กิจกรรม",
 	tool_types: "ประเภทเครื่องมือ",
-	unit_head: "หัวหน้าหน่วย",
+	unit_head_id: "หัวหน้าหน่วย",
 	count: "จำนวนกิจกรรม",
 	comment: "หมายเหตุ",
 	created_at: "วันที่สร้าง",
@@ -118,10 +118,10 @@ const TaskOrderTranslation: Record<string, string> = {
 	request_order_id: "รหัสคำสั่งงานหลัก",
 	car_id: "รถ",
 	tool_id: "เครื่องมือ",
-	tool_type_id: "ประเภทเครื่องมือ",
+	tool_types_id: "ประเภทเครื่องมือ",
 	activities_id: "กิจกรรม",
 	user_id: "ผู้ปฏิบัติงาน",
-	assigned_user_id: "รหัสผู้รับมอบหมาย",
+	assigned_user_id: "ผู้รับมอบหมาย",
 	created_at: "วันที่สร้าง",
 	updated_at: "วันที่แก้ไข",
 	created_by: "ผู้สร้าง",
@@ -161,13 +161,13 @@ const monthList = [
 const yearList = [
 	...years.map((year) => ({
 		label: String(year + 543),
-		value: String(year),
+		value: year,
 	})),
 ];
 
 const yearMap = yearList.reduce(
 	(acc, { value, label }) => ({ ...acc, [value]: label }),
-	{} as Record<string, string>
+	{} as Record<number, string>
 );
 
 export {

@@ -21,11 +21,7 @@ import AlertComponent from "./AlertComponent";
 import { useAuth } from "@/providers/AuthContext";
 import {
 	HomeIcon,
-	RequestIcon,
 	HamburgerIcon,
-	SettingIcon,
-	DocumentIcon,
-	UserIcon,
 	CancelIcon,
 	ChevronDownIcon,
 	ChevronUpIcon,
@@ -53,18 +49,18 @@ export default function Navbar() {
 	const menuItems = [
 		// * Normal Page --------------------------------------------------
 		{ name: "เมนูหลัก", path: "/home", icon: <HomeIcon size={18} /> },
-		{ name: "งาน", path: "/request", icon: <RequestIcon size={18} /> },
-		{ name: "รายการ", path: "/list", icon: <DocumentIcon size={18} /> },
+		{ name: "งาน", path: "/request", icon: <HomeIcon size={18} /> },
+		{ name: "รายการ", path: "/list", icon: <HomeIcon size={18} /> },
 		{
 			name: "การตั้งค่า",
 			path: "/setting",
-			icon: <SettingIcon size={18} />,
+			icon: <HomeIcon size={18} />,
 		},
-		{ name: "ผู้ใช้งาน", path: "/login", icon: <UserIcon size={18} /> },
+		{ name: "ผู้ใช้งาน", path: "/login", icon: <HomeIcon size={18} /> },
 		// * Componenent Page ---------------------------------------------
-		// { name: "Form", path: "/form", icon: <DocumentIcon /> },
-		// { name: "Card", path: "/card", icon: <CardIcon /> },
-		// { name: "Drawer", path: "/drawer", icon: <DrawerIcon /> },
+		// { name: "Form", path: "/form", icon: <HomeIcon /> },
+		// { name: "Card", path: "/card", icon: <HomeIcon /> },
+		// { name: "Drawer", path: "/drawer", icon: <HomeIcon /> },
 	];
 
 	// Fetch data ---------------------------------------------------------------------------------------------------

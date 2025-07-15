@@ -1,73 +1,66 @@
+import { Button } from "@heroui/button";
+
 import Header from "@/components/Header";
 import {
-	AddIcon,
-	CancelIcon,
-	CardIcon,
-	CheckIcon,
 	ChevronDownIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	ChevronsDownIcon,
+	ChevronsLeftIcon,
 	ChevronsRightIcon,
+	ChevronsUpIcon,
 	ChevronUpIcon,
-	DeleteIcon,
 	DiscordIcon,
+	DivideIcon,
 	DocumentIcon,
-	DownloadIcon,
-	DrawerIcon,
-	EditIcon,
 	EyeCloseIcon,
 	EyeIcon,
 	FilterIcon,
+	GithubIcon,
 	HamburgerIcon,
 	HomeIcon,
-	InfoIcon,
-	LoginIcon,
 	MinusIcon,
 	MoonIcon,
+	MultiplyIcon,
 	PlusIcon,
-	RejectIcon,
-	RequestIcon,
 	SearchIcon,
 	SettingIcon,
 	SunIcon,
-	UploadFileIcon,
+	TwitterIcon,
 	UserIcon,
 	VerticalDotsIcon,
 } from "@/utils/icons";
-import { Button } from "@heroui/button";
 
 export default function HomePage() {
 	// All available icons from icons.tsx
 	const allIcons = [
 		{ name: "DiscordIcon", component: DiscordIcon },
+		{ name: "GithubIcon", component: GithubIcon },
+		{ name: "TwitterIcon", component: TwitterIcon },
 		{ name: "MoonIcon", component: MoonIcon },
 		{ name: "SunIcon", component: SunIcon },
 		{ name: "SearchIcon", component: SearchIcon },
 		{ name: "UserIcon", component: UserIcon },
-		{ name: "PlusIcon", component: PlusIcon },
 		{ name: "VerticalDotsIcon", component: VerticalDotsIcon },
-		{ name: "ChevronDownIcon", component: ChevronDownIcon },
-		{ name: "ChevronUpIcon", component: ChevronUpIcon },
 		{ name: "EyeIcon", component: EyeIcon },
 		{ name: "EyeCloseIcon", component: EyeCloseIcon },
-		{ name: "ChevronsRight", component: ChevronsRightIcon },
+		{ name: "ChevronUpIcon", component: ChevronUpIcon },
+		{ name: "ChevronsUpIcon", component: ChevronsUpIcon },
+		{ name: "ChevronDownIcon", component: ChevronDownIcon },
+		{ name: "ChevronsDownIcon", component: ChevronsDownIcon },
+		{ name: "ChevronLeftIcon", component: ChevronLeftIcon },
+		{ name: "ChevronsLeftIcon", component: ChevronsLeftIcon },
+		{ name: "ChevronRightIcon", component: ChevronRightIcon },
+		{ name: "ChevronsRightIcon", component: ChevronsRightIcon },
+		{ name: "PlusIcon", component: PlusIcon },
+		{ name: "MinusIcon", component: MinusIcon },
+		{ name: "MultiplyIcon", component: MultiplyIcon },
+		{ name: "DivideIcon", component: DivideIcon },
 		{ name: "FilterIcon", component: FilterIcon },
 		{ name: "HamburgerIcon", component: HamburgerIcon },
 		{ name: "HomeIcon", component: HomeIcon },
 		{ name: "DocumentIcon", component: DocumentIcon },
-		{ name: "CardIcon", component: CardIcon },
-		{ name: "DrawerIcon", component: DrawerIcon },
-		{ name: "LoginIcon", component: LoginIcon },
-		{ name: "RequestIcon", component: RequestIcon },
-		{ name: "InfoIcon", component: InfoIcon },
-		{ name: "EditIcon", component: EditIcon },
-		{ name: "RejectIcon", component: RejectIcon },
-		{ name: "DownloadIcon", component: DownloadIcon },
-		{ name: "UploadFileIcon", component: UploadFileIcon },
-		{ name: "DeleteIcon", component: DeleteIcon },
 		{ name: "SettingIcon", component: SettingIcon },
-		{ name: "AddIcon", component: AddIcon },
-		{ name: "MinusIcon", component: MinusIcon },
-		{ name: "CancelIcon", component: CancelIcon },
-		{ name: "CheckIcon", component: CheckIcon },
 	];
 
 	const renderIconRow = (icon: { name: string; component: any }) => {
@@ -76,13 +69,13 @@ export default function HomePage() {
 		return (
 			<div
 				key={icon.name}
-				className="flex flex-col items-center gap-y-4 bg-content1 p-4 border border-divider rounded-lg"
+				className="flex flex-col items-center p-4 border rounded-lg gap-y-4 bg-content1 border-divider"
 			>
-				<h3 className="font-medium text-foreground text-small text-center">
+				<h3 className="font-medium text-center text-foreground text-small">
 					{icon.name}
 				</h3>
 
-				<div className="flex flex-row justify-center items-center gap-x-2 w-full">
+				<div className="flex flex-row items-center justify-center w-full gap-x-2">
 					<Button
 						isIconOnly
 						className="flex flex-col items-center p-3 w-fit h-fit"
@@ -136,10 +129,10 @@ export default function HomePage() {
 	};
 
 	return (
-		<div className="bg-background min-h-screen">
+		<div className="min-h-screen bg-background">
 			<Header subtitle="ยินดีต้อนรับสู่ AE Service" title="หน้าหลัก" />
 
-			<div className="flex flex-col gap-y-6 py-8 w-full">
+			<div className="flex flex-col w-full py-8 gap-y-6">
 				<Header
 					hasBorder={false}
 					orientation="horizontal"
@@ -147,7 +140,7 @@ export default function HomePage() {
 					title="All Available Icons"
 				/>
 
-				<div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					{allIcons.map(renderIconRow)}
 				</div>
 			</div>

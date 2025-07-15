@@ -32,7 +32,9 @@ export default function DynamicTaskOrder({
 	onUpdateTask,
 	getToolTypeOptions,
 }: DynamicTaskOrderProps) {
-	const createTaskOrderConfig = (taskOrder: TaskOrderUIItem): InputConfig[] => [
+	const createTaskOrderConfig = (
+		taskOrder: TaskOrderUIItem
+	): InputConfig[] => [
 		{
 			type: "dropdown",
 			name: "activities_id",
@@ -174,7 +176,12 @@ export default function DynamicTaskOrder({
 			{/* Task Order Cards */}
 			<div className="flex flex-col gap-4">
 				{taskOrders.map((taskOrder, index) => (
-					<Card key={taskOrder.uiId} className="w-full" radius="sm" shadow="sm">
+					<Card
+						key={taskOrder.uiId}
+						className="w-full"
+						radius="sm"
+						shadow="sm"
+					>
 						<CardHeader className="flex items-center justify-between py-2">
 							<span className="font-medium text-md">
 								กิจกรรมที่ {index + 1}
@@ -195,22 +202,39 @@ export default function DynamicTaskOrder({
 
 						<CardBody className="pt-4">
 							<div className="grid grid-cols-1 gap-x-2 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
-								{createTaskOrderConfig(taskOrder).map((config) => {
-									const value = taskOrder[config.name as keyof TaskOrderUIItem];
+								{createTaskOrderConfig(taskOrder).map(
+									(config) => {
+										const value =
+											taskOrder[
+												config.name as keyof TaskOrderUIItem
+											];
 
-									return (
-										<div key={config.name} className="w-full">
-											<InputRenderer
-												commonProps={commonProp(config)}
-												type={config.type}
-												value={value}
-												onValueChange={(name, val) =>
-													handleFieldChange(taskOrder, name, val)
-												}
-											/>
-										</div>
-									);
-								})}
+										return (
+											<div
+												key={config.name}
+												className="w-full"
+											>
+												<InputRenderer
+													commonProps={commonProp(
+														config
+													)}
+													type={config.type}
+													value={value}
+													onValueChange={(
+														name,
+														val
+													) =>
+														handleFieldChange(
+															taskOrder,
+															name,
+															val
+														)
+													}
+												/>
+											</div>
+										);
+									}
+								)}
 							</div>
 						</CardBody>
 					</Card>

@@ -136,7 +136,9 @@ export default function InputRenderer({
 					aria-label={commonProps.label}
 					type={type}
 					value={value || ""}
-					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
+					onValueChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
 				/>
 			);
 		}
@@ -152,7 +154,9 @@ export default function InputRenderer({
 					}}
 					minRows={commonProps.minRows || 3}
 					value={value || ""}
-					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
+					onValueChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
 				/>
 			);
 		}
@@ -163,7 +167,9 @@ export default function InputRenderer({
 					{...commonProps}
 					aria-label={commonProps.label}
 					value={value || ""}
-					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
+					onValueChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
 				/>
 			);
 		}
@@ -179,7 +185,11 @@ export default function InputRenderer({
 							isIconOnly
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
-								isVisible ? <EyeCloseIcon size={18} /> : <EyeIcon size={18} />
+								isVisible ? (
+									<EyeCloseIcon size={18} />
+								) : (
+									<EyeIcon size={18} />
+								)
 							}
 							radius="full"
 							size="sm"
@@ -189,7 +199,9 @@ export default function InputRenderer({
 					}
 					type={isVisible ? "text" : "password"}
 					value={value || ""}
-					onValueChange={onValueChange ? handleUnifiedValueChange : undefined}
+					onValueChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
 				/>
 			);
 		}
@@ -231,31 +243,40 @@ export default function InputRenderer({
 					}
 				>
 					{(commonProps.options || []).length === 0 ? (
-						<AutocompleteItem key="no-option">No option.</AutocompleteItem>
+						<AutocompleteItem key="no-option">
+							No option.
+						</AutocompleteItem>
 					) : (
-						(commonProps.options || []).map((option: DropdownOption) => {
-							const isSelected =
-								value !== undefined &&
-								value !== null &&
-								value !== "" &&
-								String(option.value) === String(value);
+						(commonProps.options || []).map(
+							(option: DropdownOption) => {
+								const isSelected =
+									value !== undefined &&
+									value !== null &&
+									value !== "" &&
+									String(option.value) === String(value);
 
-							return (
-								<AutocompleteItem
-									key={String(option.value)}
-									className={clsx(
-										/^[\u0E00-\u0E7F]/.test(option.label)
-											? undefined
-											: ["font-mono", fontMono.variable]
-									)}
-									classNames={{
-										base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
-									}}
-								>
-									{option.label}
-								</AutocompleteItem>
-							);
-						})
+								return (
+									<AutocompleteItem
+										key={String(option.value)}
+										className={clsx(
+											/^[\u0E00-\u0E7F]/.test(
+												option.label
+											)
+												? undefined
+												: [
+														"font-mono",
+														fontMono.variable,
+													]
+										)}
+										classNames={{
+											base: `rounded-md data-[hover]:bg-default/40 ${isSelected ? "bg-primary/20" : ""}`,
+										}}
+									>
+										{option.label}
+									</AutocompleteItem>
+								);
+							}
+						)
 					)}
 				</PatchedAutocomplete>
 			);
@@ -268,7 +289,9 @@ export default function InputRenderer({
 					showMonthAndYearPickers
 					aria-label={commonProps.label}
 					value={value || null}
-					onChange={onValueChange ? handleUnifiedValueChange : undefined}
+					onChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
 				/>
 			);
 		}
@@ -282,7 +305,9 @@ export default function InputRenderer({
 						aria-label={commonProps.label}
 						value={value || null}
 						visibleMonths={getVisibleMonths()}
-						onChange={onValueChange ? handleUnifiedValueChange : undefined}
+						onChange={
+							onValueChange ? handleUnifiedValueChange : undefined
+						}
 					/>
 				</div>
 			);

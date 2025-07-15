@@ -185,7 +185,9 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 
 					case "update":
 						if (!operation.data.id) {
-							throw new Error("Task order ID is required for update");
+							throw new Error(
+								"Task order ID is required for update"
+							);
 						}
 						result = await taskOrderAPIService.updateTaskOrder(
 							token,
@@ -199,7 +201,9 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 
 					case "delete":
 						if (!operation.data.id) {
-							throw new Error("Task order ID is required for delete");
+							throw new Error(
+								"Task order ID is required for delete"
+							);
 						}
 
 						result = await taskOrderAPIService.deleteTaskOrder(
@@ -211,7 +215,9 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 						break;
 
 					default:
-						throw new Error(`Unknown operation type: ${operation.type}`);
+						throw new Error(
+							`Unknown operation type: ${operation.type}`
+						);
 				}
 
 				results.push({

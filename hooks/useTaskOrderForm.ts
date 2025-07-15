@@ -21,7 +21,10 @@ interface UseTaskOrderFormReturn {
 	// Operations
 	addTaskOrder: () => void;
 	removeTaskOrder: (uiId: string) => void;
-	updateTaskOrder: (uiId: string, changes: Partial<TaskOrderFormData>) => void;
+	updateTaskOrder: (
+		uiId: string,
+		changes: Partial<TaskOrderFormData>
+	) => void;
 	updateRequestOrder: (changes: Partial<RequestOrderFormData>) => void;
 	// Reset
 	resetChanges: () => void;
@@ -40,7 +43,9 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 	const [requestOrderChanges, setRequestOrderChanges] = useState<
 		Partial<RequestOrderFormData>
 	>({});
-	const [originalTaskOrders, setOriginalTaskOrders] = useState<TaskOrder[]>([]);
+	const [originalTaskOrders, setOriginalTaskOrders] = useState<TaskOrder[]>(
+		[]
+	);
 
 	const convertDateForAPI = (date: any): string | undefined => {
 		if (!date) return undefined;
@@ -70,13 +75,15 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 
 			setOriginalTaskOrders(taskOrders);
 
-			const uiItems: TaskOrderUIItem[] = taskOrders.map((task: TaskOrder) => ({
-				...task,
-				uiId: uuidv4(),
-				isNew: false,
-				isDeleted: false,
-				ap_date: convertDateForUI(task.ap_date as string),
-			}));
+			const uiItems: TaskOrderUIItem[] = taskOrders.map(
+				(task: TaskOrder) => ({
+					...task,
+					uiId: uuidv4(),
+					isNew: false,
+					isDeleted: false,
+					ap_date: convertDateForUI(task.ap_date as string),
+				})
+			);
 
 			setTaskOrderUIItems(uiItems);
 			setRequestOrderChanges({});
@@ -169,7 +176,9 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 					data: { id: item.id },
 				});
 			} else if (!item.isNew && !item.isDeleted && item.id) {
-				const original = originalTaskOrders.find((t) => t.id === item.id);
+				const original = originalTaskOrders.find(
+					(t) => t.id === item.id
+				);
 
 				if (original && hasTaskOrderChanged(original, item)) {
 					operations.push({
@@ -195,7 +204,8 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 	}, [taskOrderUIItems, originalTaskOrders, convertDateForAPI]);
 
 	const hasChanges = useCallback(() => {
-		const hasRequestOrderChanges = Object.keys(requestOrderChanges).length > 0;
+		const hasRequestOrderChanges =
+			Object.keys(requestOrderChanges).length > 0;
 		const hasTaskOrderChanges = getTaskOrderOperations().length > 0;
 
 		return hasRequestOrderChanges || hasTaskOrderChanges;

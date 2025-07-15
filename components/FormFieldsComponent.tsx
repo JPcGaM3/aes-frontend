@@ -24,7 +24,11 @@ export default function FormFields({
 
 			if (config.path) {
 				value = getNestedValue(values, config.path);
-			} else if (config.name && typeof values === "object" && values !== null) {
+			} else if (
+				config.name &&
+				typeof values === "object" &&
+				values !== null
+			) {
 				value = values[config.name];
 			}
 
@@ -108,16 +112,23 @@ export default function FormFields({
 					>
 						{section.fields.map((field, i) =>
 							Array.isArray(field) ? (
-								<div key={i} className="flex flex-row w-full gap-2">
+								<div
+									key={i}
+									className="flex flex-row w-full gap-2"
+								>
 									{field.map(
 										(subField, subIndex) =>
 											subField && (
 												<InputRenderer
 													key={subIndex}
-													commonProps={commonProp(subField)}
+													commonProps={commonProp(
+														subField
+													)}
 													type={subField.type}
 													value={getValue(subField)}
-													onValueChange={onValueChange}
+													onValueChange={
+														onValueChange
+													}
 												/>
 											)
 									)}

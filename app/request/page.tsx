@@ -333,7 +333,9 @@ export default function RequestPage() {
 				icon: <RejectIcon />,
 				className: "text-danger-500",
 				onClick: () =>
-					handleNewPage({ params: { id: item.id, action: "reject" } }),
+					handleNewPage({
+						params: { id: item.id, action: "reject" },
+					}),
 			});
 		}
 

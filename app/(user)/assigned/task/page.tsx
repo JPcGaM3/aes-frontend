@@ -107,7 +107,12 @@ export default function TaskPage() {
 
 	useEffect(() => {
 		setIsLoading(true);
-		if (isReady && userContext.id && userContext.ae_id && userContext.token) {
+		if (
+			isReady &&
+			userContext.id &&
+			userContext.ae_id &&
+			userContext.token
+		) {
 			const fetchData = async (): Promise<any> => {
 				try {
 					setTaskOrders([]);

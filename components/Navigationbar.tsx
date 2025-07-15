@@ -193,13 +193,17 @@ export default function Navbar() {
 											isDropdownOpen ? (
 												<ChevronUpIcon />
 											) : (
-												<ChevronDownIcon strokeWidth={2} />
+												<ChevronDownIcon
+													strokeWidth={2}
+												/>
 											)
 										}
 										radius="sm"
 										size="lg"
 										variant="light"
-										onPress={() => setIsDropdownOpen(!isDropdownOpen)}
+										onPress={() =>
+											setIsDropdownOpen(!isDropdownOpen)
+										}
 									>
 										{getAeAreaLabel(userContext.ae_id)}
 									</Button>
@@ -213,24 +217,29 @@ export default function Navbar() {
 													key={option.ae_area.id}
 													className="justify-between w-full p-2 font-medium text-left text-md"
 													color={
-														userContext.ae_id === option.ae_area.id
+														userContext.ae_id ===
+														option.ae_area.id
 															? "primary"
 															: "default"
 													}
 													endContent={
-														userContext.ae_id === option.ae_area.id ? (
+														userContext.ae_id ===
+														option.ae_area.id ? (
 															<CheckIcon />
 														) : null
 													}
 													radius="sm"
 													size="md"
 													variant={
-														userContext.ae_id === option.ae_area.id
+														userContext.ae_id ===
+														option.ae_area.id
 															? "flat"
 															: "light"
 													}
 													onPress={() =>
-														handleDropdownSelect(option.ae_area.id)
+														handleDropdownSelect(
+															option.ae_area.id
+														)
 													}
 												>
 													{option.ae_area.name}
@@ -253,7 +262,9 @@ export default function Navbar() {
 							isIconOnly
 							className="h-full p-0"
 							color={isMenuOpen ? "default" : "primary"}
-							endContent={isMenuOpen ? <CancelIcon /> : <HamburgerIcon />}
+							endContent={
+								isMenuOpen ? <CancelIcon /> : <HamburgerIcon />
+							}
 							radius="sm"
 							size="lg"
 							variant="flat"
@@ -271,7 +282,9 @@ export default function Navbar() {
 									key={item.name}
 									className="flex items-center justify-center h-full gap-2 px-2 font-semibold"
 									color={isActive ? "primary" : "default"}
-									isDisabled={!userContext?.token && !isActive}
+									isDisabled={
+										!userContext?.token && !isActive
+									}
 									radius="sm"
 									size="md"
 									variant={isActive ? "solid" : "light"}

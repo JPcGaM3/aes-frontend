@@ -53,7 +53,9 @@ export default function CardComponent<T extends { id: number | string }>({
 							<Chip
 								className="p-3 mt-4 mb-2 tracking-wide w-fit"
 								color={
-									statusConfig?.colorMap?.[(item as any).status] || "default"
+									statusConfig?.colorMap?.[
+										(item as any).status
+									] || "default"
 								}
 								radius="sm"
 								size="sm"
@@ -71,13 +73,19 @@ export default function CardComponent<T extends { id: number | string }>({
 						{headerFields?.map((field) => {
 							const label = field.label
 								? field.label
-								: translateEnumValue(field.key, field.labelTranslator || {});
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
 
 							const rawValue = getFieldValue(item, field);
 							let value =
 								rawValue == null
 									? "N/A"
-									: translateEnumValue(rawValue, field.valueTranslator || {});
+									: translateEnumValue(
+											rawValue,
+											field.valueTranslator || {}
+										);
 
 							if (
 								typeof value === "string" &&
@@ -87,7 +95,10 @@ export default function CardComponent<T extends { id: number | string }>({
 							}
 
 							return (
-								<div key={field.key} className={field.className || "w-fit"}>
+								<div
+									key={field.key}
+									className={field.className || "w-fit"}
+								>
 									{label} : {value}
 								</div>
 							);
@@ -98,7 +109,10 @@ export default function CardComponent<T extends { id: number | string }>({
 						{bodyFields.map((field) => {
 							const label = field.label
 								? field.label
-								: translateEnumValue(field.key, field.labelTranslator || {});
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
 
 							let value;
 
@@ -110,7 +124,10 @@ export default function CardComponent<T extends { id: number | string }>({
 								value =
 									rawValue == null
 										? "N/A"
-										: translateEnumValue(rawValue, field.valueTranslator || {});
+										: translateEnumValue(
+												rawValue,
+												field.valueTranslator || {}
+											);
 							}
 							if (
 								typeof value === "string" &&
@@ -127,7 +144,11 @@ export default function CardComponent<T extends { id: number | string }>({
 									}`}
 								>
 									<div className="w-2/5">{label}</div>
-									<div className={clsx(`${field.valueClassName} w-3/5`)}>
+									<div
+										className={clsx(
+											`${field.valueClassName} w-3/5`
+										)}
+									>
 										{value}
 									</div>
 								</div>
@@ -139,17 +160,25 @@ export default function CardComponent<T extends { id: number | string }>({
 						<div>
 							<Divider />
 							<div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
-								<div className="text-sm text-gray-500">More actions.</div>
+								<div className="text-sm text-gray-500">
+									More actions.
+								</div>
 
 								<Popover
 									isOpen={openPopoverId === item.id}
 									placement="bottom-end"
 									onOpenChange={(isOpen) =>
-										setOpenPopoverId(isOpen ? item.id : null)
+										setOpenPopoverId(
+											isOpen ? item.id : null
+										)
 									}
 								>
 									<PopoverTrigger>
-										<Button isIconOnly size="sm" variant="light">
+										<Button
+											isIconOnly
+											size="sm"
+											variant="light"
+										>
 											<div className="text-default-300">
 												<VerticalDotsIcon />
 											</div>

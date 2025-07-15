@@ -4,8 +4,8 @@ export default function UnAuthorizeLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="flex flex-col justify-center gap-4">
-			<div className="justify-center inline-block w-full">{children}</div>
+		<section className="flex flex-col justify-center gap-4 h-full">
+			<div className="inline-block justify-center w-full">{children}</div>
 		</section>
 	);
 }

@@ -117,7 +117,11 @@ export const AccordionComponent = ({
 			selectionMode={taskOrders?.length ? "multiple" : "single"}
 		>
 			{items.map((item) => (
-				<AccordionItem key={item.id} aria-label={item.label} title={item.label}>
+				<AccordionItem
+					key={item.id}
+					aria-label={item.label}
+					title={item.label}
+				>
 					{item.content}
 				</AccordionItem>
 			))}

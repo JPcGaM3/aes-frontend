@@ -11,7 +11,9 @@ export default function Home() {
 
 	useEffect(() => {
 		{
-			userContext.token ? router.replace("/home") : router.replace("/login");
+			userContext.token
+				? router.replace("/home")
+				: router.replace("/login");
 		}
 	}, [userContext, router]);
 

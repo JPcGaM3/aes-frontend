@@ -15,7 +15,7 @@ import { RequestOrder } from "@/interfaces/schema";
 import { useAuth } from "@/providers/AuthContext";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
 import FormComponent from "@/components/FormComponent";
-import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
 import {
@@ -27,6 +27,7 @@ import {
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 import { fetchReqOrderWithTaskData } from "@/utils/functions";
+import ProtectedRoute from "@/components/HigherOrderComponent";
 
 moment.locale("th");
 
@@ -94,7 +95,9 @@ export default function RequestManagementPage({
 		if (typeof key === "string") {
 			setSelectedTab(key);
 
-			const newSearchParams = new URLSearchParams(searchParams.toString());
+			const newSearchParams = new URLSearchParams(
+				searchParams.toString()
+			);
 
 			newSearchParams.set("action", key);
 
@@ -199,7 +202,9 @@ export default function RequestManagementPage({
 				{
 					name: "created_at",
 					value: reqOrder?.created_at
-						? moment(reqOrder.created_at).tz("Asia/Bangkok").format("LLL")
+						? moment(reqOrder.created_at)
+								.tz("Asia/Bangkok")
+								.format("LLL")
 						: "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -333,101 +338,116 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			{alert.isVisible && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					size="expanded"
-				/>
-			)}
-
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
-				radius="sm"
-				selectedKey={selectedTab}
-				onSelectionChange={handleTabChange}
-			>
-				{/* View tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
-					title="รายละเอียด"
-				>
-					<Header
-						hasBorder={false}
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="รายละเอียดใบสั่งงาน"
-					/>
-
-					<FieldValueDisplayer sections={dataSections} size="expanded" />
-
-					<FormButtons
-						cancelLabel="ยกเลิก"
-						hasBorder={false}
-						isSubmitting={isSubmitting}
+		<ProtectedRoute
+			allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
+		>
+			<div className="flex flex-col justify-center items-center w-full">
+				{alert.isVisible && (
+					<AlertComponent
+						{...alert}
+						handleClose={() =>
+							setAlert({ ...alert, isVisible: false })
+						}
 						size="expanded"
-						submitLabel="อนุมัติใบสั่งงาน"
-						onCancel={handleCancel}
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Pending)}
 					/>
-				</Tab>
+				)}
 
-				{/* Edit tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="edit"
-					className="flex flex-col items-center justify-center w-full"
-					title="แก้ไข"
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+					radius="sm"
+					selectedKey={selectedTab}
+					onSelectionChange={handleTabChange}
 				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="แก้ไขใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingEdit)}
-					/>
-				</Tab>
+					{/* View tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="view"
+						className="flex flex-col justify-center items-center gap-8 w-full"
+						title="รายละเอียด"
+					>
+						<Header
+							hasBorder={false}
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="รายละเอียดใบสั่งงาน"
+						/>
 
-				{/* Reject tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="reject"
-					className="flex flex-col items-center justify-center w-full"
-					title="ยกเลิก"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="ปฏิเสธใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
-					/>
-				</Tab>
-			</Tabs>
-		</div>
+						<FieldValueDisplayer
+							sections={dataSections}
+							size="expanded"
+						/>
+
+						<FormButtons
+							cancelLabel="ยกเลิก"
+							hasBorder={false}
+							isSubmitting={isSubmitting}
+							size="expanded"
+							submitLabel="อนุมัติใบสั่งงาน"
+							onCancel={handleCancel}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Pending)
+							}
+						/>
+					</Tab>
+
+					{/* Edit tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="edit"
+						className="flex flex-col justify-center items-center w-full"
+						title="แก้ไข"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="แก้ไขใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.PendingEdit)
+							}
+						/>
+					</Tab>
+
+					{/* Reject tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="reject"
+						className="flex flex-col justify-center items-center w-full"
+						title="ยกเลิก"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="ปฏิเสธใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Rejected)
+							}
+						/>
+					</Tab>
+				</Tabs>
+			</div>
+		</ProtectedRoute>
 	);
 }

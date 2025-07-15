@@ -1,10 +1,22 @@
+import FuzzyText from "@/components/FuzzyTextComponent";
+
 export default function UnAuthorizePage() {
 	return (
-		<div className="flex flex-col items-center justify-center h-screen">
-			<div className="text-center">
-				<h1 className="mb-4 text-3xl font-bold">401 - Unauthorized</h1>
-				<p className="text-lg">You do not have permission to view this page.</p>
-			</div>
+		<div className="flex flex-col justify-center items-center w-full h-full sm:text-xl md:text-2xl lg:text-4xl">
+			<FuzzyText
+				baseIntensity={0.2}
+				enableHover={true}
+				hoverIntensity={0.5}
+			>
+				401
+			</FuzzyText>
+			<FuzzyText
+				baseIntensity={0.2}
+				enableHover={true}
+				hoverIntensity={0.5}
+			>
+				Unauthorized
+			</FuzzyText>
 		</div>
 	);
 }

@@ -104,8 +104,10 @@ export default function ProfilePage() {
 				{
 					name: "แผนก",
 					value:
-						profile?.profile.department?.name?.en?.replace(/ Section$/i, "") ??
-						"-",
+						profile?.profile.department?.name?.en?.replace(
+							/ Section$/i,
+							""
+						) ?? "-",
 				},
 				{
 					name: "สังกัด AE",
@@ -140,7 +142,9 @@ export default function ProfilePage() {
 					<AlertComponent
 						color={alert.color}
 						description={alert.description}
-						handleClose={() => setAlert({ ...alert, isVisible: false })}
+						handleClose={() =>
+							setAlert({ ...alert, isVisible: false })
+						}
 						isVisible={alert.isVisible}
 						size="compact"
 						title={alert.title}
@@ -149,7 +153,8 @@ export default function ProfilePage() {
 
 				<div className="flex flex-col items-center justify-center gap-4">
 					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
-						{profile?.user_result.email?.charAt(0)?.toUpperCase() ?? "-"}
+						{profile?.user_result.email?.charAt(0)?.toUpperCase() ??
+							"-"}
 					</div>
 
 					<Header

@@ -15,9 +15,11 @@ export default function FieldValueDisplayer({
 	let computedClassName = "";
 
 	if (size === "compact") {
-		computedClassName = "w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
+		computedClassName =
+			"w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl";
 	} else if (size === "expanded") {
-		computedClassName = "w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
+		computedClassName =
+			"w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl";
 	} else {
 		computedClassName = "w-full";
 	}
@@ -49,8 +51,12 @@ export default function FieldValueDisplayer({
 								>
 									{(() => {
 										let displayLabel =
-											typeof field.name === "string" && field.labelTranslator
-												? translateEnumValue(field.name, field.labelTranslator)
+											typeof field.name === "string" &&
+											field.labelTranslator
+												? translateEnumValue(
+														field.name,
+														field.labelTranslator
+													)
 												: field.name;
 
 										return displayLabel;
@@ -61,15 +67,22 @@ export default function FieldValueDisplayer({
 									:{" "}
 									{(() => {
 										let displayValue =
-											typeof field.value === "string" && field.translator
-												? translateEnumValue(field.value, field.translator)
+											typeof field.value === "string" &&
+											field.translator
+												? translateEnumValue(
+														field.value,
+														field.translator
+													)
 												: field.value;
 
 										if (
 											typeof displayValue === "string" &&
-											(displayValue.length > 30 || displayValue.includes("\n"))
+											(displayValue.length > 30 ||
+												displayValue.includes("\n"))
 										) {
-											displayValue = displayValue.slice(0, 30) + "...";
+											displayValue =
+												displayValue.slice(0, 30) +
+												"...";
 										}
 
 										return displayValue;

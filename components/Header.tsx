@@ -22,7 +22,8 @@ export default function Header({
 	const headerContainerClasses = clsx(
 		"flex w-full",
 		{
-			"flex-row justify-between items-center'": orientation === "horizontal",
+			"flex-row justify-between items-center'":
+				orientation === "horizontal",
 			"flex-col justify-center": orientation === "vertical",
 		},
 		headerContainerClassName
@@ -47,7 +48,9 @@ export default function Header({
 			<div className={headerContainerClasses}>
 				<div className={titleContainerClasses}>
 					<h2 className={clsx(titleClassName)}>{title}</h2>
-					{subtitle && <p className={clsx(subtitleClassName)}>{subtitle}</p>}
+					{subtitle && (
+						<p className={clsx(subtitleClassName)}>{subtitle}</p>
+					)}
 				</div>
 
 				{hasChildren && (

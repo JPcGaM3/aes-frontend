@@ -29,6 +29,8 @@ import AlertComponent from "@/components/AlertComponent";
 import { getActivities } from "@/libs/activityAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
+import ProtectedRoute from "@/components/HigherOrderComponent";
+import { USERROLE } from "@/utils/enum";
 
 interface FormType extends RequestOrder {
 	activities: string;
@@ -82,7 +84,11 @@ export default function AddRequestPage() {
 			userContext.token &&
 			userContext.ae_id
 		) {
-			const fetchDropDownOptions = async ({ token }: { token: string }) => {
+			const fetchDropDownOptions = async ({
+				token,
+			}: {
+				token: string;
+			}) => {
 				const activity = await getActivities({ token });
 				const operation_area = await getOperationAreas({ token });
 
@@ -443,105 +449,109 @@ export default function AddRequestPage() {
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
-				radius="sm"
-			>
-				{/* Key-in tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="key-in"
-					className="flex flex-col items-center justify-center w-full"
-					title="Key-in"
+		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
+			<div className="flex flex-col justify-center items-center w-full">
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					radius="sm"
 				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isCompact={true}
-						isSubmitting={isAdding}
-						sections={requestOrderFields}
-						submitLabel="ยืนยัน"
-						subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-						title="สร้างใบสั่งงาน"
-						values={formValues}
-						onCancel={handleCancelKeyIn}
-						onChange={handleRequestOrderChange}
-						onSubmit={handleSubmitKeyIn}
+					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="key-in"
+						className="flex flex-col justify-center items-center w-full"
+						title="Key-in"
 					>
-						<div className="flex flex-col items-center justify-center w-full gap-4">
-							<div className="flex items-center w-full gap-5">
-								<span className="text-xl font-semibold text-gray-700">
-									กิจกรรม
-								</span>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isCompact={true}
+							isSubmitting={isAdding}
+							sections={requestOrderFields}
+							submitLabel="ยืนยัน"
+							subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+							title="สร้างใบสั่งงาน"
+							values={formValues}
+							onCancel={handleCancelKeyIn}
+							onChange={handleRequestOrderChange}
+							onSubmit={handleSubmitKeyIn}
+						>
+							<div className="flex flex-col justify-center items-center gap-4 w-full">
+								<div className="flex items-center gap-5 w-full">
+									<span className="font-semibold text-gray-700 text-xl">
+										กิจกรรม
+									</span>
 
-								<Divider className="flex-1" />
+									<Divider className="flex-1" />
 
-								<div className="flex flex-row gap-2">
-									<Button
-										isIconOnly
-										color="default"
-										isDisabled={tasks.length >= 5}
-										radius="sm"
-										size="sm"
-										startContent={<AddIcon />}
-										variant="flat"
-										onPress={handleAddTask}
-									/>
-									<Button
-										isIconOnly
-										color="default"
-										isDisabled={tasks.length <= 1}
-										radius="sm"
-										size="sm"
-										startContent={<MinusIcon />}
-										variant="flat"
-										onPress={handleRemoveTask}
-									/>
+									<div className="flex flex-row gap-2">
+										<Button
+											isIconOnly
+											color="default"
+											isDisabled={tasks.length >= 5}
+											radius="sm"
+											size="sm"
+											startContent={<AddIcon />}
+											variant="flat"
+											onPress={handleAddTask}
+										/>
+										<Button
+											isIconOnly
+											color="default"
+											isDisabled={tasks.length <= 1}
+											radius="sm"
+											size="sm"
+											startContent={<MinusIcon />}
+											variant="flat"
+											onPress={handleRemoveTask}
+										/>
+									</div>
 								</div>
+
+								<FormComponent
+									hasBorder={false}
+									hasHeader={false}
+									isCompact={true}
+									sections={getTaskFormSection()}
+									values={getTaskFormValues()}
+									onChange={handleTaskFormChange}
+								/>
 							</div>
+						</FormComponent>
+					</Tab>
 
-							<FormComponent
-								hasBorder={false}
-								hasHeader={false}
-								isCompact={true}
-								sections={getTaskFormSection()}
-								values={getTaskFormValues()}
-								onChange={handleTaskFormChange}
-							/>
-						</div>
-					</FormComponent>
-				</Tab>
+					{/* Upload tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="upload"
+						className="flex flex-col justify-center items-center w-full"
+						title="Upload"
+					>
+						<UploadComponent
+							isUploading={isAdding}
+							maxFiles={5}
+							setUploadedFiles={setUploadedFiles}
+							uploadedFiles={uploadedFiles}
+							onCancel={handleCancelUpload}
+							onDownloadTemplate={handleDownloadTemplate}
+							onSubmit={handleSubmitUpload}
+						/>
+					</Tab>
+				</Tabs>
 
-				{/* Upload tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="upload"
-					className="flex flex-col items-center justify-center w-full"
-					title="Upload"
-				>
-					<UploadComponent
-						isUploading={isAdding}
-						maxFiles={5}
-						setUploadedFiles={setUploadedFiles}
-						uploadedFiles={uploadedFiles}
-						onCancel={handleCancelUpload}
-						onDownloadTemplate={handleDownloadTemplate}
-						onSubmit={handleSubmitUpload}
+				{/* Alert */}
+				{alert.isVisible && (
+					<AlertComponent
+						color={alert.color}
+						description={alert.description}
+						handleClose={() =>
+							setAlert({ ...alert, isVisible: false })
+						}
+						isVisible={alert.isVisible}
+						placement="top"
+						size="compact"
+						title={alert.title}
 					/>
-				</Tab>
-			</Tabs>
-
-			{/* Alert */}
-			{alert.isVisible && (
-				<AlertComponent
-					color={alert.color}
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
-					placement="top"
-					size="compact"
-					title={alert.title}
-				/>
-			)}
-		</div>
+				)}
+			</div>
+		</ProtectedRoute>
 	);
 }

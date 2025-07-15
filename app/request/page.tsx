@@ -37,7 +37,8 @@ import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { AlertComponentProps } from "@/interfaces/props";
 import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
-import { REQUESTORDERSTATUS } from "@/utils/enum";
+import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
+import ProtectedRoute from "@/components/HigherOrderComponent";
 
 interface filterInterface {
 	status?: string;
@@ -331,7 +332,9 @@ export default function RequestPage() {
 				icon: <RejectIcon />,
 				className: "text-danger-500",
 				onClick: () =>
-					handleNewPage({ params: { id: item.id, action: "reject" } }),
+					handleNewPage({
+						params: { id: item.id, action: "reject" },
+					}),
 			});
 		}
 
@@ -340,94 +343,100 @@ export default function RequestPage() {
 
 	return (
 		<>
-			{/* Modal ------------------------------------------------------------- */}
-			{alert && reqOrders.length == 0 && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert(null)}
-					isVisible={alert != null}
-					placement="bottom"
-					size="full"
+			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
+				{/* Modal ------------------------------------------------------------- */}
+				{alert && reqOrders.length == 0 && (
+					<AlertComponent
+						{...alert}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
+						placement="bottom"
+						size="full"
+					/>
+				)}
+				<FilterModal
+					cancelLabel="Cancel"
+					isOpen={isOpenFilter}
+					sections={filterSections}
+					submitLabel="Apply Filters"
+					title="ฟิลเตอร์รายการใบสั่งงาน"
+					values={filter}
+					onClose={() => onCloseFilter()}
+					onSubmit={handleApplyFilters}
 				/>
-			)}
-			<FilterModal
-				cancelLabel="Cancel"
-				isOpen={isOpenFilter}
-				sections={filterSections}
-				submitLabel="Apply Filters"
-				title="ฟิลเตอร์รายการใบสั่งงาน"
-				values={filter}
-				onClose={() => onCloseFilter()}
-				onSubmit={handleApplyFilters}
-			/>
 
-			{/* Header ----------------------------------------------------------- */}
-			<Header
-				className="w-full mb-6 text-left"
-				orientation="horizontal"
-				subtitle="ใบสั่งงานทั้งหมด"
-				title="รายการใบสั่งงาน"
-			>
-				<Button
-					className="hidden font-semibold sm:inline-flex"
-					color="primary"
-					endContent={<FilterIcon />}
-					radius="sm"
-					variant="flat"
-					onPress={onOpenFilter}
+				{/* Header ----------------------------------------------------------- */}
+				<Header
+					className="mb-6 w-full text-left"
+					orientation="horizontal"
+					subtitle="ใบสั่งงานทั้งหมด"
+					title="รายการใบสั่งงาน"
 				>
-					Filter
-				</Button>
+					<Button
+						className="hidden sm:inline-flex font-semibold"
+						color="primary"
+						endContent={<FilterIcon />}
+						radius="sm"
+						variant="flat"
+						onPress={onOpenFilter}
+					>
+						Filter
+					</Button>
 
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<FilterIcon />}
-					radius="sm"
-					variant="flat"
-					onPress={onOpenFilter}
-				/>
+					<Button
+						isIconOnly
+						className="sm:hidden"
+						color="primary"
+						endContent={<FilterIcon />}
+						radius="sm"
+						variant="flat"
+						onPress={onOpenFilter}
+					/>
 
-				<Divider className="w-[1px] h-10" orientation="vertical" />
+					<Divider className="w-[1px] h-10" orientation="vertical" />
 
-				<Button
-					className="hidden font-semibold sm:inline-flex"
-					color="primary"
-					endContent={<PlusIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				>
-					Add
-				</Button>
+					<Button
+						className="hidden sm:inline-flex font-semibold"
+						color="primary"
+						endContent={<PlusIcon />}
+						radius="sm"
+						variant="solid"
+						onPress={() =>
+							handleNewPage({ params: { action: "add" } })
+						}
+					>
+						Add
+					</Button>
 
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<PlusIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				/>
-			</Header>
+					<Button
+						isIconOnly
+						className="sm:hidden"
+						color="primary"
+						endContent={<PlusIcon />}
+						radius="sm"
+						variant="solid"
+						onPress={() =>
+							handleNewPage({ params: { action: "add" } })
+						}
+					/>
+				</Header>
 
-			{/* Body ------------------------------------------------------------- */}
+				{/* Body ------------------------------------------------------------- */}
 
-			<div>
-				<div className="mb-4 font-medium text-right text-gray-700">
-					{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
+				<div>
+					<div className="mb-4 font-medium text-gray-700 text-right">
+						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
+					</div>
+
+					<CardComponent
+						actions={(item: RequestOrder) => getActions(item)}
+						bodyFields={bodyFields}
+						headerFields={headerFields}
+						items={reqOrders}
+						statusConfig={statusConfig}
+					/>
 				</div>
-
-				<CardComponent
-					actions={(item: RequestOrder) => getActions(item)}
-					bodyFields={bodyFields}
-					headerFields={headerFields}
-					items={reqOrders}
-					statusConfig={statusConfig}
-				/>
-			</div>
+			</ProtectedRoute>
 		</>
 	);
 }

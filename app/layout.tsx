@@ -40,10 +40,12 @@ export default function RootLayout({
 					fontNoto.variable
 				)}
 			>
-				<Providers themeProps={{ attribute: "class", defaultTheme: "white" }}>
+				<Providers
+					themeProps={{ attribute: "class", defaultTheme: "white" }}
+				>
 					<div className="relative flex flex-col h-full min-h-screen">
 						<Navbar />
-						<main className="container flex-grow max-w-full p-3 mx-auto md:p-6">
+						<main className="flex-grow mx-auto p-3 md:p-6 max-w-full h-full container">
 							{children}
 						</main>
 					</div>

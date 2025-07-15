@@ -35,6 +35,8 @@ import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { getAssignedTask } from "@/libs/taskOrderAPI";
 import { RequestOrder, TaskOrder } from "@/interfaces/schema";
+import ProtectedRoute from "@/components/HigherOrderComponent";
+import { USERROLE } from "@/utils/enum";
 
 interface filterInterface {
 	start_date?: CalendarDate;
@@ -107,7 +109,12 @@ export default function TaskPage() {
 
 	useEffect(() => {
 		setIsLoading(true);
-		if (isReady && userContext.id && userContext.ae_id && userContext.token) {
+		if (
+			isReady &&
+			userContext.id &&
+			userContext.ae_id &&
+			userContext.token
+		) {
 			const fetchData = async (): Promise<any> => {
 				try {
 					setTaskOrders([]);
@@ -303,86 +310,92 @@ export default function TaskPage() {
 	};
 
 	return (
-		<div>
-			{/* Modal ------------------------------------------------------------- */}
-			<FilterModal
-				cancelLabel="Cancel"
-				isOpen={isOpenFilter}
-				sections={filterFields}
-				submitLabel="Apply Filters"
-				title="ฟิลเตอร์รายการงานย่อย"
-				values={filterValues}
-				onClose={onCloseFilter}
-				onSubmit={handleApplyFilters}
-			/>
-
-			{/* Header ----------------------------------------------------------- */}
-			<Header className="w-full mb-6 text-left" title="รายการงานย่อย">
-				<Button
-					className="hidden font-semibold sm:inline-flex"
-					color="primary"
-					endContent={<FilterIcon />}
-					radius="sm"
-					variant="flat"
-					onPress={onOpenFilter}
-				>
-					Filter
-				</Button>
-
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<FilterIcon />}
-					radius="sm"
-					variant="flat"
-					onPress={onOpenFilter}
+		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
+			<div>
+				{/* Modal ------------------------------------------------------------- */}
+				<FilterModal
+					cancelLabel="Cancel"
+					isOpen={isOpenFilter}
+					sections={filterFields}
+					submitLabel="Apply Filters"
+					title="ฟิลเตอร์รายการงานย่อย"
+					values={filterValues}
+					onClose={onCloseFilter}
+					onSubmit={handleApplyFilters}
 				/>
 
-				<Divider className="w-[1px]" orientation="vertical" />
+				{/* Header ----------------------------------------------------------- */}
+				<Header className="mb-6 w-full text-left" title="รายการงานย่อย">
+					<Button
+						className="hidden sm:inline-flex font-semibold"
+						color="primary"
+						endContent={<FilterIcon />}
+						radius="sm"
+						variant="flat"
+						onPress={onOpenFilter}
+					>
+						Filter
+					</Button>
 
-				<Button
-					className="hidden font-semibold sm:inline-flex"
-					color="primary"
-					endContent={<PlusIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				>
-					Add
-				</Button>
-
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<PlusIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				/>
-			</Header>
-
-			{/* Body ------------------------------------------------------------- */}
-			{error ? (
-				<div className="my-8 font-medium text-center text-gray-500">
-					{error}
-				</div>
-			) : (
-				<div>
-					<div className="mb-4 font-medium text-right text-gray-700">
-						{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
-					</div>
-
-					<CardComponent
-						actions={actions}
-						bodyFields={bodyFields}
-						headerFields={headerFields}
-						items={taskOrders}
-						statusConfig={statusConfig}
+					<Button
+						isIconOnly
+						className="sm:hidden"
+						color="primary"
+						endContent={<FilterIcon />}
+						radius="sm"
+						variant="flat"
+						onPress={onOpenFilter}
 					/>
-				</div>
-			)}
-		</div>
+
+					<Divider className="w-[1px]" orientation="vertical" />
+
+					<Button
+						className="hidden sm:inline-flex font-semibold"
+						color="primary"
+						endContent={<PlusIcon />}
+						radius="sm"
+						variant="solid"
+						onPress={() =>
+							handleNewPage({ params: { action: "add" } })
+						}
+					>
+						Add
+					</Button>
+
+					<Button
+						isIconOnly
+						className="sm:hidden"
+						color="primary"
+						endContent={<PlusIcon />}
+						radius="sm"
+						variant="solid"
+						onPress={() =>
+							handleNewPage({ params: { action: "add" } })
+						}
+					/>
+				</Header>
+
+				{/* Body ------------------------------------------------------------- */}
+				{error ? (
+					<div className="my-8 font-medium text-gray-500 text-center">
+						{error}
+					</div>
+				) : (
+					<div>
+						<div className="mb-4 font-medium text-gray-700 text-right">
+							{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
+						</div>
+
+						<CardComponent
+							actions={actions}
+							bodyFields={bodyFields}
+							headerFields={headerFields}
+							items={taskOrders}
+							statusConfig={statusConfig}
+						/>
+					</div>
+				)}
+			</div>
+		</ProtectedRoute>
 	);
 }

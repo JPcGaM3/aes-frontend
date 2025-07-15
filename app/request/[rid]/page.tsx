@@ -47,6 +47,7 @@ import {
 	fetchUsers,
 } from "@/utils/functions";
 import { translateEnumValue } from "@/utils/functions";
+import ProtectedRoute from "@/components/HigherOrderComponent";
 
 moment.locale("th");
 
@@ -172,7 +173,9 @@ export default function RequestManagementPage({
 		if (typeof key === "string") {
 			setSelectedTab(key);
 
-			const newSearchParams = new URLSearchParams(searchParams.toString());
+			const newSearchParams = new URLSearchParams(
+				searchParams.toString()
+			);
 
 			newSearchParams.set("action", key);
 
@@ -278,7 +281,9 @@ export default function RequestManagementPage({
 	};
 
 	const getToolTypeData = (activity_id: number) => {
-		const activity = activityWithToolTypes.find((a) => a.id === activity_id);
+		const activity = activityWithToolTypes.find(
+			(a) => a.id === activity_id
+		);
 
 		if (!activity || !activity.tool_types) {
 			return [];
@@ -302,7 +307,9 @@ export default function RequestManagementPage({
 				{
 					name: "created_at",
 					value: requestData?.created_at
-						? moment(requestData.created_at).tz("Asia/Bangkok").format("LLL")
+						? moment(requestData.created_at)
+								.tz("Asia/Bangkok")
+								.format("LLL")
 						: "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -550,7 +557,8 @@ export default function RequestManagementPage({
 						label: "car_id",
 						labelTranslator: TaskOrderTranslation,
 						options: carData.map((car) => ({
-							label: car.name || car.car_number || car.id.toString(),
+							label:
+								car.name || car.car_number || car.id.toString(),
 							value: car.id,
 						})),
 					},
@@ -605,128 +613,146 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			{alert.isVisible && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					size="expanded"
-				/>
-			)}
-
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
-				radius="sm"
-				selectedKey={selectedTab}
-				onSelectionChange={handleTabChange}
-			>
-				{/* View tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
-					title="รายละเอียด"
-				>
-					<Header
-						hasBorder={false}
-						subtitle={`@${requestData.work_order_number}`}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="รายละเอียดใบสั่งงาน"
-					/>
-
-					{requestData.comment && (
-						<Alert
-							className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
-							color={
-								requestData.status === REQUESTORDERSTATUS.Rejected
-									? "danger"
-									: "warning"
-							}
-							description={requestData.comment || "-"}
-							isVisible={true}
-							title="หมายเหตุ"
-							variant="faded"
-						/>
-					)}
-
-					<FieldValueDisplayer sections={dataSections} size="expanded" />
-
-					<FormButtons
-						cancelLabel="ยกเลิก"
-						hasBorder={false}
-						isSubmitDisabled={
-							requestData.status !== REQUESTORDERSTATUS.Created &&
-							requestData.status !== REQUESTORDERSTATUS.PendingEdit
+		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
+			<div className="flex flex-col justify-center items-center w-full">
+				{alert.isVisible && (
+					<AlertComponent
+						{...alert}
+						handleClose={() =>
+							setAlert({ ...alert, isVisible: false })
 						}
-						isSubmitting={isSubmitting}
 						size="expanded"
-						submitLabel="ส่งคำขออนุมัติ"
-						onCancel={handleCancel}
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.PendingApproval)}
 					/>
-				</Tab>
+				)}
 
-				{/* Edit tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="edit"
-					className="flex flex-col items-center justify-center w-full gap-20"
-					isDisabled={
-						requestData.status === REQUESTORDERSTATUS.Rejected ||
-						requestData.status === REQUESTORDERSTATUS.PendingApproval
-					}
-					title="แก้ไข"
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					radius="sm"
+					selectedKey={selectedTab}
+					onSelectionChange={handleTabChange}
 				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						hasBorder={false}
-						isSubmitting={isSubmitting}
-						sections={requestFormSections}
-						size="expanded"
-						submitLabel="บันทึก"
-						subtitle={`@${requestData.work_order_number}`}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="แก้ไขใบสั่งงาน"
-						values={{ ...requestData, ...changedValues }}
-						onCancel={handleCancel}
-						onChange={handleValueChange}
-						onSubmit={handleSubmit}
-					/>
-				</Tab>
+					{/* View tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="view"
+						className="flex flex-col justify-center items-center gap-8 w-full"
+						title="รายละเอียด"
+					>
+						<Header
+							hasBorder={false}
+							subtitle={`@${requestData.work_order_number}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="รายละเอียดใบสั่งงาน"
+						/>
 
-				{/* Reject tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="reject"
-					className="flex flex-col items-center justify-center w-full"
-					isDisabled={
-						requestData.status === REQUESTORDERSTATUS.Rejected ||
-						requestData.status === REQUESTORDERSTATUS.PendingApproval
-					}
-					title="ยกเลิก"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={requestData.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
+						{requestData.comment && (
+							<Alert
+								className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+								color={
+									requestData.status ===
+									REQUESTORDERSTATUS.Rejected
+										? "danger"
+										: "warning"
+								}
+								description={requestData.comment || "-"}
+								isVisible={true}
+								title="หมายเหตุ"
+								variant="faded"
+							/>
 						)}
-						title="ปฏิเสธใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() => handleStatus(REQUESTORDERSTATUS.Rejected)}
-					/>
-				</Tab>
-			</Tabs>
-		</div>
+
+						<FieldValueDisplayer
+							sections={dataSections}
+							size="expanded"
+						/>
+
+						<FormButtons
+							cancelLabel="ยกเลิก"
+							hasBorder={false}
+							isSubmitDisabled={
+								requestData.status !==
+									REQUESTORDERSTATUS.Created &&
+								requestData.status !==
+									REQUESTORDERSTATUS.PendingEdit
+							}
+							isSubmitting={isSubmitting}
+							size="expanded"
+							submitLabel="ส่งคำขออนุมัติ"
+							onCancel={handleCancel}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.PendingApproval)
+							}
+						/>
+					</Tab>
+
+					{/* Edit tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="edit"
+						className="flex flex-col justify-center items-center gap-20 w-full"
+						isDisabled={
+							requestData.status ===
+								REQUESTORDERSTATUS.Rejected ||
+							requestData.status ===
+								REQUESTORDERSTATUS.PendingApproval
+						}
+						title="แก้ไข"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							hasBorder={false}
+							isSubmitting={isSubmitting}
+							sections={requestFormSections}
+							size="expanded"
+							submitLabel="บันทึก"
+							subtitle={`@${requestData.work_order_number}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="แก้ไขใบสั่งงาน"
+							values={{ ...requestData, ...changedValues }}
+							onCancel={handleCancel}
+							onChange={handleValueChange}
+							onSubmit={handleSubmit}
+						/>
+					</Tab>
+
+					{/* Reject tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="reject"
+						className="flex flex-col justify-center items-center w-full"
+						isDisabled={
+							requestData.status ===
+								REQUESTORDERSTATUS.Rejected ||
+							requestData.status ===
+								REQUESTORDERSTATUS.PendingApproval
+						}
+						title="ยกเลิก"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={requestData.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="ปฏิเสธใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Rejected)
+							}
+						/>
+					</Tab>
+				</Tabs>
+			</div>
+		</ProtectedRoute>
 	);
 }

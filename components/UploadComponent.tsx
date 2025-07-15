@@ -167,13 +167,18 @@ export default function UploadComponent({
         ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
 						role="button"
 						tabIndex={0}
-						onClick={() => !isUploading && fileInputRef.current?.click()}
+						onClick={() =>
+							!isUploading && fileInputRef.current?.click()
+						}
 						onDragEnter={handleDragEnter}
 						onDragLeave={handleDragLeave}
 						onDragOver={handleDragOver}
 						onDrop={handleDrop}
 						onKeyDown={(e) => {
-							if (!isUploading && (e.key === "Enter" || e.key === " ")) {
+							if (
+								!isUploading &&
+								(e.key === "Enter" || e.key === " ")
+							) {
 								e.preventDefault();
 								fileInputRef.current?.click();
 							}
@@ -217,15 +222,22 @@ export default function UploadComponent({
 									className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 rounded-xl hover:bg-gray-100"
 									role="button"
 									tabIndex={0}
-									onClick={() => handleDownloadUploadedFile(file)}
+									onClick={() =>
+										handleDownloadUploadedFile(file)
+									}
 									onKeyDown={(e) => {
-										if (!isUploading && (e.key === "Enter" || e.key === " ")) {
+										if (
+											!isUploading &&
+											(e.key === "Enter" || e.key === " ")
+										) {
 											e.preventDefault();
 											handleDownloadUploadedFile(file);
 										}
 									}}
 								>
-									<span className="text-gray-700 truncate">{file.name}</span>
+									<span className="text-gray-700 truncate">
+										{file.name}
+									</span>
 									<Button
 										isIconOnly
 										className="p-1 text-gray-400 hover:text-red-500"
@@ -234,7 +246,9 @@ export default function UploadComponent({
 										radius="sm"
 										size="sm"
 										variant="light"
-										onPress={() => handleDeleteFile(file.name)}
+										onPress={() =>
+											handleDeleteFile(file.name)
+										}
 									/>
 								</div>
 							))}

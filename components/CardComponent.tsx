@@ -13,6 +13,8 @@ import {
 } from "@heroui/react";
 import { clsx } from "clsx";
 
+import SpotlightCard from "./SplotlightCardComponent";
+
 import { VerticalDotsIcon } from "@/utils/icons";
 import { getNestedValue, translateEnumValue } from "@/utils/functions";
 import { FieldConfig } from "@/interfaces/interfaces";
@@ -45,15 +47,44 @@ export default function CardComponent<T extends { id: number | string }>({
 			const resolvedActions =
 				typeof actions === "function" ? actions(item) : actions;
 
+			const getSpotlightColor = (
+				status: string
+			): `rgba(${number}, ${number}, ${number}, ${number})` => {
+				const colorMap: Record<
+					string,
+					`rgba(${number}, ${number}, ${number}, ${number})`
+				> = {
+					default: "rgba(156, 163, 175, 0.1)",
+					primary: "rgba(59, 130, 246, 0.1)",
+					secondary: "rgba(107, 114, 128, 0.1)",
+					success: "rgba(34, 197, 94, 0.1)",
+					warning: "rgba(245, 158, 11, 0.1)",
+					danger: "rgba(239, 68, 68, 0.1)",
+				};
+
+				const statusColor =
+					statusConfig?.colorMap?.[(item as any).status];
+
+				return statusColor && colorMap[statusColor]
+					? colorMap[statusColor]
+					: colorMap.default;
+			};
+
 			return (
-				<div key={item.id} className={cardClassName}>
+				<SpotlightCard
+					key={item.id}
+					className="flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full"
+					spotlightColor={getSpotlightColor((item as any).status)}
+				>
 					{/* header */}
 					<div className="gap-1 px-4 text-left">
 						{(item as any).status && (
 							<Chip
-								className="p-3 mt-4 mb-2 tracking-wide w-fit"
+								className="mt-4 mb-2 p-3 w-fit tracking-wide"
 								color={
-									statusConfig?.colorMap?.[(item as any).status] || "default"
+									statusConfig?.colorMap?.[
+										(item as any).status
+									] || "default"
 								}
 								radius="sm"
 								size="sm"
@@ -71,13 +102,19 @@ export default function CardComponent<T extends { id: number | string }>({
 						{headerFields?.map((field) => {
 							const label = field.label
 								? field.label
-								: translateEnumValue(field.key, field.labelTranslator || {});
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
 
 							const rawValue = getFieldValue(item, field);
 							let value =
 								rawValue == null
 									? "N/A"
-									: translateEnumValue(rawValue, field.valueTranslator || {});
+									: translateEnumValue(
+											rawValue,
+											field.valueTranslator || {}
+										);
 
 							if (
 								typeof value === "string" &&
@@ -87,7 +124,10 @@ export default function CardComponent<T extends { id: number | string }>({
 							}
 
 							return (
-								<div key={field.key} className={field.className || "w-fit"}>
+								<div
+									key={field.key}
+									className={field.className || "w-fit"}
+								>
 									{label} : {value}
 								</div>
 							);
@@ -98,7 +138,10 @@ export default function CardComponent<T extends { id: number | string }>({
 						{bodyFields.map((field) => {
 							const label = field.label
 								? field.label
-								: translateEnumValue(field.key, field.labelTranslator || {});
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
 
 							let value;
 
@@ -110,7 +153,10 @@ export default function CardComponent<T extends { id: number | string }>({
 								value =
 									rawValue == null
 										? "N/A"
-										: translateEnumValue(rawValue, field.valueTranslator || {});
+										: translateEnumValue(
+												rawValue,
+												field.valueTranslator || {}
+											);
 							}
 							if (
 								typeof value === "string" &&
@@ -127,7 +173,11 @@ export default function CardComponent<T extends { id: number | string }>({
 									}`}
 								>
 									<div className="w-2/5">{label}</div>
-									<div className={clsx(`${field.valueClassName} w-3/5`)}>
+									<div
+										className={clsx(
+											`${field.valueClassName} w-3/5`
+										)}
+									>
 										{value}
 									</div>
 								</div>
@@ -138,25 +188,33 @@ export default function CardComponent<T extends { id: number | string }>({
 					{resolvedActions && resolvedActions.length > 0 && (
 						<div>
 							<Divider />
-							<div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
-								<div className="text-sm text-gray-500">More actions.</div>
+							<div className="flex justify-between items-center gap-2 py-1 pr-1 pl-4">
+								<div className="text-gray-500 text-sm">
+									More actions.
+								</div>
 
 								<Popover
 									isOpen={openPopoverId === item.id}
 									placement="bottom-end"
 									onOpenChange={(isOpen) =>
-										setOpenPopoverId(isOpen ? item.id : null)
+										setOpenPopoverId(
+											isOpen ? item.id : null
+										)
 									}
 								>
 									<PopoverTrigger>
-										<Button isIconOnly size="sm" variant="light">
+										<Button
+											isIconOnly
+											size="sm"
+											variant="light"
+										>
 											<div className="text-default-300">
 												<VerticalDotsIcon />
 											</div>
 										</Button>
 									</PopoverTrigger>
 
-									<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg min-w-40">
+									<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg min-w-40">
 										<div className="flex flex-col w-full text-sm">
 											{resolvedActions.map((action) => (
 												<Button
@@ -182,7 +240,7 @@ export default function CardComponent<T extends { id: number | string }>({
 							</div>
 						</div>
 					)}
-				</div>
+				</SpotlightCard>
 			);
 		},
 		[
@@ -197,7 +255,7 @@ export default function CardComponent<T extends { id: number | string }>({
 	);
 
 	return (
-		<div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+		<div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full h-full">
 			{items.map((item) => renderCell(item))}
 		</div>
 	);

@@ -22,21 +22,17 @@ export default function FormFields({
 
 			let value;
 
-			// Get the value from path or name
 			if (config.path) {
 				value = getNestedValue(values, config.path);
 			} else if (config.name && typeof values === "object" && values !== null) {
 				value = values[config.name];
 			}
 
-			// Handle different input types with proper defaults
 			if (config.type === "date" || config.type === "date-range") {
-				// For date inputs, return null if no value, otherwise the value or default
 				return value !== undefined && value !== null && value !== ""
 					? value
 					: (config.defaultValue ?? null);
 			} else {
-				// For all other inputs, return empty string if no value
 				return value !== undefined && value !== null && value !== ""
 					? value
 					: (config.defaultValue ?? "");

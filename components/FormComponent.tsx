@@ -26,18 +26,13 @@ export default function FormComponent({
 	onSubmit,
 	onChange,
 }: FormComponentProps & { isCompact?: boolean }) {
-	// Initialize formValues with proper defaults to prevent controlled/uncontrolled switch
-	const [formValues, setFormValues] = useState<any>(() => {
-		// Ensure we always have a proper object with defined values
-		return values || {};
-	});
+	const [formValues, setFormValues] = useState<any>(values || {});
 
 	useEffect(() => {
-		// Only update if values actually changed and is a valid object
 		if (values && typeof values === "object") {
 			setFormValues(values);
 		}
-	}, [values]);
+	}, [JSON.stringify(values)]);
 
 	const handleValueChange = (name: string, value: any) => {
 		const newValues = { ...formValues, [name]: value };

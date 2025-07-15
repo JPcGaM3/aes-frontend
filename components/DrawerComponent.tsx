@@ -2,7 +2,7 @@ import type { DrawerComponentProps } from "@/interfaces/props";
 
 import { Drawer, DrawerContent, DrawerHeader, Button } from "@heroui/react";
 
-import { CloseDrawerIcon } from "@/utils/icons";
+import { ChevronsRight } from "@/utils/icons";
 
 export default function DrawerComponent({
 	size = "5xl",
@@ -41,7 +41,7 @@ export default function DrawerComponent({
 										variant="light"
 										onPress={onClose}
 									>
-										<CloseDrawerIcon />
+										<ChevronsRight />
 									</Button>
 								</DrawerHeader>
 							)}

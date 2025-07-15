@@ -13,7 +13,7 @@ import clsx from "clsx";
 import { PatchedAutocomplete } from "./PatchedAutocomplete";
 
 import { InputRendererProps } from "@/interfaces/props";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "@/utils/icons";
+import { EyeIcon, EyeCloseIcon } from "@/utils/icons";
 import { DropdownOption } from "@/interfaces/interfaces";
 import { fontMono } from "@/config/fonts";
 
@@ -179,7 +179,7 @@ export default function InputRenderer({
 							isIconOnly
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
-								isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />
+								isVisible ? <EyeCloseIcon size={18} /> : <EyeIcon size={18} />
 							}
 							radius="full"
 							size="sm"
@@ -200,7 +200,6 @@ export default function InputRenderer({
 				commonProps.defaultValue !== null &&
 				commonProps.defaultValue !== "";
 
-			// Ensure we always have a string value for consistency
 			const stringValue =
 				value !== undefined && value !== null && value !== ""
 					? String(value)
@@ -210,7 +209,6 @@ export default function InputRenderer({
 				? String(commonProps.defaultValue)
 				: "";
 
-			// Always use selectedKey to maintain controlled state
 			const autocompleteProps = {
 				selectedKey: stringValue || stringDefaultValue || "",
 			};
@@ -224,6 +222,7 @@ export default function InputRenderer({
 						...commonProps.classNames,
 						popoverContent: "rounded-lg p-0",
 					}}
+					isClearable={false}
 					placement="bottom"
 					shouldCloseOnBlur={true}
 					shouldCloseOnInteractOutside={true}

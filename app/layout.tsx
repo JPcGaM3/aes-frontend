@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 		default: siteConfig.name,
 		template: `%s - ${siteConfig.name}`,
 	},
-	description: siteConfig.description,
-	icons: {
-		icon: "/favicon.ico",
+	appleWebApp: {
+		title: siteConfig.name,
 	},
+	description: siteConfig.description,
 };
 
 export const viewport: Viewport = {
@@ -34,6 +34,7 @@ export default function RootLayout({
 	return (
 		<html suppressHydrationWarning lang="en">
 			<head />
+
 			<body
 				className={clsx(
 					"bg-background font-sans text-foreground antialiased",

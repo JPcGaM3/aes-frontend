@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "หน้าใบงานย่อย",
+};
+
 export default function TaskOrderLayout({
 	children,
 }: {
@@ -5,7 +11,7 @@ export default function TaskOrderLayout({
 }) {
 	return (
 		<section className="flex flex-col justify-center gap-4">
-			<div className="justify-center inline-block w-full">{children}</div>
+			<div className="inline-block justify-center w-full">{children}</div>
 		</section>
 	);
 }

@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "ไม่มีสิทธิ์เข้าถึง",
+};
+
 export default function UnAuthorizeLayout({
 	children,
 }: {

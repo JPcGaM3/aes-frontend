@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	name: "Next.js + HeroUI",
+	name: "AES - กลุ่มงานไร่อ้อย",
 	description:
-		"Make beautiful websites regardless of your design experience.",
+		"น้ำตาลมิตรผล · โมลาส · ปุ๋ย · วัสดุทดแทนไม้ · การพัฒนาที่ยั่งยืน · การกำกับดูแลกิจการ · ศูนย์นวัตกรรมและการวิจัย · หน้าหลัก · เกี่ยวกับเรา; ธุรกิจมิตรผล; ธุรกิจมิตรผล. ธุรกิจส่งเสริมและพัฒนาอ้อย ...",
 };

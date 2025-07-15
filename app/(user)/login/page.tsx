@@ -10,11 +10,13 @@ import { useAuth } from "@/providers/AuthContext";
 import FormComponent from "@/components/FormComponent";
 import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
+import { useLoading } from "@/providers/LoadingContext";
 
 export default function LoginPage() {
 	const router = useRouter();
 
 	const { login } = useAuth();
+	const { setIsLoading } = useLoading();
 
 	const [alert, setAlert] = useState<AlertComponentProps>({
 		title: "",
@@ -23,6 +25,7 @@ export default function LoginPage() {
 	});
 
 	const handleSubmit = async (values: any) => {
+		setIsLoading(true);
 		const isEmail = values.username.includes("@mitrphol.com");
 
 		const body = isEmail
@@ -30,16 +33,26 @@ export default function LoginPage() {
 			: { username: values.username, password: values.password };
 
 		try {
-			await login({
-				params: {
-					ae_id: values.ae_id,
-				},
-				body: {
-					...body,
-				},
-			});
-
-			router.push("/home");
+			try {
+				await login({
+					params: {
+						ae_id: values.ae_id,
+					},
+					body: {
+						...body,
+					},
+				});
+			} catch (err: any) {
+				setAlert({
+					title: "Login Failed",
+					description: err.message || "Unknown error occurred",
+					color: "danger",
+					isVisible: true,
+				});
+			} finally {
+				setIsLoading(false);
+				router.push("/home");
+			}
 		} catch (err: any) {
 			setAlert({
 				title: "Login Failed",
@@ -47,6 +60,7 @@ export default function LoginPage() {
 				color: "danger",
 				isVisible: true,
 			});
+			setIsLoading(false);
 		}
 	};
 

@@ -297,8 +297,6 @@ export default function ListPage() {
 				break;
 
 			case "add":
-				router.push("/list/add");
-				break;
 
 			default:
 				setIsLoading(false);

@@ -10,7 +10,7 @@ import {
 	monthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
-import { AddIcon, MinusIcon } from "@/utils/icons";
+import { PlusIcon, MinusIcon } from "@/utils/icons";
 import {
 	Activity,
 	OperationArea,
@@ -470,7 +470,7 @@ export default function AddRequestPage() {
 										isDisabled={tasks.length >= 5}
 										radius="sm"
 										size="sm"
-										startContent={<AddIcon />}
+										startContent={<PlusIcon />}
 										variant="flat"
 										onPress={handleAddTask}
 									/>

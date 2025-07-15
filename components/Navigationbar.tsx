@@ -26,6 +26,10 @@ import {
 	ChevronDownIcon,
 	ChevronUpIcon,
 	CheckIcon,
+	DocumentIcon,
+	CheckFillIcon,
+	SettingIcon,
+	UserIcon,
 } from "@/utils/icons";
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { fontMono } from "@/config/fonts";
@@ -49,14 +53,14 @@ export default function Navbar() {
 	const menuItems = [
 		// * Normal Page --------------------------------------------------
 		{ name: "เมนูหลัก", path: "/home", icon: <HomeIcon size={18} /> },
-		{ name: "งาน", path: "/request", icon: <HomeIcon size={18} /> },
-		{ name: "รายการ", path: "/list", icon: <HomeIcon size={18} /> },
+		{ name: "งาน", path: "/request", icon: <DocumentIcon size={18} /> },
+		{ name: "รายการ", path: "/list", icon: <CheckFillIcon size={18} /> },
 		{
 			name: "การตั้งค่า",
 			path: "/setting",
-			icon: <HomeIcon size={18} />,
+			icon: <SettingIcon size={18} />,
 		},
-		{ name: "ผู้ใช้งาน", path: "/login", icon: <HomeIcon size={18} /> },
+		{ name: "ผู้ใช้งาน", path: "/login", icon: <UserIcon size={18} /> },
 		// * Componenent Page ---------------------------------------------
 		// { name: "Form", path: "/form", icon: <HomeIcon /> },
 		// { name: "Card", path: "/card", icon: <HomeIcon /> },

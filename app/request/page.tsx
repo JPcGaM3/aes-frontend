@@ -8,6 +8,7 @@ import clsx from "clsx";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
+	AddIcon,
 	EditIcon,
 	FilterIcon,
 	InfoIcon,
@@ -375,7 +376,7 @@ export default function RequestPage() {
 				<Button
 					className="hidden font-semibold sm:inline-flex"
 					color="primary"
-					endContent={<FilterIcon />}
+					endContent={<FilterIcon variant="border" />}
 					radius="sm"
 					variant="flat"
 					onPress={onOpenFilter}
@@ -387,7 +388,7 @@ export default function RequestPage() {
 					isIconOnly
 					className="sm:hidden"
 					color="primary"
-					endContent={<FilterIcon />}
+					endContent={<FilterIcon variant="border" />}
 					radius="sm"
 					variant="flat"
 					onPress={onOpenFilter}
@@ -398,7 +399,7 @@ export default function RequestPage() {
 				<Button
 					className="hidden font-semibold sm:inline-flex"
 					color="primary"
-					endContent={<PlusIcon />}
+					endContent={<AddIcon />}
 					radius="sm"
 					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}
@@ -410,7 +411,7 @@ export default function RequestPage() {
 					isIconOnly
 					className="sm:hidden"
 					color="primary"
-					endContent={<PlusIcon />}
+					endContent={<AddIcon />}
 					radius="sm"
 					variant="solid"
 					onPress={() => handleNewPage({ params: { action: "add" } })}

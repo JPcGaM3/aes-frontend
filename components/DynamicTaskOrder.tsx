@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import { Plus, Trash2 } from "lucide-react";
 
 import InputRenderer from "./InputRenderer";
 
@@ -10,6 +9,7 @@ import { TaskOrderFormData, TaskOrderUIItem } from "@/types/form-state";
 import { InputConfig, DropdownOption } from "@/interfaces/interfaces";
 import { TaskOrderTranslation } from "@/utils/constants";
 import { Activity, Car, User } from "@/interfaces/schema";
+import { PlusIcon, RemoveIcon } from "@/utils/icons";
 
 interface DynamicTaskOrderProps {
 	taskOrders: TaskOrderUIItem[];
@@ -165,7 +165,7 @@ export default function DynamicTaskOrder({
 				<Button
 					color="primary"
 					size="sm"
-					startContent={<Plus size={16} />}
+					startContent={<PlusIcon size={16} />}
 					variant="flat"
 					onPress={onAddTask}
 				>
@@ -190,12 +190,11 @@ export default function DynamicTaskOrder({
 							<Button
 								isIconOnly
 								color="danger"
+								endContent={<RemoveIcon size={20} />}
 								size="sm"
 								variant="light"
 								onPress={() => onRemoveTask(taskOrder.uiId)}
-							>
-								<Trash2 size={16} />
-							</Button>
+							/>
 						</CardHeader>
 
 						<Divider />
@@ -248,7 +247,7 @@ export default function DynamicTaskOrder({
 						<Button
 							color="primary"
 							size="lg"
-							startContent={<Plus size={20} />}
+							startContent={<PlusIcon size={20} />}
 							variant="flat"
 							onPress={onAddTask}
 						>

@@ -7,7 +7,7 @@ import FormButtons from "./FormButtons";
 import AlertComponent from "./AlertComponent";
 
 import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
-import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
+import { RemoveIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
 import { UploadedFile } from "@/interfaces/interfaces";
 
 export default function UploadComponent({
@@ -144,7 +144,7 @@ export default function UploadComponent({
 						color="primary"
 						radius="sm"
 						size="sm"
-						startContent={<DownloadIcon />}
+						startContent={<DownloadIcon size={18} />}
 						variant="flat"
 						onPress={onDownloadTemplate}
 					>
@@ -236,7 +236,7 @@ export default function UploadComponent({
 										isIconOnly
 										className="p-1 text-gray-400 hover:text-red-500"
 										disabled={isUploading}
-										endContent={<DeleteIcon />}
+										endContent={<RemoveIcon />}
 										radius="sm"
 										size="sm"
 										variant="light"

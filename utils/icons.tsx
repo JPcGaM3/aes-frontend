@@ -20,6 +20,13 @@ import {
 	Divide,
 	Funnel,
 	Menu,
+	Info,
+	SquarePen,
+	Ban,
+	Download,
+	Upload,
+	Trash2,
+	Check,
 } from "lucide-react";
 
 import { IconSvgProps } from "@/types";
@@ -531,7 +538,7 @@ export const DivideIcon = (props: IconSvgProps) => {
 export const FilterIcon = (props: IconSvgProps) => {
 	const {
 		size = 24,
-		strokeWidth = 1,
+		strokeWidth = 1.5,
 		variant = "fill",
 		color = "currentColor",
 		...rest
@@ -645,6 +652,35 @@ export const DocumentIcon = (props: IconSvgProps) => {
 	);
 };
 
+export const CheckFillIcon = (props: IconSvgProps) => {
+	const {
+		size = 24,
+		strokeWidth = 1.5,
+		color = "currentColor",
+		...rest
+	} = props;
+
+	return (
+		<svg
+			fill={color}
+			height={size}
+			stroke="none"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
+			{...rest}
+		>
+			<path
+				clipRule="evenodd"
+				d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"
+				fillRule="evenodd"
+			/>
+		</svg>
+	);
+};
+
 export const SettingIcon = (props: IconSvgProps) => {
 	const {
 		size = 24,
@@ -673,180 +709,131 @@ export const SettingIcon = (props: IconSvgProps) => {
 
 export const InfoIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
+		<Info
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
 			viewBox="0 0 24 24"
-			width={size || width}
-			stroke={variant === "border" ? color : "none"}
+			width={size}
 			{...rest}
-		>
-			<path
-				d="M12 17V11"
-				stroke={variant === "border" ? color : "none"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 1.5}
-			/>
-			<circle
-				cx="1"
-				cy="1"
-				fill={variant === "fill" ? color : "currentColor"}
-				r="1"
-				transform="matrix(1 0 0 -1 11 9)"
-			/>
-			<path
-				d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z"
-				stroke={variant === "border" ? color : "none"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 1.5}
-			/>
-		</svg>
+		/>
 	);
 };
 
 export const EditIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
+		<SquarePen
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
 			viewBox="0 0 24 24"
-			width={size || width}
-			stroke={variant === "border" ? color : "none"}
+			width={size}
 			{...rest}
-		>
-			<path
-				d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
-				stroke={variant === "border" ? color : "none"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 1.5}
-			/>
-			<path
-				d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
-				stroke={variant === "border" ? color : "none"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 1.5}
-			/>
-		</svg>
+		/>
 	);
 };
 
 export const RejectIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
-			stroke={variant === "border" ? color : "none"}
+		<Ban
+			height={size}
+			stroke={color}
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			strokeWidth={strokeWidth || 2}
-			viewBox="0 0 32 32"
-			width={size || width}
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
 			{...rest}
-		>
-			<circle cx="16" cy="16" r="13" />
-			<line x1="13.2" x2="18.8" y1="13.2" y2="18.8" />
-			<line x1="13.2" x2="18.8" y1="18.8" y2="13.2" />
-		</svg>
+		/>
 	);
 };
 
 export const DownloadIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
-			stroke={variant === "border" ? color : "none"}
+		<Download
+			height={size}
+			stroke={color}
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			strokeWidth={strokeWidth || 2}
+			strokeWidth={strokeWidth}
 			viewBox="0 0 24 24"
-			width={size || width}
+			width={size}
 			{...rest}
-		>
-			<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-		</svg>
+		/>
+	);
+};
+
+export const UploadIcon = (props: IconSvgProps) => {
+	const {
+		size = 24,
+		strokeWidth = 1.5,
+		color = "currentColor",
+		...rest
+	} = props;
+
+	return (
+		<Upload
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
+			{...rest}
+		/>
 	);
 };
 
 export const UploadFileIcon = (props: IconSvgProps) => {
-	const {
-		fill,
-		size = 24,
-		width,
-		height,
-		strokeWidth,
-		color = "currentColor",
-		variant = "fill",
-		...rest
-	} = props;
+	const { fill, size = 24, width, height, ...rest } = props;
 
 	return (
 		<svg
 			height={size || height}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			strokeWidth={strokeWidth || (variant === "border" ? 2 : 0)}
 			viewBox="0 0 24 24"
 			width={size || width}
-			fill={variant === "fill" ? color : "none"}
-			stroke={variant === "border" ? color : "none"}
 			{...rest}
 		>
 			<path
 				d="M14,19a5,5,0,0,1,4-4.9h0V5a1,1,0,0,0-.29-.71l-2-2A1,1,0,0,0,15,2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2H15A5,5,0,0,1,14,19Z"
-				fill={variant === "fill" ? color : "#2563eb"}
+				fill={fill || "#2563eb"}
 			/>
 			<path
 				d="M19,22a1,1,0,0,1-1-1V20H17a1,1,0,0,1,0-2h1V17a1,1,0,0,1,2,0v1h1a1,1,0,0,1,0,2H20v1A1,1,0,0,1,19,22ZM15,4a1,1,0,0,0,1,1h2a1,1,0,0,0-.28-.71l-2-2A1,1,0,0,0,15,2Zm-2,9a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h6A1,1,0,0,0,13,13Zm2-4a1,1,0,0,0-1-1H6a1,1,0,0,0,0,2h8A1,1,0,0,0,15,9Z"
-				fill={variant === "fill" ? color : "#38bdf8"}
+				fill={fill || "#38bdf8"}
 			/>
 		</svg>
 	);
@@ -854,149 +841,96 @@ export const UploadFileIcon = (props: IconSvgProps) => {
 
 export const AddIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1,
+		variant = "fill",
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
 		<svg
-			height={size || height}
-			viewBox="0 0 24 24"
-			width={size || width}
 			fill={variant === "fill" ? color : "none"}
+			height={size}
 			stroke={variant === "border" ? color : "none"}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
 			{...rest}
 		>
-			<g id="Complete">
-				<g data-name="add" id="add-2">
-					<g>
-						<line
-							stroke={
-								variant === "border" ? color : "currentColor"
-							}
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={strokeWidth || 2}
-							x1="12"
-							x2="12"
-							y1="19"
-							y2="5"
-						/>
-
-						<line
-							stroke={
-								variant === "border" ? color : "currentColor"
-							}
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={strokeWidth || 2}
-							x1="5"
-							x2="19"
-							y1="12"
-							y2="12"
-						/>
-					</g>
-				</g>
-			</g>
+			<path
+				clipRule="evenodd"
+				d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22ZM12 8.25C12.4142 8.25 12.75 8.58579 12.75 9V11.25H15C15.4142 11.25 15.75 11.5858 15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H12.75L12.75 15C12.75 15.4142 12.4142 15.75 12 15.75C11.5858 15.75 11.25 15.4142 11.25 15V12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H11.25L11.25 9C11.25 8.58579 11.5858 8.25 12 8.25Z"
+				fillRule="evenodd"
+			/>
 		</svg>
 	);
 };
 
 export const RemoveIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
-			stroke={variant === "border" ? color : "none"}
+		<Trash2
+			height={size}
+			stroke={color}
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			strokeWidth={strokeWidth || 2}
+			strokeWidth={strokeWidth}
 			viewBox="0 0 24 24"
-			width={size || width}
+			width={size}
 			{...rest}
-		>
-			<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-		</svg>
+		/>
 	);
 };
 
 export const CancelIcon = (props: IconSvgProps) => {
 	const {
-		fill,
 		size = 24,
-		width,
-		height,
-		strokeWidth,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			height={size || height}
+		<X
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
 			viewBox="0 0 24 24"
-			width={size || width}
-			fill={variant === "fill" ? color : "none"}
-			stroke={variant === "border" ? color : "none"}
+			width={size}
 			{...rest}
-		>
-			<path
-				d="M19 5L5 19M5.00001 5L19 19"
-				stroke={variant === "border" ? color : "currentColor"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 2}
-			/>
-		</svg>
+		/>
 	);
 };
 
 export const CheckIcon = (props: IconSvgProps) => {
 	const {
-		fill,
-		size = 18,
-		width,
-		height,
-		strokeWidth,
+		size = 24,
+		strokeWidth = 1.5,
 		color = "currentColor",
-		variant = "border",
 		...rest
 	} = props;
 
 	return (
-		<svg
-			fill={variant === "fill" ? color : "none"}
-			height={size || height}
-			viewBox="0 0 48 48"
-			width={size || width}
-			stroke={variant === "border" ? color : "none"}
+		<Check
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
 			{...rest}
-		>
-			<path
-				d="M10 24L20 34L40 14"
-				stroke={variant === "border" ? color : "currentColor"}
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={strokeWidth || 3}
-			/>
-		</svg>
+		/>
 	);
 };

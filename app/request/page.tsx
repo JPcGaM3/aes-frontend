@@ -88,16 +88,20 @@ export default function RequestPage() {
 
 	useEffect(() => {
 		if (isReady && userContext?.ae_id && !hasFetched.current) {
+			setIsLoading(true);
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
+					const promises = [];
+
 					if (customerTypes.length < 1) {
-						await fetchCustomerTypes({
-							token: userContext.token,
-							setCustomerTypes,
-							setAlert,
-							setIsLoading,
-						});
+						promises.push(
+							fetchCustomerTypes({
+								token: userContext.token,
+								setCustomerTypes,
+								setAlert,
+							})
+						);
 					}
 
 					const params = {
@@ -105,13 +109,15 @@ export default function RequestPage() {
 						ae_id: userContext?.ae_id,
 					};
 
-					await fetchReqOrderData({
-						token: userContext.token,
-						params: params,
-						setReqOrders,
-						setAlert,
-						setIsLoading,
-					});
+					promises.push(
+						fetchReqOrderData({
+							token: userContext.token,
+							params: params,
+							setReqOrders,
+							setAlert,
+						})
+					);
+					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
 						title: "Failed to fetch",

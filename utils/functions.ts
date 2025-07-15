@@ -49,14 +49,11 @@ export async function fetchCustomerTypes({
 	token,
 	setCustomerTypes,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	setCustomerTypes: (options: CustomerType[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const customer_type = await getCustomerTypes({
@@ -79,15 +76,12 @@ export async function fetchReqOrderData({
 	params,
 	setReqOrders,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	params: any;
 	setReqOrders: (orders: RequestOrder[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token && params) {
 		try {
 			const data = await getRequestOrders({
@@ -121,15 +115,12 @@ export async function fetchReqOrderWithTaskData({
 	requestId,
 	setReqOrder,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	requestId: number;
 	setReqOrder: (order: RequestOrder) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token && requestId) {
 		try {
 			const data = await getRequestOrderWithTask({
@@ -167,16 +158,13 @@ export async function fetchUsers({
 	role,
 	setUsers,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	ae_id?: number;
 	role?: string[];
 	setUsers: (users: User[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const paramData = {
@@ -214,14 +202,11 @@ export async function fetchAE({
 	token,
 	setAE,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	setAE: (ae: AeArea[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const data = await getAeAreaAll({
@@ -253,14 +238,11 @@ export async function fetchOperationAreas({
 	token,
 	setOpArea,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	setOpArea: (op: OperationArea[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const data = await getOperationAreas({
@@ -293,15 +275,12 @@ export async function fetchCars({
 	ae_id,
 	setCars,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	ae_id?: number;
 	setCars: (cars: Car[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const paramData = {
@@ -333,14 +312,11 @@ export async function fetchActivitiesWithToolTypes({
 	token,
 	setActivitiesWithToolTypes,
 	setAlert,
-	setIsLoading,
 }: {
 	token: string;
 	setActivitiesWithToolTypes: (activities: Activity[]) => void;
 	setAlert: (alert: AlertComponentProps) => void;
-	setIsLoading: (loading: boolean) => void;
 }) {
-	setIsLoading(true);
 	if (token) {
 		try {
 			const data = await getActivities({

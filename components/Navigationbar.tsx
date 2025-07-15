@@ -83,7 +83,7 @@ export default function Navbar() {
 		},
 		{
 			name: "รายการ",
-			path: "/assigned",
+			path: "/assigned/task",
 			icon: <RequestIcon size={18} />,
 			allowedRoles: [USERROLE.Admin, USERROLE.Driver],
 		},

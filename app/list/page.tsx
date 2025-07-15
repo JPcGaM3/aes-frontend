@@ -23,7 +23,11 @@ import {
 	yearList,
 	yearMap,
 } from "@/utils/constants";
-import { FieldConfig, FormSection } from "@/interfaces/interfaces";
+import {
+	ActionConfig,
+	FieldConfig,
+	FormSection,
+} from "@/interfaces/interfaces";
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
@@ -86,16 +90,20 @@ export default function ListPage() {
 
 	useEffect(() => {
 		if (isReady && userContext?.ae_id && !hasFetched.current) {
+			setIsLoading(true);
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
+					const promises = [];
+
 					if (customerTypes.length < 1) {
-						await fetchCustomerTypes({
-							token: userContext.token,
-							setCustomerTypes,
-							setAlert,
-							setIsLoading,
-						});
+						promises.push(
+							fetchCustomerTypes({
+								token: userContext.token,
+								setCustomerTypes,
+								setAlert,
+							})
+						);
 					}
 
 					const params = {
@@ -104,13 +112,15 @@ export default function ListPage() {
 						status: REQUESTORDERSTATUS.PendingApproval,
 					};
 
-					await fetchReqOrderData({
-						token: userContext.token,
-						params: params,
-						setReqOrders,
-						setAlert,
-						setIsLoading,
-					});
+					promises.push(
+						fetchReqOrderData({
+							token: userContext.token,
+							params: params,
+							setReqOrders,
+							setAlert,
+						})
+					);
+					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
 						title: "Failed to fetch",
@@ -127,30 +137,36 @@ export default function ListPage() {
 		}
 	}, [filter, isReady, userContext?.ae_id]);
 
-	const actions = [
-		{
-			key: "view",
-			label: "ดูรายละเอียด",
-			icon: <InfoIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "view" } }),
-		},
-		{
-			key: "edit",
-			label: "แจ้งแก้ไข",
-			icon: <EditIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "edit" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
+	const getActions = (item: RequestOrder) => {
+		const actionList: ActionConfig[] = [
+			{
+				key: "view",
+				label: "ดูรายละเอียด",
+				icon: <InfoIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "view" } }),
+			},
+			{
+				key: "edit",
+				label: "แจ้งแก้ไข",
+				icon: <EditIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "edit" } }),
+			},
+			{
+				key: "reject",
+				label: "ปฏิเสธ",
+				icon: <RejectIcon />,
+				className: "text-danger-500",
+				onClick: () =>
+					handleNewPage({
+						params: { id: item.id, action: "reject" },
+					}),
+			},
+		];
+
+		return actionList;
+	};
 
 	const headerFields: FieldConfig[] = [
 		{
@@ -393,7 +409,7 @@ export default function ListPage() {
 					</div>
 
 					<CardComponent
-						actions={actions}
+						actions={getActions}
 						bodyFields={bodyFields}
 						headerFields={headerFields}
 						items={reqOrders}

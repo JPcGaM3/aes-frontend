@@ -64,16 +64,20 @@ export default function RequestManagementPage({
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
 		if (rid && isReady && !hasFetched.current) {
+			setIsLoading(true);
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
-					await fetchReqOrderWithTaskData({
-						token: userContext.token,
-						requestId: rid,
-						setReqOrder,
-						setAlert,
-						setIsLoading,
-					});
+					const promises = [
+						fetchReqOrderWithTaskData({
+							token: userContext.token,
+							requestId: rid,
+							setReqOrder,
+							setAlert,
+						}),
+					];
+
+					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
 						title: "Failed to fetch",
@@ -112,6 +116,7 @@ export default function RequestManagementPage({
 	};
 
 	const handleCancel = () => {
+		setIsLoading(true);
 		setCommentValues({ comment: "" });
 		router.back();
 	};

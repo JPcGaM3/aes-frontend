@@ -37,6 +37,8 @@ import { getAssignedTask } from "@/libs/taskOrderAPI";
 import { RequestOrder, TaskOrder } from "@/interfaces/schema";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
+import { AlertComponentProps } from "@/interfaces/props";
+import AlertComponent from "@/components/AlertComponent";
 
 interface filterInterface {
 	start_date?: CalendarDate;
@@ -71,6 +73,7 @@ export default function TaskPage() {
 		end_date: endDateValue,
 		status: undefined,
 	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	const fetchTaskOrderData = async ({
 		token,
@@ -122,8 +125,13 @@ export default function TaskPage() {
 						token: userContext.token,
 						user_id: userContext.id,
 					});
-				} catch (error) {
-					console.error("Failed to fetch:", error);
+				} catch (error: any) {
+					setAlert({
+						title: "Failed to fetch",
+						description: error.message || "Unknown error occurred",
+						color: "danger",
+						isVisible: true,
+					});
 				} finally {
 					setIsLoading(false);
 				}
@@ -311,6 +319,15 @@ export default function TaskPage() {
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
+			{alert && taskOrders.length == 0 && (
+				<AlertComponent
+					{...alert}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
+					placement="bottom"
+					size="full"
+				/>
+			)}
 			<div>
 				{/* Modal ------------------------------------------------------------- */}
 				<FilterModal

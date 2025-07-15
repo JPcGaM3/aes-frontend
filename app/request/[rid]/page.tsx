@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { use, useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -66,6 +66,7 @@ export default function RequestManagementPage({
 	const pathname = usePathname();
 	const action = searchParams.get("action") || "view";
 
+	const hasFetched = useRef(false);
 	const [selectedTab, setSelectedTab] = useState(action);
 	const [carData, setCarData] = useState<Car[]>([]);
 	const [aeData, setAeData] = useState<AeArea[]>([]);
@@ -97,61 +98,60 @@ export default function RequestManagementPage({
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (rid && isReady) {
+		if (rid && isReady && userContext && !hasFetched.current) {
+			setIsLoading(true);
+			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
-					await fetchUsers({
-						token: userContext.token,
-						role: [USERROLE.UnitHead],
-						setUsers: setUnitHeadData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchUsers({
-						token: userContext.token,
-						role: [USERROLE.Driver],
-						setUsers: setDriverData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchAE({
-						token: userContext.token,
-						setAE: setAeData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchCustomerTypes({
-						token: userContext.token,
-						setCustomerTypes: setCustomerData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchOperationAreas({
-						token: userContext.token,
-						setOpArea: setOpData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchCars({
-						token: userContext.token,
-						ae_id: userContext.ae_id,
-						setCars: setCarData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchActivitiesWithToolTypes({
-						token: userContext.token,
-						setActivitiesWithToolTypes: setActivityWithToolTypes,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
-					await fetchReqOrderWithTaskData({
-						token: userContext.token,
-						requestId: rid,
-						setReqOrder: setRequestData,
-						setAlert: setAlert,
-						setIsLoading: setIsLoading,
-					});
+					const promises = [
+						fetchUsers({
+							token: userContext.token,
+							role: [USERROLE.UnitHead],
+							setUsers: setUnitHeadData,
+							setAlert: setAlert,
+						}),
+						fetchUsers({
+							token: userContext.token,
+							role: [USERROLE.Driver],
+							setUsers: setDriverData,
+							setAlert: setAlert,
+						}),
+						fetchAE({
+							token: userContext.token,
+							setAE: setAeData,
+							setAlert: setAlert,
+						}),
+						fetchCustomerTypes({
+							token: userContext.token,
+							setCustomerTypes: setCustomerData,
+							setAlert: setAlert,
+						}),
+						fetchOperationAreas({
+							token: userContext.token,
+							setOpArea: setOpData,
+							setAlert: setAlert,
+						}),
+						fetchCars({
+							token: userContext.token,
+							ae_id: userContext.ae_id,
+							setCars: setCarData,
+							setAlert: setAlert,
+						}),
+						fetchActivitiesWithToolTypes({
+							token: userContext.token,
+							setActivitiesWithToolTypes:
+								setActivityWithToolTypes,
+							setAlert: setAlert,
+						}),
+						fetchReqOrderWithTaskData({
+							token: userContext.token,
+							requestId: rid,
+							setReqOrder: setRequestData,
+							setAlert: setAlert,
+						}),
+					];
+
+					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
 						title: "Failed to fetch",
@@ -166,7 +166,7 @@ export default function RequestManagementPage({
 
 			fetchData();
 		}
-	}, [isReady, rid]);
+	}, [isReady, rid, userContext]);
 
 	// Handler ---------------------------------------------------------------------------------------------------
 	const handleTabChange = (key: React.Key) => {

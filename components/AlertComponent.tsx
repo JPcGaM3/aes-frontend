@@ -2,6 +2,7 @@ import type { AlertComponentProps } from "@/interfaces/props";
 
 import { Alert } from "@heroui/react";
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 export default function AlertComponent({
 	title,
@@ -47,7 +48,7 @@ export default function AlertComponent({
 			? "fixed left-0 right-0 bottom-0 z-[1500] flex items-center justify-center w-full p-3"
 			: "fixed left-0 right-0 top-16 z-[1500] flex items-center justify-center w-full p-3 ";
 
-	return (
+	const alertContent = (
 		<div className={placementClass}>
 			<Alert
 				className={computedClassName}
@@ -65,4 +66,6 @@ export default function AlertComponent({
 			/>
 		</div>
 	);
+
+	return createPortal(alertContent, document.body);
 }

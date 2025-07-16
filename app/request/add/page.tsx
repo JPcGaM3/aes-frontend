@@ -22,15 +22,14 @@ import {
 	FormSection,
 	UploadedFile,
 } from "@/interfaces/interfaces";
-import { AlertComponentProps } from "@/interfaces/props";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
-import AlertComponent from "@/components/AlertComponent";
 import { getActivities } from "@/libs/activityAPI";
 import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
+import { useAlert } from "@/providers/AlertContext";
 
 interface FormType extends RequestOrder {
 	activities: string;
@@ -46,6 +45,7 @@ export default function AddRequestPage() {
 	// const value & react hook -------------------------------------	------------------------------------------------
 	// * For key-in form
 	const { userContext, isReady } = useAuth();
+	const { showAlert } = useAlert();
 	const now = new Date();
 	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
@@ -67,13 +67,6 @@ export default function AddRequestPage() {
 	// * For file upload
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-
-	// * Other
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -134,8 +127,7 @@ export default function AddRequestPage() {
 
 	const handleSubmitUpload = async (_e?: any): Promise<void> => {
 		if (uploadedFiles.length === 0) {
-			setAlert({
-				isVisible: true,
+			showAlert({
 				color: "danger",
 				title: "Upload Error",
 				description: "Please upload files before confirming.",
@@ -178,15 +170,13 @@ export default function AddRequestPage() {
 				alertColor = "warning";
 			}
 
-			setAlert({
-				isVisible: true,
+			showAlert({
 				color: alertColor,
 				title: alertTitle,
 				description: `total row: ${totalRows} , valid row: ${validRows} , error row: ${errorRows}`,
 			});
 		} catch (error) {
-			setAlert({
-				isVisible: true,
+			showAlert({
 				color: "danger",
 				title: "Upload Failed",
 				description: "Upload failed!, error: " + error,
@@ -200,8 +190,7 @@ export default function AddRequestPage() {
 	};
 
 	const handleCancelUpload = (_e?: any): void => {
-		setAlert({
-			isVisible: true,
+		showAlert({
 			title: "Upload Cancelled",
 			description: "Cancelling upload, Clear form",
 			color: "warning",
@@ -238,8 +227,7 @@ export default function AddRequestPage() {
 				data: submitValue,
 			});
 
-			setAlert({
-				isVisible: true,
+			showAlert({
 				title: "สำเร็จ!!",
 				description: "เพิ่มรายการคำขอสำเร็จ",
 				color: "success",
@@ -251,8 +239,7 @@ export default function AddRequestPage() {
 				ae_id: userContext.ae_id,
 			});
 		} catch (error: any) {
-			setAlert({
-				isVisible: true,
+			showAlert({
 				title: "เพิ่มรายการคำขอล้มเหลว",
 				description: error.message || "เกิดข้อผิดพลาด",
 				color: "danger",
@@ -536,21 +523,6 @@ export default function AddRequestPage() {
 						/>
 					</Tab>
 				</Tabs>
-
-				{/* Alert */}
-				{alert.isVisible && (
-					<AlertComponent
-						color={alert.color}
-						description={alert.description}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
-						isVisible={alert.isVisible}
-						placement="top"
-						size="compact"
-						title={alert.title}
-					/>
-				)}
 			</div>
 		</ProtectedRoute>
 	);

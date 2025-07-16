@@ -16,8 +16,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { Button } from "@heroui/button";
 import { clsx } from "clsx";
 
-import AlertComponent from "./AlertComponent";
-
 import { useAuth } from "@/providers/AuthContext";
 import {
 	HomeIcon,
@@ -34,26 +32,21 @@ import {
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { fontMono } from "@/config/fonts";
 import { AeArea } from "@/interfaces/schema";
-import { AlertComponentProps } from "@/interfaces/props";
 import { USERROLE } from "@/utils/enum";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function Navbar() {
 	// const value & react hook -------------------------------------------------------------------------------------
 	const router = useRouter();
 	const pathname = usePathname();
 
-	// const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 	const { userContext, setUserContext, isReady } = useAuth();
 
 	const hasFetched = useRef(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
 
 	interface MenuItem {
 		name: string;
@@ -121,10 +114,9 @@ export default function Navbar() {
 
 					setAeAreas(response);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Error fetching areas",
 						description: error.message,
-						isVisible: true,
 					});
 				}
 			};
@@ -204,16 +196,6 @@ export default function Navbar() {
 
 	return (
 		<>
-			{alert.isVisible && (
-				<AlertComponent
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
-					size="full"
-					title={alert.title}
-				/>
-			)}
-
 			<HeroUINavbar
 				className="z-50 flex items-center shadow-md p-0 h-18"
 				classNames={{

@@ -32,13 +32,12 @@ import { CustomerType, RequestOrder } from "@/interfaces/schema";
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
-import AlertComponent from "@/components/AlertComponent";
 import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
-import { AlertComponentProps } from "@/interfaces/props";
 import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
 import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
 import ProtectedRoute from "@/components/HigherOrderComponent";
+import { useAlert } from "@/providers/AlertContext";
 
 interface filterInterface {
 	status?: string;
@@ -54,6 +53,7 @@ export default function RequestPage() {
 	// Fetch data ------------------------------------------------------------------
 	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 
 	const router = useRouter();
 	const now = new Date();
@@ -64,7 +64,7 @@ export default function RequestPage() {
 	const hasFetched = useRef(false);
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
 	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
+
 	const [filter, setFilter] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
@@ -99,7 +99,7 @@ export default function RequestPage() {
 							fetchCustomerTypes({
 								token: userContext.token,
 								setCustomerTypes,
-								setAlert,
+								showAlert,
 							})
 						);
 					}
@@ -114,16 +114,15 @@ export default function RequestPage() {
 							token: userContext.token,
 							params: params,
 							setReqOrders,
-							setAlert,
+							showAlert,
 						})
 					);
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Failed to fetch",
 						description: error.message || "Unknown error occurred",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -351,15 +350,7 @@ export default function RequestPage() {
 		<>
 			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
 				{/* Modal ------------------------------------------------------------- */}
-				{alert && reqOrders.length == 0 && (
-					<AlertComponent
-						{...alert}
-						handleClose={() => setAlert(null)}
-						isVisible={alert != null}
-						placement="bottom"
-						size="full"
-					/>
-				)}
+
 				<FilterModal
 					cancelLabel="Cancel"
 					isOpen={isOpenFilter}

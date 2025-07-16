@@ -1,28 +1,21 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { FormSection } from "@/interfaces/interfaces";
-import { AlertComponentProps } from "@/interfaces/props";
 import { useAuth } from "@/providers/AuthContext";
 import FormComponent from "@/components/FormComponent";
-import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
 import { useLoading } from "@/providers/LoadingContext";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function LoginPage() {
 	const router = useRouter();
 
 	const { login } = useAuth();
 	const { setIsLoading } = useLoading();
-
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const { showAlert } = useAlert();
 
 	const handleSubmit = async (values: any) => {
 		setIsLoading(true);
@@ -43,11 +36,10 @@ export default function LoginPage() {
 			});
 			router.push("/home");
 		} catch (err: any) {
-			setAlert({
+			showAlert({
 				title: "Login Failed",
 				description: err.message || "Unknown error occurred",
 				color: "danger",
-				isVisible: true,
 			});
 		} finally {
 			setIsLoading(false);
@@ -94,19 +86,6 @@ export default function LoginPage() {
 				title="ยินดีต้อนรับ"
 				onSubmit={handleSubmit}
 			/>
-
-			{/* Alert */}
-			{alert.isVisible && (
-				<AlertComponent
-					color={alert.color}
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
-					placement="top"
-					size="compact"
-					title={alert.title}
-				/>
-			)}
 		</div>
 	);
 }

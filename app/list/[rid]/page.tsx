@@ -16,8 +16,6 @@ import { useAuth } from "@/providers/AuthContext";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
 import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
-import { AlertComponentProps } from "@/interfaces/props";
-import AlertComponent from "@/components/AlertComponent";
 import {
 	RequestOrderTranslation,
 	TaskOrderTranslation,
@@ -28,6 +26,7 @@ import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 import { fetchReqOrderWithTaskData } from "@/utils/functions";
 import ProtectedRoute from "@/components/HigherOrderComponent";
+import { useAlert } from "@/providers/AlertContext";
 
 moment.locale("th");
 
@@ -39,6 +38,7 @@ export default function RequestManagementPage({
 	const { rid } = use(params);
 	const { setIsLoading } = useLoading();
 	const { userContext, isReady } = useAuth();
+	const { showAlert } = useAlert();
 
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -55,11 +55,6 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -73,17 +68,16 @@ export default function RequestManagementPage({
 							token: userContext.token,
 							requestId: rid,
 							setReqOrder,
-							setAlert,
+							showAlert,
 						}),
 					];
 
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Failed to fetch",
 						description: error.message || "Unknown error occurred",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -136,11 +130,10 @@ export default function RequestManagementPage({
 				!commentValues.comment.trim() &&
 				status !== REQUESTORDERSTATUS.Pending
 			) {
-				setAlert({
+				showAlert({
 					title: "Warning!!",
 					description: "คำอธิบาย: กรุณาระบุเหตุผล",
 					color: "warning",
-					isVisible: true,
 				});
 
 				setIsSubmitting(false);
@@ -160,32 +153,29 @@ export default function RequestManagementPage({
 					paramData: paramData,
 				});
 
-				setAlert({
+				showAlert({
 					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${reqOrder.work_order_number} แล้ว`,
 					color: "success",
-					isVisible: true,
 				});
 
 				setTimeout(() => {
 					router.back();
 				}, 2000);
 			} catch (err: any) {
-				setAlert({
+				showAlert({
 					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
 					description: err.message || "Unknown error occurred",
 					color: "danger",
-					isVisible: true,
 				});
 			} finally {
 				setIsSubmitting(false);
 			}
 		} else {
-			setAlert({
+			showAlert({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
-				isVisible: true,
 			});
 
 			setTimeout(() => {
@@ -347,16 +337,6 @@ export default function RequestManagementPage({
 			allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
 		>
 			<div className="flex flex-col justify-center items-center w-full">
-				{alert.isVisible && (
-					<AlertComponent
-						{...alert}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
-						size="expanded"
-					/>
-				)}
-
 				<Tabs
 					aria-label="TabOptions"
 					className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"

@@ -18,6 +18,7 @@ export default function TaskManagementPage({
 	const { tid } = use(params);
 	// const { setIsLoading } = useLoading();
 	// const { userContext, isReady } = useAuth();
+	// const { showAlert } = useAlert();
 
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -35,11 +36,6 @@ export default function TaskManagementPage({
 	// }>({
 	// 	comment: "",
 	// });
-	// const [alert, setAlert] = useState<AlertComponentProps>({
-	// 	title: "",
-	// 	description: "",
-	// 	isVisible: false,
-	// });
 
 	// useEffect(() => {
 	// 	if (tid && isReady && !hasFetched.current) {
@@ -52,17 +48,16 @@ export default function TaskManagementPage({
 	// 						token: userContext.token,
 	// 						taskId: Number(tid),
 	// 						setTaskOrder,
-	// 						setAlert,
+	// 						showAlert,
 	// 					}),
 	// 				];
 
 	// 				await Promise.all(promises);
 	// 			} catch (error: any) {
-	// 				setAlert({
+	// 				showAlert({
 	// 					title: "Failed to fetch",
 	// 					description: error.message || "Unknown error occurred",
 	// 					color: "danger",
-	// 					isVisible: true,
 	// 				});
 	// 			} finally {
 	// 				setIsLoading(false);
@@ -111,11 +106,10 @@ export default function TaskManagementPage({
 	// 		setIsSubmitting(true);
 
 	// 		if (!commentValues.comment.trim()) {
-	// 			setAlert({
+	// 			showAlert({
 	// 				title: "Warning!!",
 	// 				description: "คำอธิบาย: กรุณาระบุเหตุผล",
 	// 				color: "warning",
-	// 				isVisible: true,
 	// 			});
 
 	// 			setIsSubmitting(false);
@@ -134,32 +128,29 @@ export default function TaskManagementPage({
 	// 				paramData: paramData,
 	// 			});
 
-	// 			setAlert({
+	// 			showAlert({
 	// 				title: "แจ้งปัญหาใบงานย่อยสำเร็จ",
 	// 				description: `แจ้งปัญหาใบงานย่อยเลขที่ ${taskOrder.id} แล้ว`,
 	// 				color: "success",
-	// 				isVisible: true,
 	// 			});
 
 	// 			setTimeout(() => {
 	// 				router.back();
 	// 			}, 2000);
 	// 		} catch (err: any) {
-	// 			setAlert({
+	// 			showAlert({
 	// 				title: "แจ้งปัญหาใบงานย่อยไม่สำเร็จ",
 	// 				description: err.message || "Unknown error occurred",
 	// 				color: "danger",
-	// 				isVisible: true,
 	// 			});
 	// 		} finally {
 	// 			setIsSubmitting(false);
 	// 		}
 	// 	} else {
-	// 		setAlert({
+	// 		showAlert({
 	// 			title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 	// 			description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 	// 			color: "danger",
-	// 			isVisible: true,
 	// 		});
 
 	// 		setTimeout(() => {

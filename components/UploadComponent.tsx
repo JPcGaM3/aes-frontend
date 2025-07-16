@@ -4,11 +4,11 @@ import { Button } from "@heroui/button";
 
 import Header from "./Header";
 import FormButtons from "./FormButtons";
-import AlertComponent from "./AlertComponent";
 
-import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
+import { UploadComponentProps } from "@/interfaces/props";
 import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
 import { UploadedFile } from "@/interfaces/interfaces";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function UploadComponent({
 	maxFiles = 5,
@@ -20,13 +20,9 @@ export default function UploadComponent({
 	onCancel,
 }: UploadComponentProps) {
 	// Const and State --------------------------------------------------------------------------------------------------------
+	const { showAlert } = useAlert();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState<boolean>(false);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
 
 	// Handlers ---------------------------------------------------------------------------------------------------------------
 	const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
@@ -98,15 +94,13 @@ export default function UploadComponent({
 		}
 
 		if (duplicateFiles.length > 0) {
-			setAlert({
-				isVisible: true,
+			showAlert({
 				title: "Upload Warning",
 				description: `File(s) ${duplicateFiles.join(", ")} already in the list.`,
 				color: "warning",
 			});
 		} else if (filesSkipped > 0) {
-			setAlert({
-				isVisible: true,
+			showAlert({
 				title: "Upload Warning",
 				description: `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`,
 				color: "warning",
@@ -134,7 +128,7 @@ export default function UploadComponent({
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full max-w-sm gap-6 sm:max-w-md md:max-w-lg lg:max-w-xl">
+		<div className="flex flex-col justify-center items-center gap-6 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
 			{/* Header ------------------------------------------------------------------------------------------------------- */}
 			<Header
 				subtitle="กรุณาอัปโหลดไฟล์ที่รองรับ (.xlsx, .csv)"
@@ -142,7 +136,7 @@ export default function UploadComponent({
 			/>
 
 			{/* Upload Component --------------------------------------------------------------------------------------------- */}
-			<div className="flex flex-col w-full gap-2">
+			<div className="flex flex-col gap-2 w-full">
 				{/* Download Template Button -------------------------------------------------------------------------------------- */}
 				<div className="flex justify-end">
 					<Button
@@ -195,11 +189,11 @@ export default function UploadComponent({
 							onChange={handleFileInputChange}
 						/>
 
-						<div className="flex flex-col items-center justify-center h-full py-8">
-							<div className="flex items-center justify-center w-24 h-24 mb-2 bg-blue-100 rounded-full">
+						<div className="flex flex-col justify-center items-center py-8 h-full">
+							<div className="flex justify-center items-center bg-blue-100 mb-2 rounded-full w-24 h-24">
 								<UploadFileIcon size={54} />
 							</div>
-							<p className="mt-2 text-sm font-medium text-gray-600">
+							<p className="mt-2 font-medium text-gray-600 text-sm">
 								คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
 							</p>
 						</div>
@@ -219,7 +213,7 @@ export default function UploadComponent({
 								<div
 									key={file.name}
 									aria-disabled={isUploading}
-									className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 rounded-xl hover:bg-gray-100"
+									className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 p-2 pl-4 border border-gray-200 rounded-xl cursor-pointer"
 									role="button"
 									tabIndex={0}
 									onClick={() =>
@@ -266,15 +260,6 @@ export default function UploadComponent({
 				onCancel={onCancel}
 				onSubmit={onSubmit}
 			/>
-
-			{/* Alert */}
-			{alert.isVisible && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					size="compact"
-				/>
-			)}
 		</div>
 	);
 }

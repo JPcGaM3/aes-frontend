@@ -87,7 +87,7 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps>({
+	const [alert, showAlert] = useState<AlertComponentProps>({
 		title: "",
 		description: "",
 		isVisible: false,
@@ -108,56 +108,55 @@ export default function RequestManagementPage({
 							token: userContext.token,
 							role: [USERROLE.UnitHead],
 							setUsers: setUnitHeadData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchUsers({
 							token: userContext.token,
 							role: [USERROLE.Driver],
 							setUsers: setDriverData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchAE({
 							token: userContext.token,
 							setAE: setAeData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchCustomerTypes({
 							token: userContext.token,
 							setCustomerTypes: setCustomerData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchOperationAreas({
 							token: userContext.token,
 							setOpArea: setOpData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchCars({
 							token: userContext.token,
 							ae_id: userContext.ae_id,
 							setCars: setCarData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchActivitiesWithToolTypes({
 							token: userContext.token,
 							setActivitiesWithToolTypes:
 								setActivityWithToolTypes,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 						fetchReqOrderWithTaskData({
 							token: userContext.token,
 							requestId: rid,
 							setReqOrder: setRequestData,
-							setAlert: setAlert,
+							showAlert: showAlert,
 						}),
 					];
 
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Failed to fetch",
 						description: error.message || "Unknown error occurred",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -206,11 +205,10 @@ export default function RequestManagementPage({
 				!commentValues.comment.trim() &&
 				status !== REQUESTORDERSTATUS.PendingApproval
 			) {
-				setAlert({
+				showAlert({
 					title: "คำเตือน!!",
 					description: "กรุณาระบุเหตุผล",
 					color: "warning",
-					isVisible: true,
 				});
 
 				setIsSubmitting(false);
@@ -230,32 +228,29 @@ export default function RequestManagementPage({
 					paramData: paramData,
 				});
 
-				setAlert({
+				showAlert({
 					title: "อัพเดตใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
 					color: "success",
-					isVisible: true,
 				});
 
 				setTimeout(() => {
 					router.back();
 				}, 2000);
 			} catch (err: any) {
-				setAlert({
+				showAlert({
 					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
 					description: err.message || "Unknown error occurred",
 					color: "danger",
-					isVisible: true,
 				});
 			} finally {
 				setIsSubmitting(false);
 			}
 		} else {
-			setAlert({
+			showAlert({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
-				isVisible: true,
 			});
 
 			setTimeout(() => {
@@ -277,7 +272,11 @@ export default function RequestManagementPage({
 	};
 
 	const handleSubmit = () => {
-		console.log("Changed values:", changedValues);
+		showAlert({
+			title: "Success",
+			description: `Changes saved successfully: ${JSON.stringify(changedValues)}`,
+			color: "success",
+		});
 	};
 
 	const getToolTypeData = (activity_id: number) => {
@@ -619,7 +618,7 @@ export default function RequestManagementPage({
 					<AlertComponent
 						{...alert}
 						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
+							showAlert({ ...alert, isVisible: false })
 						}
 						size="expanded"
 					/>

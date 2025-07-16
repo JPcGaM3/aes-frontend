@@ -9,30 +9,25 @@ import { useDisclosure } from "@heroui/react";
 import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
-import AlertComponent from "@/components/AlertComponent";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/schema";
-import { AlertComponentProps } from "@/interfaces/props";
 import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
 import FormButtons from "@/components/FormButtons";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function ProfilePage() {
 	const router = useRouter();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { setIsLoading } = useLoading();
 	const { userContext, logout } = useAuth();
+	const { showAlert } = useAlert();
 	const hasFetched = useRef(false);
 	const [profile, setProfile] = useState<UserProfileResponse["data"] | null>(
 		null
 	);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
 
 	useEffect(() => {
 		if (userContext.token && !hasFetched.current) {
@@ -44,11 +39,10 @@ export default function ProfilePage() {
 
 					setProfile(response);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Failed to load user profile",
 						description: error.message,
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -124,8 +118,8 @@ export default function ProfilePage() {
 	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
 
 	return (
-		<div className="flex items-center justify-center pt-3">
-			<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+		<div className="flex justify-center items-center pt-3">
+			<div className="flex flex-col justify-center items-center gap-8 w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
 				{isOpen && (
 					<AlertModal
 						cancelText="ยกเลิก"
@@ -138,21 +132,8 @@ export default function ProfilePage() {
 					/>
 				)}
 
-				{alert.isVisible && (
-					<AlertComponent
-						color={alert.color}
-						description={alert.description}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
-						isVisible={alert.isVisible}
-						size="compact"
-						title={alert.title}
-					/>
-				)}
-
-				<div className="flex flex-col items-center justify-center gap-4">
-					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+				<div className="flex flex-col justify-center items-center gap-4">
+					<div className="flex justify-center items-center bg-gray-200 rounded-full w-24 h-24 font-bold text-gray-700 text-4xl">
 						{profile?.user_result.email?.charAt(0)?.toUpperCase() ??
 							"-"}
 					</div>

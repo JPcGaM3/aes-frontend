@@ -15,11 +15,8 @@ import type { SwitchProps } from "@heroui/switch";
 export interface AlertComponentProps {
 	title: string;
 	description: string;
-	isVisible?: boolean;
 	handleClose?: () => void;
 	variant?: "solid" | "bordered" | "flat" | "faded";
-	size?: "compact" | "expanded" | "full";
-	placement?: "top" | "bottom";
 	color?:
 		| "default"
 		| "primary"
@@ -29,6 +26,8 @@ export interface AlertComponentProps {
 		| "danger";
 	stackIndex?: number;
 	totalAlerts?: number;
+	hideAllAlerts?: () => void;
+	isClosing?: boolean;
 }
 
 export interface AlertModalProps {

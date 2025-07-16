@@ -13,6 +13,7 @@ import AlertComponent from "@/components/AlertComponent";
 
 interface AlertItem extends AlertComponentProps {
 	id: string;
+	isClosing?: boolean;
 }
 
 interface AlertContextType {
@@ -49,7 +50,6 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 			const newAlert: AlertItem = {
 				...alert,
 				id,
-				isVisible: true,
 				handleClose: () => hideAlert(id),
 			};
 
@@ -63,7 +63,16 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 	}, []);
 
 	const hideAllAlerts = useCallback(() => {
-		setAlerts([]);
+		setAlerts((prev) =>
+			prev.map((alert) => ({
+				...alert,
+				isClosing: true,
+			}))
+		);
+
+		setTimeout(() => {
+			setAlerts([]);
+		}, 300);
 	}, []);
 
 	const alertCount = alerts.length;
@@ -80,7 +89,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 					key={alert.id}
 					{...alert}
 					handleClose={() => hideAlert(alert.id)}
-					isVisible={alert.isVisible}
+					hideAllAlerts={hideAllAlerts}
 					stackIndex={index}
 					totalAlerts={alertCount}
 				/>

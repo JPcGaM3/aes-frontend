@@ -27,6 +27,8 @@ export interface AlertComponentProps {
 		| "success"
 		| "warning"
 		| "danger";
+	stackIndex?: number;
+	totalAlerts?: number;
 }
 
 export interface AlertModalProps {

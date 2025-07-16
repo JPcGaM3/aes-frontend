@@ -11,12 +11,17 @@ import React, {
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
 
+interface AlertItem extends AlertComponentProps {
+	id: string;
+}
+
 interface AlertContextType {
 	showAlert: (
 		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
 	) => void;
-	hideAlert: () => void;
-	isVisible: boolean;
+	hideAlert: (id: string) => void;
+	hideAllAlerts: () => void;
+	alertCount: number;
 }
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
@@ -36,37 +41,50 @@ interface AlertProviderProps {
 }
 
 export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
-	const [alertConfig, setAlertConfig] = useState<AlertComponentProps | null>(
-		null
-	);
+	const [alerts, setAlerts] = useState<AlertItem[]>([]);
 
 	const showAlert = useCallback(
 		(alert: Omit<AlertComponentProps, "isVisible" | "handleClose">) => {
-			setAlertConfig({
+			const id = `alert-${Date.now()}-${Math.random()}`;
+			const newAlert: AlertItem = {
 				...alert,
+				id,
 				isVisible: true,
-				handleClose: () => setAlertConfig(null),
-			});
+				handleClose: () => hideAlert(id),
+			};
+
+			setAlerts((prev) => [newAlert, ...prev]);
 		},
 		[]
 	);
 
-	const hideAlert = useCallback(() => {
-		setAlertConfig(null);
+	const hideAlert = useCallback((id: string) => {
+		setAlerts((prev) => prev.filter((alert) => alert.id !== id));
 	}, []);
 
-	const isVisible = alertConfig?.isVisible || false;
+	const hideAllAlerts = useCallback(() => {
+		setAlerts([]);
+	}, []);
+
+	const alertCount = alerts.length;
+
+	const visibleAlerts = alerts.slice(0, 3);
 
 	return (
-		<AlertContext.Provider value={{ showAlert, hideAlert, isVisible }}>
+		<AlertContext.Provider
+			value={{ showAlert, hideAlert, hideAllAlerts, alertCount }}
+		>
 			{children}
-			{alertConfig && (
+			{visibleAlerts.map((alert, index) => (
 				<AlertComponent
-					{...alertConfig}
-					handleClose={hideAlert}
-					isVisible={isVisible}
+					key={alert.id}
+					{...alert}
+					handleClose={() => hideAlert(alert.id)}
+					isVisible={alert.isVisible}
+					stackIndex={index}
+					totalAlerts={alertCount}
 				/>
-			)}
+			))}
 		</AlertContext.Provider>
 	);
 };

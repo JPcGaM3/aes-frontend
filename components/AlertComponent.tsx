@@ -13,6 +13,8 @@ export default function AlertComponent({
 	placement = "top",
 	isVisible = true,
 	handleClose,
+	stackIndex = 0,
+	totalAlerts = 1,
 }: AlertComponentProps) {
 	const [visible, setVisible] = useState(isVisible);
 
@@ -43,13 +45,33 @@ export default function AlertComponent({
 		computedClassName = "relative w-full";
 	}
 
+	const stackOffset = stackIndex * 20;
+	const zIndex = 1500 + (totalAlerts - stackIndex);
+
 	const placementClass =
 		placement === "bottom"
-			? "fixed left-0 right-0 bottom-0 z-[1500] flex items-center justify-center w-full p-3"
-			: "fixed left-0 right-0 top-16 z-[1500] flex items-center justify-center w-full p-3 ";
+			? "fixed left-4 right-4 sm:left-auto sm:right-4 sm:w-96 transition-all duration-300 ease-out"
+			: "fixed left-4 right-4 sm:left-auto sm:right-4 sm:w-96 transition-all duration-300 ease-out";
+
+	const placementStyle =
+		placement === "bottom"
+			? {
+					bottom: `${16 + stackOffset}px`,
+					zIndex: zIndex,
+				}
+			: {
+					top: `${64 + stackOffset}px`,
+					zIndex: zIndex,
+				};
+
+	const stackStyle = {
+		...placementStyle,
+		opacity: stackIndex === 0 ? 1 : Math.max(0.8 - stackIndex * 0.2, 0.4),
+		transform: `scale(${Math.max(1 - stackIndex * 0.05, 0.9)})`,
+	};
 
 	const alertContent = (
-		<div className={placementClass}>
+		<div className={placementClass} style={stackStyle}>
 			<Alert
 				className={computedClassName}
 				color={color}
@@ -64,6 +86,11 @@ export default function AlertComponent({
 					handleClose?.();
 				}}
 			/>
+			{totalAlerts > 1 && stackIndex === 0 && (
+				<div className="-top-2 -right-2 z-10 absolute flex justify-center items-center bg-primary rounded-full w-6 h-6 font-bold text-white text-xs">
+					{totalAlerts}
+				</div>
+			)}
 		</div>
 	);
 

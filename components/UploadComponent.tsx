@@ -7,7 +7,7 @@ import FormButtons from "./FormButtons";
 import AlertComponent from "./AlertComponent";
 
 import { AlertComponentProps, UploadComponentProps } from "@/interfaces/props";
-import { DeleteIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
+import { RemoveIcon, DownloadIcon, UploadFileIcon } from "@/utils/icons";
 import { UploadedFile } from "@/interfaces/interfaces";
 
 export default function UploadComponent({
@@ -22,11 +22,7 @@ export default function UploadComponent({
 	// Const and State --------------------------------------------------------------------------------------------------------
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState<boolean>(false);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Handlers ---------------------------------------------------------------------------------------------------------------
 	const handleDragEnter = (e: DragEvent<HTMLDivElement>): void => {
@@ -99,16 +95,14 @@ export default function UploadComponent({
 
 		if (duplicateFiles.length > 0) {
 			setAlert({
-				isVisible: true,
-				title: "Upload Warning",
-				description: `File(s) ${duplicateFiles.join(", ")} already in the list.`,
+				title: "คำเตือน!!",
+				description: `ไฟล์ ${duplicateFiles.join(", ")} มีอยู่ในรายการแล้ว.`,
 				color: "warning",
 			});
 		} else if (filesSkipped > 0) {
 			setAlert({
-				isVisible: true,
-				title: "Upload Warning",
-				description: `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`,
+				title: "คำเตือน!!",
+				description: `คุณสามารถอัปโหลดไฟล์ได้สูงสุด ${maxFiles} ไฟล์. ${filesSkipped} ไฟล์ไม่ถูกเพิ่มหรือเป็นไฟล์ซ้ำ.`,
 				color: "warning",
 			});
 		}
@@ -150,7 +144,7 @@ export default function UploadComponent({
 						color="primary"
 						radius="sm"
 						size="sm"
-						startContent={<DownloadIcon />}
+						startContent={<DownloadIcon size={18} />}
 						variant="flat"
 						onPress={onDownloadTemplate}
 					>
@@ -242,7 +236,7 @@ export default function UploadComponent({
 										isIconOnly
 										className="p-1 text-gray-400 hover:text-red-500"
 										disabled={isUploading}
-										endContent={<DeleteIcon />}
+										endContent={<RemoveIcon />}
 										radius="sm"
 										size="sm"
 										variant="light"
@@ -268,10 +262,11 @@ export default function UploadComponent({
 			/>
 
 			{/* Alert */}
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
 					{...alert}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					size="compact"
 				/>
 			)}

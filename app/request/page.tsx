@@ -8,10 +8,10 @@ import clsx from "clsx";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
+	AddIcon,
 	EditIcon,
 	FilterIcon,
 	InfoIcon,
-	PlusIcon,
 	RejectIcon,
 } from "@/utils/icons";
 import {
@@ -120,10 +120,10 @@ export default function RequestPage() {
 					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -156,6 +156,8 @@ export default function RequestPage() {
 			id?: number;
 		};
 	}) => {
+		setIsLoading(true);
+
 		switch (params.action) {
 			case "view":
 			case "edit":
@@ -373,15 +375,15 @@ export default function RequestPage() {
 
 				{/* Header ----------------------------------------------------------- */}
 				<Header
-					className="mb-6 w-full text-left"
+					className="w-full mb-6 text-left"
 					orientation="horizontal"
 					subtitle="ใบสั่งงานทั้งหมด"
 					title="รายการใบสั่งงาน"
 				>
 					<Button
-						className="hidden sm:inline-flex font-semibold"
+						className="hidden font-semibold sm:inline-flex"
 						color="primary"
-						endContent={<FilterIcon />}
+						endContent={<FilterIcon variant="border" />}
 						radius="sm"
 						variant="flat"
 						onPress={onOpenFilter}
@@ -393,7 +395,7 @@ export default function RequestPage() {
 						isIconOnly
 						className="sm:hidden"
 						color="primary"
-						endContent={<FilterIcon />}
+						endContent={<FilterIcon variant="border" />}
 						radius="sm"
 						variant="flat"
 						onPress={onOpenFilter}
@@ -402,9 +404,9 @@ export default function RequestPage() {
 					<Divider className="w-[1px] h-10" orientation="vertical" />
 
 					<Button
-						className="hidden sm:inline-flex font-semibold"
+						className="hidden font-semibold sm:inline-flex"
 						color="primary"
-						endContent={<PlusIcon />}
+						endContent={<AddIcon />}
 						radius="sm"
 						variant="solid"
 						onPress={() =>
@@ -418,7 +420,7 @@ export default function RequestPage() {
 						isIconOnly
 						className="sm:hidden"
 						color="primary"
-						endContent={<PlusIcon />}
+						endContent={<AddIcon />}
 						radius="sm"
 						variant="solid"
 						onPress={() =>
@@ -430,7 +432,7 @@ export default function RequestPage() {
 				{/* Body ------------------------------------------------------------- */}
 
 				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
+					<div className="mb-4 font-medium text-right text-gray-700">
 						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 					</div>
 

@@ -74,6 +74,7 @@ export interface FormFieldsProps {
 	sections: FormSection[];
 	onValueChange?: (name: string, value: any) => void;
 	values?: any;
+	errors?: Record<string, string | null>;
 	isCompact?: boolean;
 }
 

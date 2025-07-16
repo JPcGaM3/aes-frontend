@@ -3,17 +3,11 @@
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Divider, useDisclosure } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import clsx from "clsx";
 
 import { useAuth } from "@/providers/AuthContext";
-import {
-	EditIcon,
-	FilterIcon,
-	InfoIcon,
-	PlusIcon,
-	RejectIcon,
-} from "@/utils/icons";
+import { EditIcon, FilterIcon, InfoIcon, RejectIcon } from "@/utils/icons";
 import {
 	RequestOrderStatusColorMap,
 	RequestOrderStatusTranslation,
@@ -123,10 +117,10 @@ export default function ListPage() {
 					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -137,36 +131,30 @@ export default function ListPage() {
 		}
 	}, [filter, isReady, userContext?.ae_id]);
 
-	const getActions = (item: RequestOrder) => {
-		const actionList: ActionConfig[] = [
-			{
-				key: "view",
-				label: "ดูรายละเอียด",
-				icon: <InfoIcon />,
-				onClick: () =>
-					handleNewPage({ params: { id: item.id, action: "view" } }),
-			},
-			{
-				key: "edit",
-				label: "แจ้งแก้ไข",
-				icon: <EditIcon />,
-				onClick: () =>
-					handleNewPage({ params: { id: item.id, action: "edit" } }),
-			},
-			{
-				key: "reject",
-				label: "ปฏิเสธ",
-				icon: <RejectIcon />,
-				className: "text-danger-500",
-				onClick: () =>
-					handleNewPage({
-						params: { id: item.id, action: "reject" },
-					}),
-			},
-		];
-
-		return actionList;
-	};
+	const actions: ActionConfig[] = [
+		{
+			key: "view",
+			label: "ดูรายละเอียด",
+			icon: <InfoIcon />,
+			onClick: (item: RequestOrder) =>
+				handleNewPage({ params: { id: item.id, action: "view" } }),
+		},
+		{
+			key: "edit",
+			label: "แจ้งแก้ไข",
+			icon: <EditIcon />,
+			onClick: (item: RequestOrder) =>
+				handleNewPage({ params: { id: item.id, action: "edit" } }),
+		},
+		{
+			key: "reject",
+			label: "ปฏิเสธ",
+			icon: <RejectIcon />,
+			className: "text-danger-500",
+			onClick: (item: RequestOrder) =>
+				handleNewPage({ params: { id: item.id, action: "reject" } }),
+		},
+	];
 
 	const headerFields: FieldConfig[] = [
 		{
@@ -312,8 +300,6 @@ export default function ListPage() {
 				router.push(`/list/${params.id}?action=${params.action}`);
 				break;
 
-			case "add":
-
 			default:
 				setIsLoading(false);
 				break;
@@ -348,15 +334,15 @@ export default function ListPage() {
 
 				{/* Header ----------------------------------------------------------- */}
 				<Header
-					className="mb-6 w-full text-left"
+					className="w-full mb-6 text-left"
 					orientation="horizontal"
 					subtitle="ใบสั่งงานทั้งหมด"
 					title="รายการใบสั่งงาน"
 				>
 					<Button
-						className="hidden sm:inline-flex font-semibold"
+						className="hidden font-semibold sm:inline-flex"
 						color="primary"
-						endContent={<FilterIcon />}
+						endContent={<FilterIcon variant="border" />}
 						radius="sm"
 						variant="flat"
 						onPress={onOpenFilter}
@@ -368,48 +354,21 @@ export default function ListPage() {
 						isIconOnly
 						className="sm:hidden"
 						color="primary"
-						endContent={<FilterIcon />}
+						endContent={<FilterIcon variant="border" />}
 						radius="sm"
 						variant="flat"
 						onPress={onOpenFilter}
-					/>
-
-					<Divider className="w-[1px] h-10" orientation="vertical" />
-
-					<Button
-						className="hidden sm:inline-flex font-semibold"
-						color="primary"
-						endContent={<PlusIcon />}
-						radius="sm"
-						variant="solid"
-						onPress={() =>
-							handleNewPage({ params: { action: "add" } })
-						}
-					>
-						Add
-					</Button>
-
-					<Button
-						isIconOnly
-						className="sm:hidden"
-						color="primary"
-						endContent={<PlusIcon />}
-						radius="sm"
-						variant="solid"
-						onPress={() =>
-							handleNewPage({ params: { action: "add" } })
-						}
 					/>
 				</Header>
 
 				{/* Body ------------------------------------------------------------- */}
 				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
+					<div className="mb-4 font-medium text-right text-gray-700">
 						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 					</div>
 
 					<CardComponent
-						actions={getActions}
+						actions={actions}
 						bodyFields={bodyFields}
 						headerFields={headerFields}
 						items={reqOrders}

@@ -3,7 +3,7 @@
 import React from "react";
 import { use } from "react";
 import moment from "moment-timezone";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+// import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
@@ -19,10 +19,10 @@ export default function TaskManagementPage({
 	// const { setIsLoading } = useLoading();
 	// const { userContext, isReady } = useAuth();
 
-	const searchParams = useSearchParams();
-	const router = useRouter();
-	const pathname = usePathname();
-	const action = searchParams.get("action") || "view";
+	// const searchParams = useSearchParams();
+	// const router = useRouter();
+	// const pathname = usePathname();
+	// const action = searchParams.get("action") || "view";
 
 	// const [taskOrder, setTaskOrder] = useState<TaskOrder>({} as TaskOrder);
 

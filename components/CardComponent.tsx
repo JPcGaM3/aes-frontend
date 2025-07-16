@@ -73,14 +73,14 @@ export default function CardComponent<T extends { id: number | string }>({
 			return (
 				<SpotlightCard
 					key={item.id}
-					className="flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full"
+					className="flex flex-col h-full gap-3 bg-white rounded-lg shadow-md min-w-64"
 					spotlightColor={getSpotlightColor((item as any).status)}
 				>
 					{/* header */}
 					<div className="gap-1 px-4 text-left">
 						{(item as any).status && (
 							<Chip
-								className="mt-4 mb-2 p-3 w-fit tracking-wide"
+								className="p-3 mt-4 mb-2 tracking-wide w-fit"
 								color={
 									statusConfig?.colorMap?.[
 										(item as any).status
@@ -188,8 +188,8 @@ export default function CardComponent<T extends { id: number | string }>({
 					{resolvedActions && resolvedActions.length > 0 && (
 						<div>
 							<Divider />
-							<div className="flex justify-between items-center gap-2 py-1 pr-1 pl-4">
-								<div className="text-gray-500 text-sm">
+							<div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
+								<div className="text-sm text-gray-500">
 									More actions.
 								</div>
 
@@ -214,7 +214,7 @@ export default function CardComponent<T extends { id: number | string }>({
 										</Button>
 									</PopoverTrigger>
 
-									<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg min-w-40">
+									<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg min-w-40">
 										<div className="flex flex-col w-full text-sm">
 											{resolvedActions.map((action) => (
 												<Button
@@ -255,7 +255,7 @@ export default function CardComponent<T extends { id: number | string }>({
 	);
 
 	return (
-		<div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full h-full">
+		<div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 			{items.map((item) => renderCell(item))}
 		</div>
 	);

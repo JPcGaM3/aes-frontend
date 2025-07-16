@@ -21,15 +21,15 @@ import AlertComponent from "./AlertComponent";
 import { useAuth } from "@/providers/AuthContext";
 import {
 	HomeIcon,
-	RequestIcon,
 	HamburgerIcon,
-	SettingIcon,
-	DocumentIcon,
-	UserIcon,
 	CancelIcon,
 	ChevronDownIcon,
 	ChevronUpIcon,
 	CheckIcon,
+	DocumentIcon,
+	CheckFillIcon,
+	SettingIcon,
+	UserIcon,
 } from "@/utils/icons";
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { fontMono } from "@/config/fonts";
@@ -49,11 +49,7 @@ export default function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	interface MenuItem {
 		name: string;
@@ -78,13 +74,13 @@ export default function Navbar() {
 		{
 			name: "รายการ",
 			path: "/request",
-			icon: <RequestIcon size={18} />,
+			icon: <CheckFillIcon size={18} />,
 			allowedRoles: [USERROLE.Admin, USERROLE.UnitHead],
 		},
 		{
 			name: "รายการ",
 			path: "/assigned/task",
-			icon: <RequestIcon size={18} />,
+			icon: <CheckFillIcon size={18} />,
 			allowedRoles: [USERROLE.Admin, USERROLE.Driver],
 		},
 		{
@@ -105,15 +101,13 @@ export default function Navbar() {
 			icon: <UserIcon size={18} />,
 		},
 		// * Componenent Page ---------------------------------------------
-		// { name: "Form", path: "/form", icon: <DocumentIcon /> },
-		// { name: "Card", path: "/card", icon: <CardIcon /> },
-		// { name: "Drawer", path: "/drawer", icon: <DrawerIcon /> },
+		// { name: "Form", path: "/form", icon: <HomeIcon /> },
+		// { name: "Card", path: "/card", icon: <HomeIcon /> },
+		// { name: "Drawer", path: "/drawer", icon: <HomeIcon /> },
 	];
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		// setIsLoading(true);
-
 		if (isReady && userContext && userContext.token && userContext.ae_id) {
 			const fetchAeArea = async ({ token }: { token: string }) => {
 				try {
@@ -122,9 +116,10 @@ export default function Navbar() {
 					setAeAreas(response);
 				} catch (error: any) {
 					setAlert({
-						title: "Error fetching areas",
-						description: error.message,
-						isVisible: true,
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+						color: "danger",
 					});
 				}
 			};
@@ -204,18 +199,16 @@ export default function Navbar() {
 
 	return (
 		<>
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
+					{...alert}
+					handleClose={() => setAlert(null)}
 					size="full"
-					title={alert.title}
 				/>
 			)}
 
 			<HeroUINavbar
-				className="z-50 flex items-center shadow-md p-0 h-18"
+				className="z-50 flex items-center p-0 shadow-md h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
@@ -225,9 +218,9 @@ export default function Navbar() {
 				shouldHideOnScroll={false}
 				onMenuOpenChange={setIsMenuOpen}
 			>
-				<NavbarContent className="justify-start items-center gap-2 w-full">
+				<NavbarContent className="items-center justify-start w-full gap-2">
 					{/* Logo */}
-					<NavbarBrand className="flex justify-start items-center p-0 w-full h-full">
+					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
 						<Button
 							isIconOnly
 							className="relative p-0 h-full aspect-[1/1]"
@@ -265,7 +258,7 @@ export default function Navbar() {
 							>
 								<PopoverTrigger>
 									<Button
-										className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
+										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold w-fit min-w-24"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -287,13 +280,13 @@ export default function Navbar() {
 									</Button>
 								</PopoverTrigger>
 
-								<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
-									<div className="flex flex-col w-full font-semibold text-sm">
+								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
+									<div className="flex flex-col w-full text-sm font-semibold">
 										{aeAreas.length > 0 ? (
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													className="justify-between p-2 w-full font-medium text-md text-left"
+													className="justify-between w-full p-2 font-medium text-left text-md"
 													color={
 														userContext.ae_id ===
 														option.ae_area.id
@@ -324,7 +317,7 @@ export default function Navbar() {
 												</Button>
 											))
 										) : (
-											<div className="p-2 text-gray-400 text-center">
+											<div className="p-2 text-center text-gray-400">
 												No options available
 											</div>
 										)}
@@ -335,10 +328,10 @@ export default function Navbar() {
 					)}
 
 					{/* Menu Toggle */}
-					<NavbarItem className="md:hidden flex justify-end items-center h-full">
+					<NavbarItem className="flex items-center justify-end h-full md:hidden">
 						<Button
 							isIconOnly
-							className="p-0 h-full"
+							className="h-full p-0"
 							color={isMenuOpen ? "default" : "primary"}
 							endContent={
 								isMenuOpen ? <CancelIcon /> : <HamburgerIcon />
@@ -360,7 +353,7 @@ export default function Navbar() {
 							return (
 								<Button
 									key={item.name}
-									className="flex justify-center items-center gap-2 px-2 h-full font-semibold"
+									className="flex items-center justify-center h-full gap-2 px-2 font-semibold"
 									color={isActive ? "primary" : "default"}
 									isDisabled={
 										!userContext?.token && !isActive

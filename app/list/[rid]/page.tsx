@@ -55,11 +55,7 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -80,10 +76,10 @@ export default function RequestManagementPage({
 					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -137,10 +133,9 @@ export default function RequestManagementPage({
 				status !== REQUESTORDERSTATUS.Pending
 			) {
 				setAlert({
-					title: "Warning!!",
+					title: "คำเตือน!!",
 					description: "คำอธิบาย: กรุณาระบุเหตุผล",
 					color: "warning",
-					isVisible: true,
 				});
 
 				setIsSubmitting(false);
@@ -164,18 +159,16 @@ export default function RequestManagementPage({
 					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${reqOrder.work_order_number} แล้ว`,
 					color: "success",
-					isVisible: true,
 				});
 
 				setTimeout(() => {
 					router.back();
 				}, 2000);
-			} catch (err: any) {
+			} catch (error: any) {
 				setAlert({
 					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
-					description: err.message || "Unknown error occurred",
+					description: error.message || "Unknown error occurred",
 					color: "danger",
-					isVisible: true,
 				});
 			} finally {
 				setIsSubmitting(false);
@@ -185,7 +178,6 @@ export default function RequestManagementPage({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
-				isVisible: true,
 			});
 
 			setTimeout(() => {
@@ -346,20 +338,19 @@ export default function RequestManagementPage({
 		<ProtectedRoute
 			allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
 		>
-			<div className="flex flex-col justify-center items-center w-full">
-				{alert.isVisible && (
+			<div className="flex flex-col items-center justify-center w-full">
+				{alert && (
 					<AlertComponent
 						{...alert}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
 						size="expanded"
 					/>
 				)}
 
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -367,7 +358,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -401,7 +392,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="แก้ไข"
 					>
 						<FormComponent
@@ -428,7 +419,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="ยกเลิก"
 					>
 						<FormComponent

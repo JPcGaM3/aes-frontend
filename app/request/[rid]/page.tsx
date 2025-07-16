@@ -12,8 +12,10 @@ import Header from "@/components/Header";
 import FormButtons from "@/components/FormButtons";
 import FormComponent from "@/components/FormComponent";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import DynamicTaskOrder from "@/components/DynamicTaskOrder";
 import { useLoading } from "@/providers/LoadingContext";
 import { useAuth } from "@/providers/AuthContext";
+import { useTaskOrderForm } from "@/hooks/useTaskOrderForm";
 import { FieldSection, FormSection } from "@/interfaces/interfaces";
 import {
 	Activity,
@@ -48,6 +50,7 @@ import {
 } from "@/utils/functions";
 import { translateEnumValue } from "@/utils/functions";
 import ProtectedRoute from "@/components/HigherOrderComponent";
+import { taskOrderAPIService } from "@/services/taskOrderAPI";
 
 moment.locale("th");
 
@@ -87,14 +90,19 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
-	const [changedValues, setChangedValues] = useState<RequestOrder>(
-		{} as RequestOrder
-	);
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
+
+	const {
+		taskOrderUIItems,
+		requestOrderChanges,
+		addTaskOrder,
+		removeTaskOrder,
+		updateTaskOrder,
+		updateRequestOrder,
+		resetChanges,
+		getTaskOrderOperations,
+		hasChanges,
+	} = useTaskOrderForm();
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -154,10 +162,10 @@ export default function RequestManagementPage({
 					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -186,9 +194,21 @@ export default function RequestManagementPage({
 	};
 
 	const handleCancel = () => {
-		setIsLoading(true);
+		if (commentValues.comment || hasChanges()) {
+			setAlert({
+				title: "ยกเลิกการแก้ไขใบสั่งงาน",
+				description:
+					"ยกเลิกการแก้ไขหรือปฏิเสธใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
+				color: "warning",
+			});
+		}
+
 		setCommentValues({ comment: "" });
-		router.back();
+		resetChanges();
+
+		setTimeout(() => {
+			router.back();
+		}, 1000);
 	};
 
 	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
@@ -210,7 +230,6 @@ export default function RequestManagementPage({
 					title: "คำเตือน!!",
 					description: "กรุณาระบุเหตุผล",
 					color: "warning",
-					isVisible: true,
 				});
 
 				setIsSubmitting(false);
@@ -234,18 +253,16 @@ export default function RequestManagementPage({
 					title: "อัพเดตใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
 					color: "success",
-					isVisible: true,
 				});
 
 				setTimeout(() => {
 					router.back();
 				}, 2000);
-			} catch (err: any) {
+			} catch (error: any) {
 				setAlert({
 					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
-					description: err.message || "Unknown error occurred",
+					description: error.message || "Unknown error occurred",
 					color: "danger",
-					isVisible: true,
 				});
 			} finally {
 				setIsSubmitting(false);
@@ -255,7 +272,6 @@ export default function RequestManagementPage({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
-				isVisible: true,
 			});
 
 			setTimeout(() => {
@@ -269,18 +285,91 @@ export default function RequestManagementPage({
 		setCommentValues(newValues);
 	};
 
-	const handleValueChange = (newValues: Partial<typeof changedValues>) => {
-		setChangedValues((prevValues) => ({
-			...prevValues,
-			...newValues,
-		}));
+	const handleValueChange = (newValues: any) => {
+		const requestOrderFields = [
+			"customer_type_id",
+			"phone",
+			"operation_area_id",
+			"ae_id",
+			"zone",
+			"quota_number",
+			"farmer_name",
+			"target_area",
+			"land_number",
+			"location_xy",
+			"ap_month",
+			"ap_year",
+			"supervisor_name",
+			"unit_head_id",
+		];
+
+		const requestOrderChanges: any = {};
+
+		Object.keys(newValues).forEach((key) => {
+			if (requestOrderFields.includes(key)) {
+				requestOrderChanges[key] = newValues[key];
+			}
+		});
+
+		if (Object.keys(requestOrderChanges).length > 0) {
+			updateRequestOrder(requestOrderChanges);
+		}
 	};
 
-	const handleSubmit = () => {
-		console.log("Changed values:", changedValues);
+	const handleSubmit = async () => {
+		try {
+			setIsSubmitting(true);
+
+			if (Object.keys(requestOrderChanges).length > 0) {
+				await taskOrderAPIService.updateRequestOrder(
+					userContext.token,
+					Number(rid),
+					requestOrderChanges
+				);
+			}
+
+			const operations = getTaskOrderOperations();
+
+			if (operations.length > 0) {
+				const result =
+					await taskOrderAPIService.processTaskOrderOperations(
+						userContext.token,
+						Number(rid),
+						operations,
+						userContext.id
+					);
+
+				if (!result.success) {
+					throw new Error(
+						result.errors.map((e) => e.error).join(", ")
+					);
+				}
+			}
+
+			setAlert({
+				title: "บันทึกสำเร็จ",
+				description: "อัพเดตข้อมูลใบสั่งงานสำเร็จแล้ว",
+				color: "success",
+			});
+
+			handleTabChange("view");
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		} catch (error: any) {
+			setAlert({
+				title: "เกิดข้อผิดพลาด",
+				description: error.message || "ไม่สามารถบันทึกข้อมูลได้",
+				color: "danger",
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
-	const getToolTypeData = (activity_id: number) => {
+	const getToolTypeData = (activity_id?: number) => {
+		if (!activity_id) return [];
+
 		const activity = activityWithToolTypes.find(
 			(a) => a.id === activity_id
 		);
@@ -397,17 +486,16 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "car_id",
-					value: task.cars?.name || "-",
+					value:
+						task.cars?.name ||
+						task.cars?.car_number ||
+						task.cars?.id ||
+						"-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
-					name: "tool_type_id",
+					name: "tool_types_id",
 					value: task.tool_type?.tool_type_name || "-",
-					labelTranslator: TaskOrderTranslation,
-				},
-				{
-					name: "tool_id",
-					value: task.tools?.name || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -418,6 +506,13 @@ export default function RequestManagementPage({
 				{
 					name: "target_area",
 					value: task.target_area ?? "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "ap_date",
+					value: task.ap_date
+						? moment(task.ap_date).tz("Asia/Bangkok").format("LL")
+						: "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 			],
@@ -446,6 +541,7 @@ export default function RequestManagementPage({
 				{
 					type: "dropdown",
 					name: "ae_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: aeData.map((ae) => ({
 						label: ae.name || "-",
@@ -454,8 +550,8 @@ export default function RequestManagementPage({
 				},
 				{
 					type: "dropdown",
-					name: "unit_head",
-					path: "unit_head_id",
+					name: "unit_head_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: unitHeadData.map((user) => ({
 						label:
@@ -467,6 +563,7 @@ export default function RequestManagementPage({
 				{
 					type: "text",
 					name: "supervisor_name",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
@@ -477,12 +574,14 @@ export default function RequestManagementPage({
 				{
 					type: "dropdown",
 					name: "ap_month",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: monthList,
 				},
 				{
 					type: "dropdown",
 					name: "ap_year",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: yearList,
 				},
@@ -501,22 +600,26 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "quota_number",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "text",
 					name: "farmer_name",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "land_number",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "dropdown",
 					name: "operation_area_id",
 					path: "operation_area_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: opData.map((area) => ({
 						label: area.operation_area || "-",
@@ -531,67 +634,11 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "target_area",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
 		},
-		...(requestData.taskorders || []).map(
-			(task, idx): FormSection => ({
-				title: `กิจกรรมที่ ${idx + 1}`,
-				fields: [
-					{
-						type: "dropdown",
-						name: `activities_id_${idx}`,
-						path: `taskorders.${idx}.activities_id`,
-						label: "activities_id",
-						labelTranslator: TaskOrderTranslation,
-						options: activityWithToolTypes.map((activity) => ({
-							label: activity.name,
-							value: activity.id,
-						})),
-					},
-					{
-						type: "dropdown",
-						name: `car_id_${idx}`,
-						path: `taskorders.${idx}.car_id`,
-						label: "car_id",
-						labelTranslator: TaskOrderTranslation,
-						options: carData.map((car) => ({
-							label:
-								car.name || car.car_number || car.id.toString(),
-							value: car.id,
-						})),
-					},
-					{
-						type: "dropdown",
-						name: `tool_type_id_${idx}`,
-						path: `taskorders.${idx}.tool_types_id`,
-						label: "tool_type_id",
-						labelTranslator: TaskOrderTranslation,
-						options: getToolTypeData(task.activities_id || 0),
-						isReadOnly: !task.activities_id,
-					},
-					{
-						type: "dropdown",
-						name: "user_id",
-						path: `taskorders.${idx}.user_id`,
-						labelTranslator: TaskOrderTranslation,
-						options: driverData.map((user) => ({
-							label:
-								`${user.username?.charAt(0).toUpperCase()}${user.username?.slice(1).toLowerCase()}` ||
-								"-",
-							value: user.id,
-						})),
-					},
-					{
-						type: "number",
-						name: "target_area",
-						path: `taskorders.${idx}.target_area`,
-						labelTranslator: TaskOrderTranslation,
-					},
-				],
-			})
-		),
 	];
 
 	const commentSections: FormSection[] = [
@@ -614,20 +661,19 @@ export default function RequestManagementPage({
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col justify-center items-center w-full">
-				{alert.isVisible && (
+			<div className="flex flex-col items-center justify-center w-full">
+				{alert && (
 					<AlertComponent
 						{...alert}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
 						size="expanded"
 					/>
 				)}
 
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -635,7 +681,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -678,7 +724,6 @@ export default function RequestManagementPage({
 								requestData.status !==
 									REQUESTORDERSTATUS.PendingEdit
 							}
-							isSubmitting={isSubmitting}
 							size="expanded"
 							submitLabel="ส่งคำขออนุมัติ"
 							onCancel={handleCancel}
@@ -691,7 +736,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center gap-20 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -700,30 +745,65 @@ export default function RequestManagementPage({
 						}
 						title="แก้ไข"
 					>
-						<FormComponent
-							cancelLabel="ยกเลิก"
-							hasBorder={false}
-							isSubmitting={isSubmitting}
-							sections={requestFormSections}
-							size="expanded"
-							submitLabel="บันทึก"
-							subtitle={`@${requestData.work_order_number}`}
-							subtitleClassName={clsx(
-								"mt-1 font-mono text-gray-600 text-sm",
-								fontMono.variable
-							)}
-							title="แก้ไขใบสั่งงาน"
-							values={{ ...requestData, ...changedValues }}
-							onCancel={handleCancel}
-							onChange={handleValueChange}
-							onSubmit={handleSubmit}
-						/>
+						<div className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+							<Header
+								hasBorder={false}
+								subtitle={`@${requestData.work_order_number}`}
+								subtitleClassName={clsx(
+									"mt-1 font-mono text-gray-600 text-sm",
+									fontMono.variable
+								)}
+								title="แก้ไขใบสั่งงาน"
+							/>
+
+							<div className="flex flex-col gap-8 mt-8">
+								{/* Request Order Form */}
+								<FormComponent
+									hasBorder={false}
+									hasHeader={false}
+									sections={requestFormSections}
+									size="expanded"
+									values={{
+										...requestData,
+										...requestOrderChanges,
+									}}
+									onChange={handleValueChange}
+								/>
+
+								{/* Dynamic Task Orders */}
+								<DynamicTaskOrder
+									activityData={activityWithToolTypes}
+									carData={carData}
+									driverData={driverData}
+									getToolTypeOptions={getToolTypeData}
+									taskOrders={taskOrderUIItems}
+									onAddTask={addTaskOrder}
+									onRemoveTask={removeTaskOrder}
+									onUpdateTask={updateTaskOrder}
+								/>
+
+								{/* Form Buttons */}
+								<FormButtons
+									cancelLabel="ยกเลิก"
+									hasBorder={false}
+									isSubmitDisabled={!hasChanges()}
+									isSubmitting={isSubmitting}
+									size="expanded"
+									submitLabel="บันทึก"
+									onCancel={() => {
+										resetChanges();
+										handleCancel();
+									}}
+									onSubmit={handleSubmit}
+								/>
+							</div>
+						</div>
 					</Tab>
 
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||

@@ -1,20 +1,8 @@
-"use client";
-
-import { useEffect } from "react";
-
 import Header from "@/components/Header";
-import { useLoading } from "@/providers/LoadingContext";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
 
 export default function HomePage() {
-	const { setIsLoading } = useLoading();
-
-	useEffect(() => {
-		setIsLoading(true);
-		setIsLoading(false);
-	}, []);
-
 	return (
 		<ProtectedRoute
 			allowedRoles={[

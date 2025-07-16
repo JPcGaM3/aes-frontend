@@ -63,10 +63,10 @@ export async function fetchCustomerTypes({
 			});
 
 			setCustomerTypes(customer_type);
-		} catch (err: any) {
+		} catch (error: any) {
 			setAlert({
-				title: "Failed to fetch customer types",
-				description: err.message,
+				title: "ไม่สามารถโหลดข้อมูลแหล่งที่มาได้",
+				description: error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 				color: "danger",
 			});
 		}
@@ -92,17 +92,18 @@ export async function fetchReqOrderData({
 			});
 
 			setReqOrders(data);
-		} catch (err: any) {
-			if (err.status === 404) {
+		} catch (error: any) {
+			if (error.status === 404) {
 				setAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-					description: err.message,
+					description: error.message,
 					color: "default",
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: err.message,
+					title: "ไม่สามารถโหลดข้อมูลใบสั่งงานได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -143,8 +144,9 @@ export async function fetchReqOrderWithTaskData({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลใบสั่งงานได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -189,8 +191,9 @@ export async function fetchUsers({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -225,8 +228,9 @@ export async function fetchAE({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลสังกัดได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -261,8 +265,9 @@ export async function fetchOperationAreas({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลพื้นที่ปฏิบัติงานได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -300,8 +305,9 @@ export async function fetchCars({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch cars",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลรถได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -335,8 +341,9 @@ export async function fetchActivitiesWithToolTypes({
 				});
 			} else {
 				setAlert({
-					title: "Failed to fetch",
-					description: error.message,
+					title: "ไม่สามารถโหลดข้อมูลประเภทกิจกรรมได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}

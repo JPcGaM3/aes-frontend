@@ -13,7 +13,7 @@ import clsx from "clsx";
 import { PatchedAutocomplete } from "./PatchedAutocomplete";
 
 import { InputRendererProps } from "@/interfaces/props";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "@/utils/icons";
+import { EyeIcon, EyeCloseIcon } from "@/utils/icons";
 import { DropdownOption } from "@/interfaces/interfaces";
 import { fontMono } from "@/config/fonts";
 
@@ -93,23 +93,19 @@ export default function InputRenderer({
 							? typeof commonProps.options[0].value
 							: "string";
 
-					let selected = Array.isArray(v)
-						? v[0]
-						: v instanceof Set
-							? Array.from(v)[0]
-							: v;
+					// For autocomplete, v is the selected key (single value as string)
+					let selectedValue = v;
 
-					let selectedValue = selected;
-
+					// Convert string back to number if the original options are numbers
 					if (
 						optionType === "number" &&
-						selected !== undefined &&
-						selected !== null &&
-						selected !== ""
+						selectedValue !== undefined &&
+						selectedValue !== null &&
+						selectedValue !== ""
 					) {
-						const num = Number(selected);
+						const num = Number(selectedValue);
 
-						selectedValue = isNaN(num) ? selected : num;
+						selectedValue = isNaN(num) ? selectedValue : num;
 					}
 
 					onValueChange(commonProps.name, selectedValue);
@@ -124,6 +120,13 @@ export default function InputRenderer({
 		[onValueChange, commonProps.name, type, commonProps.options]
 	);
 
+	commonProps.classNames = {
+		...commonProps.classNames,
+		label: "min-w-[100px] p-0 text-start",
+		mainWrapper: "w-full min-w-0",
+		base: "min-w-0",
+	};
+
 	switch (type) {
 		case "text":
 		case "email": {
@@ -132,7 +135,7 @@ export default function InputRenderer({
 					{...commonProps}
 					aria-label={commonProps.label}
 					type={type}
-					value={value}
+					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -145,8 +148,12 @@ export default function InputRenderer({
 				<Textarea
 					{...commonProps}
 					aria-label={commonProps.label}
+					classNames={{
+						...commonProps.classNames,
+						clearButton: "bg-default/40",
+					}}
 					minRows={commonProps.minRows || 3}
-					value={value}
+					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -159,7 +166,7 @@ export default function InputRenderer({
 				<NumberInput
 					{...commonProps}
 					aria-label={commonProps.label}
-					value={value}
+					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -179,9 +186,9 @@ export default function InputRenderer({
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
 								isVisible ? (
-									<EyeSlashFilledIcon />
+									<EyeCloseIcon size={18} />
 								) : (
-									<EyeFilledIcon />
+									<EyeIcon size={18} />
 								)
 							}
 							radius="full"
@@ -191,7 +198,7 @@ export default function InputRenderer({
 						/>
 					}
 					type={isVisible ? "text" : "password"}
-					value={value}
+					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -200,20 +207,35 @@ export default function InputRenderer({
 		}
 
 		case "dropdown": {
+			const hasDefaultValue =
+				commonProps.defaultValue !== undefined &&
+				commonProps.defaultValue !== null &&
+				commonProps.defaultValue !== "";
+
+			const stringValue =
+				value !== undefined && value !== null && value !== ""
+					? String(value)
+					: "";
+
+			const stringDefaultValue = hasDefaultValue
+				? String(commonProps.defaultValue)
+				: "";
+
+			const autocompleteProps = {
+				selectedKey: stringValue || stringDefaultValue || "",
+			};
+
 			return (
 				<PatchedAutocomplete
 					{...commonProps}
+					{...autocompleteProps}
 					aria-label={commonProps.label}
 					classNames={{
 						...commonProps.classNames,
 						popoverContent: "rounded-lg p-0",
 					}}
+					isClearable={false}
 					placement="bottom"
-					selectedKeys={
-						value !== undefined && value !== null && value !== ""
-							? new Set([String(value)])
-							: new Set()
-					}
 					shouldCloseOnBlur={true}
 					shouldCloseOnInteractOutside={true}
 					onSelectionChange={
@@ -266,7 +288,7 @@ export default function InputRenderer({
 					{...commonProps}
 					showMonthAndYearPickers
 					aria-label={commonProps.label}
-					value={value}
+					value={value || null}
 					onChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -281,7 +303,7 @@ export default function InputRenderer({
 						{...commonProps}
 						showMonthAndYearPickers
 						aria-label={commonProps.label}
-						value={value}
+						value={value || null}
 						visibleMonths={getVisibleMonths()}
 						onChange={
 							onValueChange ? handleUnifiedValueChange : undefined

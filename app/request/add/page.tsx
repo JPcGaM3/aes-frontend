@@ -3,6 +3,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
@@ -10,7 +11,7 @@ import {
 	monthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
-import { AddIcon, MinusIcon } from "@/utils/icons";
+import { PlusIcon, MinusIcon } from "@/utils/icons";
 import {
 	Activity,
 	OperationArea,
@@ -26,11 +27,14 @@ import { AlertComponentProps } from "@/interfaces/props";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
 import AlertComponent from "@/components/AlertComponent";
-import { getActivities } from "@/libs/activityAPI";
-import { getOperationAreas } from "@/libs/operationAreaAPI";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
+import { useLoading } from "@/providers/LoadingContext";
+import {
+	fetchActivitiesWithToolTypes,
+	fetchOperationAreas,
+} from "@/utils/functions";
 
 interface FormType extends RequestOrder {
 	activities: string;
@@ -43,9 +47,10 @@ interface TaskFormType {
 }
 
 export default function AddRequestPage() {
-	// const value & react hook -------------------------------------	------------------------------------------------
-	// * For key-in form
+	// const value & react hook ----------------------------------------------------------------------------------------
+	const router = useRouter();
 	const { userContext, isReady } = useAuth();
+	const { setIsLoading } = useLoading();
 	const now = new Date();
 	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
@@ -63,62 +68,62 @@ export default function AddRequestPage() {
 	const [tasks, setTasks] = useState<TaskFormType[]>([defaultTask]);
 	const [formValues, setFormValues] = useState<FormType>(defaultFormValues);
 	const [opOptions, setOpOptions] = useState<OperationArea[]>([]);
-
-	// * For file upload
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-
-	// * Other
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (
-			isReady &&
-			userContext &&
-			userContext.id &&
-			userContext.token &&
-			userContext.ae_id
-		) {
-			const fetchDropDownOptions = async ({
-				token,
-			}: {
-				token: string;
-			}) => {
-				const activity = await getActivities({ token });
-				const operation_area = await getOperationAreas({ token });
+		if (isReady) {
+			const fetchData = async () => {
+				// TODO: using fetch function
+				try {
+					await fetchOperationAreas({
+						token: userContext.token,
+						setOpArea: setOpOptions,
+						setAlert: setAlert,
+						// setIsLoading: setIsLoading,
+					});
+					await fetchActivitiesWithToolTypes({
+						token: userContext.token,
+						setActivitiesWithToolTypes: setActivityWithTools,
+						setAlert: setAlert,
+						// setIsLoading: setIsLoading,
+					});
 
-				setOpOptions(operation_area);
-				setActivityWithTools(activity);
-				setActOptions(
-					activity.map((activity: Activity) => ({
-						label: activity.name,
-						value: activity.name,
-					}))
-				);
+					setActOptions(
+						activityWithTools.map((activity: Activity) => ({
+							label: activity.name,
+							value: activity.name,
+						}))
+					);
 
-				setFormValues({
-					...formValues,
-					ae_id: userContext.ae_id,
-				} as FormType);
+					setFormValues({
+						...formValues,
+						ae_id: userContext.ae_id,
+					} as FormType);
 
-				setTasks([
-					{
-						activity_name: "",
-						tool_type_name: "",
-					},
-				]);
+					setTasks([
+						{
+							activity_name: "",
+							tool_type_name: "",
+						},
+					]);
+				} catch (error: any) {
+					setAlert({
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+						color: "danger",
+					});
+				} finally {
+					setIsLoading(false);
+				}
 			};
 
-			fetchDropDownOptions({
-				token: userContext.token,
-			});
+			fetchData();
 		}
-	}, [userContext, isReady]);
+	}, [isReady]);
 
 	// Handler ------------------------------------------------------------------------------------------------------
 	const handleDownloadTemplate = (): void => {
@@ -135,10 +140,9 @@ export default function AddRequestPage() {
 	const handleSubmitUpload = async (_e?: any): Promise<void> => {
 		if (uploadedFiles.length === 0) {
 			setAlert({
-				isVisible: true,
 				color: "danger",
-				title: "Upload Error",
-				description: "Please upload files before confirming.",
+				title: "ไม่สามารถอัปโหลดไฟล์ได้",
+				description: "กรุณาอัปโหลดไฟล์อย่างน้อย 1 ไฟล์ก่อนยืนยัน.",
 			});
 
 			return;
@@ -168,28 +172,26 @@ export default function AddRequestPage() {
 			let alertColor: "success" | "danger" | "warning" = "success";
 
 			if (validRows === totalRows && totalRows > 0) {
-				alertTitle = "Upload Successful";
+				alertTitle = "การอัปโหลดสำเร็จ";
 				alertColor = "success";
 			} else if (validRows === 0) {
-				alertTitle = "Upload Fail";
+				alertTitle = "การอัปโหลดล้มเหลว";
 				alertColor = "danger";
 			} else {
-				alertTitle = "Upload success with partial error";
+				alertTitle = "การอัปโหลดสำเร็จ แต่มีข้อผิดพลาดบางประการ";
 				alertColor = "warning";
 			}
 
 			setAlert({
-				isVisible: true,
 				color: alertColor,
 				title: alertTitle,
-				description: `total row: ${totalRows} , valid row: ${validRows} , error row: ${errorRows}`,
+				description: `จำนวนแถวทั้งหมด: ${totalRows} , จำนวนแถวที่ถูกต้อง: ${validRows} , จำนวนแถวที่ผิดพลาด: ${errorRows}`,
 			});
 		} catch (error) {
 			setAlert({
-				isVisible: true,
 				color: "danger",
-				title: "Upload Failed",
-				description: "Upload failed!, error: " + error,
+				title: "การอัปโหลดล้มเหลว",
+				description: "การอัปโหลดล้มเหลว!, ข้อผิดพลาด: " + error,
 			});
 		} finally {
 			setTimeout(() => {
@@ -201,13 +203,16 @@ export default function AddRequestPage() {
 
 	const handleCancelUpload = (_e?: any): void => {
 		setAlert({
-			isVisible: true,
-			title: "Upload Cancelled",
-			description: "Cancelling upload, Clear form",
+			title: "ยกเลิกการอัปโหลดใบสั่งงาน",
+			description: "ยกเลิกการอัปโหลดใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
 			color: "warning",
 		});
 
 		setUploadedFiles([]);
+
+		setTimeout(() => {
+			router.back();
+		}, 1000);
 	};
 
 	const handleRequestOrderChange = (values: any) => {
@@ -239,7 +244,6 @@ export default function AddRequestPage() {
 			});
 
 			setAlert({
-				isVisible: true,
 				title: "สำเร็จ!!",
 				description: "เพิ่มรายการคำขอสำเร็จ",
 				color: "success",
@@ -252,7 +256,6 @@ export default function AddRequestPage() {
 			});
 		} catch (error: any) {
 			setAlert({
-				isVisible: true,
 				title: "เพิ่มรายการคำขอล้มเหลว",
 				description: error.message || "เกิดข้อผิดพลาด",
 				color: "danger",
@@ -265,12 +268,22 @@ export default function AddRequestPage() {
 	};
 
 	const handleCancelKeyIn = () => {
+		setAlert({
+			title: "ยกเลิกการเพิ่มใบสั่งงาน",
+			description: "ยกเลิกการเพิ่มใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
+			color: "warning",
+		});
+
 		setFormValues({
 			...defaultFormValues,
 			ae_id: userContext.ae_id,
 		});
 
 		setTasks([defaultTask]);
+
+		setTimeout(() => {
+			router.back();
+		}, 1000);
 	};
 
 	const handleAddTask = () => {
@@ -393,7 +406,6 @@ export default function AddRequestPage() {
 				{
 					type: "textarea",
 					name: "location_xy",
-					isRequired: false,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -431,16 +443,16 @@ export default function AddRequestPage() {
 					type: "dropdown",
 					name: `activity_name_${idx}`,
 					label: "กิจกรรม",
-					options: actOptions,
 					isRequired: true,
+					options: actOptions,
 					className: "w-1/2",
 				},
 				{
 					type: "dropdown",
 					name: `tool_type_name_${idx}`,
 					label: "ประเภทเครื่องมือ",
-					options: getToolTypeOptions(task.activity_name),
 					isRequired: true,
+					options: getToolTypeOptions(task.activity_name),
 					className: "w-1/2",
 					isReadOnly: !task.activity_name,
 				},
@@ -450,16 +462,16 @@ export default function AddRequestPage() {
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Key-in"
 					>
 						<FormComponent
@@ -475,9 +487,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col justify-center items-center gap-4 w-full">
-								<div className="flex items-center gap-5 w-full">
-									<span className="font-semibold text-gray-700 text-xl">
+							<div className="flex flex-col items-center justify-center w-full gap-4">
+								<div className="flex items-center w-full gap-5">
+									<span className="text-xl font-semibold text-gray-700">
 										กิจกรรม
 									</span>
 
@@ -490,7 +502,7 @@ export default function AddRequestPage() {
 											isDisabled={tasks.length >= 5}
 											radius="sm"
 											size="sm"
-											startContent={<AddIcon />}
+											startContent={<PlusIcon />}
 											variant="flat"
 											onPress={handleAddTask}
 										/>
@@ -505,16 +517,16 @@ export default function AddRequestPage() {
 											onPress={handleRemoveTask}
 										/>
 									</div>
-								</div>
 
-								<FormComponent
-									hasBorder={false}
-									hasHeader={false}
-									isCompact={true}
-									sections={getTaskFormSection()}
-									values={getTaskFormValues()}
-									onChange={handleTaskFormChange}
-								/>
+									<FormComponent
+										hasBorder={false}
+										hasHeader={false}
+										isCompact={true}
+										sections={getTaskFormSection()}
+										values={getTaskFormValues()}
+										onChange={handleTaskFormChange}
+									/>
+								</div>
 							</div>
 						</FormComponent>
 					</Tab>
@@ -522,7 +534,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Upload"
 					>
 						<UploadComponent
@@ -538,17 +550,13 @@ export default function AddRequestPage() {
 				</Tabs>
 
 				{/* Alert */}
-				{alert.isVisible && (
+				{alert && (
 					<AlertComponent
-						color={alert.color}
-						description={alert.description}
-						handleClose={() =>
-							setAlert({ ...alert, isVisible: false })
-						}
-						isVisible={alert.isVisible}
+						{...alert}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
 						placement="top"
 						size="compact"
-						title={alert.title}
 					/>
 				)}
 			</div>

@@ -18,11 +18,7 @@ export default function LoginPage() {
 	const { login } = useAuth();
 	const { setIsLoading } = useLoading();
 
-	const [alert, setAlert] = useState<AlertComponentProps>({
-		title: "",
-		description: "",
-		isVisible: false,
-	});
+	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	const handleSubmit = async (values: any) => {
 		setIsLoading(true);
@@ -42,12 +38,11 @@ export default function LoginPage() {
 				},
 			});
 			router.push("/home");
-		} catch (err: any) {
+		} catch (error: any) {
 			setAlert({
-				title: "Login Failed",
-				description: err.message || "Unknown error occurred",
+				title: "เข้าสู่ระบบล้มเหลว",
+				description: error.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
 				color: "danger",
-				isVisible: true,
 			});
 		} finally {
 			setIsLoading(false);
@@ -85,7 +80,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex justify-center items-center w-full">
+		<div className="flex items-center justify-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
@@ -96,15 +91,13 @@ export default function LoginPage() {
 			/>
 
 			{/* Alert */}
-			{alert.isVisible && (
+			{alert && (
 				<AlertComponent
-					color={alert.color}
-					description={alert.description}
-					handleClose={() => setAlert({ ...alert, isVisible: false })}
-					isVisible={alert.isVisible}
+					{...alert}
+					handleClose={() => setAlert(null)}
+					isVisible={alert != null}
 					placement="top"
 					size="compact"
-					title={alert.title}
 				/>
 			)}
 		</div>

@@ -12,6 +12,7 @@ export default function FormFields({
 	sections = [],
 	onValueChange,
 	values = {},
+	errors = {},
 	isCompact = false,
 }: FormFieldsProps & { isCompact?: boolean }) {
 	const getValue = useCallback(
@@ -20,87 +21,92 @@ export default function FormFields({
 				return "";
 			}
 
-			if (config.type === "date" || config.type === "date-range") {
-				if (config.path) {
-					return getNestedValue(values, config.path) ?? null;
-				}
-				if (
-					config.name &&
-					typeof values === "object" &&
-					values !== null
-				) {
-					return values[config.name] ?? config.defaultValue ?? null;
-				}
+			let value;
 
-				return config.defaultValue ?? null;
-			} else {
-				if (config.path) {
-					return getNestedValue(values, config.path) ?? "";
-				}
-				if (
-					config.name &&
-					typeof values === "object" &&
-					values !== null
-				) {
-					return values[config.name] ?? config.defaultValue ?? "";
-				}
+			if (config.path) {
+				value = getNestedValue(values, config.path);
+			} else if (
+				config.name &&
+				typeof values === "object" &&
+				values !== null
+			) {
+				value = values[config.name];
 			}
 
-			return config.defaultValue ?? "";
+			if (config.type === "date" || config.type === "date-range") {
+				return value !== undefined && value !== null && value !== ""
+					? value
+					: (config.defaultValue ?? null);
+			} else {
+				return value !== undefined && value !== null && value !== ""
+					? value
+					: (config.defaultValue ?? "");
+			}
 		},
 		[values]
 	);
 
-	const commonProp: any = useCallback((config: InputConfig) => {
-		const {
-			type,
-			name,
-			hasLabel = true,
-			label,
-			labelTranslator,
-			hasPlaceholder = true,
-			labelPlacement,
-			isReadOnly,
-			isRequired,
-			size,
-			className,
-			...restProps
-		} = config;
+	const getCommonProp: any = useCallback(
+		(config: InputConfig) => {
+			const {
+				type,
+				name,
+				hasLabel = true,
+				label,
+				labelTranslator,
+				hasPlaceholder = true,
+				labelPlacement,
+				isReadOnly,
+				isRequired,
+				size,
+				className,
+				...restProps
+			} = config;
 
-		const labelValue =
-			hasLabel === false
-				? undefined
-				: label
-					? translateEnumValue(label, labelTranslator || {})
-					: translateEnumValue(name, labelTranslator || {});
+			const labelValue =
+				hasLabel === false
+					? undefined
+					: label
+						? translateEnumValue(label, labelTranslator || {})
+						: translateEnumValue(name, labelTranslator || {});
 
-		const placeholder = hasPlaceholder
-			? type === "dropdown"
-				? `โปรดเลือก ${labelValue || name}`
-				: `โปรดกรอก ${labelValue || name}`
-			: undefined;
+			const placeholder = hasPlaceholder
+				? type === "dropdown"
+					? `เลือก ${labelValue || name}`
+					: `กรอก ${labelValue || name}`
+				: undefined;
 
-		const resolvedLabelPlacement =
-			labelPlacement || (isCompact ? "outside" : "outside-left");
+			const resolvedLabelPlacement =
+				labelPlacement || (isCompact ? "outside" : "outside-left");
 
-		return {
-			name: name,
-			label: labelValue,
-			placeholder: placeholder,
-			radius: "sm",
-			size: size || "md",
-			isDisabled: isReadOnly || false,
-			isRequired: isRequired || false,
-			labelPlacement: resolvedLabelPlacement,
-			className: clsx("min-w-[100px] p-0", className),
-			classNames: {
-				label: "min-w-[100px] p-0 text-start",
-				mainWrapper: "w-full min-w-0",
-				base: "min-w-0",
-			},
-			...restProps,
-		};
-	}, []);
+			const defaultErrorMessage =
+				config.type === "dropdown"
+					? `กรุณาเลือก ${labelValue || name}`
+					: `กรุณากรอก ${labelValue || name}`;
+
+			const errorMessage =
+				errors[name] !== undefined && errors[name] !== null
+					? errors[name]
+					: defaultErrorMessage;
+			const isInvalid = errors[name] !== undefined;
+
+			return {
+				name: name,
+				label: labelValue,
+				placeholder: placeholder,
+				errorMessage: errorMessage,
+				isInvalid: isInvalid,
+				radius: "sm",
+				size: size || "md",
+				isDisabled: isReadOnly || false,
+				isRequired: isRequired || false,
+				labelPlacement: resolvedLabelPlacement,
+				className: clsx("min-w-[100px] p-0", className),
+				...restProps,
+			};
+		},
+		[isCompact, errors]
+	);
 
 	return (
 		<div className="flex flex-col w-full gap-6">
@@ -132,7 +138,7 @@ export default function FormFields({
 											subField && (
 												<InputRenderer
 													key={subIndex}
-													commonProps={commonProp(
+													commonProps={getCommonProp(
 														subField
 													)}
 													type={subField.type}
@@ -148,7 +154,7 @@ export default function FormFields({
 								field && (
 									<div key={i} className="w-full col-span-1">
 										<InputRenderer
-											commonProps={commonProp(field)}
+											commonProps={getCommonProp(field)}
 											type={field.type}
 											value={getValue(field)}
 											onValueChange={onValueChange}

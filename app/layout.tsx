@@ -17,9 +17,6 @@ export const metadata: Metadata = {
 		title: siteConfig.name,
 	},
 	description: siteConfig.description,
-	icons: {
-		icon: "/favicon.ico",
-	},
 };
 
 export const viewport: Viewport = {
@@ -37,6 +34,7 @@ export default function RootLayout({
 	return (
 		<html suppressHydrationWarning lang="en">
 			<head />
+
 			<body
 				className={clsx(
 					"bg-background font-sans text-foreground antialiased",
@@ -48,7 +46,7 @@ export default function RootLayout({
 				>
 					<div className="relative flex flex-col h-full min-h-screen">
 						<Navbar />
-						<main className="flex-grow mx-auto p-3 md:p-6 max-w-full h-full container">
+						<main className="container flex-grow h-full max-w-full p-3 mx-auto md:p-6">
 							{children}
 						</main>
 					</div>

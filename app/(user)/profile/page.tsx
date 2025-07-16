@@ -12,11 +12,11 @@ import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/schema";
-import { getProfile } from "@/libs/userAPI";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
 import FormButtons from "@/components/FormButtons";
 import { useAlert } from "@/providers/AlertContext";
+import { fetchProfile } from "@/utils/functions";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -31,13 +31,19 @@ export default function ProfilePage() {
 
 	useEffect(() => {
 		if (userContext.token && !hasFetched.current) {
+			setIsLoading(true);
 			hasFetched.current = true;
-			const fetchProfile = async ({ token }: { token: string }) => {
+			const fetchData = async () => {
 				try {
-					setIsLoading(true);
-					const response = await getProfile({ token });
+					const promises = [
+						fetchProfile({
+							token: userContext.token,
+							setProfile: setProfile,
+							showAlert: showAlert,
+						}),
+					];
 
-					setProfile(response);
+					await Promise.all(promises);
 				} catch (error: any) {
 					showAlert({
 						title: "ไม่สามารถโหลดข้อมูลผู้ใช้ได้",
@@ -49,7 +55,7 @@ export default function ProfilePage() {
 				}
 			};
 
-			fetchProfile({ token: userContext!.token ?? "" });
+			fetchData();
 		}
 	}, [userContext]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { Tab, Tabs, Divider, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -51,6 +51,7 @@ export default function AddRequestPage() {
 	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
 	const { showAlert } = useAlert();
+	const hasFetched = useRef(false);
 	const now = new Date();
 	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
@@ -74,21 +75,24 @@ export default function AddRequestPage() {
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
 		if (isReady) {
+			setIsLoading(true);
+			hasFetched.current = true;
 			const fetchData = async () => {
-				// TODO: using fetch function
 				try {
-					await fetchOperationAreas({
-						token: userContext.token,
-						setOpArea: setOpOptions,
-						showAlert: showAlert,
-						// setIsLoading: setIsLoading,
-					});
-					await fetchActivitiesWithToolTypes({
-						token: userContext.token,
-						setActivitiesWithToolTypes: setActivityWithTools,
-						showAlert: showAlert,
-						// setIsLoading: setIsLoading,
-					});
+					const promises = [
+						fetchOperationAreas({
+							token: userContext.token,
+							setOpArea: setOpOptions,
+							showAlert: showAlert,
+						}),
+						fetchActivitiesWithToolTypes({
+							token: userContext.token,
+							setActivitiesWithToolTypes: setActivityWithTools,
+							showAlert: showAlert,
+						}),
+					];
+
+					await Promise.all(promises);
 
 					setActOptions(
 						activityWithTools.map((activity: Activity) => ({

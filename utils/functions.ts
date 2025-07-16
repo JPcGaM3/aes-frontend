@@ -8,6 +8,8 @@ import {
 	RequestOrder,
 	TaskOrder,
 	User,
+	UserProfile,
+	UserProfileResponse,
 } from "@/interfaces/schema";
 import { getActivities } from "@/libs/activityAPI";
 import { getAeAreaAll } from "@/libs/aeAreaAPI";
@@ -19,7 +21,7 @@ import {
 	getRequestOrderWithTask,
 } from "@/libs/requestOrderAPI";
 import { getAssignedTask, getTaskById } from "@/libs/taskOrderAPI";
-import { getUsers } from "@/libs/userAPI";
+import { getProfile, getUsers } from "@/libs/userAPI";
 
 /**
  * Translates an enum value using a translation map.
@@ -451,6 +453,42 @@ export async function fetchTaskOrder({
 				});
 			}
 			setTaskOrder({} as TaskOrder);
+		}
+	}
+}
+
+export async function fetchProfile({
+	token,
+	setProfile,
+	showAlert,
+}: {
+	token: string;
+	setProfile: (profile: UserProfileResponse["data"]) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
+}) {
+	if (token) {
+		try {
+			const data = await getProfile({ token });
+
+			setProfile(data);
+		} catch (error: any) {
+			if (error.status === 404) {
+				showAlert({
+					title: "ไม่พบข้อมูลผู้ใช้ในขณะนี้",
+					description: error.message,
+					color: "default",
+				});
+			} else {
+				showAlert({
+					title: "ไม่สามารถโหลดข้อมูลผู้ใช้ได้",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+					color: "danger",
+				});
+			}
+			setProfile({} as UserProfileResponse["data"]);
 		}
 	}
 }

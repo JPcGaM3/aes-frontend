@@ -50,11 +50,13 @@ export function getNestedValue(obj: Record<string, any>, path: string): any {
 export async function fetchCustomerTypes({
 	token,
 	setCustomerTypes,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	setCustomerTypes: (options: CustomerType[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -64,7 +66,7 @@ export async function fetchCustomerTypes({
 
 			setCustomerTypes(customer_type);
 		} catch (error: any) {
-			setAlert({
+			showAlert({
 				title: "ไม่สามารถโหลดข้อมูลแหล่งที่มาได้",
 				description: error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 				color: "danger",
@@ -77,12 +79,14 @@ export async function fetchReqOrderData({
 	token,
 	params,
 	setReqOrders,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	params: any;
 	setReqOrders: (orders: RequestOrder[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token && params) {
 		try {
@@ -92,18 +96,17 @@ export async function fetchReqOrderData({
 			});
 
 			setReqOrders(data);
-		} catch (error: any) {
-			if (error.status === 404) {
-				setAlert({
+		} catch (err: any) {
+			if (err.status === 404) {
+				showAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-					description: error.message,
+					description: err.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลใบสั่งงานได้",
-					description:
-						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+					description: err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -117,12 +120,14 @@ export async function fetchReqOrderWithTaskData({
 	token,
 	requestId,
 	setReqOrder,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	requestId: number;
 	setReqOrder: (order: RequestOrder) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token && requestId) {
 		try {
@@ -137,13 +142,13 @@ export async function fetchReqOrderWithTaskData({
 			});
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลใบสั่งงานได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -161,13 +166,15 @@ export async function fetchUsers({
 	ae_id,
 	role,
 	setUsers,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	ae_id?: number;
 	role?: string[];
 	setUsers: (users: User[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -184,13 +191,13 @@ export async function fetchUsers({
 			setUsers(data);
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบข้อมูลผู้ใช้ในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -206,11 +213,13 @@ export async function fetchUsers({
 export async function fetchAE({
 	token,
 	setAE,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	setAE: (ae: AeArea[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -221,13 +230,13 @@ export async function fetchAE({
 			setAE(data);
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบข้อมูลสังกัดในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลสังกัดได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -243,11 +252,13 @@ export async function fetchAE({
 export async function fetchOperationAreas({
 	token,
 	setOpArea,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	setOpArea: (op: OperationArea[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -258,13 +269,13 @@ export async function fetchOperationAreas({
 			setOpArea(data);
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบข้อมูลพื้นที่ปฏิบัติงานในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลพื้นที่ปฏิบัติงานได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -281,12 +292,14 @@ export async function fetchCars({
 	token,
 	ae_id,
 	setCars,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	ae_id?: number;
 	setCars: (cars: Car[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -298,13 +311,13 @@ export async function fetchCars({
 			setCars(cars);
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบข้อมูลรถในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลรถได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -319,11 +332,13 @@ export async function fetchCars({
 export async function fetchActivitiesWithToolTypes({
 	token,
 	setActivitiesWithToolTypes,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	setActivitiesWithToolTypes: (activities: Activity[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -334,13 +349,13 @@ export async function fetchActivitiesWithToolTypes({
 			setActivitiesWithToolTypes(data);
 		} catch (error: any) {
 			if (error.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบข้อมูลกิจกรรมในขณะนี้",
 					description: error.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลประเภทกิจกรรมได้",
 					description:
 						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -357,12 +372,14 @@ export async function fetchAssignedTask({
 	token,
 	user_id,
 	setTaskOrders,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	user_id?: number;
 	setTaskOrders: (orders: TaskOrder[]) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token) {
 		try {
@@ -378,20 +395,20 @@ export async function fetchAssignedTask({
 			setTaskOrders(data);
 		} catch (err: any) {
 			if (err.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
 					description: err.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "Failed to fetch",
 					description: err.message,
 					color: "danger",
 				});
 			}
 
-			setTaskOrders([]);
+			setTaskOrders([] as TaskOrder[]);
 		}
 	}
 }
@@ -400,12 +417,14 @@ export async function fetchTaskOrder({
 	token,
 	taskId,
 	setTaskOrder,
-	setAlert,
+	showAlert,
 }: {
 	token: string;
 	taskId: number;
 	setTaskOrder: (orders: TaskOrder) => void;
-	setAlert: (alert: AlertComponentProps) => void;
+	showAlert: (
+		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
+	) => void;
 }) {
 	if (token && taskId) {
 		try {
@@ -419,18 +438,19 @@ export async function fetchTaskOrder({
 			setTaskOrder(data);
 		} catch (err: any) {
 			if (err.status === 404) {
-				setAlert({
+				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
 					description: err.message,
 					color: "default",
 				});
 			} else {
-				setAlert({
+				showAlert({
 					title: "Failed to fetch",
 					description: err.message,
 					color: "danger",
 				});
 			}
+			setTaskOrder({} as TaskOrder);
 		}
 	}
 }

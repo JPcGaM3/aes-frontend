@@ -23,10 +23,8 @@ import {
 	FormSection,
 	UploadedFile,
 } from "@/interfaces/interfaces";
-import { AlertComponentProps } from "@/interfaces/props";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
-import AlertComponent from "@/components/AlertComponent";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
@@ -35,6 +33,7 @@ import {
 	fetchActivitiesWithToolTypes,
 	fetchOperationAreas,
 } from "@/utils/functions";
+import { useAlert } from "@/providers/AlertContext";
 
 interface FormType extends RequestOrder {
 	activities: string;
@@ -51,6 +50,7 @@ export default function AddRequestPage() {
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 	const now = new Date();
 	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
@@ -70,7 +70,6 @@ export default function AddRequestPage() {
 	const [opOptions, setOpOptions] = useState<OperationArea[]>([]);
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -81,13 +80,13 @@ export default function AddRequestPage() {
 					await fetchOperationAreas({
 						token: userContext.token,
 						setOpArea: setOpOptions,
-						setAlert: setAlert,
+						showAlert: showAlert,
 						// setIsLoading: setIsLoading,
 					});
 					await fetchActivitiesWithToolTypes({
 						token: userContext.token,
 						setActivitiesWithToolTypes: setActivityWithTools,
-						setAlert: setAlert,
+						showAlert: showAlert,
 						// setIsLoading: setIsLoading,
 					});
 
@@ -110,7 +109,7 @@ export default function AddRequestPage() {
 						},
 					]);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "ไม่สามารถโหลดข้อมูลได้",
 						description:
 							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -139,7 +138,7 @@ export default function AddRequestPage() {
 
 	const handleSubmitUpload = async (_e?: any): Promise<void> => {
 		if (uploadedFiles.length === 0) {
-			setAlert({
+			showAlert({
 				color: "danger",
 				title: "ไม่สามารถอัปโหลดไฟล์ได้",
 				description: "กรุณาอัปโหลดไฟล์อย่างน้อย 1 ไฟล์ก่อนยืนยัน.",
@@ -182,13 +181,13 @@ export default function AddRequestPage() {
 				alertColor = "warning";
 			}
 
-			setAlert({
+			showAlert({
 				color: alertColor,
 				title: alertTitle,
 				description: `จำนวนแถวทั้งหมด: ${totalRows} , จำนวนแถวที่ถูกต้อง: ${validRows} , จำนวนแถวที่ผิดพลาด: ${errorRows}`,
 			});
 		} catch (error) {
-			setAlert({
+			showAlert({
 				color: "danger",
 				title: "การอัปโหลดล้มเหลว",
 				description: "การอัปโหลดล้มเหลว!, ข้อผิดพลาด: " + error,
@@ -202,7 +201,7 @@ export default function AddRequestPage() {
 	};
 
 	const handleCancelUpload = (_e?: any): void => {
-		setAlert({
+		showAlert({
 			title: "ยกเลิกการอัปโหลดใบสั่งงาน",
 			description: "ยกเลิกการอัปโหลดใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
 			color: "warning",
@@ -243,7 +242,7 @@ export default function AddRequestPage() {
 				data: submitValue,
 			});
 
-			setAlert({
+			showAlert({
 				title: "สำเร็จ!!",
 				description: "เพิ่มรายการคำขอสำเร็จ",
 				color: "success",
@@ -255,7 +254,7 @@ export default function AddRequestPage() {
 				ae_id: userContext.ae_id,
 			});
 		} catch (error: any) {
-			setAlert({
+			showAlert({
 				title: "เพิ่มรายการคำขอล้มเหลว",
 				description: error.message || "เกิดข้อผิดพลาด",
 				color: "danger",
@@ -268,7 +267,7 @@ export default function AddRequestPage() {
 	};
 
 	const handleCancelKeyIn = () => {
-		setAlert({
+		showAlert({
 			title: "ยกเลิกการเพิ่มใบสั่งงาน",
 			description: "ยกเลิกการเพิ่มใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
 			color: "warning",
@@ -462,16 +461,16 @@ export default function AddRequestPage() {
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col items-center justify-center w-full">
+			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="Key-in"
 					>
 						<FormComponent
@@ -487,9 +486,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col items-center justify-center w-full gap-4">
-								<div className="flex items-center w-full gap-5">
-									<span className="text-xl font-semibold text-gray-700">
+							<div className="flex flex-col justify-center items-center gap-4 w-full">
+								<div className="flex items-center gap-5 w-full">
+									<span className="font-semibold text-gray-700 text-xl">
 										กิจกรรม
 									</span>
 
@@ -534,7 +533,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="Upload"
 					>
 						<UploadComponent
@@ -548,17 +547,6 @@ export default function AddRequestPage() {
 						/>
 					</Tab>
 				</Tabs>
-
-				{/* Alert */}
-				{alert && (
-					<AlertComponent
-						{...alert}
-						handleClose={() => setAlert(null)}
-						isVisible={alert != null}
-						placement="top"
-						size="compact"
-					/>
-				)}
 			</div>
 		</ProtectedRoute>
 	);

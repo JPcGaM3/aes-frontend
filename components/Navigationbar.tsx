@@ -16,8 +16,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { Button } from "@heroui/button";
 import { clsx } from "clsx";
 
-import AlertComponent from "./AlertComponent";
-
 import { useAuth } from "@/providers/AuthContext";
 import {
 	HomeIcon,
@@ -34,22 +32,21 @@ import {
 import { getAeArea } from "@/libs/aeAreaAPI";
 import { fontMono } from "@/config/fonts";
 import { AeArea } from "@/interfaces/schema";
-import { AlertComponentProps } from "@/interfaces/props";
 import { USERROLE } from "@/utils/enum";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function Navbar() {
 	// const value & react hook -------------------------------------------------------------------------------------
 	const router = useRouter();
 	const pathname = usePathname();
 
-	// const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 	const { userContext, setUserContext, isReady } = useAuth();
 
 	const hasFetched = useRef(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	interface MenuItem {
 		name: string;
@@ -116,7 +113,7 @@ export default function Navbar() {
 
 					setAeAreas(response);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "ไม่สามารถโหลดข้อมูลได้",
 						description:
 							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -200,16 +197,8 @@ export default function Navbar() {
 
 	return (
 		<>
-			{alert && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert(null)}
-					size="full"
-				/>
-			)}
-
 			<HeroUINavbar
-				className="z-50 flex items-center p-0 shadow-md h-18"
+				className="z-50 flex items-center shadow-md p-0 h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
@@ -219,9 +208,9 @@ export default function Navbar() {
 				shouldHideOnScroll={false}
 				onMenuOpenChange={setIsMenuOpen}
 			>
-				<NavbarContent className="items-center justify-start w-full gap-2">
+				<NavbarContent className="justify-start items-center gap-2 w-full">
 					{/* Logo */}
-					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
+					<NavbarBrand className="flex justify-start items-center p-0 w-full h-full">
 						<Button
 							isIconOnly
 							className="relative p-0 h-full aspect-[1/1] opacity-100"
@@ -259,7 +248,7 @@ export default function Navbar() {
 							>
 								<PopoverTrigger>
 									<Button
-										className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold w-fit min-w-24"
+										className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
 										color="default"
 										endContent={
 											isDropdownOpen ? (
@@ -281,13 +270,13 @@ export default function Navbar() {
 									</Button>
 								</PopoverTrigger>
 
-								<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
-									<div className="flex flex-col w-full text-sm font-semibold">
+								<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
+									<div className="flex flex-col w-full font-semibold text-sm">
 										{aeAreas.length > 0 ? (
 											aeAreas.map((option) => (
 												<Button
 													key={option.ae_area.id}
-													className="justify-between w-full p-2 font-medium text-left text-md"
+													className="justify-between p-2 w-full font-medium text-md text-left"
 													color={
 														userContext.ae_id ===
 														option.ae_area.id
@@ -318,7 +307,7 @@ export default function Navbar() {
 												</Button>
 											))
 										) : (
-											<div className="p-2 text-center text-gray-400">
+											<div className="p-2 text-gray-400 text-center">
 												No options available
 											</div>
 										)}
@@ -329,10 +318,10 @@ export default function Navbar() {
 					)}
 
 					{/* Menu Toggle */}
-					<NavbarItem className="flex items-center justify-end h-full md:hidden">
+					<NavbarItem className="md:hidden flex justify-end items-center h-full">
 						<Button
 							isIconOnly
-							className="h-full p-0"
+							className="p-0 h-full"
 							color={isMenuOpen ? "default" : "primary"}
 							endContent={
 								isMenuOpen ? <CancelIcon /> : <HamburgerIcon />
@@ -354,7 +343,7 @@ export default function Navbar() {
 							return (
 								<Button
 									key={item.name}
-									className="flex items-center justify-center h-full gap-2 px-2 font-semibold"
+									className="flex justify-center items-center gap-2 px-2 h-full font-semibold"
 									color={isActive ? "primary" : "default"}
 									isDisabled={
 										!userContext?.token && !isActive

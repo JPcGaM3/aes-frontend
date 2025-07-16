@@ -1,24 +1,21 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { FormSection } from "@/interfaces/interfaces";
-import { AlertComponentProps } from "@/interfaces/props";
 import { useAuth } from "@/providers/AuthContext";
 import FormComponent from "@/components/FormComponent";
-import AlertComponent from "@/components/AlertComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
 import { useLoading } from "@/providers/LoadingContext";
+import { useAlert } from "@/providers/AlertContext";
 
 export default function LoginPage() {
 	const router = useRouter();
 
 	const { login } = useAuth();
 	const { setIsLoading } = useLoading();
-
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
+	const { showAlert } = useAlert();
 
 	const handleSubmit = async (values: any) => {
 		setIsLoading(true);
@@ -39,7 +36,7 @@ export default function LoginPage() {
 			});
 			router.push("/home");
 		} catch (error: any) {
-			setAlert({
+			showAlert({
 				title: "เข้าสู่ระบบล้มเหลว",
 				description: error.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
 				color: "danger",
@@ -80,7 +77,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex items-center justify-center w-full">
+		<div className="flex justify-center items-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
@@ -89,17 +86,6 @@ export default function LoginPage() {
 				title="ยินดีต้อนรับ"
 				onSubmit={handleSubmit}
 			/>
-
-			{/* Alert */}
-			{alert && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert(null)}
-					isVisible={alert != null}
-					placement="top"
-					size="compact"
-				/>
-			)}
 		</div>
 	);
 }

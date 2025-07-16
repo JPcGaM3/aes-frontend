@@ -34,9 +34,8 @@ import { fontMono } from "@/config/fonts";
 import { TaskOrder } from "@/interfaces/schema";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
-import { AlertComponentProps } from "@/interfaces/props";
-import AlertComponent from "@/components/AlertComponent";
 import { fetchAssignedTask } from "@/utils/functions";
+import { useAlert } from "@/providers/AlertContext";
 
 interface filterInterface {
 	start_date?: CalendarDate;
@@ -50,6 +49,7 @@ export default function TaskPage() {
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 	const [taskOrders, setTaskOrders] = useState<TaskOrder[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const {
@@ -73,7 +73,6 @@ export default function TaskPage() {
 		end_date: endDateValue,
 		status: undefined,
 	});
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -90,17 +89,16 @@ export default function TaskPage() {
 							token: userContext.token,
 							user_id: userContext.id,
 							setTaskOrders,
-							setAlert,
+							showAlert,
 						}),
 					];
 
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "Failed to fetch",
 						description: error.message || "Unknown error occurred",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);
@@ -266,11 +264,10 @@ export default function TaskPage() {
 				status: status,
 			});
 		} catch (error: any) {
-			setAlert({
+			showAlert({
 				title: "Failed to process date values",
 				description: error.message || "Unknown error occurred",
 				color: "danger",
-				isVisible: true,
 			});
 		}
 
@@ -305,15 +302,6 @@ export default function TaskPage() {
 	return (
 		<>
 			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
-				{alert && taskOrders.length == 0 && (
-					<AlertComponent
-						{...alert}
-						handleClose={() => setAlert(null)}
-						isVisible={alert != null}
-						placement="bottom"
-						size="full"
-					/>
-				)}
 				{/* Modal ------------------------------------------------------------- */}
 				<FilterModal
 					cancelLabel="Cancel"

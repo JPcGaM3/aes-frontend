@@ -8,6 +8,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 import { LoadingProvider } from "@/providers/LoadingContext";
 import { AuthProvider } from "@/providers/AuthContext";
+import { AlertProvider } from "@/providers/AlertContext";
 
 export interface ProvidersProps {
 	children: React.ReactNode;
@@ -29,7 +30,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 		<HeroUIProvider navigate={router.push}>
 			<NextThemesProvider {...themeProps}>
 				<AuthProvider>
-					<LoadingProvider>{children}</LoadingProvider>
+					<LoadingProvider>
+						<AlertProvider>{children}</AlertProvider>
+					</LoadingProvider>
 				</AuthProvider>
 			</NextThemesProvider>
 		</HeroUIProvider>

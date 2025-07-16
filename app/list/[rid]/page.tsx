@@ -16,8 +16,6 @@ import { useAuth } from "@/providers/AuthContext";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
 import FormComponent from "@/components/FormComponent";
 import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
-import { AlertComponentProps } from "@/interfaces/props";
-import AlertComponent from "@/components/AlertComponent";
 import {
 	RequestOrderTranslation,
 	TaskOrderTranslation,
@@ -28,6 +26,7 @@ import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 import { fetchReqOrderWithTaskData } from "@/utils/functions";
 import ProtectedRoute from "@/components/HigherOrderComponent";
+import { useAlert } from "@/providers/AlertContext";
 
 moment.locale("th");
 
@@ -39,6 +38,7 @@ export default function RequestManagementPage({
 	const { rid } = use(params);
 	const { setIsLoading } = useLoading();
 	const { userContext, isReady } = useAuth();
+	const { showAlert } = useAlert();
 
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -55,7 +55,6 @@ export default function RequestManagementPage({
 	}>({
 		comment: "",
 	});
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -69,13 +68,13 @@ export default function RequestManagementPage({
 							token: userContext.token,
 							requestId: rid,
 							setReqOrder,
-							setAlert,
+							showAlert,
 						}),
 					];
 
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "ไม่สามารถโหลดข้อมูลได้",
 						description:
 							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -132,7 +131,7 @@ export default function RequestManagementPage({
 				!commentValues.comment.trim() &&
 				status !== REQUESTORDERSTATUS.Pending
 			) {
-				setAlert({
+				showAlert({
 					title: "คำเตือน!!",
 					description: "คำอธิบาย: กรุณาระบุเหตุผล",
 					color: "warning",
@@ -155,7 +154,7 @@ export default function RequestManagementPage({
 					paramData: paramData,
 				});
 
-				setAlert({
+				showAlert({
 					title: "อัพเดตสถานะใบสั่งงานสำเร็จ",
 					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${reqOrder.work_order_number} แล้ว`,
 					color: "success",
@@ -165,7 +164,7 @@ export default function RequestManagementPage({
 					router.back();
 				}, 2000);
 			} catch (error: any) {
-				setAlert({
+				showAlert({
 					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
 					description: error.message || "Unknown error occurred",
 					color: "danger",
@@ -174,7 +173,7 @@ export default function RequestManagementPage({
 				setIsSubmitting(false);
 			}
 		} else {
-			setAlert({
+			showAlert({
 				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
 				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
 				color: "danger",
@@ -338,19 +337,10 @@ export default function RequestManagementPage({
 		<ProtectedRoute
 			allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
 		>
-			<div className="flex flex-col items-center justify-center w-full">
-				{alert && (
-					<AlertComponent
-						{...alert}
-						handleClose={() => setAlert(null)}
-						isVisible={alert != null}
-						size="expanded"
-					/>
-				)}
-
+			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
+					className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -358,7 +348,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col items-center justify-center w-full gap-8"
+						className="flex flex-col justify-center items-center gap-8 w-full"
 						title="รายละเอียด"
 					>
 						<Header
@@ -392,7 +382,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="แก้ไข"
 					>
 						<FormComponent
@@ -419,7 +409,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="ยกเลิก"
 					>
 						<FormComponent

@@ -29,10 +29,9 @@ import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
 import { CustomerType, RequestOrder } from "@/interfaces/schema";
-import { AlertComponentProps } from "@/interfaces/props";
-import AlertComponent from "@/components/AlertComponent";
 import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
 import ProtectedRoute from "@/components/HigherOrderComponent";
+import { useAlert } from "@/providers/AlertContext";
 
 interface filterInterface {
 	customer_type_id?: number;
@@ -46,6 +45,7 @@ export default function ListPage() {
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
 	const { setIsLoading } = useLoading();
+	const { showAlert } = useAlert();
 	const {
 		isOpen: isOpenFilter,
 		onOpen: onOpenFilter,
@@ -60,7 +60,6 @@ export default function ListPage() {
 	const hasFetched = useRef(false);
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
 	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
-	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 	const [filter, setFilter] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
@@ -95,7 +94,7 @@ export default function ListPage() {
 							fetchCustomerTypes({
 								token: userContext.token,
 								setCustomerTypes,
-								setAlert,
+								showAlert,
 							})
 						);
 					}
@@ -111,12 +110,12 @@ export default function ListPage() {
 							token: userContext.token,
 							params: params,
 							setReqOrders,
-							setAlert,
+							showAlert,
 						})
 					);
 					await Promise.all(promises);
 				} catch (error: any) {
-					setAlert({
+					showAlert({
 						title: "ไม่สามารถโหลดข้อมูลได้",
 						description:
 							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
@@ -312,15 +311,6 @@ export default function ListPage() {
 				allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
 			>
 				{/* Modal ------------------------------------------------------------- */}
-				{alert && reqOrders.length == 0 && (
-					<AlertComponent
-						{...alert}
-						handleClose={() => setAlert(null)}
-						isVisible={alert != null}
-						placement="bottom"
-						size="full"
-					/>
-				)}
 				<FilterModal
 					cancelLabel="Cancel"
 					isOpen={isOpenFilter}
@@ -334,13 +324,13 @@ export default function ListPage() {
 
 				{/* Header ----------------------------------------------------------- */}
 				<Header
-					className="w-full mb-6 text-left"
+					className="mb-6 w-full text-left"
 					orientation="horizontal"
 					subtitle="ใบสั่งงานทั้งหมด"
 					title="รายการใบสั่งงาน"
 				>
 					<Button
-						className="hidden font-semibold sm:inline-flex"
+						className="hidden sm:inline-flex font-semibold"
 						color="primary"
 						endContent={<FilterIcon variant="border" />}
 						radius="sm"
@@ -363,7 +353,7 @@ export default function ListPage() {
 
 				{/* Body ------------------------------------------------------------- */}
 				<div>
-					<div className="mb-4 font-medium text-right text-gray-700">
+					<div className="mb-4 font-medium text-gray-700 text-right">
 						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 					</div>
 

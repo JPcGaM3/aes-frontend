@@ -12,7 +12,6 @@ import {
 	EditIcon,
 	FilterIcon,
 	InfoIcon,
-	PlusIcon,
 	RejectIcon,
 } from "@/utils/icons";
 import {
@@ -114,10 +113,10 @@ export default function RequestPage() {
 					});
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
-						isVisible: true,
 					});
 				} finally {
 					setIsLoading(false);

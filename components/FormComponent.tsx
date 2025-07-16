@@ -27,6 +27,7 @@ export default function FormComponent({
 	onChange,
 }: FormComponentProps & { isCompact?: boolean }) {
 	const [formValues, setFormValues] = useState<any>(values || {});
+	const [errors, setErrors] = useState<Record<string, string | null>>({});
 
 	useEffect(() => {
 		if (values && typeof values === "object") {
@@ -39,13 +40,70 @@ export default function FormComponent({
 
 		setFormValues(newValues);
 
+		if (errors[name] !== undefined) {
+			const newErrors = { ...errors };
+
+			delete newErrors[name];
+			setErrors(newErrors);
+		}
+
 		if (onChange) {
 			onChange(newValues);
 		}
 	};
 
+	const validateForm = () => {
+		const newErrors: Record<string, string | null> = {};
+
+		const allFields: any[] = [];
+
+		sections.forEach((section) => {
+			section.fields.forEach((field) => {
+				if (Array.isArray(field)) {
+					allFields.push(...field);
+				} else {
+					allFields.push(field);
+				}
+			});
+		});
+
+		allFields.forEach((field) => {
+			if (field.isRequired) {
+				const value = formValues[field.name];
+				const isEmpty =
+					value === undefined ||
+					value === null ||
+					value === "" ||
+					(Array.isArray(value) && value.length === 0);
+
+				if (isEmpty) {
+					newErrors[field.name] = null;
+				}
+			}
+
+			// Add custom validation logic here
+			// For password validation EX.
+			// if (field.type === "password" && field.name === "passwordField") {
+			// 	const password = formValues[field.name];
+
+			// 	if (password && password.length > 0 && password.length < 8) {
+			// 		newErrors[field.name] =
+			// 			"รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
+			// 	}
+			// }
+		});
+
+		setErrors(newErrors);
+
+		return Object.keys(newErrors).length === 0;
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+
+		if (!validateForm()) {
+			return;
+		}
 
 		if (onSubmit) {
 			(onSubmit as any)(formValues);
@@ -82,6 +140,7 @@ export default function FormComponent({
 					)}
 
 					<FormFields
+						errors={errors}
 						isCompact={size === "compact"}
 						sections={sections}
 						values={formValues}
@@ -112,6 +171,7 @@ export default function FormComponent({
 					)}
 
 					<FormFields
+						errors={errors}
 						isCompact={size === "compact"}
 						sections={sections}
 						values={formValues}

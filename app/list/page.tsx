@@ -3,17 +3,11 @@
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Divider, useDisclosure } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import clsx from "clsx";
 
 import { useAuth } from "@/providers/AuthContext";
-import {
-	AddIcon,
-	EditIcon,
-	FilterIcon,
-	InfoIcon,
-	RejectIcon,
-} from "@/utils/icons";
+import { EditIcon, FilterIcon, InfoIcon, RejectIcon } from "@/utils/icons";
 import {
 	RequestOrderStatusColorMap,
 	RequestOrderStatusTranslation,
@@ -116,8 +110,9 @@ export default function ListPage() {
 					});
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
 					});
 				} finally {
@@ -353,29 +348,6 @@ export default function ListPage() {
 					radius="sm"
 					variant="flat"
 					onPress={onOpenFilter}
-				/>
-
-				<Divider className="w-[1px] h-10" orientation="vertical" />
-
-				<Button
-					className="hidden font-semibold sm:inline-flex"
-					color="primary"
-					endContent={<AddIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				>
-					Add
-				</Button>
-
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<AddIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
 				/>
 			</Header>
 

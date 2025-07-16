@@ -77,8 +77,10 @@ export default function Navbar() {
 					setAeAreas(response);
 				} catch (error: any) {
 					setAlert({
-						title: "Error fetching areas",
-						description: error.message,
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+						color: "danger",
 					});
 				}
 			};

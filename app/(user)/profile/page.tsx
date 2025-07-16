@@ -41,7 +41,7 @@ export default function ProfilePage() {
 					setProfile(response);
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to load user profile",
+						title: "ไม่สามารถโหลดข้อมูลผู้ใช้ได้",
 						description: error.message,
 						color: "danger",
 					});

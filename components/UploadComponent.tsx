@@ -95,14 +95,14 @@ export default function UploadComponent({
 
 		if (duplicateFiles.length > 0) {
 			setAlert({
-				title: "Upload Warning",
-				description: `File(s) ${duplicateFiles.join(", ")} already in the list.`,
+				title: "คำเตือน!!",
+				description: `ไฟล์ ${duplicateFiles.join(", ")} มีอยู่ในรายการแล้ว.`,
 				color: "warning",
 			});
 		} else if (filesSkipped > 0) {
 			setAlert({
-				title: "Upload Warning",
-				description: `You can only upload a maximum of ${maxFiles} files. ${filesSkipped} file(s) were not added or were duplicates.`,
+				title: "คำเตือน!!",
+				description: `คุณสามารถอัปโหลดไฟล์ได้สูงสุด ${maxFiles} ไฟล์. ${filesSkipped} ไฟล์ไม่ถูกเพิ่มหรือเป็นไฟล์ซ้ำ.`,
 				color: "warning",
 			});
 		}

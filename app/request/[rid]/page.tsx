@@ -165,8 +165,9 @@ export default function RequestManagementPage({
 					});
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
 					});
 				} finally {
@@ -196,9 +197,21 @@ export default function RequestManagementPage({
 	};
 
 	const handleCancel = () => {
-		setIsLoading(true);
+		if (commentValues.comment || hasChanges()) {
+			setAlert({
+				title: "ยกเลิกการแก้ไขใบสั่งงาน",
+				description:
+					"ยกเลิกการแก้ไขหรือปฏิเสธใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
+				color: "warning",
+			});
+		}
+
 		setCommentValues({ comment: "" });
-		router.back();
+		resetChanges();
+
+		setTimeout(() => {
+			router.back();
+		}, 1000);
 	};
 
 	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
@@ -248,10 +261,10 @@ export default function RequestManagementPage({
 				setTimeout(() => {
 					router.back();
 				}, 2000);
-			} catch (err: any) {
+			} catch (error: any) {
 				setAlert({
 					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
-					description: err.message || "Unknown error occurred",
+					description: error.message || "Unknown error occurred",
 					color: "danger",
 				});
 			} finally {
@@ -531,6 +544,7 @@ export default function RequestManagementPage({
 				{
 					type: "dropdown",
 					name: "ae_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: aeData.map((ae) => ({
 						label: ae.name || "-",
@@ -540,6 +554,7 @@ export default function RequestManagementPage({
 				{
 					type: "dropdown",
 					name: "unit_head_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: unitHeadData.map((user) => ({
 						label:
@@ -551,6 +566,7 @@ export default function RequestManagementPage({
 				{
 					type: "text",
 					name: "supervisor_name",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
@@ -561,12 +577,14 @@ export default function RequestManagementPage({
 				{
 					type: "dropdown",
 					name: "ap_month",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: monthList,
 				},
 				{
 					type: "dropdown",
 					name: "ap_year",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: yearList,
 				},
@@ -585,22 +603,26 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "quota_number",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "text",
 					name: "farmer_name",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "land_number",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "dropdown",
 					name: "operation_area_id",
 					path: "operation_area_id",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 					options: opData.map((area) => ({
 						label: area.operation_area || "-",
@@ -615,6 +637,7 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "target_area",
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],

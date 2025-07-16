@@ -38,6 +38,7 @@ export default function DynamicTaskOrder({
 		{
 			type: "dropdown",
 			name: "activities_id",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 			options: activityData.map((activity) => ({
 				label: activity.name,
@@ -47,6 +48,7 @@ export default function DynamicTaskOrder({
 		{
 			type: "dropdown",
 			name: "tool_types_id",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 			options: getToolTypeOptions(taskOrder.activities_id),
 			isReadOnly: !taskOrder.activities_id,
@@ -54,6 +56,7 @@ export default function DynamicTaskOrder({
 		{
 			type: "dropdown",
 			name: "car_id",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 			options: carData.map((car) => ({
 				label: car.name || car.car_number || car.id.toString(),
@@ -63,6 +66,7 @@ export default function DynamicTaskOrder({
 		{
 			type: "dropdown",
 			name: "assigned_user_id",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 			options: driverData.map((user) => ({
 				label:
@@ -74,11 +78,13 @@ export default function DynamicTaskOrder({
 		{
 			type: "number",
 			name: "target_area",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 		},
 		{
 			type: "date",
 			name: "ap_date",
+			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 		},
 	];

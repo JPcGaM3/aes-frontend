@@ -36,10 +36,10 @@ export default function LoginPage() {
 			});
 
 			router.push("/home");
-		} catch (err: any) {
+		} catch (error: any) {
 			setAlert({
-				title: "Login Failed",
-				description: err.message || "Unknown error occurred",
+				title: "เข้าสู่ระบบล้มเหลว",
+				description: error.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
 				color: "danger",
 			});
 		}
@@ -52,16 +52,19 @@ export default function LoginPage() {
 					type: "text",
 					name: "username",
 					label: "ชื่อผู้ใช้งาน",
+					isRequired: true,
 				},
 				{
 					type: "password",
 					name: "password",
 					label: "รหัสผ่าน",
+					isRequired: true,
 				},
 				{
 					type: "dropdown",
 					name: "ae_id",
 					labelTranslator: RequestOrderTranslation,
+					isRequired: true,
 					options: [
 						{ label: "CT0", value: 1 },
 						{ label: "NE1", value: 2 },

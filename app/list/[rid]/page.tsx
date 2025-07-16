@@ -71,8 +71,9 @@ export default function RequestManagementPage({
 					});
 				} catch (error: any) {
 					setAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
 					});
 				} finally {
@@ -126,7 +127,7 @@ export default function RequestManagementPage({
 				status !== REQUESTORDERSTATUS.Pending
 			) {
 				setAlert({
-					title: "Warning!!",
+					title: "คำเตือน!!",
 					description: "คำอธิบาย: กรุณาระบุเหตุผล",
 					color: "warning",
 				});
@@ -157,10 +158,10 @@ export default function RequestManagementPage({
 				setTimeout(() => {
 					router.back();
 				}, 2000);
-			} catch (err: any) {
+			} catch (error: any) {
 				setAlert({
 					title: "อัพเดตสถานะใบสั่งงานไม่สำเร็จ",
-					description: err.message || "Unknown error occurred",
+					description: error.message || "Unknown error occurred",
 					color: "danger",
 				});
 			} finally {

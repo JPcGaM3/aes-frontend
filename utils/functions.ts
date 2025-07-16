@@ -8,7 +8,6 @@ import {
 	RequestOrder,
 	TaskOrder,
 	User,
-	UserProfile,
 	UserProfileResponse,
 } from "@/interfaces/schema";
 import { getActivities } from "@/libs/activityAPI";

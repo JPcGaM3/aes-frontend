@@ -10,8 +10,8 @@ export default function UnAuthorizeLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="flex flex-col justify-center gap-4 h-full">
-			<div className="inline-block justify-center w-full">{children}</div>
-		</section>
+		<div className="flex items-center justify-center w-full min-h-[calc(100vh-120px)]">
+			{children}
+		</div>
 	);
 }

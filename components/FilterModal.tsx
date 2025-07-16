@@ -23,7 +23,7 @@ export default function FilterModal({
 			isOpen={isOpen}
 			placement="center"
 			radius="sm"
-			size="sm"
+			size="lg"
 			onOpenChange={onClose}
 		>
 			<ModalContent>

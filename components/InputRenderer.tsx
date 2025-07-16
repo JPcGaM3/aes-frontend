@@ -234,7 +234,6 @@ export default function InputRenderer({
 						...commonProps.classNames,
 						popoverContent: "rounded-lg p-0",
 					}}
-					isClearable={false}
 					placement="bottom"
 					shouldCloseOnBlur={true}
 					shouldCloseOnInteractOutside={true}

@@ -103,11 +103,6 @@ export interface ActionConfig {
 	onClick?: (item: any) => void;
 }
 
-export interface FilterConfig {
-	status?: string;
-	ae?: string;
-}
-
 export interface UploadedFile {
 	name: string;
 	size: number;

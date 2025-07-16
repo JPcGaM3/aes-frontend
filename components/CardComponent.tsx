@@ -48,7 +48,7 @@ export default function CardComponent<T extends { id: number | string }>({
 				typeof actions === "function" ? actions(item) : actions;
 
 			const getSpotlightColor = (
-				status: string
+				_status: string
 			): `rgba(${number}, ${number}, ${number}, ${number})` => {
 				const colorMap: Record<
 					string,

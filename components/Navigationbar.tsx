@@ -100,6 +100,7 @@ export default function Navbar() {
 			path: "/login",
 			icon: <UserIcon size={18} />,
 		},
+
 		// * Componenent Page ---------------------------------------------
 		// { name: "Form", path: "/form", icon: <HomeIcon /> },
 		// { name: "Card", path: "/card", icon: <HomeIcon /> },
@@ -223,7 +224,7 @@ export default function Navbar() {
 					<NavbarBrand className="flex items-center justify-start w-full h-full p-0">
 						<Button
 							isIconOnly
-							className="relative p-0 h-full aspect-[1/1]"
+							className="relative p-0 h-full aspect-[1/1] opacity-100"
 							isDisabled={!userContext?.token}
 							radius="sm"
 							size="lg"

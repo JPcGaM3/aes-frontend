@@ -7,6 +7,7 @@ import { clsx } from "clsx";
 import { useAuth } from "@/providers/AuthContext";
 import { useAlert } from "@/providers/AlertContext";
 import { fontMono } from "@/config/fonts";
+import { TimerIcon } from "@/utils/icons";
 
 export default function SessionTimer() {
 	const router = useRouter();
@@ -47,13 +48,17 @@ export default function SessionTimer() {
 	return (
 		<div
 			className={clsx(
-				"flex justify-center items-center bg-default-100 px-3 py-1 rounded-lg font-mono font-semibold text-sm",
+				"flex justify-center items-center bg-default-100 px-3 py-1 rounded-lg h-full aspect-[1/1] font-mono font-semibold text-sm",
 				fontMono.variable,
 				getTimerColor()
 			)}
 		>
-			<span className="mr-1">⏱️</span>
-			<span>{formatTime(sessionTimeLeft)}</span>
+			<div className="items-center mr-1">
+				<TimerIcon />
+			</div>
+			<span className="items-center sm:text-l md:text-xl lg:text-2xl">
+				{formatTime(sessionTimeLeft)}
+			</span>
 		</div>
 	);
 }

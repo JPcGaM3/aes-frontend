@@ -233,7 +233,7 @@ export default function Navbar() {
 					<NavbarBrand className="flex justify-start items-center w-full h-full">
 						<Button
 							isIconOnly
-							className="relative opacity-100 p-0 h-full aspect-[1/1]"
+							className="relative opacity-100 mr-4 p-0 h-full aspect-[1/1]"
 							isDisabled={!userContext?.token}
 							radius="sm"
 							size="lg"
@@ -253,7 +253,7 @@ export default function Navbar() {
 
 						{/* Session Timer */}
 						{userContext.token && (
-							<NavbarItem className="flex justify-center items-center h-full">
+							<NavbarItem className="flex justify-start items-center w-full h-full">
 								<SessionTimer />
 							</NavbarItem>
 						)}

@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: parsed.ae_id,
 					});
 
-					// Start timer with remaining time
 					const remainingTime = sessionDuration - elapsed;
 
 					setSessionTimeLeft(remainingTime);
@@ -121,8 +120,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						setSessionTimeLeft((prev) => {
 							if (prev <= 1) {
 								setIsSessionExpired(true);
+
+								sessionStorage.removeItem("authUser");
+								sessionStorage.removeItem("loginTime");
 								if (timerRef.current) {
 									clearInterval(timerRef.current);
+									timerRef.current = null;
 								}
 
 								return 0;
@@ -132,7 +135,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						});
 					}, 1000);
 				} else {
-					// Session expired
 					sessionStorage.removeItem("authUser");
 					sessionStorage.removeItem("loginTime");
 					setIsSessionExpired(true);
@@ -152,13 +154,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			!isNaN(userContext.ae_id) &&
 			userContext.role.length > 0;
 
-		if (isValid) {
+		if (isValid && !isSessionExpired) {
 			sessionStorage.setItem("authUser", JSON.stringify(userContext));
-		} else if (sessionStorage.getItem("authUser")) {
-			sessionStorage.removeItem("authUser");
-			sessionStorage.removeItem("loginTime");
 		}
-	}, [userContext]);
+	}, [userContext, isSessionExpired]);
 
 	const login = useCallback(
 		async ({ ...props }: LoginProps) => {
@@ -197,6 +196,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		};
 
 		setUserContext(newUserContext);
+		stopSessionTimer();
 
 		sessionStorage.removeItem("authUser");
 		sessionStorage.removeItem("loginTime");

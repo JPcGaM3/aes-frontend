@@ -46,12 +46,12 @@ export default function AlertComponent({
 	}
 
 	const stackOffset = stackIndex * 20;
-	const zIndex = 1500 + (totalAlerts - stackIndex);
+	const zIndex = 45 + (totalAlerts - stackIndex);
 
 	const placementClass =
 		placement === "bottom"
-			? "fixed left-4 right-4 sm:left-auto sm:right-4 sm:w-96 transition-all duration-300 ease-out"
-			: "fixed left-4 right-4 sm:left-auto sm:right-4 sm:w-96 transition-all duration-300 ease-out";
+			? "fixed left-3 mt-3 right-3 sm:left-auto md:right-6 sm:w-96 transition-all duration-300 ease-out"
+			: "fixed left-3 mt-3 right-3 sm:left-auto md:right-6 sm:w-96 transition-all duration-300 ease-out";
 
 	const placementStyle =
 		placement === "bottom"
@@ -86,8 +86,9 @@ export default function AlertComponent({
 					handleClose?.();
 				}}
 			/>
+
 			{totalAlerts > 1 && stackIndex === 0 && (
-				<div className="-top-2 -right-2 z-10 absolute flex justify-center items-center bg-primary rounded-full w-6 h-6 font-bold text-white text-xs">
+				<div className="absolute z-10 flex items-center justify-center w-6 h-6 text-xs font-bold text-white rounded-full -top-2 -right-2 bg-primary">
 					{totalAlerts}
 				</div>
 			)}

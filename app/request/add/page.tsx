@@ -18,11 +18,7 @@ import {
 	RequestOrder,
 	ToolType,
 } from "@/interfaces/schema";
-import {
-	DropdownOption,
-	FormSection,
-	UploadedFile,
-} from "@/interfaces/interfaces";
+import { FormSection, UploadedFile } from "@/interfaces/interfaces";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
@@ -64,12 +60,14 @@ export default function AddRequestPage() {
 	} as FormType;
 
 	const [activityWithTools, setActivityWithTools] = useState<Activity[]>([]);
-	const [actOptions, setActOptions] = useState<DropdownOption[]>([]);
 	const [tasks, setTasks] = useState<TaskFormType[]>([defaultTask]);
 	const [formValues, setFormValues] = useState<FormType>(defaultFormValues);
 	const [opOptions, setOpOptions] = useState<OperationArea[]>([]);
 	const [isAdding, setIsAdding] = useState<boolean>(false);
 	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+	const [taskErrors, setTaskErrors] = useState<Record<string, string | null>>(
+		{}
+	);
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
@@ -81,21 +79,12 @@ export default function AddRequestPage() {
 						token: userContext.token,
 						setOpArea: setOpOptions,
 						showAlert: showAlert,
-						// setIsLoading: setIsLoading,
 					});
 					await fetchActivitiesWithToolTypes({
 						token: userContext.token,
 						setActivitiesWithToolTypes: setActivityWithTools,
 						showAlert: showAlert,
-						// setIsLoading: setIsLoading,
 					});
-
-					setActOptions(
-						activityWithTools.map((activity: Activity) => ({
-							label: activity.name,
-							value: activity.name,
-						}))
-					);
 
 					setFormValues({
 						...formValues,
@@ -223,18 +212,29 @@ export default function AddRequestPage() {
 		setFormValues(updateValues);
 	};
 
-	const handleSubmitKeyIn = async () => {
+	const handleSubmitKeyIn = async (formData: any) => {
 		setIsAdding(true);
+
+		// Validate tasks first
+		if (!validateTasks()) {
+			showAlert({
+				title: "ข้อมูลไม่ครบถ้วน",
+				description:
+					"กรุณาเลือกกิจกรรมและประเภทเครื่องมือให้ครบทุกรายการ",
+				color: "warning",
+			});
+			setIsAdding(false);
+
+			return;
+		}
 
 		const activities = tasks.map((t) => t.activity_name).join("+");
 		const tool_types = tasks.map((t) => t.tool_type_name).join("+");
 		const submitValue = {
-			...formValues,
+			...formData,
 			activities,
 			tool_types,
 		};
-
-		setFormValues(submitValue);
 
 		try {
 			await KeyInRequestOrder({
@@ -300,6 +300,9 @@ export default function AddRequestPage() {
 	const handleTaskFormChange = (values: Record<string, string>) => {
 		const newTasks: TaskFormType[] = [];
 
+		// Clear task errors when values change
+		const newErrors = { ...taskErrors };
+
 		for (let i = 0; i < tasks.length; i++) {
 			const activity = values[`activity_name_${i}`] || "";
 			const prevActivity = tasks[i]?.activity_name || "";
@@ -310,13 +313,35 @@ export default function AddRequestPage() {
 				toolType = "";
 			}
 
+			// Clear errors for this task when values change
+			delete newErrors[`activity_name_${i}`];
+			delete newErrors[`tool_type_name_${i}`];
+
 			newTasks.push({
 				activity_name: activity,
 				tool_type_name: toolType,
 			});
 		}
 
+		setTaskErrors(newErrors);
 		setTasks(newTasks);
+	};
+
+	const validateTasks = (): boolean => {
+		const newErrors: Record<string, string | null> = {};
+
+		tasks.forEach((task, index) => {
+			if (!task.activity_name) {
+				newErrors[`activity_name_${index}`] = null; // Use default error message
+			}
+			if (!task.tool_type_name) {
+				newErrors[`tool_type_name_${index}`] = null; // Use default error message
+			}
+		});
+
+		setTaskErrors(newErrors);
+
+		return Object.keys(newErrors).length === 0;
 	};
 
 	// Field configurations ----------------------------------------------------------------------------------------
@@ -443,7 +468,10 @@ export default function AddRequestPage() {
 					name: `activity_name_${idx}`,
 					label: "กิจกรรม",
 					isRequired: true,
-					options: actOptions,
+					options: activityWithTools.map((activity: Activity) => ({
+						label: activity.name,
+						value: activity.name,
+					})),
 					className: "w-1/2",
 				},
 				{
@@ -461,16 +489,16 @@ export default function AddRequestPage() {
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Key-in"
 					>
 						<FormComponent
@@ -486,9 +514,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col justify-center items-center gap-4 w-full">
-								<div className="flex items-center gap-5 w-full">
-									<span className="font-semibold text-gray-700 text-xl">
+							<div className="flex flex-col items-center justify-center w-full gap-4">
+								<div className="flex items-center w-full gap-5">
+									<span className="text-xl font-semibold text-gray-700">
 										กิจกรรม
 									</span>
 
@@ -516,16 +544,17 @@ export default function AddRequestPage() {
 											onPress={handleRemoveTask}
 										/>
 									</div>
-
-									<FormComponent
-										hasBorder={false}
-										hasHeader={false}
-										isCompact={true}
-										sections={getTaskFormSection()}
-										values={getTaskFormValues()}
-										onChange={handleTaskFormChange}
-									/>
 								</div>
+
+								<FormComponent
+									errors={taskErrors}
+									hasBorder={false}
+									hasHeader={false}
+									isCompact={true}
+									sections={getTaskFormSection()}
+									values={getTaskFormValues()}
+									onChange={handleTaskFormChange}
+								/>
 							</div>
 						</FormComponent>
 					</Tab>
@@ -533,7 +562,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Upload"
 					>
 						<UploadComponent

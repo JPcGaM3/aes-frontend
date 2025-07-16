@@ -16,6 +16,7 @@ interface DynamicTaskOrderProps {
 	activityData: Activity[];
 	carData: Car[];
 	driverData: User[];
+	errors?: Record<string, string | null>;
 	onAddTask: () => void;
 	onRemoveTask: (uiId: string) => void;
 	onUpdateTask: (uiId: string, changes: Partial<TaskOrderFormData>) => void;
@@ -27,6 +28,7 @@ export default function DynamicTaskOrder({
 	activityData,
 	carData,
 	driverData,
+	errors = {},
 	onAddTask,
 	onRemoveTask,
 	onUpdateTask,
@@ -113,7 +115,10 @@ export default function DynamicTaskOrder({
 		}
 	};
 
-	const commonProp = (config: InputConfig): any => {
+	const commonProp = (
+		config: InputConfig,
+		taskOrder: TaskOrderUIItem
+	): any => {
 		const {
 			type,
 			name,
@@ -142,10 +147,25 @@ export default function DynamicTaskOrder({
 				: `โปรดกรอก ${labelValue || name}`
 			: undefined;
 
+		// Create field key with task order ID for unique error identification
+		const fieldKey = `${taskOrder.uiId}_${name}`;
+		const defaultErrorMessage =
+			type === "dropdown"
+				? `กรุณาเลือก ${labelValue || name}`
+				: `กรุณากรอก ${labelValue || name}`;
+
+		const errorMessage =
+			errors[fieldKey] !== undefined && errors[fieldKey] !== null
+				? errors[fieldKey]
+				: defaultErrorMessage;
+		const isInvalid = errors[fieldKey] !== undefined;
+
 		return {
 			name,
 			label: labelValue,
 			placeholder,
+			errorMessage,
+			isInvalid,
 			radius: "sm",
 			size: size || "md",
 			isDisabled: isReadOnly || false,
@@ -170,6 +190,7 @@ export default function DynamicTaskOrder({
 
 				<Button
 					color="primary"
+					isDisabled={taskOrders.length >= 5}
 					size="sm"
 					startContent={<PlusIcon size={16} />}
 					variant="flat"
@@ -221,7 +242,8 @@ export default function DynamicTaskOrder({
 											>
 												<InputRenderer
 													commonProps={commonProp(
-														config
+														config,
+														taskOrder
 													)}
 													type={config.type}
 													value={value}
@@ -245,23 +267,6 @@ export default function DynamicTaskOrder({
 					</Card>
 				))}
 			</div>
-
-			{/* Add Task Button (when no tasks) */}
-			{taskOrders.length === 0 && (
-				<Card className="w-full border-2 border-dashed border-primary/30">
-					<CardBody className="flex items-center justify-center py-8">
-						<Button
-							color="primary"
-							size="lg"
-							startContent={<PlusIcon size={20} />}
-							variant="flat"
-							onPress={onAddTask}
-						>
-							เพิ่มกิจกรรม
-						</Button>
-					</CardBody>
-				</Card>
-			)}
 		</div>
 	);
 }

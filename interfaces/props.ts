@@ -103,6 +103,7 @@ export interface FormComponentProps
 	hasHeader?: boolean;
 	className?: string;
 	children?: React.ReactNode;
+	errors?: Record<string, string | null>;
 	onCancel?: () => void;
 	onSubmit?: (values: any) => void;
 	onChange?: (values: any) => void;

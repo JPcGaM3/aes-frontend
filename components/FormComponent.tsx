@@ -22,12 +22,18 @@ export default function FormComponent({
 	children = null,
 	className,
 	subtitleClassName,
+	errors: externalErrors = {},
 	onCancel,
 	onSubmit,
 	onChange,
 }: FormComponentProps & { isCompact?: boolean }) {
 	const [formValues, setFormValues] = useState<any>(values || {});
-	const [errors, setErrors] = useState<Record<string, string | null>>({});
+	const [internalErrors, setInternalErrors] = useState<
+		Record<string, string | null>
+	>({});
+
+	// Merge external errors with internal validation errors
+	const mergedErrors = { ...externalErrors, ...internalErrors };
 
 	useEffect(() => {
 		if (values && typeof values === "object") {
@@ -40,11 +46,11 @@ export default function FormComponent({
 
 		setFormValues(newValues);
 
-		if (errors[name] !== undefined) {
-			const newErrors = { ...errors };
+		if (mergedErrors[name] !== undefined) {
+			const newErrors = { ...internalErrors };
 
 			delete newErrors[name];
-			setErrors(newErrors);
+			setInternalErrors(newErrors);
 		}
 
 		if (onChange) {
@@ -93,7 +99,7 @@ export default function FormComponent({
 			// }
 		});
 
-		setErrors(newErrors);
+		setInternalErrors(newErrors);
 
 		return Object.keys(newErrors).length === 0;
 	};
@@ -140,7 +146,7 @@ export default function FormComponent({
 					)}
 
 					<FormFields
-						errors={errors}
+						errors={mergedErrors}
 						isCompact={size === "compact"}
 						sections={sections}
 						values={formValues}
@@ -171,7 +177,7 @@ export default function FormComponent({
 					)}
 
 					<FormFields
-						errors={errors}
+						errors={mergedErrors}
 						isCompact={size === "compact"}
 						sections={sections}
 						values={formValues}

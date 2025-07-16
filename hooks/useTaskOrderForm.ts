@@ -10,6 +10,7 @@ import {
 	FormChangeState,
 } from "@/types/form-state";
 import { TaskOrder } from "@/interfaces/schema";
+import { useAlert } from "@/providers/AlertContext";
 
 interface UseTaskOrderFormReturn {
 	// UI Items for rendering
@@ -18,6 +19,8 @@ interface UseTaskOrderFormReturn {
 	formChanges: FormChangeState;
 	// Request order changes
 	requestOrderChanges: Partial<RequestOrderFormData>;
+	// Validation errors
+	taskOrderErrors: Record<string, string | null>;
 	// Operations
 	addTaskOrder: () => void;
 	removeTaskOrder: (uiId: string) => void;
@@ -26,6 +29,9 @@ interface UseTaskOrderFormReturn {
 		changes: Partial<TaskOrderFormData>
 	) => void;
 	updateRequestOrder: (changes: Partial<RequestOrderFormData>) => void;
+	// Validation
+	validateTaskOrders: () => boolean;
+	clearTaskOrderError: (uiId: string, fieldName: string) => void;
 	// Reset
 	resetChanges: () => void;
 	// Get operations for API calls
@@ -37,11 +43,16 @@ interface UseTaskOrderFormReturn {
 }
 
 export function useTaskOrderForm(): UseTaskOrderFormReturn {
+	const { showAlert } = useAlert();
+
 	const [taskOrderUIItems, setTaskOrderUIItems] = useState<TaskOrderUIItem[]>(
 		[]
 	);
 	const [requestOrderChanges, setRequestOrderChanges] = useState<
 		Partial<RequestOrderFormData>
+	>({});
+	const [taskOrderErrors, setTaskOrderErrors] = useState<
+		Record<string, string | null>
 	>({});
 	const [originalTaskOrders, setOriginalTaskOrders] = useState<TaskOrder[]>(
 		[]
@@ -92,20 +103,36 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 	);
 
 	const addTaskOrder = useCallback(() => {
-		const newTaskOrder: TaskOrderUIItem = {
-			uiId: uuidv4(),
-			isNew: true,
-			isDeleted: false,
-			activities_id: undefined,
-			tool_types_id: undefined,
-			car_id: undefined,
-			tool_id: undefined,
-			assigned_user_id: undefined,
-			target_area: undefined,
-		};
+		const activeTaskCount = taskOrderUIItems.filter(
+			(item) => !item.isDeleted
+		).length;
 
-		setTaskOrderUIItems((prev) => [...prev, newTaskOrder]);
-	}, []);
+		if (activeTaskCount >= 5) {
+			showAlert({
+				title: "เพิ่มกิจกรรมล้มเหลว",
+				description: "ไม่สามารถเพิ่มกิจกรรมได้มากกว่า 5 รายการ",
+				color: "warning",
+			});
+
+			return;
+		}
+
+		setTaskOrderUIItems((prev) => {
+			const newTaskOrder: TaskOrderUIItem = {
+				uiId: uuidv4(),
+				isNew: true,
+				isDeleted: false,
+				activities_id: undefined,
+				tool_types_id: undefined,
+				car_id: undefined,
+				tool_id: undefined,
+				assigned_user_id: undefined,
+				target_area: undefined,
+			};
+
+			return [...prev, newTaskOrder];
+		});
+	}, [taskOrderUIItems, showAlert]);
 
 	const removeTaskOrder = useCallback((uiId: string) => {
 		setTaskOrderUIItems((prev) =>
@@ -122,8 +149,23 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 					item.uiId === uiId ? { ...item, ...changes } : item
 				)
 			);
+
+			// Clear errors for the fields that changed
+			Object.keys(changes).forEach((fieldName) => {
+				const fieldKey = `${uiId}_${fieldName}`;
+
+				if (taskOrderErrors[fieldKey] !== undefined) {
+					setTaskOrderErrors((prev) => {
+						const newErrors = { ...prev };
+
+						delete newErrors[fieldKey];
+
+						return newErrors;
+					});
+				}
+			});
 		},
-		[]
+		[taskOrderErrors]
 	);
 
 	const updateRequestOrder = useCallback(
@@ -211,6 +253,70 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 		return hasRequestOrderChanges || hasTaskOrderChanges;
 	}, [requestOrderChanges, getTaskOrderOperations]);
 
+	// Validation functions
+	const validateTaskOrders = useCallback((): boolean => {
+		const newErrors: Record<string, string | null> = {};
+
+		taskOrderUIItems
+			.filter((item) => !item.isDeleted)
+			.forEach((taskOrder) => {
+				// Required field validation
+				const requiredFields = [
+					"activities_id",
+					"tool_types_id",
+					"car_id",
+					"assigned_user_id",
+					"target_area",
+					"ap_date",
+				];
+
+				requiredFields.forEach((field) => {
+					const value = taskOrder[field as keyof TaskOrderUIItem];
+					const isEmpty =
+						value === undefined ||
+						value === null ||
+						value === "" ||
+						(Array.isArray(value) && value.length === 0);
+
+					if (isEmpty) {
+						const fieldKey = `${taskOrder.uiId}_${field}`;
+
+						newErrors[fieldKey] = null; // Use null for required field validation
+					}
+				});
+
+				// Custom validation logic can be added here
+				// For example, target_area must be greater than 0
+				if (
+					taskOrder.target_area !== undefined &&
+					taskOrder.target_area !== null &&
+					taskOrder.target_area <= 0
+				) {
+					const fieldKey = `${taskOrder.uiId}_target_area`;
+
+					newErrors[fieldKey] = "พื้นที่เป้าหมายต้องมากกว่า 0";
+				}
+			});
+
+		setTaskOrderErrors(newErrors);
+
+		return Object.keys(newErrors).length === 0;
+	}, [taskOrderUIItems]);
+
+	const clearTaskOrderError = useCallback(
+		(uiId: string, fieldName: string) => {
+			const fieldKey = `${uiId}_${fieldName}`;
+
+			if (taskOrderErrors[fieldKey] !== undefined) {
+				const newErrors = { ...taskOrderErrors };
+
+				delete newErrors[fieldKey];
+				setTaskOrderErrors(newErrors);
+			}
+		},
+		[taskOrderErrors]
+	);
+
 	const formChanges: FormChangeState = {
 		requestOrder: requestOrderChanges,
 		taskOrders: getTaskOrderOperations(),
@@ -220,10 +326,13 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 		taskOrderUIItems: taskOrderUIItems.filter((item) => !item.isDeleted),
 		formChanges,
 		requestOrderChanges,
+		taskOrderErrors,
 		addTaskOrder,
 		removeTaskOrder,
 		updateTaskOrder,
 		updateRequestOrder,
+		validateTaskOrders,
+		clearTaskOrderError,
 		resetChanges,
 		getTaskOrderOperations,
 		initializeFromData,

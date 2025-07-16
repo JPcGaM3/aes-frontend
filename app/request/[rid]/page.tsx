@@ -94,10 +94,12 @@ export default function RequestManagementPage({
 	const {
 		taskOrderUIItems,
 		requestOrderChanges,
+		taskOrderErrors,
 		addTaskOrder,
 		removeTaskOrder,
 		updateTaskOrder,
 		updateRequestOrder,
+		validateTaskOrders,
 		resetChanges,
 		getTaskOrderOperations,
 		hasChanges,
@@ -318,6 +320,18 @@ export default function RequestManagementPage({
 	const handleSubmit = async () => {
 		try {
 			setIsSubmitting(true);
+
+			// Validate task orders first
+			if (!validateTaskOrders()) {
+				showAlert({
+					title: "ข้อมูลไม่ถูกต้อง",
+					description: "กรุณาตรวจสอบข้อมูลในกิจกรรมที่มีข้อผิดพลาด",
+					color: "warning",
+				});
+				setIsSubmitting(false);
+
+				return;
+			}
 
 			if (Object.keys(requestOrderChanges).length > 0) {
 				await taskOrderAPIService.updateRequestOrder(
@@ -735,59 +749,42 @@ export default function RequestManagementPage({
 						}
 						title="แก้ไข"
 					>
-						<div className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
-							<Header
-								hasBorder={false}
-								subtitle={`@${requestData.work_order_number}`}
-								subtitleClassName={clsx(
-									"mt-1 font-mono text-gray-600 text-sm",
-									fontMono.variable
-								)}
-								title="แก้ไขใบสั่งงาน"
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={requestFormSections}
+							size="expanded"
+							submitLabel="บันทึก"
+							subtitle={`@${requestData.work_order_number}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="แก้ไขใบสั่งงาน"
+							values={{
+								...requestData,
+								...requestOrderChanges,
+							}}
+							onCancel={() => {
+								resetChanges();
+								handleCancel();
+							}}
+							onChange={handleValueChange}
+							onSubmit={handleSubmit}
+						>
+							{/* Dynamic Task Orders */}
+							<DynamicTaskOrder
+								activityData={activityWithToolTypes}
+								carData={carData}
+								driverData={driverData}
+								errors={taskOrderErrors}
+								getToolTypeOptions={getToolTypeData}
+								taskOrders={taskOrderUIItems}
+								onAddTask={addTaskOrder}
+								onRemoveTask={removeTaskOrder}
+								onUpdateTask={updateTaskOrder}
 							/>
-
-							<div className="flex flex-col gap-8 mt-8">
-								{/* Request Order Form */}
-								<FormComponent
-									hasBorder={false}
-									hasHeader={false}
-									sections={requestFormSections}
-									size="expanded"
-									values={{
-										...requestData,
-										...requestOrderChanges,
-									}}
-									onChange={handleValueChange}
-								/>
-
-								{/* Dynamic Task Orders */}
-								<DynamicTaskOrder
-									activityData={activityWithToolTypes}
-									carData={carData}
-									driverData={driverData}
-									getToolTypeOptions={getToolTypeData}
-									taskOrders={taskOrderUIItems}
-									onAddTask={addTaskOrder}
-									onRemoveTask={removeTaskOrder}
-									onUpdateTask={updateTaskOrder}
-								/>
-
-								{/* Form Buttons */}
-								<FormButtons
-									cancelLabel="ยกเลิก"
-									hasBorder={false}
-									isSubmitDisabled={!hasChanges()}
-									isSubmitting={isSubmitting}
-									size="expanded"
-									submitLabel="บันทึก"
-									onCancel={() => {
-										resetChanges();
-										handleCancel();
-									}}
-									onSubmit={handleSubmit}
-								/>
-							</div>
-						</div>
+						</FormComponent>
 					</Tab>
 
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
@@ -804,6 +801,7 @@ export default function RequestManagementPage({
 					>
 						<FormComponent
 							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
 							sections={commentSections}
 							size="expanded"
 							submitLabel="ส่งความคิดเห็น"

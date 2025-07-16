@@ -1,27 +1,25 @@
 import axios from "axios";
 
+const apiUrl = process.env.API_URL || "http://localhost:8080";
+
 export async function getAssignedTask({
 	token,
-	user_id,
-	params,
+	paramData,
 }: {
 	token: string;
-	user_id: number;
-	params?: any | undefined;
+	paramData?: any | undefined;
 }) {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
 	const queryParams: Record<string, string | undefined> = {};
 
-	if (params) {
-		if (params.start_date) queryParams.start_date = params.start_date;
-		if (params.end_date) queryParams.end_date = params.end_date;
-		if (params.status) queryParams.status = params.status;
+	if (paramData) {
+		if (paramData.start_date) queryParams.start_date = paramData.start_date;
+		if (paramData.end_date) queryParams.end_date = paramData.end_date;
+		if (paramData.status) queryParams.status = paramData.status;
 	}
 
 	try {
 		const response = await axios.get(
-			`${apiUrl}/api/v1/task-orders/${user_id}/get-task`,
+			`${apiUrl}/api/v1/task-orders/${paramData.user_id}/get-task`,
 			{
 				params: queryParams,
 				headers: {
@@ -40,5 +38,76 @@ export async function getAssignedTask({
 		}
 
 		throw error;
+	}
+}
+
+export async function getTaskById({
+	token,
+	paramData,
+}: {
+	token: string;
+	paramData?: any | undefined;
+}) {
+	try {
+		const response = await axios.get(
+			`${apiUrl}/api/v1/task-orders/${paramData.taskId}`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return response.data.data;
+	} catch (error: any) {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				`Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+			);
+		}
+
+		throw error;
+	}
+}
+
+export async function SetStatusTaskOrder({
+	token,
+	tid,
+	paramData,
+}: {
+	token: string;
+	tid: number;
+	paramData: {
+		status?: string;
+		comment?: string;
+	};
+}) {
+	const params: Record<string, any> = {};
+	const body: Record<string, any> = {};
+
+	if (paramData) {
+		if (paramData.status) body.status = paramData.status;
+		if (paramData.comment) body.comment = paramData.comment;
+	}
+
+	try {
+		const response = await axios.patch(
+			`${apiUrl}/api/v1/task-orders/${tid}/set/status`,
+			body,
+			{
+				params,
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
 	}
 }

@@ -6,6 +6,7 @@ import {
 	CustomerType,
 	OperationArea,
 	RequestOrder,
+	TaskOrder,
 	User,
 } from "@/interfaces/schema";
 import { getActivities } from "@/libs/activityAPI";
@@ -17,6 +18,7 @@ import {
 	getRequestOrders,
 	getRequestOrderWithTask,
 } from "@/libs/requestOrderAPI";
+import { getAssignedTask, getTaskById } from "@/libs/taskOrderAPI";
 import { getUsers } from "@/libs/userAPI";
 
 /**
@@ -340,6 +342,88 @@ export async function fetchActivitiesWithToolTypes({
 			}
 
 			setActivitiesWithToolTypes([] as Activity[]);
+		}
+	}
+}
+
+export async function fetchAssignedTask({
+	token,
+	user_id,
+	setTaskOrders,
+	setAlert,
+}: {
+	token: string;
+	user_id?: number;
+	setTaskOrders: (orders: TaskOrder[]) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+}) {
+	if (token) {
+		try {
+			const paramData = {
+				...(user_id && { user_id }),
+			};
+
+			const data = await getAssignedTask({
+				token,
+				paramData,
+			});
+
+			setTaskOrders(data);
+		} catch (err: any) {
+			if (err.status === 404) {
+				setAlert({
+					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
+					description: err.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: err.message,
+					color: "danger",
+				});
+			}
+
+			setTaskOrders([]);
+		}
+	}
+}
+
+export async function fetchTaskOrder({
+	token,
+	taskId,
+	setTaskOrder,
+	setAlert,
+}: {
+	token: string;
+	taskId: number;
+	setTaskOrder: (orders: TaskOrder) => void;
+	setAlert: (alert: AlertComponentProps) => void;
+}) {
+	if (token && taskId) {
+		try {
+			const data = await getTaskById({
+				token,
+				paramData: {
+					taskId,
+				},
+			});
+
+			setTaskOrder(data);
+		} catch (err: any) {
+			if (err.status === 404) {
+				setAlert({
+					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
+					description: err.message,
+					color: "default",
+				});
+			} else {
+				setAlert({
+					title: "Failed to fetch",
+					description: err.message,
+					color: "danger",
+				});
+			}
 		}
 	}
 }

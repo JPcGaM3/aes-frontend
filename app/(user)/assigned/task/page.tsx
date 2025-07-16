@@ -14,37 +14,37 @@ import {
 } from "@internationalized/date";
 
 import { useAuth } from "@/providers/AuthContext";
-import {
-	EditIcon,
-	FilterIcon,
-	InfoIcon,
-	PlusIcon,
-	RejectIcon,
-} from "@/utils/icons";
+import { EditIcon, FilterIcon, InfoIcon, PlusIcon } from "@/utils/icons";
 import {
 	RequestOrderTranslation,
 	TaskOrderStatusColorMap,
 	TaskOrderStatusTranslation,
 	TaskOrderTranslation,
 } from "@/utils/constants";
-import { FieldConfig, FormSection } from "@/interfaces/interfaces";
+import {
+	ActionConfig,
+	FieldConfig,
+	FormSection,
+} from "@/interfaces/interfaces";
 import Header from "@/components/Header";
 import FilterModal from "@/components/FilterModal";
 import CardComponent from "@/components/CardComponent";
 import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
-import { getAssignedTask } from "@/libs/taskOrderAPI";
 import { RequestOrder, TaskOrder } from "@/interfaces/schema";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
 import { AlertComponentProps } from "@/interfaces/props";
 import AlertComponent from "@/components/AlertComponent";
+import { fetchAssignedTask } from "@/utils/functions";
 
 interface filterInterface {
 	start_date?: CalendarDate;
 	end_date?: CalendarDate;
 	status?: string;
 }
+
+moment.locale("th");
 
 export default function TaskPage() {
 	const router = useRouter();
@@ -75,41 +75,6 @@ export default function TaskPage() {
 	});
 	const [alert, setAlert] = useState<AlertComponentProps | null>(null);
 
-	const fetchTaskOrderData = async ({
-		token,
-		user_id,
-	}: {
-		token: string;
-		user_id: number;
-	}) => {
-		try {
-			const params = filterValues
-				? {
-						start_date: filterValues.start_date
-							? filterValues.start_date.toString()
-							: undefined,
-						end_date: filterValues.end_date
-							? filterValues.end_date.toString()
-							: undefined,
-						status: filterValues.status
-							? filterValues.status?.toUpperCase()
-							: undefined,
-					}
-				: undefined;
-
-			setError(null);
-			const data = await getAssignedTask({ token, user_id, params });
-
-			if (!data) {
-				setTaskOrders([]);
-			}
-			setTaskOrders(data || []);
-		} catch (error: any) {
-			setError(error.message || "Unknown error");
-			setTaskOrders([]);
-		}
-	};
-
 	useEffect(() => {
 		setIsLoading(true);
 		if (
@@ -120,11 +85,16 @@ export default function TaskPage() {
 		) {
 			const fetchData = async (): Promise<any> => {
 				try {
-					setTaskOrders([]);
-					await fetchTaskOrderData({
-						token: userContext.token,
-						user_id: userContext.id,
-					});
+					const promises = [
+						fetchAssignedTask({
+							token: userContext.token,
+							user_id: userContext.id,
+							setTaskOrders,
+							setAlert,
+						}),
+					];
+
+					await Promise.all(promises);
 				} catch (error: any) {
 					setAlert({
 						title: "Failed to fetch",
@@ -155,29 +125,39 @@ export default function TaskPage() {
 
 	const bodyFields: FieldConfig[] = [
 		{
-			key: "requestorders.quota_number",
+			key: "quota_number",
+			path: "requestorders.quota_number",
 			className: "text-gray-600 text-md font-semibold",
 			labelTranslator: RequestOrderTranslation,
 		},
 		{
-			key: "requestorders.farmer_name",
+			key: "farmer_name",
+			path: "requestorders.farmer_name",
 			className: "text-gray-600 text-md font-semibold pb-4",
 			labelTranslator: RequestOrderTranslation,
 		},
 		{
-			key: "activities.name",
+			key: "activities_id",
+			path: "activities.name",
 			className: "text-gray-500 text-sm",
 			labelTranslator: TaskOrderTranslation,
 		},
 		{
-			key: "tool_type.tool_type_name",
+			key: "tool_type_id",
+			path: "tool_type.tool_type_name",
 			className: "text-gray-500 text-sm",
 			labelTranslator: TaskOrderTranslation,
 		},
 		{
 			key: "ap_date",
+			path: "ap_date",
 			className: "text-gray-500 text-sm",
 			labelTranslator: TaskOrderTranslation,
+			valueFunction: (item: any) => {
+				return item.ap_date
+					? moment(item.ap_date).tz("Asia/Bangkok").format("LL")
+					: "-";
+			},
 		},
 	];
 
@@ -219,30 +199,30 @@ export default function TaskPage() {
 		translation: TaskOrderStatusTranslation,
 	};
 
-	const actions = [
-		{
-			key: "view",
-			label: "ดูรายละเอียด",
-			icon: <InfoIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "view" } }),
-		},
-		{
-			key: "edit",
-			label: "แก้ไข",
-			icon: <EditIcon />,
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "edit" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: ({ item }: { item: RequestOrder }) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
+	const getActions = (item: TaskOrder) => {
+		const actionList: ActionConfig[] = [
+			{
+				key: "view",
+				label: "ดูรายละเอียด",
+				icon: <InfoIcon />,
+				onClick: () =>
+					handleNewPage({
+						params: { id: item.id, action: "view" },
+					}),
+			},
+			{
+				key: "comment",
+				label: "แจ้งปัญหา",
+				icon: <EditIcon />,
+				onClick: () =>
+					handleNewPage({
+						params: { id: item.id, action: "comment" },
+					}),
+			},
+		];
+
+		return actionList;
+	};
 
 	const handleApplyFilters = (values: any) => {
 		try {
@@ -285,8 +265,13 @@ export default function TaskPage() {
 				end_date: endDate,
 				status: status,
 			});
-		} catch (error) {
-			console.error("Error processing date values:", error);
+		} catch (error: any) {
+			setAlert({
+				title: "Failed to process date values",
+				description: error.message || "Unknown error occurred",
+				color: "danger",
+				isVisible: true,
+			});
 		}
 
 		onCloseFilter();
@@ -306,7 +291,7 @@ export default function TaskPage() {
 			case "view":
 			case "edit":
 			case "comment":
-				router.push(`/task/${params.id}/${params.action}`);
+				router.push(`task/${params.id}?action=${params.action}`);
 				break;
 			case "reject":
 			case "add":
@@ -318,17 +303,17 @@ export default function TaskPage() {
 	};
 
 	return (
-		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
-			{alert && taskOrders.length == 0 && (
-				<AlertComponent
-					{...alert}
-					handleClose={() => setAlert(null)}
-					isVisible={alert != null}
-					placement="bottom"
-					size="full"
-				/>
-			)}
-			<div>
+		<>
+			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
+				{alert && taskOrders.length == 0 && (
+					<AlertComponent
+						{...alert}
+						handleClose={() => setAlert(null)}
+						isVisible={alert != null}
+						placement="bottom"
+						size="full"
+					/>
+				)}
 				{/* Modal ------------------------------------------------------------- */}
 				<FilterModal
 					cancelLabel="Cancel"
@@ -404,7 +389,7 @@ export default function TaskPage() {
 						</div>
 
 						<CardComponent
-							actions={actions}
+							actions={getActions}
 							bodyFields={bodyFields}
 							headerFields={headerFields}
 							items={taskOrders}
@@ -412,7 +397,7 @@ export default function TaskPage() {
 						/>
 					</div>
 				)}
-			</div>
-		</ProtectedRoute>
+			</ProtectedRoute>
+		</>
 	);
 }

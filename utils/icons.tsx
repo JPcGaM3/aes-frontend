@@ -27,6 +27,7 @@ import {
 	Upload,
 	Trash2,
 	Check,
+	Timer,
 } from "lucide-react";
 
 import { IconSvgProps } from "@/types";
@@ -923,6 +924,28 @@ export const CheckIcon = (props: IconSvgProps) => {
 
 	return (
 		<Check
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
+			{...rest}
+		/>
+	);
+};
+
+export const TimerIcon = (props: IconSvgProps) => {
+	const {
+		size = 24,
+		strokeWidth = 1.5,
+		color = "currentColor",
+		...rest
+	} = props;
+
+	return (
+		<Timer
 			height={size}
 			stroke={color}
 			strokeLinecap="round"

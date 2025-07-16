@@ -12,9 +12,17 @@ import {
 	NavbarMenu,
 	NavbarMenuItem,
 } from "@heroui/navbar";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+	Tab,
+	Tabs,
+} from "@heroui/react";
 import { Button } from "@heroui/button";
 import { clsx } from "clsx";
+
+import SessionTimer from "./SessionTimer";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
@@ -47,12 +55,13 @@ export default function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [aeAreas, setAeAreas] = useState<{ ae_area: AeArea }[]>([]);
+	const [selectedTab, setSelectedTab] = useState(pathname);
 
 	interface MenuItem {
 		name: string;
 		path: string;
 		icon: React.ReactNode;
-		allowedRoles?: string[]; // Make it optional
+		allowedRoles?: string[];
 	}
 
 	const menuItems: MenuItem[] = [
@@ -106,7 +115,14 @@ export default function Navbar() {
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
-		if (isReady && userContext && userContext.token && userContext.ae_id) {
+		if (
+			isReady &&
+			userContext &&
+			userContext.token &&
+			userContext.ae_id &&
+			!hasFetched.current
+		) {
+			hasFetched.current = true;
 			const fetchAeArea = async ({ token }: { token: string }) => {
 				try {
 					const response = await getAeArea({ token: token });
@@ -124,9 +140,11 @@ export default function Navbar() {
 
 			fetchAeArea({ token: userContext!.token });
 		}
-
-		hasFetched.current = true;
 	}, [userContext, isReady]);
+
+	useEffect(() => {
+		setSelectedTab(pathname);
+	}, [pathname]);
 
 	const hasPermission = (allowedRoles: string[]) => {
 		if (!allowedRoles || allowedRoles.length === 0) {
@@ -180,12 +198,14 @@ export default function Navbar() {
 
 			return;
 		}
-
-		// if (path === pathname) {
-		// window.location.reload();
-		// } else {
 		router.push(path);
-		// }
+	};
+
+	const handleTabChange = (key: React.Key) => {
+		if (typeof key === "string") {
+			setSelectedTab(key);
+			handleNav(key);
+		}
 	};
 
 	const handleDropdownSelect = (value: number) => {
@@ -210,10 +230,10 @@ export default function Navbar() {
 			>
 				<NavbarContent className="justify-start items-center gap-2 w-full">
 					{/* Logo */}
-					<NavbarBrand className="flex justify-start items-center p-0 w-full h-full">
+					<NavbarBrand className="flex justify-start items-center w-full h-full">
 						<Button
 							isIconOnly
-							className="relative p-0 h-full aspect-[1/1] opacity-100"
+							className="relative opacity-100 mr-4 p-0 h-full aspect-[1/1]"
 							isDisabled={!userContext?.token}
 							radius="sm"
 							size="lg"
@@ -230,6 +250,13 @@ export default function Navbar() {
 								src="/pictures/logo.png"
 							/>
 						</Button>
+
+						{/* Session Timer */}
+						{userContext.token && (
+							<NavbarItem className="flex justify-start items-center w-full h-full">
+								<SessionTimer />
+							</NavbarItem>
+						)}
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
@@ -334,30 +361,48 @@ export default function Navbar() {
 					</NavbarItem>
 
 					{/* Nav bar desktop */}
-					<NavbarItem className="hidden md:flex flex-row items-center bg-default-100 p-[4px] rounded-lg h-full">
-						{dynamicMenuItems.map((item) => {
-							const isActive = pathname === item.path;
+					<NavbarItem className="hidden md:flex flex-row items-center bg-default-100 rounded-lg w-fit h-full">
+						<Tabs
+							aria-label="Navigation Tabs"
+							className="h-full"
+							classNames={{
+								base: "h-full",
+								tabList:
+									"gap-0 w-full relative rounded-lg p-1 h-full bg-default-100",
+								cursor: "w-full bg-primary",
+								tab: "max-w-fit px-3 h-full",
+								tabContent:
+									"group-data-[selected=true]:text-primary-foreground font-semibold text-sm",
+							}}
+							radius="sm"
+							selectedKey={selectedTab}
+							variant="solid"
+							onSelectionChange={handleTabChange}
+						>
+							{dynamicMenuItems.map((item) => {
+								const isActive = pathname === item.path;
+								const hasTabPermission = hasPermission(
+									item.allowedRoles || []
+								);
 
-							hasPermission(item.allowedRoles || []);
-
-							return (
-								<Button
-									key={item.name}
-									className="flex justify-center items-center gap-2 px-2 h-full font-semibold"
-									color={isActive ? "primary" : "default"}
-									isDisabled={
-										!userContext?.token && !isActive
-									}
-									radius="sm"
-									size="md"
-									variant={isActive ? "solid" : "light"}
-									onPress={() => handleNav(item.path)}
-								>
-									{isActive && item.icon}
-									{item.name}
-								</Button>
-							);
-						})}
+								return (
+									<Tab
+										key={item.path}
+										isDisabled={
+											(!userContext?.token &&
+												!isActive) ||
+											!hasTabPermission
+										}
+										title={
+											<div className="flex items-center gap-2">
+												{isActive && item.icon}
+												{item.name}
+											</div>
+										}
+									/>
+								);
+							})}
+						</Tabs>
 					</NavbarItem>
 				</NavbarContent>
 

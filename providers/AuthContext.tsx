@@ -8,6 +8,7 @@ import React, {
 	useCallback,
 	useMemo,
 	ReactNode,
+	useRef,
 } from "react";
 
 import { LoginProps, LoginUser } from "@/libs/userAPI";
@@ -25,6 +26,8 @@ interface AuthContextType {
 	logout: () => void;
 	setUserContext: (context: Partial<UserContextType>) => void;
 	isReady: boolean;
+	sessionTimeLeft: number;
+	isSessionExpired: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,6 +38,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [role, setRole] = useState<string[]>([]);
 	const [ae_id, setae_id] = useState<number>(NaN);
 	const [isReady, setIsReady] = useState<boolean>(false);
+	const [sessionTimeLeft, setSessionTimeLeft] = useState<number>(0);
+	const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const sessionDuration = 59 * 60;
 
 	const userContext: UserContextType = useMemo(
 		() => ({
@@ -53,25 +60,92 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		if (context.ae_id !== undefined) setae_id(context.ae_id);
 	}, []);
 
+	const startSessionTimer = useCallback(() => {
+		if (timerRef.current) {
+			clearInterval(timerRef.current);
+		}
+
+		setSessionTimeLeft(sessionDuration);
+		setIsSessionExpired(false);
+
+		timerRef.current = setInterval(() => {
+			setSessionTimeLeft((prev) => {
+				if (prev <= 1) {
+					setIsSessionExpired(true);
+					if (timerRef.current) {
+						clearInterval(timerRef.current);
+					}
+
+					return 0;
+				}
+
+				return prev - 1;
+			});
+		}, 1000);
+	}, [sessionDuration]);
+
+	const stopSessionTimer = useCallback(() => {
+		if (timerRef.current) {
+			clearInterval(timerRef.current);
+			timerRef.current = null;
+		}
+		setSessionTimeLeft(0);
+		setIsSessionExpired(false);
+	}, []);
+
 	useEffect(() => {
 		const storedUser = sessionStorage.getItem("authUser");
+		const storedLoginTime = sessionStorage.getItem("loginTime");
 
-		if (storedUser) {
+		if (storedUser && storedLoginTime) {
 			try {
 				const parsed = JSON.parse(storedUser);
+				const loginTime = parseInt(storedLoginTime);
+				const currentTime = Date.now();
+				const elapsed = Math.floor((currentTime - loginTime) / 1000);
 
-				setUserContext({
-					token: parsed.token ?? "",
-					id: parsed.id,
-					role: parsed.role ?? [],
-					ae_id: parsed.ae_id,
-				});
+				if (elapsed < sessionDuration) {
+					setUserContext({
+						token: parsed.token ?? "",
+						id: parsed.id,
+						role: parsed.role ?? [],
+						ae_id: parsed.ae_id,
+					});
+
+					const remainingTime = sessionDuration - elapsed;
+
+					setSessionTimeLeft(remainingTime);
+
+					timerRef.current = setInterval(() => {
+						setSessionTimeLeft((prev) => {
+							if (prev <= 1) {
+								setIsSessionExpired(true);
+
+								sessionStorage.removeItem("authUser");
+								sessionStorage.removeItem("loginTime");
+								if (timerRef.current) {
+									clearInterval(timerRef.current);
+									timerRef.current = null;
+								}
+
+								return 0;
+							}
+
+							return prev - 1;
+						});
+					}, 1000);
+				} else {
+					sessionStorage.removeItem("authUser");
+					sessionStorage.removeItem("loginTime");
+					setIsSessionExpired(true);
+				}
 			} catch {
 				sessionStorage.removeItem("authUser");
+				sessionStorage.removeItem("loginTime");
 			}
 		}
 		setIsReady(true);
-	}, [setUserContext]);
+	}, [setUserContext, sessionDuration]);
 
 	useEffect(() => {
 		const isValid =
@@ -80,12 +154,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			!isNaN(userContext.ae_id) &&
 			userContext.role.length > 0;
 
-		if (isValid) {
+		if (isValid && !isSessionExpired) {
 			sessionStorage.setItem("authUser", JSON.stringify(userContext));
-		} else if (sessionStorage.getItem("authUser")) {
-			sessionStorage.removeItem("authUser");
 		}
-	}, [userContext]);
+	}, [userContext, isSessionExpired]);
 
 	const login = useCallback(
 		async ({ ...props }: LoginProps) => {
@@ -105,12 +177,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						"authUser",
 						JSON.stringify(newUserContext)
 					);
+					sessionStorage.setItem("loginTime", Date.now().toString());
+					startSessionTimer();
 				}
 			} catch (error) {
 				throw error;
 			}
 		},
-		[setUserContext]
+		[setUserContext, startSessionTimer]
 	);
 
 	const logout = useCallback(() => {
@@ -122,13 +196,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		};
 
 		setUserContext(newUserContext);
+		stopSessionTimer();
 
 		sessionStorage.removeItem("authUser");
-	}, [setUserContext]);
+		sessionStorage.removeItem("loginTime");
+	}, [setUserContext, stopSessionTimer]);
+
+	useEffect(() => {
+		return () => {
+			if (timerRef.current) {
+				clearInterval(timerRef.current);
+			}
+		};
+	}, []);
 
 	const providerValue = useMemo(
-		() => ({ userContext, login, logout, setUserContext, isReady }),
-		[userContext, login, logout, setUserContext, isReady]
+		() => ({
+			userContext,
+			login,
+			logout,
+			setUserContext,
+			isReady,
+			sessionTimeLeft,
+			isSessionExpired,
+		}),
+		[
+			userContext,
+			login,
+			logout,
+			setUserContext,
+			isReady,
+			sessionTimeLeft,
+			isSessionExpired,
+		]
 	);
 
 	return (

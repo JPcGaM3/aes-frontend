@@ -11,9 +11,7 @@ export default function TestErrorPage() {
 	const [shouldReferenceError, setShouldReferenceError] = useState(false);
 
 	if (shouldError) {
-		throw new Error(
-			"This is a test error to demonstrate the error page!, This is a test error to demonstrate the error page!, This is a test error to demonstrate the error page!, This is a test error to demonstrate the error page!"
-		);
+		throw new Error("This is a test error to demonstrate the error page!");
 	}
 
 	if (shouldReferenceError) {

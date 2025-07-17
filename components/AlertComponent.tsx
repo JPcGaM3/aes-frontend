@@ -1,9 +1,10 @@
 import type { AlertComponentProps } from "@/interfaces/props";
-import { colorClasses } from "@/utils/constants";
 
 import { Alert } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+
+import { colorClasses } from "@/utils/constants";
 
 export default function AlertComponent({
 	title,

@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { Button } from "@heroui/button";
 
 import { fontMono } from "@/config/fonts";
-// import GlitchText from "@/components/GlitchTextComponent";
 import FuzzyText from "@/components/FuzzyTextComponent";
 
 export default function Error({
@@ -16,21 +15,18 @@ export default function Error({
 }) {
 	return (
 		<div className="flex flex-col items-center justify-between w-full h-[calc(100vh-120px)] ">
-			<div className="flex flex-col items-center justify-center w-full h-full max-w-xl gap-8 text-center">
+			<div className="flex flex-col items-center justify-center w-full h-full max-w-lg gap-12 text-center">
 				{/* Error Title Section */}
 				<div
 					className={clsx(
-						"flex flex-col items-center justify-center space-y-8 w-full",
+						"flex flex-col items-center justify-center w-full",
 						fontMono.className
 					)}
 				>
-					{/* TODO: Implement Glitch Text */}
 					<div className="relative w-full">
 						<FuzzyText
 							baseIntensity={0.15}
 							color="rgba(239, 68, 68, 0.9)"
-							enableHover={true}
-							fontFamily="inherit"
 							fontSize="9rem"
 							fontWeight={700}
 							hoverIntensity={0.35}
@@ -43,13 +39,11 @@ export default function Error({
 						<FuzzyText
 							baseIntensity={0.12}
 							color="rgba(156, 163, 175, 0.9)"
-							enableHover={true}
-							fontFamily="inherit"
 							fontSize="2rem"
 							fontWeight={500}
 							hoverIntensity={0.25}
 						>
-							Something went wrong!
+							Something went wrong !
 						</FuzzyText>
 					</div>
 				</div>
@@ -71,7 +65,7 @@ export default function Error({
 						variant="solid"
 						onPress={() => reset()}
 					>
-						Try Again
+						ลองอีกครั้ง
 					</Button>
 				</div>
 			</div>
@@ -79,8 +73,8 @@ export default function Error({
 			{/* Additional Info */}
 			<div className="max-w-md text-xs text-center sm:text-sm text-foreground/50">
 				<p>
-					If this error persists, please contact support or refresh
-					the page.
+					หากยังพบปัญหานี้อยู่ กรุณาติดต่อฝ่ายสนับสนุน
+					หรือรีเฟรชหน้าเว็บเพื่อแก้ไขปัญหา
 				</p>
 			</div>
 		</div>

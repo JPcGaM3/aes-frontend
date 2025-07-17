@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import TableComponent from "@/app/(component-demo)/table/page";
+import TableComponent from "@/app/(demo)/table/page";
 import { FieldConfig } from "@/interfaces/interfaces";
 import { getCars } from "@/libs/carAPI";
 import { useAuth } from "@/providers/AuthContext";

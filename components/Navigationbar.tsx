@@ -258,7 +258,6 @@ export default function Navbar() {
 						</Button>
 
 						{/* Session Timer */}
-						{/* TODO: Implement Session Timer */}
 						{userContext.token && (
 							<NavbarItem className="flex items-center justify-start w-full h-full">
 								<SessionTimer />

@@ -144,7 +144,7 @@ export default function ProfilePage() {
 
 					<Header
 						hasBorder={false}
-						subtitle={`employee_id: ${`@${profile?.profile.id}` || "-"}`}
+						subtitle={`employee_id: ${`@${profile?.profile.id || "-"}`}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable

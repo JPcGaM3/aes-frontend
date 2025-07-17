@@ -7,7 +7,7 @@ import { clsx } from "clsx";
 import { useAuth } from "@/providers/AuthContext";
 import { useAlert } from "@/providers/AlertContext";
 import { fontMono } from "@/config/fonts";
-import { TimerIcon } from "@/utils/icons";
+// import { TimerIcon } from "@/utils/icons";
 
 export default function SessionTimer() {
 	const router = useRouter();
@@ -54,7 +54,7 @@ export default function SessionTimer() {
 			)}
 		>
 			<div className="items-center mr-1">
-				<TimerIcon />
+				{/* <TimerIcon strokeWidth={2} /> */}
 			</div>
 			<span className="items-center sm:text-l md:text-xl lg:text-2xl">
 				{formatTime(sessionTimeLeft)}

@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [sessionTimeLeft, setSessionTimeLeft] = useState<number>(0);
 	const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
-	const sessionDuration = 59 * 60;
+	const sessionDuration = 59 * 60 + 59;
 
 	const userContext: UserContextType = useMemo(
 		() => ({

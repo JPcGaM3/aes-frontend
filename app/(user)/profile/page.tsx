@@ -124,8 +124,8 @@ export default function ProfilePage() {
 	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
 
 	return (
-		<div className="flex justify-center items-center pt-3">
-			<div className="flex flex-col justify-center items-center gap-8 w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+		<div className="flex items-center justify-center pt-3">
+			<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
 				{isOpen && (
 					<AlertModal
 						cancelText="ยกเลิก"
@@ -138,8 +138,8 @@ export default function ProfilePage() {
 					/>
 				)}
 
-				<div className="flex flex-col justify-center items-center gap-4">
-					<div className="flex justify-center items-center bg-gray-200 rounded-full w-24 h-24 font-bold text-gray-700 text-4xl">
+				<div className="flex flex-col items-center justify-center gap-4">
+					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
 						{profile?.user_result.email?.charAt(0)?.toUpperCase() ??
 							"-"}
 					</div>

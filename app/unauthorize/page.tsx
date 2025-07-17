@@ -11,22 +11,24 @@ export default function UnAuthorizePage() {
 			<div className="w-full max-w-lg space-y-8 text-center">
 				<div
 					className={clsx(
-						"flex flex-col space-y-8 justify-center items-center",
+						"flex flex-col space-y-8 justify-center items-center pr-1 sm:pr-2 md:pr-3",
 						fontMono.className
 					)}
 				>
-					<FuzzyText
-						baseIntensity={0.15}
-						color="rgba(59, 130, 246, 0.9)"
-						enableHover={true}
-						fontFamily="inherit"
-						fontSize="9rem"
-						fontWeight={700}
-						// fullWidth={true}
-						hoverIntensity={0.35}
-					>
-						401
-					</FuzzyText>
+					{/* TODO: Implement Glitch Text */}
+					<div className="pr-1 sm:pr-2 md:pr-3">
+						<FuzzyText
+							baseIntensity={0.15}
+							color="rgba(59, 130, 246, 0.9)"
+							enableHover={true}
+							fontFamily="inherit"
+							fontSize="9rem"
+							fontWeight={700}
+							hoverIntensity={0.35}
+						>
+							401
+						</FuzzyText>
+					</div>
 
 					<FuzzyText
 						baseIntensity={0.12}
@@ -35,7 +37,6 @@ export default function UnAuthorizePage() {
 						fontFamily="inherit"
 						fontSize="3rem"
 						fontWeight={500}
-						// fullWidth={true}
 						hoverIntensity={0.25}
 					>
 						Unauthorized

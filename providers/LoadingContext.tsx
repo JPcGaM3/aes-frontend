@@ -8,8 +8,10 @@ import React, {
 	useRef,
 } from "react";
 import { Spinner } from "@heroui/react";
+import clsx from "clsx";
 
 import { ColorType } from "@/types";
+import { fontMono } from "@/config/fonts";
 
 interface LoadingContextType {
 	isLoading: boolean;
@@ -108,7 +110,8 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 						left: 0,
 						width: "100vw",
 						height: "100vh",
-						background: "rgba(0,0,0,0.4)",
+						background: "rgba(0,0,0,0.5)",
+						backdropFilter: "blur(4px)",
 						zIndex: 9999,
 						display: "flex",
 						alignItems: "center",
@@ -117,22 +120,46 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 				>
 					<div
 						style={{
-							background: "#fff",
-							borderRadius: "1rem",
-							padding: "2rem 3rem",
-							boxShadow: "0 4px 24px rgba(0,0,0,0.15)",
+							background: "rgba(255,255,255,0.85)",
+							borderRadius: "0.5rem",
+							padding: "2rem 2.5rem",
+							boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
+							justifyContent: "center",
+							gap: "1.5rem",
+							minWidth: "120px",
 						}}
 					>
-						<Spinner
-							classNames={{ label: "text-foreground mt-4" }}
-							color={colors[colorIndex] as ColorType}
-							label="กำลังโหลด..."
-							size="lg"
-							variant="wave"
-						/>
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+						>
+							<Spinner
+								classNames={{
+									wrapper: "w-16 h-16 gap-3 translate-y-1/2",
+									dots: "w-3 h-3",
+								}}
+								color={
+									colors[colorIndex as number] as ColorType
+								}
+								size="lg"
+								variant="wave"
+							/>
+						</div>
+
+						<p
+							className={clsx(
+								"font-mono text-md font-medium tracking-wide text-foreground opacity-60",
+								fontMono.variable
+							)}
+						>
+							Loading...
+						</p>
 					</div>
 				</div>
 			)}

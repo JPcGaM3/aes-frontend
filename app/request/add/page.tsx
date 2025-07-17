@@ -147,6 +147,7 @@ export default function AddRequestPage() {
 		try {
 			const response = await uploadRequestOrder({
 				token: userContext.token,
+				ae_id: userContext.ae_id,
 				uploadedFiles: uploadedFiles,
 			});
 

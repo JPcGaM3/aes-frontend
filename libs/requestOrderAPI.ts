@@ -81,12 +81,16 @@ export async function getRequestOrderWithTask({
 
 export async function uploadRequestOrder({
 	token,
+	ae_id,
 	uploadedFiles,
 }: {
 	token: string;
+	ae_id: number;
 	uploadedFiles: UploadedFile[];
 }) {
 	const formData = new FormData();
+
+	formData.append("ae_id", ae_id.toString());
 
 	uploadedFiles.forEach((fileData) => {
 		formData.append("files", fileData.file);

@@ -143,6 +143,13 @@ export default function Navbar() {
 	}, [userContext, isReady]);
 
 	useEffect(() => {
+		if (isReady && (!userContext?.token || !userContext?.ae_id)) {
+			setAeAreas([]);
+			hasFetched.current = false;
+		}
+	}, [userContext?.token, userContext?.ae_id, isReady]);
+
+	useEffect(() => {
 		setSelectedTab(pathname);
 	}, [pathname]);
 

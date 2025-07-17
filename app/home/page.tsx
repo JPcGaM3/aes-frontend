@@ -1,3 +1,5 @@
+"use client";
+
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";

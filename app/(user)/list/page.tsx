@@ -44,7 +44,7 @@ interface filterInterface {
 export default function ListPage() {
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 	const {
 		isOpen: isOpenFilter,
@@ -58,8 +58,10 @@ export default function ListPage() {
 
 	const prevAeId = useRef<number | undefined>(undefined);
 	const hasFetched = useRef(false);
-	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
-	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
+	const [reqOrders, setReqOrders] = useState<RequestOrder[] | null>(null);
+	const [customerTypes, setCustomerTypes] = useState<CustomerType[] | null>(
+		null
+	);
 	const [filter, setFilter] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
@@ -69,7 +71,6 @@ export default function ListPage() {
 		if (
 			isReady &&
 			userContext?.ae_id &&
-			filter !== null &&
 			prevAeId.current !== userContext.ae_id
 		) {
 			prevAeId.current = userContext.ae_id;
@@ -79,17 +80,23 @@ export default function ListPage() {
 				start_year: currentYear,
 			});
 		}
-	}, [userContext?.ae_id, isReady, filter, currentMonth, currentYear]);
+	}, [userContext?.ae_id, isReady, currentMonth, currentYear]);
 
 	useEffect(() => {
-		if (isReady && userContext?.ae_id && !hasFetched.current) {
-			setIsLoading(true);
+		if (
+			isReady &&
+			userContext?.ae_id &&
+			userContext?.token &&
+			!hasFetched.current
+		) {
+			showLoading();
 			hasFetched.current = true;
+
 			const fetchData = async () => {
 				try {
 					const promises = [];
 
-					if (customerTypes.length < 1) {
+					if (!customerTypes) {
 						promises.push(
 							fetchCustomerTypes({
 								token: userContext.token,
@@ -122,13 +129,13 @@ export default function ListPage() {
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 
 			fetchData();
 		}
-	}, [filter, isReady, userContext?.ae_id]);
+	}, [filter, isReady, userContext?.ae_id, userContext?.token]);
 
 	const actions: ActionConfig[] = [
 		{
@@ -229,10 +236,10 @@ export default function ListPage() {
 					name: "customer_type_id",
 					labelTranslator: RequestOrderTranslation,
 					options: [
-						...customerTypes.map((option) => ({
+						...(customerTypes?.map((option) => ({
 							label: option.name || "-",
 							value: option.id,
-						})),
+						})) || []),
 					],
 				},
 				[
@@ -322,7 +329,7 @@ export default function ListPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
@@ -332,7 +339,7 @@ export default function ListPage() {
 				break;
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};
@@ -386,14 +393,14 @@ export default function ListPage() {
 				{/* Body ------------------------------------------------------------- */}
 				<div>
 					<div className="mb-4 font-medium text-gray-700 text-right">
-						{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
+						{`จำนวนทั้งหมด: ${reqOrders?.length ?? 0} รายการ`}
 					</div>
 
 					<CardComponent
 						actions={actions}
 						bodyFields={bodyFields}
 						headerFields={headerFields}
-						items={reqOrders}
+						items={reqOrders || []}
 						statusConfig={statusConfig}
 					/>
 				</div>

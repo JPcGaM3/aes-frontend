@@ -45,7 +45,7 @@ export default function AddRequestPage() {
 	// const value & react hook ----------------------------------------------------------------------------------------
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 	const hasFetched = useRef(false);
 	const now = new Date();
@@ -73,7 +73,7 @@ export default function AddRequestPage() {
 	// Fetch data ---------------------------------------------------------------------------------------------------
 	useEffect(() => {
 		if (isReady) {
-			setIsLoading(true);
+			showLoading();
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
@@ -111,7 +111,7 @@ export default function AddRequestPage() {
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 
@@ -495,16 +495,16 @@ export default function AddRequestPage() {
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col items-center justify-center w-full">
+			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="Key-in"
 					>
 						<FormComponent
@@ -520,9 +520,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col items-center justify-center w-full gap-4">
-								<div className="flex items-center w-full gap-5">
-									<span className="text-xl font-semibold text-gray-700">
+							<div className="flex flex-col justify-center items-center gap-4 w-full">
+								<div className="flex items-center gap-5 w-full">
+									<span className="font-semibold text-gray-700 text-xl">
 										กิจกรรม
 									</span>
 
@@ -568,7 +568,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="Upload"
 					>
 						<UploadComponent

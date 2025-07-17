@@ -60,29 +60,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		if (context.ae_id !== undefined) setae_id(context.ae_id);
 	}, []);
 
-	const startSessionTimer = useCallback(() => {
-		if (timerRef.current) {
-			clearInterval(timerRef.current);
-		}
+	const calculateTimeLeft = useCallback((expirationTime: number): number => {
+		const currentTime = Date.now();
+		const timeLeft = Math.max(
+			0,
+			Math.floor((expirationTime - currentTime) / 1000)
+		);
 
-		setSessionTimeLeft(sessionDuration);
-		setIsSessionExpired(false);
+		return timeLeft;
+	}, []);
 
-		timerRef.current = setInterval(() => {
-			setSessionTimeLeft((prev) => {
-				if (prev <= 1) {
+	const startSessionTimer = useCallback(
+		(expirationTime?: number) => {
+			if (timerRef.current) {
+				clearInterval(timerRef.current);
+			}
+
+			const expTime =
+				expirationTime || Date.now() + sessionDuration * 1000;
+
+			sessionStorage.setItem("sessionExpireTime", expTime.toString());
+
+			const updateTimer = () => {
+				const timeLeft = calculateTimeLeft(expTime);
+
+				setSessionTimeLeft(timeLeft);
+
+				if (timeLeft <= 0) {
 					setIsSessionExpired(true);
+					sessionStorage.removeItem("authUser");
+					sessionStorage.removeItem("sessionExpireTime");
 					if (timerRef.current) {
 						clearInterval(timerRef.current);
+						timerRef.current = null;
 					}
-
-					return 0;
 				}
+			};
 
-				return prev - 1;
-			});
-		}, 1000);
-	}, [sessionDuration]);
+			// Initial update
+			updateTimer();
+			setIsSessionExpired(false);
+
+			timerRef.current = setInterval(updateTimer, 1000);
+		},
+		[sessionDuration, calculateTimeLeft]
+	);
 
 	const stopSessionTimer = useCallback(() => {
 		if (timerRef.current) {
@@ -91,20 +113,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		}
 		setSessionTimeLeft(0);
 		setIsSessionExpired(false);
+		sessionStorage.removeItem("sessionExpireTime");
 	}, []);
 
 	useEffect(() => {
 		const storedUser = sessionStorage.getItem("authUser");
-		const storedLoginTime = sessionStorage.getItem("loginTime");
+		const storedExpireTime = sessionStorage.getItem("sessionExpireTime");
 
-		if (storedUser && storedLoginTime) {
+		if (storedUser && storedExpireTime) {
 			try {
 				const parsed = JSON.parse(storedUser);
-				const loginTime = parseInt(storedLoginTime);
+				const expirationTime = parseInt(storedExpireTime);
 				const currentTime = Date.now();
-				const elapsed = Math.floor((currentTime - loginTime) / 1000);
 
-				if (elapsed < sessionDuration) {
+				if (currentTime < expirationTime) {
 					setUserContext({
 						token: parsed.token ?? "",
 						id: parsed.id,
@@ -112,40 +134,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: parsed.ae_id,
 					});
 
-					const remainingTime = sessionDuration - elapsed;
-
-					setSessionTimeLeft(remainingTime);
-
-					timerRef.current = setInterval(() => {
-						setSessionTimeLeft((prev) => {
-							if (prev <= 1) {
-								setIsSessionExpired(true);
-
-								sessionStorage.removeItem("authUser");
-								sessionStorage.removeItem("loginTime");
-								if (timerRef.current) {
-									clearInterval(timerRef.current);
-									timerRef.current = null;
-								}
-
-								return 0;
-							}
-
-							return prev - 1;
-						});
-					}, 1000);
+					startSessionTimer(expirationTime);
 				} else {
 					sessionStorage.removeItem("authUser");
-					sessionStorage.removeItem("loginTime");
+					sessionStorage.removeItem("sessionExpireTime");
 					setIsSessionExpired(true);
 				}
 			} catch {
 				sessionStorage.removeItem("authUser");
-				sessionStorage.removeItem("loginTime");
+				sessionStorage.removeItem("sessionExpireTime");
 			}
 		}
 		setIsReady(true);
-	}, [setUserContext, sessionDuration]);
+	}, [setUserContext, startSessionTimer]);
 
 	useEffect(() => {
 		const isValid =
@@ -177,7 +178,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						"authUser",
 						JSON.stringify(newUserContext)
 					);
-					sessionStorage.setItem("loginTime", Date.now().toString());
+
 					startSessionTimer();
 				}
 			} catch (error) {
@@ -199,7 +200,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		stopSessionTimer();
 
 		sessionStorage.removeItem("authUser");
-		sessionStorage.removeItem("loginTime");
+		sessionStorage.removeItem("sessionExpireTime");
 	}, [setUserContext, stopSessionTimer]);
 
 	useEffect(() => {

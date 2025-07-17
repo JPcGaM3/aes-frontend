@@ -52,7 +52,7 @@ interface filterInterface {
 export default function RequestPage() {
 	// Fetch data ------------------------------------------------------------------
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 
 	const router = useRouter();
@@ -88,7 +88,7 @@ export default function RequestPage() {
 
 	useEffect(() => {
 		if (isReady && userContext?.ae_id && !hasFetched.current) {
-			setIsLoading(true);
+			showLoading();
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
@@ -126,7 +126,7 @@ export default function RequestPage() {
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 
@@ -156,7 +156,7 @@ export default function RequestPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
@@ -170,7 +170,7 @@ export default function RequestPage() {
 				break;
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};

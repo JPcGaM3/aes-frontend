@@ -1,125 +1,227 @@
-"use client";
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface FuzzyTextProps {
 	children: React.ReactNode;
-	baseIntensity?: number;
-	hoverIntensity?: number;
+	fontSize?: number | string;
+	fontWeight?: string | number;
+	fontFamily?: string;
 	color?: string;
 	enableHover?: boolean;
-	fontSize?: string;
-	fontWeight?: number;
-	fontFamily?: string;
-	textAlign?: "text-center" | "text-start" | "text-end";
-	className?: string;
+	baseIntensity?: number;
+	hoverIntensity?: number;
 }
 
 const FuzzyText: React.FC<FuzzyTextProps> = ({
 	children,
-	baseIntensity = 0.15,
-	hoverIntensity = 0.35,
-	color = "rgba(239, 68, 68, 0.9)",
-	enableHover = true,
-	fontSize = "9rem",
-	fontWeight = 700,
+	fontSize = "clamp(2rem, 8vw, 8rem)",
+	fontWeight = 900,
 	fontFamily = "inherit",
-	textAlign = "text-center",
-	className = "",
+	color = "#fff",
+	enableHover = true,
+	baseIntensity = 0.18,
+	hoverIntensity = 0.5,
 }) => {
-	const textRef = useRef<HTMLDivElement>(null);
-	const [isHovered, setIsHovered] = useState(false);
-
-	// Convert intensity values to CSS-friendly values
-	const baseBlur = baseIntensity * 10; // 0.15 -> 1.5px
-	const hoverBlur = hoverIntensity * 10; // 0.35 -> 3.5px
+	const canvasRef = useRef<
+		HTMLCanvasElement & { cleanupFuzzyText?: () => void }
+	>(null);
 
 	useEffect(() => {
-		const element = textRef.current;
+		let animationFrameId: number;
+		let isCancelled = false;
+		const canvas = canvasRef.current;
 
-		if (!element) return;
+		if (!canvas) return;
 
-		let animationFrame: number;
-		let isRunning = true;
+		const init = async () => {
+			if (document.fonts?.ready) {
+				await document.fonts.ready;
+			}
+			if (isCancelled) return;
 
-		const animate = () => {
-			if (!isRunning) return;
+			const ctx = canvas.getContext("2d");
 
-			const intensity = isHovered ? hoverIntensity : baseIntensity;
-			const blur = isHovered ? hoverBlur : baseBlur;
-			const offset = intensity * 20;
+			if (!ctx) return;
 
-			// Generate random glitch effects
-			const translateX = (Math.random() - 0.5) * offset;
-			const translateY = (Math.random() - 0.5) * offset;
-			const currentBlur = blur * (0.5 + Math.random() * 0.5);
+			const computedFontFamily =
+				fontFamily === "inherit"
+					? window.getComputedStyle(canvas).fontFamily || "sans-serif"
+					: fontFamily;
 
-			const shadowX1 = (Math.random() - 0.5) * offset;
-			const shadowY1 = (Math.random() - 0.5) * offset;
-			const shadowX2 = (Math.random() - 0.5) * offset;
-			const shadowY2 = (Math.random() - 0.5) * offset;
-			const shadowX3 = (Math.random() - 0.5) * offset;
-			const shadowY3 = (Math.random() - 0.5) * offset;
+			const fontSizeStr =
+				typeof fontSize === "number" ? `${fontSize}px` : fontSize;
+			let numericFontSize: number;
 
-			element.style.transform = `translate(${translateX}px, ${translateY}px)`;
-			element.style.filter = `blur(${currentBlur}px)`;
-			element.style.textShadow = `
-				${shadowX1}px ${shadowY1}px ${blur}px ${color},
-				${shadowX2}px ${shadowY2}px ${blur * 1.5}px ${color},
-				${shadowX3}px ${shadowY3}px ${blur * 2}px ${color}
-			`;
+			if (typeof fontSize === "number") {
+				numericFontSize = fontSize;
+			} else {
+				const temp = document.createElement("span");
 
-			// Adjust animation speed based on hover state
-			const delay = isHovered ? 50 : 100;
+				temp.style.fontSize = fontSize;
+				document.body.appendChild(temp);
+				const computedSize = window.getComputedStyle(temp).fontSize;
 
-			setTimeout(() => {
-				animationFrame = requestAnimationFrame(animate);
-			}, delay);
+				numericFontSize = parseFloat(computedSize);
+				document.body.removeChild(temp);
+			}
+
+			const text = React.Children.toArray(children).join("");
+
+			const offscreen = document.createElement("canvas");
+			const offCtx = offscreen.getContext("2d");
+
+			if (!offCtx) return;
+
+			offCtx.font = `${fontWeight} ${fontSizeStr} ${computedFontFamily}`;
+			offCtx.textBaseline = "alphabetic";
+			const metrics = offCtx.measureText(text);
+
+			const actualLeft = metrics.actualBoundingBoxLeft ?? 0;
+			const actualRight = metrics.actualBoundingBoxRight ?? metrics.width;
+			const actualAscent =
+				metrics.actualBoundingBoxAscent ?? numericFontSize;
+			const actualDescent =
+				metrics.actualBoundingBoxDescent ?? numericFontSize * 0.2;
+
+			const textBoundingWidth = Math.ceil(actualLeft + actualRight);
+			const tightHeight = Math.ceil(actualAscent + actualDescent);
+
+			const extraWidthBuffer = 10;
+			const offscreenWidth = textBoundingWidth + extraWidthBuffer;
+
+			offscreen.width = offscreenWidth;
+			offscreen.height = tightHeight;
+
+			const xOffset = extraWidthBuffer / 2;
+
+			offCtx.font = `${fontWeight} ${fontSizeStr} ${computedFontFamily}`;
+			offCtx.textBaseline = "alphabetic";
+			offCtx.fillStyle = color;
+			offCtx.fillText(text, xOffset - actualLeft, actualAscent);
+
+			const horizontalMargin = 50;
+			const verticalMargin = 0;
+
+			canvas.width = offscreenWidth + horizontalMargin * 2;
+			canvas.height = tightHeight + verticalMargin * 2;
+			ctx.translate(horizontalMargin, verticalMargin);
+
+			const interactiveLeft = horizontalMargin + xOffset;
+			const interactiveTop = verticalMargin;
+			const interactiveRight = interactiveLeft + textBoundingWidth;
+			const interactiveBottom = interactiveTop + tightHeight;
+
+			let isHovering = false;
+			const fuzzRange = 30;
+
+			const run = () => {
+				if (isCancelled) return;
+				ctx.clearRect(
+					-fuzzRange,
+					-fuzzRange,
+					offscreenWidth + 2 * fuzzRange,
+					tightHeight + 2 * fuzzRange
+				);
+				const intensity = isHovering ? hoverIntensity : baseIntensity;
+
+				for (let j = 0; j < tightHeight; j++) {
+					const dx = Math.floor(
+						intensity * (Math.random() - 0.5) * fuzzRange
+					);
+
+					ctx.drawImage(
+						offscreen,
+						0,
+						j,
+						offscreenWidth,
+						1,
+						dx,
+						j,
+						offscreenWidth,
+						1
+					);
+				}
+				animationFrameId = window.requestAnimationFrame(run);
+			};
+
+			run();
+
+			const isInsideTextArea = (x: number, y: number) =>
+				x >= interactiveLeft &&
+				x <= interactiveRight &&
+				y >= interactiveTop &&
+				y <= interactiveBottom;
+
+			const handleMouseMove = (e: MouseEvent) => {
+				if (!enableHover) return;
+				const rect = canvas.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+
+				isHovering = isInsideTextArea(x, y);
+			};
+
+			const handleMouseLeave = () => {
+				isHovering = false;
+			};
+
+			const handleTouchMove = (e: TouchEvent) => {
+				if (!enableHover) return;
+				e.preventDefault();
+				const rect = canvas.getBoundingClientRect();
+				const touch = e.touches[0];
+				const x = touch.clientX - rect.left;
+				const y = touch.clientY - rect.top;
+
+				isHovering = isInsideTextArea(x, y);
+			};
+
+			const handleTouchEnd = () => {
+				isHovering = false;
+			};
+
+			if (enableHover) {
+				canvas.addEventListener("mousemove", handleMouseMove);
+				canvas.addEventListener("mouseleave", handleMouseLeave);
+				canvas.addEventListener("touchmove", handleTouchMove, {
+					passive: false,
+				});
+				canvas.addEventListener("touchend", handleTouchEnd);
+			}
+
+			const cleanup = () => {
+				window.cancelAnimationFrame(animationFrameId);
+				if (enableHover) {
+					canvas.removeEventListener("mousemove", handleMouseMove);
+					canvas.removeEventListener("mouseleave", handleMouseLeave);
+					canvas.removeEventListener("touchmove", handleTouchMove);
+					canvas.removeEventListener("touchend", handleTouchEnd);
+				}
+			};
+
+			canvas.cleanupFuzzyText = cleanup;
 		};
 
-		animate();
+		init();
 
 		return () => {
-			isRunning = false;
-			if (animationFrame) {
-				cancelAnimationFrame(animationFrame);
+			isCancelled = true;
+			window.cancelAnimationFrame(animationFrameId);
+			if (canvas && canvas.cleanupFuzzyText) {
+				canvas.cleanupFuzzyText();
 			}
 		};
-	}, [isHovered, baseIntensity, hoverIntensity, color, baseBlur, hoverBlur]);
+	}, [
+		children,
+		fontSize,
+		fontWeight,
+		fontFamily,
+		color,
+		enableHover,
+		baseIntensity,
+		hoverIntensity,
+	]);
 
-	const handleMouseEnter = () => {
-		if (enableHover) {
-			setIsHovered(true);
-		}
-	};
-
-	const handleMouseLeave = () => {
-		if (enableHover) {
-			setIsHovered(false);
-		}
-	};
-
-	return (
-		<div className={`relative inline-block ${className}`}>
-			<div
-				ref={textRef}
-				className={`${textAlign} select-none cursor-default`}
-				style={{
-					fontSize,
-					fontWeight,
-					fontFamily,
-					color,
-					userSelect: "none",
-					position: "relative",
-					display: "inline-block",
-				}}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-			>
-				{children}
-			</div>
-		</div>
-	);
+	return <canvas ref={canvasRef} />;
 };
 
 export default FuzzyText;

@@ -74,19 +74,19 @@ export default function ProfilePage() {
 		{
 			title: "ข้อมูลส่วนตัว",
 			fields: [
-				{ name: "รหัสพนักงาน", value: profile?.user_result.id ?? "-" },
-				{ name: "อีเมล", value: profile?.user_result.email ?? "-" },
+				{ name: "รหัสพนักงาน", value: profile?.user_result?.id || "-" },
+				{ name: "อีเมล", value: profile?.user_result?.email || "-" },
 				{
 					name: "ชื่อ-สกุล (TH)",
-					value: profile?.profile.employeeName?.th ?? "-",
+					value: profile?.profile?.employeeName?.th || "-",
 				},
 				{
 					name: "ชื่อ-สกุล (EN)",
-					value: profile?.profile.employeeName?.en ?? "-",
+					value: profile?.profile?.employeeName?.en || "-",
 				},
 				{
 					name: "เบอร์โทรศัพท์",
-					value: profile?.user_result.phone ?? "-",
+					value: profile?.user_result?.phone || "-",
 				},
 				{ name: "ที่อยู่", value: "-" },
 			],
@@ -96,22 +96,20 @@ export default function ProfilePage() {
 			fields: [
 				{
 					name: "ตำแหน่ง",
-					value: profile?.user_result.role?.length
-						? profile.user_result.role.join(", ")
-						: "-",
+					value: profile?.user_result?.role.join(", ") || "-",
 				},
-				{ name: "ระดับ", value: profile?.profile.level?.name ?? "-" },
+				{ name: "ระดับ", value: profile?.profile.level?.name || "-" },
 				{
 					name: "แผนก",
 					value:
 						profile?.profile.department?.name?.en?.replace(
 							/ Section$/i,
 							""
-						) ?? "-",
+						) || "-",
 				},
 				{
 					name: "สังกัด AE",
-					value: profile?.user_result.user_ae_area?.length
+					value: profile?.user_result?.user_ae_area?.length
 						? profile.user_result.user_ae_area
 								.map((ae) => ae.ae_area?.name)
 								.join(", ")
@@ -121,7 +119,7 @@ export default function ProfilePage() {
 		},
 	];
 
-	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] ?? "-";
+	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] || "-";
 
 	return (
 		<div className="flex items-center justify-center pt-3">
@@ -140,13 +138,13 @@ export default function ProfilePage() {
 
 				<div className="flex flex-col items-center justify-center gap-4">
 					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
-						{profile?.user_result.email?.charAt(0)?.toUpperCase() ??
+						{profile?.user_result.email?.charAt(0)?.toUpperCase() ||
 							"-"}
 					</div>
 
 					<Header
 						hasBorder={false}
-						subtitle={`employee_id: ${profile?.profile.id ? `@${profile?.profile.id}` : "-"}`}
+						subtitle={`employee_id: ${`@${profile?.profile.id}` || "-"}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable

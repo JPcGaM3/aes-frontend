@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { use, useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
-import { Alert, Tab, Tabs } from "@heroui/react";
+import { Alert, Button, Tab, Tabs } from "@heroui/react";
 import moment from "moment-timezone";
 
 import { fontMono } from "@/config/fonts";
@@ -50,6 +50,7 @@ import { translateEnumValue } from "@/utils/functions";
 import ProtectedRoute from "@/components/HigherOrderComponent";
 import { taskOrderAPIService } from "@/services/taskOrderAPI";
 import { useAlert } from "@/providers/AlertContext";
+import { CheckIcon } from "@/utils/icons";
 
 moment.locale("th");
 
@@ -85,6 +86,7 @@ export default function RequestManagementPage({
 	);
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isHoveringComment, setIsHoveringComment] = useState(false);
 	const [commentValues, setCommentValues] = useState<{
 		comment: string;
 	}>({
@@ -102,6 +104,7 @@ export default function RequestManagementPage({
 		validateTaskOrders,
 		resetChanges,
 		getTaskOrderOperations,
+		initializeFromData,
 		hasChanges,
 	} = useTaskOrderForm();
 
@@ -176,6 +179,12 @@ export default function RequestManagementPage({
 			fetchData();
 		}
 	}, [isReady, rid, userContext]);
+
+	useEffect(() => {
+		if (requestData && requestData.id) {
+			initializeFromData(requestData);
+		}
+	}, [requestData]);
 
 	// Handler ---------------------------------------------------------------------------------------------------
 	const handleTabChange = (key: React.Key) => {
@@ -674,10 +683,10 @@ export default function RequestManagementPage({
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -685,7 +694,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -700,7 +709,7 @@ export default function RequestManagementPage({
 
 						{requestData.comment && (
 							<Alert
-								className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+								className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl "
 								color={
 									requestData.status ===
 									REQUESTORDERSTATUS.Rejected
@@ -708,6 +717,30 @@ export default function RequestManagementPage({
 										: "warning"
 								}
 								description={requestData.comment || "-"}
+								endContent={
+									<Button
+										className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
+										color="warning"
+										title="mark as done"
+										type="button"
+										variant="flat"
+										onMouseEnter={() =>
+											setIsHoveringComment(true)
+										}
+										onMouseLeave={() =>
+											setIsHoveringComment(false)
+										}
+										onPress={() => {}}
+									>
+										{isHoveringComment ? (
+											<span className="whitespace-nowrap">
+												Clear All
+											</span>
+										) : (
+											<CheckIcon />
+										)}
+									</Button>
+								}
 								isVisible={true}
 								title="หมายเหตุ"
 								variant="faded"
@@ -740,7 +773,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -790,7 +823,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||

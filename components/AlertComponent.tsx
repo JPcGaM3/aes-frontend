@@ -1,4 +1,5 @@
 import type { AlertComponentProps } from "@/interfaces/props";
+import { colorClasses } from "@/utils/constants";
 
 import { Alert } from "@heroui/react";
 import React, { useEffect, useState } from "react";
@@ -50,46 +51,6 @@ export default function AlertComponent({
 
 	const getTotalAlertBadgeClasses = () => {
 		const baseClasses = `absolute z-10 flex items-center justify-center min-w-6 w-fit h-6 text-xs font-semibold rounded-full -top-2 -right-2 shadow-lg ${isHoveringBadge ? "px-2" : "px-0"}`;
-
-		const colorClasses = {
-			default: {
-				solid: "bg-default text-default-foreground",
-				flat: "bg-default-100 text-default-foreground",
-				faded: "bg-default-100 border-1 border-default-300 text-default-foreground",
-				bordered: "bg-transparent border-1 border-default text-default",
-			},
-			primary: {
-				solid: "bg-primary text-primary-foreground",
-				flat: "bg-primary-50 text-primary-600",
-				faded: "bg-primary-50 border-1 border-primary-200 text-primary-600",
-				bordered: "bg-transparent border-1 border-primary text-primary",
-			},
-			secondary: {
-				solid: "bg-secondary text-secondary-foreground",
-				flat: "bg-secondary-50 text-secondary-600",
-				faded: "bg-secondary-50 border-1 border-secondary-200 text-secondary-600",
-				bordered:
-					"bg-transparent border-1 border-secondary text-secondary",
-			},
-			success: {
-				solid: "bg-success text-success-foreground",
-				flat: "bg-success-50 text-success-700",
-				faded: "bg-success-50 border-1 border-success-300 text-success-700",
-				bordered: "bg-transparent border-1 border-success text-success",
-			},
-			warning: {
-				solid: "bg-warning text-warning-foreground",
-				flat: "bg-warning-50 text-warning-700",
-				faded: "bg-warning-50 border-1 border-warning-300 text-warning-700",
-				bordered: "bg-transparent border-1 border-warning text-warning",
-			},
-			danger: {
-				solid: "bg-danger text-danger-foreground",
-				flat: "bg-danger-50 text-danger-600",
-				faded: "bg-danger-50 border-1 border-danger-200 text-danger-600",
-				bordered: "bg-transparent border-1 border-danger text-danger",
-			},
-		};
 
 		const colorClass =
 			colorClasses[color]?.[variant] ||

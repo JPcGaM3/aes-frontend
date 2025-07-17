@@ -29,10 +29,11 @@ export default function Error({
 						<FuzzyText
 							baseIntensity={0.15}
 							color="rgba(239, 68, 68, 0.9)"
+							enableHover={true}
 							fontFamily="inherit"
 							fontSize="9rem"
-							hoverIntensity={1}
-							textAlign="text-center"
+							fontWeight={700}
+							hoverIntensity={0.35}
 						>
 							ERROR
 						</FuzzyText>
@@ -42,10 +43,11 @@ export default function Error({
 						<FuzzyText
 							baseIntensity={0.12}
 							color="rgba(156, 163, 175, 0.9)"
+							enableHover={true}
 							fontFamily="inherit"
-							fontSize="3rem"
+							fontSize="2rem"
+							fontWeight={500}
 							hoverIntensity={0.25}
-							textAlign="text-center"
 						>
 							Something went wrong!
 						</FuzzyText>

@@ -226,7 +226,7 @@ export default function DynamicTaskOrder({
 
 						<Divider />
 
-						<CardBody className="pt-4">
+						<CardBody className="pt-4 pb-0">
 							<div className="grid grid-cols-1 gap-x-2 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
 								{createTaskOrderConfig(taskOrder).map(
 									(config) => {

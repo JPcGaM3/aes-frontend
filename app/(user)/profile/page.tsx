@@ -21,7 +21,7 @@ import { fetchProfile } from "@/utils/functions";
 export default function ProfilePage() {
 	const router = useRouter();
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { userContext, logout } = useAuth();
 	const { showAlert } = useAlert();
 	const hasFetched = useRef(false);
@@ -31,7 +31,7 @@ export default function ProfilePage() {
 
 	useEffect(() => {
 		if (userContext.token && !hasFetched.current) {
-			setIsLoading(true);
+			showLoading();
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
@@ -51,7 +51,7 @@ export default function ProfilePage() {
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 

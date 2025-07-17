@@ -27,14 +27,16 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 	const router = useRouter();
 
 	return (
-		<HeroUIProvider navigate={router.push}>
-			<NextThemesProvider {...themeProps}>
-				<AuthProvider>
-					<LoadingProvider>
-						<AlertProvider>{children}</AlertProvider>
-					</LoadingProvider>
-				</AuthProvider>
-			</NextThemesProvider>
-		</HeroUIProvider>
+		<LoadingProvider>
+			<AuthProvider>
+				<AlertProvider>
+					<HeroUIProvider navigate={router.push}>
+						<NextThemesProvider {...themeProps}>
+							{children}
+						</NextThemesProvider>
+					</HeroUIProvider>
+				</AlertProvider>
+			</AuthProvider>
+		</LoadingProvider>
 	);
 }

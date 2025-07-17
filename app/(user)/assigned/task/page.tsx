@@ -48,7 +48,7 @@ moment.locale("th");
 export default function TaskPage() {
 	const router = useRouter();
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 	const [taskOrders, setTaskOrders] = useState<TaskOrder[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export default function TaskPage() {
 	});
 
 	useEffect(() => {
-		setIsLoading(true);
+		showLoading();
 		if (
 			isReady &&
 			userContext.id &&
@@ -101,7 +101,7 @@ export default function TaskPage() {
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 
@@ -282,7 +282,7 @@ export default function TaskPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
@@ -294,7 +294,7 @@ export default function TaskPage() {
 			case "add":
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { useAuth } from "@/providers/AuthContext";
-import { useLoading } from "@/providers/LoadingContext";
 
 interface ProtectedRouteProps {
 	children: React.ReactNode;
@@ -16,7 +15,6 @@ export default function ProtectedRoute({
 	allowedRoles,
 }: ProtectedRouteProps) {
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
 	const router = useRouter();
 
 	const hasPermission = (allowedRoles: string[]) => {
@@ -39,27 +37,21 @@ export default function ProtectedRoute({
 
 	useEffect(() => {
 		if (!isReady) {
-			setIsLoading(true);
-
 			return;
 		}
 
 		if (!userContext?.token) {
-			setIsLoading(false);
 			router.push("/login");
 
 			return;
 		}
 
 		if (!hasPermission(allowedRoles)) {
-			setIsLoading(false);
 			router.push("/unauthorize");
 
 			return;
 		}
-
-		setIsLoading(false);
-	}, [userContext, isReady, router, allowedRoles, setIsLoading]);
+	}, [userContext, isReady, router, allowedRoles]);
 
 	if (!isReady || !userContext?.token || !hasPermission(allowedRoles)) {
 		return null;

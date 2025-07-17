@@ -61,7 +61,7 @@ export default function RequestManagementPage({
 	// const and hooks -------------------------------------------------------------------------------------------
 	const { rid } = use(params);
 	const { userContext, isReady } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 
 	const searchParams = useSearchParams();
@@ -108,7 +108,7 @@ export default function RequestManagementPage({
 	// Fetch data ------------------------------------------------------------------------------------------------
 	useEffect(() => {
 		if (rid && isReady && userContext && !hasFetched.current) {
-			setIsLoading(true);
+			showLoading();
 			hasFetched.current = true;
 			const fetchData = async () => {
 				try {
@@ -169,7 +169,7 @@ export default function RequestManagementPage({
 						color: "danger",
 					});
 				} finally {
-					setIsLoading(false);
+					hideLoading();
 				}
 			};
 
@@ -276,7 +276,7 @@ export default function RequestManagementPage({
 			});
 
 			setTimeout(() => {
-				setIsLoading(false);
+				hideLoading();
 				router.push("/login");
 			}, 2000);
 		}

@@ -188,7 +188,6 @@ export default function Navbar() {
 
 	// Handler ------------------------------------------------------------------------------------------------------
 	const handleNav = (path: string) => {
-		// setIsLoading(true);
 		setIsMenuOpen(false);
 
 		const menuItem = menuItems.find((item) => item.path === path);
@@ -260,89 +259,98 @@ export default function Navbar() {
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
-					{userContext.token && hasFetched.current && (
-						<NavbarItem
-							className={clsx(
-								"justify-end items-center bg-default-100 rounded-lg w-fit h-full font-mono",
-								fontMono.variable
-							)}
-						>
-							<Popover
-								className={clsx("font-mono", fontMono.variable)}
-								isOpen={isDropdownOpen}
-								placement="bottom-end"
-								onOpenChange={setIsDropdownOpen}
+					{userContext.token &&
+						hasFetched.current &&
+						aeAreas.length > 0 && (
+							<NavbarItem
+								className={clsx(
+									"justify-end items-center bg-default-100 rounded-lg w-fit h-full font-mono",
+									fontMono.variable
+								)}
 							>
-								<PopoverTrigger>
-									<Button
-										className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
-										color="default"
-										endContent={
-											isDropdownOpen ? (
-												<ChevronUpIcon />
-											) : (
-												<ChevronDownIcon
-													strokeWidth={2}
-												/>
-											)
-										}
-										radius="sm"
-										size="lg"
-										variant="light"
-										onPress={() =>
-											setIsDropdownOpen(!isDropdownOpen)
-										}
-									>
-										{getAeAreaLabel(userContext.ae_id)}
-									</Button>
-								</PopoverTrigger>
+								<Popover
+									className={clsx(
+										"font-mono",
+										fontMono.variable
+									)}
+									isOpen={isDropdownOpen}
+									placement="bottom-end"
+									onOpenChange={setIsDropdownOpen}
+								>
+									<PopoverTrigger>
+										<Button
+											className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
+											color="default"
+											endContent={
+												isDropdownOpen ? (
+													<ChevronUpIcon />
+												) : (
+													<ChevronDownIcon
+														strokeWidth={2}
+													/>
+												)
+											}
+											radius="sm"
+											size="lg"
+											variant="light"
+											onPress={() =>
+												setIsDropdownOpen(
+													!isDropdownOpen
+												)
+											}
+										>
+											{getAeAreaLabel(userContext.ae_id)}
+										</Button>
+									</PopoverTrigger>
 
-								<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
-									<div className="flex flex-col w-full font-semibold text-sm">
-										{aeAreas.length > 0 ? (
-											aeAreas.map((option) => (
-												<Button
-													key={option.ae_area.id}
-													className="justify-between p-2 w-full font-medium text-md text-left"
-													color={
-														userContext.ae_id ===
-														option.ae_area.id
-															? "primary"
-															: "default"
-													}
-													endContent={
-														userContext.ae_id ===
-														option.ae_area.id ? (
-															<CheckIcon />
-														) : null
-													}
-													radius="sm"
-													size="md"
-													variant={
-														userContext.ae_id ===
-														option.ae_area.id
-															? "flat"
-															: "light"
-													}
-													onPress={() =>
-														handleDropdownSelect(
+									<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
+										<div className="flex flex-col w-full font-semibold text-sm">
+											{aeAreas.length > 0 ? (
+												aeAreas.map((option) => (
+													<Button
+														key={option.ae_area.id}
+														className="justify-between p-2 w-full font-medium text-md text-left"
+														color={
+															userContext.ae_id ===
 															option.ae_area.id
-														)
-													}
-												>
-													{option.ae_area.name}
-												</Button>
-											))
-										) : (
-											<div className="p-2 text-gray-400 text-center">
-												No options available
-											</div>
-										)}
-									</div>
-								</PopoverContent>
-							</Popover>
-						</NavbarItem>
-					)}
+																? "primary"
+																: "default"
+														}
+														endContent={
+															userContext.ae_id ===
+															option.ae_area
+																.id ? (
+																<CheckIcon />
+															) : null
+														}
+														radius="sm"
+														size="md"
+														variant={
+															userContext.ae_id ===
+															option.ae_area.id
+																? "flat"
+																: "light"
+														}
+														onPress={() =>
+															handleDropdownSelect(
+																option.ae_area
+																	.id
+															)
+														}
+													>
+														{option.ae_area.name}
+													</Button>
+												))
+											) : (
+												<div className="p-2 text-gray-400 text-center">
+													No options available
+												</div>
+											)}
+										</div>
+									</PopoverContent>
+								</Popover>
+							</NavbarItem>
+						)}
 
 					{/* Menu Toggle */}
 					<NavbarItem className="md:hidden flex justify-end items-center h-full">

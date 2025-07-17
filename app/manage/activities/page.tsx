@@ -10,7 +10,7 @@ import { useLoading } from "@/providers/LoadingContext";
 import { DeleteIcon, EditIcon } from "@/utils/icons";
 
 export default function ManageCarsPage() {
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { userContext } = useAuth();
 	const [activities, setActivities] = useState<any[]>([]);
 	// const router = useRouter();
@@ -23,12 +23,12 @@ export default function ManageCarsPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
 			case "edit":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			case "reject":
@@ -36,11 +36,11 @@ export default function ManageCarsPage() {
 				break;
 
 			case "delete":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};
@@ -60,10 +60,10 @@ export default function ManageCarsPage() {
 	useEffect(() => {
 		if (userContext.token) {
 			try {
-				setIsLoading(true);
+				showLoading();
 				fetchData();
 			} finally {
-				setIsLoading(false);
+				hideLoading();
 			}
 		}
 	}, [userContext]);

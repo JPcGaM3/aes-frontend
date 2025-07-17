@@ -1,19 +1,26 @@
 "use client";
 
-import React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, {
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+	useRef,
+} from "react";
 import { Spinner } from "@heroui/react";
 
 import { ColorType } from "@/types";
 
 interface LoadingContextType {
 	isLoading: boolean;
-	setIsLoading: (loading: boolean) => void;
+	showLoading: (delay?: number) => void;
+	hideLoading: () => void;
 }
 
 const LoadingContext = createContext<LoadingContextType>({
 	isLoading: false,
-	setIsLoading: () => {},
+	showLoading: () => {},
+	hideLoading: () => {},
 });
 
 export const useLoading = () => useContext(LoadingContext);
@@ -22,23 +29,78 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isDebouncing, setIsDebouncing] = useState<boolean>(false);
 	const [colorIndex, setColorIndex] = useState<number>(0);
 
-	const colors = ["primary", "secondary", "success", "warning", "danger"];
+	const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const colorIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+	const colors: ColorType[] = [
+		"primary",
+		"secondary",
+		"success",
+		"warning",
+		"danger",
+	];
+
+	const showLoading = (delay: number = 300) => {
+		if (debounceTimerRef.current) {
+			clearTimeout(debounceTimerRef.current);
+			debounceTimerRef.current = null;
+		}
+
+		setIsDebouncing(true);
+		debounceTimerRef.current = setTimeout(() => {
+			setIsLoading(true);
+			setIsDebouncing(false);
+		}, delay);
+	};
+
+	const hideLoading = () => {
+		if (debounceTimerRef.current) {
+			clearTimeout(debounceTimerRef.current);
+			debounceTimerRef.current = null;
+		}
+		setIsLoading(false);
+		setIsDebouncing(false);
+	};
 
 	useEffect(() => {
-		if (!isLoading) return;
+		if (isLoading) {
+			if (colorIntervalRef.current) {
+				clearInterval(colorIntervalRef.current);
+			}
+			colorIntervalRef.current = setInterval(() => {
+				setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
+			}, 300);
+		} else {
+			if (colorIntervalRef.current) {
+				clearInterval(colorIntervalRef.current);
+				colorIntervalRef.current = null;
+			}
+			setColorIndex(0);
+		}
 
-		const intervalId = setInterval(() => {
-			setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
-		}, 300);
+		return () => {
+			if (colorIntervalRef.current) {
+				clearInterval(colorIntervalRef.current);
+			}
+		};
+	}, [isLoading, colors.length]);
 
-		return () => clearInterval(intervalId);
-	}, [isLoading]);
+	useEffect(() => {
+		return () => {
+			if (debounceTimerRef.current) {
+				clearTimeout(debounceTimerRef.current);
+			}
+		};
+	}, []);
 
 	return (
-		<LoadingContext.Provider value={{ isLoading, setIsLoading }}>
-			{isLoading && (
+		<LoadingContext.Provider
+			value={{ isLoading, showLoading, hideLoading }}
+		>
+			{(isLoading || isDebouncing) && (
 				<div
 					style={{
 						position: "fixed",
@@ -66,7 +128,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 					>
 						<Spinner
 							classNames={{ label: "text-foreground mt-4" }}
-							color={colors[colorIndex as number] as ColorType}
+							color={colors[colorIndex] as ColorType}
 							label="กำลังโหลด..."
 							size="lg"
 							variant="wave"

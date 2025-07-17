@@ -14,11 +14,11 @@ export default function LoginPage() {
 	const router = useRouter();
 
 	const { login } = useAuth();
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 
 	const handleSubmit = async (values: any) => {
-		setIsLoading(true);
+		showLoading();
 		const isEmail = values.username.includes("@mitrphol.com");
 
 		const body = isEmail
@@ -42,7 +42,7 @@ export default function LoginPage() {
 				color: "danger",
 			});
 		} finally {
-			setIsLoading(false);
+			hideLoading();
 		}
 	};
 

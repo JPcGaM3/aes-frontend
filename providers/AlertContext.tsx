@@ -84,6 +84,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 			value={{ showAlert, hideAlert, hideAllAlerts, alertCount }}
 		>
 			{children}
+
 			{visibleAlerts.map((alert, index) => (
 				<AlertComponent
 					key={alert.id}

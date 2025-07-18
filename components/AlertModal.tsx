@@ -25,7 +25,7 @@ export default function AlertModal({
 	onClose,
 	onConfirm,
 	title,
-	message,
+	description,
 	color = "danger",
 	confirmText,
 	cancelText,
@@ -116,7 +116,9 @@ export default function AlertModal({
 
 							<div className="flex flex-col items-center justify-center w-full gap-1">
 								<p className="text-2xl font-bold">{title}</p>
-								<p className="text-sm font-normal">{message}</p>
+								<p className="text-sm font-normal">
+									{description}
+								</p>
 							</div>
 						</ModalBody>
 

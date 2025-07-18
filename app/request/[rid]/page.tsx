@@ -221,72 +221,52 @@ export default function RequestManagementPage({
 	};
 
 	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
+		setIsSubmitting(true);
+
 		if (
-			rid ||
-			isReady ||
-			userContext.id ||
-			userContext.role ||
-			userContext.token ||
-			userContext.ae_id
+			!commentValues.comment.trim() &&
+			status !== REQUESTORDERSTATUS.PendingApproval
 		) {
-			setIsSubmitting(true);
-
-			if (
-				!commentValues.comment.trim() &&
-				status !== REQUESTORDERSTATUS.PendingApproval
-			) {
-				showAlert({
-					title: "คำเตือน!!",
-					description: "กรุณาระบุเหตุผล",
-					color: "warning",
-				});
-
-				setIsSubmitting(false);
-
-				return;
-			}
-
-			try {
-				const paramData = {
-					status: (status as REQUESTORDERSTATUS) || undefined,
-					comment: (commentValues.comment as string) || undefined,
-				};
-
-				await SetStatusRequestOrder({
-					token: userContext.token,
-					rid: Number(rid),
-					paramData: paramData,
-				});
-
-				showAlert({
-					title: "อัพเดตใบสั่งงานสำเร็จ",
-					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
-					color: "success",
-				});
-
-				setTimeout(() => {
-					router.back();
-				}, 2000);
-			} catch (error: any) {
-				showAlert({
-					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
-					description: error.message || "Unknown error occurred",
-					color: "danger",
-				});
-			} finally {
-				setIsSubmitting(false);
-			}
-		} else {
 			showAlert({
-				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
-				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
-				color: "danger",
+				title: "คำเตือน!!",
+				description: "กรุณาระบุเหตุผล",
+				color: "warning",
+			});
+
+			setIsSubmitting(false);
+
+			return;
+		}
+
+		try {
+			const paramData = {
+				status: (status as REQUESTORDERSTATUS) || undefined,
+				comment: (commentValues.comment as string) || undefined,
+			};
+
+			await SetStatusRequestOrder({
+				token: userContext.token,
+				rid: Number(rid),
+				paramData: paramData,
+			});
+
+			showAlert({
+				title: "อัพเดตใบสั่งงานสำเร็จ",
+				description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
+				color: "success",
 			});
 
 			setTimeout(() => {
-				hideLoading();
-				router.push("/login");
+				router.back();
 			}, 2000);
+		} catch (error: any) {
+			showAlert({
+				title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
+				description: error.message || "Unknown error occurred",
+				color: "danger",
+			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -388,7 +368,34 @@ export default function RequestManagementPage({
 		}
 	};
 
-	const handleClearComment = async () => {};
+	const handleClearComment = async () => {
+		setIsSubmitting(true);
+
+		try {
+			await SetStatusRequestOrder({
+				token: userContext.token,
+				rid: Number(rid),
+			});
+
+			showAlert({
+				title: "แก้ไขหมายเหตุสำเร็จ",
+				description: `แก้ไขหมายเหตุ ใบสั่งงานเลขที่ ${requestData.work_order_number} สำเร็จแล้ว`,
+				color: "success",
+			});
+
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		} catch (error: any) {
+			showAlert({
+				title: "แก้ไขหมายเหตุไม่สำเร็จ",
+				description: error.message || "Unknown error occurred",
+				color: "danger",
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	const getToolTypeData = (activity_id?: number) => {
 		if (!activity_id) return [];
@@ -684,10 +691,10 @@ export default function RequestManagementPage({
 
 	return (
 		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -695,7 +702,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -719,28 +726,31 @@ export default function RequestManagementPage({
 								}
 								description={requestData.comment || "-"}
 								endContent={
-									<Button
-										className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
-										color="warning"
-										title="mark as done"
-										type="button"
-										variant="flat"
-										onMouseEnter={() =>
-											setIsHoveringComment(true)
-										}
-										onMouseLeave={() =>
-											setIsHoveringComment(false)
-										}
-										onPress={handleClearComment}
-									>
-										{isHoveringComment ? (
-											<span className="whitespace-nowrap">
-												แก้ไขแล้ว
-											</span>
-										) : (
-											<CheckIcon />
-										)}
-									</Button>
+									requestData.status !==
+										REQUESTORDERSTATUS.Rejected && (
+										<Button
+											className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
+											color="warning"
+											title="mark as done"
+											type="button"
+											variant="flat"
+											onMouseEnter={() =>
+												setIsHoveringComment(true)
+											}
+											onMouseLeave={() =>
+												setIsHoveringComment(false)
+											}
+											onPress={handleClearComment}
+										>
+											{isHoveringComment ? (
+												<span className="whitespace-nowrap">
+													แก้ไขแล้ว
+												</span>
+											) : (
+												<CheckIcon />
+											)}
+										</Button>
+									)
 								}
 								isVisible={true}
 								title="หมายเหตุ"
@@ -774,7 +784,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -824,7 +834,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||

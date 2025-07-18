@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				hasFetch.current = false;
 			}, 5000);
 		}
-	}, [token, userContext, setUserContext, setUserContext, startSessionTimer]);
+	}, [token, userContext, setUserContext, startSessionTimer]);
 
 	const stopSessionTimer = useCallback(() => {
 		if (timerRef.current) {
@@ -171,6 +171,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		const storedExpireTime = sessionStorage.getItem("sessionExpireTime");
 
 		if (storedUser && storedExpireTime) {
+			const expirationTime = parseInt(storedExpireTime);
+			const currentTime = Date.now();
+			const timeLeft = Math.floor((expirationTime - currentTime) / 1000);
+
 			try {
 				const parsed = JSON.parse(storedUser);
 				const expirationTime = parseInt(storedExpireTime);
@@ -184,6 +188,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: parsed.ae_id,
 					});
 
+					if (timeLeft <= refreshThreshold && timeLeft > 0) {
+						setTimeout(() => {
+							refreshToken();
+						}, 100);
+					}
+
 					startSessionTimer(expirationTime);
 				} else {
 					sessionStorage.removeItem("authUser");
@@ -196,7 +206,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			}
 		}
 		setIsReady(true);
-	}, [setUserContext, startSessionTimer]);
+	}, []);
+
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (!document.hidden && token) {
+				const storedExpireTime =
+					sessionStorage.getItem("sessionExpireTime");
+
+				if (storedExpireTime) {
+					const expirationTime = parseInt(storedExpireTime);
+					const currentTime = Date.now();
+					const timeLeft = Math.floor(
+						(expirationTime - currentTime) / 1000
+					);
+
+					if (
+						timeLeft <= refreshThreshold &&
+						timeLeft > 0 &&
+						!refreshInProgress.current
+					) {
+						refreshToken();
+					} else if (timeLeft <= 0) {
+						setIsSessionExpired(true);
+						sessionStorage.removeItem("authUser");
+						sessionStorage.removeItem("sessionExpireTime");
+					}
+				}
+			}
+		};
+
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener(
+				"visibilitychange",
+				handleVisibilityChange
+			);
+		};
+	}, [token, refreshThreshold, refreshToken]);
 
 	useEffect(() => {
 		const isValid =

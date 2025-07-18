@@ -71,7 +71,7 @@ export default function Error({
 			</div>
 
 			{/* Additional Info */}
-			<div className="max-w-md text-xs text-center sm:text-sm text-foreground/50">
+			<div className="w-full text-xs text-center sm:text-sm text-foreground/50">
 				<p>
 					หากยังพบปัญหานี้อยู่ กรุณาติดต่อฝ่ายสนับสนุน
 					หรือรีเฟรชหน้าเว็บเพื่อแก้ไขปัญหา

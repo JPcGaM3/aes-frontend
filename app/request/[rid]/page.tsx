@@ -207,8 +207,7 @@ export default function RequestManagementPage({
 		if (commentValues.comment || hasChanges()) {
 			showAlert({
 				title: "ยกเลิกการแก้ไขใบสั่งงาน",
-				description:
-					"ยกเลิกการแก้ไขหรือปฏิเสธใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
+				description: "ยกเลิกการแก้ไขหรือปฏิเสธ, ล้างข้อมูลในฟอร์ม",
 				color: "warning",
 			});
 		}
@@ -222,72 +221,52 @@ export default function RequestManagementPage({
 	};
 
 	const handleStatus = async (status: REQUESTORDERSTATUS): Promise<any> => {
+		setIsSubmitting(true);
+
 		if (
-			rid ||
-			isReady ||
-			userContext.id ||
-			userContext.role ||
-			userContext.token ||
-			userContext.ae_id
+			!commentValues.comment.trim() &&
+			status !== REQUESTORDERSTATUS.PendingApproval
 		) {
-			setIsSubmitting(true);
-
-			if (
-				!commentValues.comment.trim() &&
-				status !== REQUESTORDERSTATUS.PendingApproval
-			) {
-				showAlert({
-					title: "คำเตือน!!",
-					description: "กรุณาระบุเหตุผล",
-					color: "warning",
-				});
-
-				setIsSubmitting(false);
-
-				return;
-			}
-
-			try {
-				const paramData = {
-					status: (status as REQUESTORDERSTATUS) || undefined,
-					comment: (commentValues.comment as string) || undefined,
-				};
-
-				await SetStatusRequestOrder({
-					token: userContext.token,
-					rid: Number(rid),
-					paramData: paramData,
-				});
-
-				showAlert({
-					title: "อัพเดตใบสั่งงานสำเร็จ",
-					description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
-					color: "success",
-				});
-
-				setTimeout(() => {
-					router.back();
-				}, 2000);
-			} catch (error: any) {
-				showAlert({
-					title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
-					description: error.message || "Unknown error occurred",
-					color: "danger",
-				});
-			} finally {
-				setIsSubmitting(false);
-			}
-		} else {
 			showAlert({
-				title: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
-				description: "กรุณาเข้าสู่ระบบและลองอีกครั้ง",
-				color: "danger",
+				title: "คำเตือน!!",
+				description: "กรุณาระบุเหตุผล",
+				color: "warning",
+			});
+
+			setIsSubmitting(false);
+
+			return;
+		}
+
+		try {
+			const paramData = {
+				status: (status as REQUESTORDERSTATUS) || undefined,
+				comment: (commentValues.comment as string) || undefined,
+			};
+
+			await SetStatusRequestOrder({
+				token: userContext.token,
+				rid: Number(rid),
+				paramData: paramData,
+			});
+
+			showAlert({
+				title: "อัพเดตใบสั่งงานสำเร็จ",
+				description: `อัพเดตสถานะใบสั่งงานเลขที่ ${requestData.work_order_number} เป็น ${translateEnumValue(status, RequestOrderStatusTranslation)} สำเร็จแล้ว`,
+				color: "success",
 			});
 
 			setTimeout(() => {
-				hideLoading();
-				router.push("/login");
+				router.back();
 			}, 2000);
+		} catch (error: any) {
+			showAlert({
+				title: "ยกเลิกใบสั่งงานไม่สำเร็จ",
+				description: error.message || "Unknown error occurred",
+				color: "danger",
+			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -382,6 +361,35 @@ export default function RequestManagementPage({
 			showAlert({
 				title: "เกิดข้อผิดพลาด",
 				description: error.message || "ไม่สามารถบันทึกข้อมูลได้",
+				color: "danger",
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const handleClearComment = async () => {
+		setIsSubmitting(true);
+
+		try {
+			await SetStatusRequestOrder({
+				token: userContext.token,
+				rid: Number(rid),
+			});
+
+			showAlert({
+				title: "แก้ไขหมายเหตุสำเร็จ",
+				description: `แก้ไขหมายเหตุ ใบสั่งงานเลขที่ ${requestData.work_order_number} สำเร็จแล้ว`,
+				color: "success",
+			});
+
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		} catch (error: any) {
+			showAlert({
+				title: "แก้ไขหมายเหตุไม่สำเร็จ",
+				description: error.message || "Unknown error occurred",
 				color: "danger",
 			});
 		} finally {
@@ -709,7 +717,7 @@ export default function RequestManagementPage({
 
 						{requestData.comment && (
 							<Alert
-								className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl "
+								className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
 								color={
 									requestData.status ===
 									REQUESTORDERSTATUS.Rejected
@@ -718,28 +726,31 @@ export default function RequestManagementPage({
 								}
 								description={requestData.comment || "-"}
 								endContent={
-									<Button
-										className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
-										color="warning"
-										title="mark as done"
-										type="button"
-										variant="flat"
-										onMouseEnter={() =>
-											setIsHoveringComment(true)
-										}
-										onMouseLeave={() =>
-											setIsHoveringComment(false)
-										}
-										onPress={() => {}}
-									>
-										{isHoveringComment ? (
-											<span className="whitespace-nowrap">
-												Clear All
-											</span>
-										) : (
-											<CheckIcon />
-										)}
-									</Button>
+									requestData.status !==
+										REQUESTORDERSTATUS.Rejected && (
+										<Button
+											className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
+											color="warning"
+											title="mark as done"
+											type="button"
+											variant="flat"
+											onMouseEnter={() =>
+												setIsHoveringComment(true)
+											}
+											onMouseLeave={() =>
+												setIsHoveringComment(false)
+											}
+											onPress={handleClearComment}
+										>
+											{isHoveringComment ? (
+												<span className="whitespace-nowrap">
+													แก้ไขแล้ว
+												</span>
+											) : (
+												<CheckIcon />
+											)}
+										</Button>
+									)
 								}
 								isVisible={true}
 								title="หมายเหตุ"

@@ -43,7 +43,7 @@ export default function AlertComponent({
 		if (isMounted && !effectiveIsClosing && stackIndex === 0) {
 			const timer = setTimeout(
 				performClose,
-				color === "success" ? 2000 : 300000
+				color === "success" ? 2000 : 3000
 			);
 
 			return () => clearTimeout(timer);

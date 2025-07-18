@@ -17,8 +17,6 @@ import { FieldSection } from "@/interfaces/interfaces";
 import FormButtons from "@/components/FormButtons";
 import { useAlert } from "@/providers/AlertContext";
 import { fetchProfile } from "@/utils/functions";
-import ProtectedRoute from "@/components/HigherOrderComponent";
-import { USERROLE } from "@/utils/enum";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -124,49 +122,46 @@ export default function ProfilePage() {
 	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] || "-";
 
 	return (
-		<ProtectedRoute allowedRoles={Object.values(USERROLE)}>
-			<div className="flex items-center justify-center pt-3">
-				<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
-					{isOpen && (
-						<AlertModal
-							cancelText="ยกเลิก"
-							confirmText="ยืนยัน"
-							description="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
-							title="ออกจากระบบ"
-							onClose={onClose}
-							onConfirm={handleConfirmLogout}
-						/>
-					)}
+		<div className="flex items-center justify-center pt-3">
+			<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+				{isOpen && (
+					<AlertModal
+						cancelText="ยกเลิก"
+						confirmText="ยืนยัน"
+						description="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
+						title="ออกจากระบบ"
+						onClose={onClose}
+						onConfirm={handleConfirmLogout}
+					/>
+				)}
 
-					<div className="flex flex-col items-center justify-center gap-4">
-						<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
-							{profile?.user_result.email
-								?.charAt(0)
-								?.toUpperCase() || "-"}
-						</div>
-
-						<Header
-							hasBorder={false}
-							subtitle={`employee_id: ${`@${profile?.profile.id || "-"}`}`}
-							subtitleClassName={clsx(
-								"mt-1 font-mono text-gray-600 text-sm",
-								fontMono.variable
-							)}
-							title={firstname}
-						/>
+				<div className="flex flex-col items-center justify-center gap-4">
+					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+						{profile?.user_result.email?.charAt(0)?.toUpperCase() ||
+							"-"}
 					</div>
 
-					<FieldValueDisplayer sections={profileSections} />
-
-					<FormButtons
+					<Header
 						hasBorder={false}
-						size="compact"
-						submitColor="danger"
-						submitLabel="ออกจากระบบ"
-						onSubmit={handleLogout}
+						subtitle={`employee_id: ${`@${profile?.profile.id || "-"}`}`}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						title={firstname}
 					/>
 				</div>
+
+				<FieldValueDisplayer sections={profileSections} />
+
+				<FormButtons
+					hasBorder={false}
+					size="compact"
+					submitColor="danger"
+					submitLabel="ออกจากระบบ"
+					onSubmit={handleLogout}
+				/>
 			</div>
-		</ProtectedRoute>
+		</div>
 	);
 }

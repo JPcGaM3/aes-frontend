@@ -47,7 +47,7 @@ export default function ProtectedRoute({
 		}
 
 		if (!hasPermission(allowedRoles)) {
-			router.push("/unauthorize");
+			router.replace("/unauthorize");
 
 			return;
 		}

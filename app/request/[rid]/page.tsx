@@ -47,7 +47,6 @@ import {
 	fetchUsers,
 } from "@/utils/functions";
 import { translateEnumValue } from "@/utils/functions";
-import ProtectedRoute from "@/components/HigherOrderComponent";
 import { taskOrderAPIService } from "@/services/taskOrderAPI";
 import { useAlert } from "@/providers/AlertContext";
 import { CheckIcon } from "@/utils/icons";
@@ -690,181 +689,176 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col items-center justify-center w-full">
-				<Tabs
-					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
-					radius="sm"
-					selectedKey={selectedTab}
-					onSelectionChange={handleTabChange}
+		<div className="flex flex-col items-center justify-center w-full">
+			<Tabs
+				aria-label="TabOptions"
+				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+				radius="sm"
+				selectedKey={selectedTab}
+				onSelectionChange={handleTabChange}
+			>
+				{/* View tab ------------------------------------------------------------------------------------------- */}
+				<Tab
+					key="view"
+					className="flex flex-col items-center justify-center w-full gap-8"
+					title="รายละเอียด"
 				>
-					{/* View tab ------------------------------------------------------------------------------------------- */}
-					<Tab
-						key="view"
-						className="flex flex-col items-center justify-center w-full gap-8"
-						title="รายละเอียด"
-					>
-						<Header
-							hasBorder={false}
-							subtitle={`@${requestData.work_order_number}`}
-							subtitleClassName={clsx(
-								"mt-1 font-mono text-gray-600 text-sm",
-								fontMono.variable
-							)}
-							title="รายละเอียดใบสั่งงาน"
-						/>
-
-						{requestData.comment && (
-							<Alert
-								className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
-								color={
-									requestData.status ===
-									REQUESTORDERSTATUS.Rejected
-										? "danger"
-										: "warning"
-								}
-								description={requestData.comment || "-"}
-								endContent={
-									requestData.status !==
-										REQUESTORDERSTATUS.Rejected && (
-										<Button
-											className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
-											color="warning"
-											title="mark as done"
-											type="button"
-											variant="flat"
-											onMouseEnter={() =>
-												setIsHoveringComment(true)
-											}
-											onMouseLeave={() =>
-												setIsHoveringComment(false)
-											}
-											onPress={handleClearComment}
-										>
-											{isHoveringComment ? (
-												<span className="whitespace-nowrap">
-													แก้ไขแล้ว
-												</span>
-											) : (
-												<CheckIcon />
-											)}
-										</Button>
-									)
-								}
-								isVisible={true}
-								title="หมายเหตุ"
-								variant="faded"
-							/>
+					<Header
+						hasBorder={false}
+						subtitle={`@${requestData.work_order_number}`}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
 						)}
+						title="รายละเอียดใบสั่งงาน"
+					/>
 
-						<FieldValueDisplayer
-							sections={dataSections}
-							size="expanded"
-						/>
-
-						<FormButtons
-							cancelLabel="ยกเลิก"
-							hasBorder={false}
-							isSubmitDisabled={
+					{requestData.comment && (
+						<Alert
+							className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+							color={
+								requestData.status ===
+								REQUESTORDERSTATUS.Rejected
+									? "danger"
+									: "warning"
+							}
+							description={requestData.comment || "-"}
+							endContent={
 								requestData.status !==
-									REQUESTORDERSTATUS.Created &&
-								requestData.status !==
-									REQUESTORDERSTATUS.PendingEdit
+									REQUESTORDERSTATUS.Rejected && (
+									<Button
+										className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
+										color="warning"
+										title="mark as done"
+										type="button"
+										variant="flat"
+										onMouseEnter={() =>
+											setIsHoveringComment(true)
+										}
+										onMouseLeave={() =>
+											setIsHoveringComment(false)
+										}
+										onPress={handleClearComment}
+									>
+										{isHoveringComment ? (
+											<span className="whitespace-nowrap">
+												แก้ไขแล้ว
+											</span>
+										) : (
+											<CheckIcon />
+										)}
+									</Button>
+								)
 							}
-							size="expanded"
-							submitLabel="ส่งคำขออนุมัติ"
-							onCancel={handleCancel}
-							onSubmit={() =>
-								handleStatus(REQUESTORDERSTATUS.PendingApproval)
-							}
+							isVisible={true}
+							title="หมายเหตุ"
+							variant="faded"
 						/>
-					</Tab>
+					)}
 
-					{/* Edit tab ------------------------------------------------------------------------------------------- */}
-					<Tab
-						key="edit"
-						className="flex flex-col items-center justify-center w-full gap-8"
-						isDisabled={
-							requestData.status ===
-								REQUESTORDERSTATUS.Rejected ||
-							requestData.status ===
-								REQUESTORDERSTATUS.PendingApproval
-						}
-						title="แก้ไข"
-					>
-						<FormComponent
-							cancelLabel="ยกเลิก"
-							isSubmitting={isSubmitting}
-							sections={requestFormSections}
-							size="expanded"
-							submitLabel="บันทึก"
-							subtitle={`@${requestData.work_order_number}`}
-							subtitleClassName={clsx(
-								"mt-1 font-mono text-gray-600 text-sm",
-								fontMono.variable
-							)}
-							title="แก้ไขใบสั่งงาน"
-							values={{
-								...requestData,
-								...requestOrderChanges,
-							}}
-							onCancel={() => {
-								resetChanges();
-								handleCancel();
-							}}
-							onChange={handleValueChange}
-							onSubmit={handleSubmit}
-						>
-							{/* Dynamic Task Orders */}
-							<DynamicTaskOrder
-								activityData={activityWithToolTypes}
-								carData={carData}
-								driverData={driverData}
-								errors={taskOrderErrors}
-								getToolTypeOptions={getToolTypeData}
-								taskOrders={taskOrderUIItems}
-								onAddTask={addTaskOrder}
-								onRemoveTask={removeTaskOrder}
-								onUpdateTask={updateTaskOrder}
-							/>
-						</FormComponent>
-					</Tab>
+					<FieldValueDisplayer
+						sections={dataSections}
+						size="expanded"
+					/>
 
-					{/* Reject tab ----------------------------------------------------------------------------------------- */}
-					<Tab
-						key="reject"
-						className="flex flex-col items-center justify-center w-full"
-						isDisabled={
-							requestData.status ===
-								REQUESTORDERSTATUS.Rejected ||
-							requestData.status ===
-								REQUESTORDERSTATUS.PendingApproval
+					<FormButtons
+						cancelLabel="ยกเลิก"
+						hasBorder={false}
+						isSubmitDisabled={
+							requestData.status !== REQUESTORDERSTATUS.Created &&
+							requestData.status !==
+								REQUESTORDERSTATUS.PendingEdit
 						}
-						title="ยกเลิก"
+						size="expanded"
+						submitLabel="ส่งคำขออนุมัติ"
+						onCancel={handleCancel}
+						onSubmit={() =>
+							handleStatus(REQUESTORDERSTATUS.PendingApproval)
+						}
+					/>
+				</Tab>
+
+				{/* Edit tab ------------------------------------------------------------------------------------------- */}
+				<Tab
+					key="edit"
+					className="flex flex-col items-center justify-center w-full gap-8"
+					isDisabled={
+						requestData.status === REQUESTORDERSTATUS.Rejected ||
+						requestData.status ===
+							REQUESTORDERSTATUS.PendingApproval
+					}
+					title="แก้ไข"
+				>
+					<FormComponent
+						cancelLabel="ยกเลิก"
+						isSubmitting={isSubmitting}
+						sections={requestFormSections}
+						size="expanded"
+						submitLabel="บันทึก"
+						subtitle={`@${requestData.work_order_number}`}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						title="แก้ไขใบสั่งงาน"
+						values={{
+							...requestData,
+							...requestOrderChanges,
+						}}
+						onCancel={() => {
+							resetChanges();
+							handleCancel();
+						}}
+						onChange={handleValueChange}
+						onSubmit={handleSubmit}
 					>
-						<FormComponent
-							cancelLabel="ยกเลิก"
-							isSubmitting={isSubmitting}
-							sections={commentSections}
-							size="expanded"
-							submitLabel="ส่งความคิดเห็น"
-							subtitle={requestData.work_order_number}
-							subtitleClassName={clsx(
-								"mt-1 font-mono text-gray-600 text-sm",
-								fontMono.variable
-							)}
-							title="ปฏิเสธใบสั่งงาน"
-							values={commentValues}
-							onCancel={handleCancel}
-							onChange={handleCommentChange}
-							onSubmit={() =>
-								handleStatus(REQUESTORDERSTATUS.Rejected)
-							}
+						{/* Dynamic Task Orders */}
+						<DynamicTaskOrder
+							activityData={activityWithToolTypes}
+							carData={carData}
+							driverData={driverData}
+							errors={taskOrderErrors}
+							getToolTypeOptions={getToolTypeData}
+							taskOrders={taskOrderUIItems}
+							onAddTask={addTaskOrder}
+							onRemoveTask={removeTaskOrder}
+							onUpdateTask={updateTaskOrder}
 						/>
-					</Tab>
-				</Tabs>
-			</div>
-		</ProtectedRoute>
+					</FormComponent>
+				</Tab>
+
+				{/* Reject tab ----------------------------------------------------------------------------------------- */}
+				<Tab
+					key="reject"
+					className="flex flex-col items-center justify-center w-full"
+					isDisabled={
+						requestData.status === REQUESTORDERSTATUS.Rejected ||
+						requestData.status ===
+							REQUESTORDERSTATUS.PendingApproval
+					}
+					title="ยกเลิก"
+				>
+					<FormComponent
+						cancelLabel="ยกเลิก"
+						isSubmitting={isSubmitting}
+						sections={commentSections}
+						size="expanded"
+						submitLabel="ส่งความคิดเห็น"
+						subtitle={requestData.work_order_number}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						title="ปฏิเสธใบสั่งงาน"
+						values={commentValues}
+						onCancel={handleCancel}
+						onChange={handleCommentChange}
+						onSubmit={() =>
+							handleStatus(REQUESTORDERSTATUS.Rejected)
+						}
+					/>
+				</Tab>
+			</Tabs>
+		</div>
 	);
 }

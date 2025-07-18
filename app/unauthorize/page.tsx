@@ -6,17 +6,19 @@ import { useRouter } from "next/navigation";
 
 import FuzzyText from "@/components/FuzzyTextComponent";
 import { fontMono } from "@/config/fonts";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function UnAuthorizePage() {
 	const router = useRouter();
+	const { logout } = useAuth();
 
 	return (
-		<div className="flex flex-col items-center justify-between w-full h-[calc(100vh-120px)] ">
-			<div className="flex flex-col items-center justify-center w-full h-full max-w-lg gap-12 text-center">
+		<div className="flex flex-col justify-between items-center w-full h-[calc(100vh-120px)]">
+			<div className="flex flex-col justify-center items-center gap-12 w-full max-w-lg h-full text-center">
 				{/* Error Title Section */}
 				<div
 					className={clsx(
-						"flex flex-col items-center justify-center w-full",
+						"flex flex-col justify-center items-center w-full",
 						fontMono.className
 					)}
 				>
@@ -46,17 +48,17 @@ export default function UnAuthorizePage() {
 				</div>
 
 				{/* Error Message Section */}
-				<div className="w-full px-6 py-4 border rounded-lg bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800">
-					<p className="text-xs font-medium leading-relaxed break-words sm:text-sm md:text-md text-primary-700 dark:text-primary-300">
+				<div className="bg-primary-50 dark:bg-primary-900/20 px-6 py-4 border border-primary-200 dark:border-primary-800 rounded-lg w-full">
+					<p className="font-medium text-primary-700 md:text-md dark:text-primary-300 text-xs sm:text-sm break-words leading-relaxed">
 						การเข้าถึงถูกปฏิเสธ คุณไม่มีสิทธิ์ในการดูหน้านี้
 						กรุณาติดต่อผู้ดูแลระบบหรือเข้าสู่ระบบใหม่อีกครั้ง
 					</p>
 				</div>
 
 				{/* Action Button */}
-				<div className="flex flex-row justify-center w-full gap-2">
+				<div className="flex flex-row justify-center gap-2 w-full">
 					<Button
-						className="w-full px-8 py-3 font-semibold transition-all duration-200 transform hover:scale-105"
+						className="px-8 py-3 w-full font-semibold hover:scale-105 transition-all duration-200 transform"
 						color="default"
 						radius="sm"
 						size="lg"
@@ -69,12 +71,13 @@ export default function UnAuthorizePage() {
 					</Button>
 
 					<Button
-						className="w-full px-8 py-3 font-semibold transition-all duration-200 transform hover:scale-105"
+						className="px-8 py-3 w-full font-semibold hover:scale-105 transition-all duration-200 transform"
 						color="primary"
 						radius="sm"
 						size="lg"
 						variant="solid"
 						onPress={() => {
+							logout();
 							router.push("/login");
 						}}
 					>
@@ -84,7 +87,7 @@ export default function UnAuthorizePage() {
 			</div>
 
 			{/* Additional Info */}
-			<div className="max-w-md text-xs text-center sm:text-sm text-foreground/50">
+			<div className="max-w-md text-foreground/50 text-xs sm:text-sm text-center">
 				<p>
 					หากยังพบปัญหานี้อยู่ กรุณาติดต่อฝ่ายสนับสนุน
 					หรือรีเฟรชหน้าเว็บเพื่อแก้ไขปัญหา

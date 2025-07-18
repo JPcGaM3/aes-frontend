@@ -43,7 +43,7 @@ export default function AlertComponent({
 		if (isMounted && !effectiveIsClosing && stackIndex === 0) {
 			const timer = setTimeout(
 				performClose,
-				color === "success" ? 2000 : 3000
+				color === "success" ? 2000 : 300000
 			);
 
 			return () => clearTimeout(timer);
@@ -65,7 +65,7 @@ export default function AlertComponent({
 	const zIndex = 45 + (totalAlerts - stackIndex);
 
 	const placementClass =
-		"fixed left-3 mt-3 right-3 sm:left-auto md:right-6 sm:w-96 transition-all duration-300 ease-in-out";
+		"fixed left-3 mt-3 right-3 sm:left-auto md:right-6 w-96 transition-all duration-300 ease-in-out";
 
 	const scaleTransform = `scale(${Math.max(1 - stackIndex * 0.05, 0.9)})`;
 	const slideTransform =
@@ -86,7 +86,7 @@ export default function AlertComponent({
 	const alertContent = (
 		<div className={placementClass} style={stackStyle}>
 			<Alert
-				className="shadow-xl"
+				className="items-center w-full shadow-xl"
 				color={color}
 				description={description}
 				isClosable={true}

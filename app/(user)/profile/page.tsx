@@ -128,7 +128,6 @@ export default function ProfilePage() {
 					<AlertModal
 						cancelText="ยกเลิก"
 						confirmText="ยืนยัน"
-						isOpen={isOpen}
 						message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
 						title="ออกจากระบบ"
 						onClose={onClose}

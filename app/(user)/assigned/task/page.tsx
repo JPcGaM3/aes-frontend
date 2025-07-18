@@ -304,10 +304,8 @@ export default function TaskPage() {
 			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
 				{/* Modal ------------------------------------------------------------- */}
 				<FilterModal
-					cancelLabel="Cancel"
 					isOpen={isOpenFilter}
 					sections={filterFields}
-					submitLabel="Apply Filters"
 					title="ฟิลเตอร์รายการงานย่อย"
 					values={filterValues}
 					onClose={onCloseFilter}
@@ -315,16 +313,16 @@ export default function TaskPage() {
 				/>
 
 				{/* Header ----------------------------------------------------------- */}
-				<Header className="mb-6 w-full text-left" title="รายการงานย่อย">
+				<Header className="w-full mb-6 text-left" title="รายการงานย่อย">
 					<Button
-						className="hidden sm:inline-flex font-semibold"
+						className="hidden font-semibold sm:inline-flex"
 						color="primary"
 						endContent={<FilterIcon />}
 						radius="sm"
 						variant="flat"
 						onPress={onOpenFilter}
 					>
-						Filter
+						ตัวกรอง
 					</Button>
 
 					<Button
@@ -340,7 +338,7 @@ export default function TaskPage() {
 					<Divider className="w-[1px]" orientation="vertical" />
 
 					<Button
-						className="hidden sm:inline-flex font-semibold"
+						className="hidden font-semibold sm:inline-flex"
 						color="primary"
 						endContent={<PlusIcon />}
 						radius="sm"
@@ -349,7 +347,7 @@ export default function TaskPage() {
 							handleNewPage({ params: { action: "add" } })
 						}
 					>
-						Add
+						สร้าง
 					</Button>
 
 					<Button
@@ -367,12 +365,12 @@ export default function TaskPage() {
 
 				{/* Body ------------------------------------------------------------- */}
 				{error ? (
-					<div className="my-8 font-medium text-gray-500 text-center">
+					<div className="my-8 font-medium text-center text-gray-500">
 						{error}
 					</div>
 				) : (
 					<div>
-						<div className="mb-4 font-medium text-gray-700 text-right">
+						<div className="mb-4 font-medium text-right text-gray-700">
 							{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 						</div>
 

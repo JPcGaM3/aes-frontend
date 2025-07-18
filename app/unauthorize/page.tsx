@@ -40,7 +40,7 @@ export default function UnAuthorizePage() {
 							fontWeight={500}
 							hoverIntensity={0.25}
 						>
-							Something went wrong!
+							Unauthorize!
 						</FuzzyText>
 					</div>
 				</div>
@@ -84,7 +84,7 @@ export default function UnAuthorizePage() {
 			</div>
 
 			{/* Additional Info */}
-			<div className="max-w-md text-xs text-center sm:text-sm text-foreground/50">
+			<div className="w-full text-xs text-center sm:text-sm text-foreground/50">
 				<p>
 					หากยังพบปัญหานี้อยู่ กรุณาติดต่อฝ่ายสนับสนุน
 					หรือรีเฟรชหน้าเว็บเพื่อแก้ไขปัญหา

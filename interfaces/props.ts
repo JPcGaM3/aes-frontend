@@ -31,11 +31,17 @@ export interface AlertComponentProps {
 }
 
 export interface AlertModalProps {
-	isOpen: boolean;
 	onClose: () => void;
 	onConfirm?: () => void;
 	title: string;
 	message: string;
+	color?:
+		| "default"
+		| "primary"
+		| "secondary"
+		| "success"
+		| "warning"
+		| "danger";
 	confirmText?: string;
 	cancelText?: string;
 }

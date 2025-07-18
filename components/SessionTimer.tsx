@@ -7,7 +7,7 @@ import { clsx } from "clsx";
 import { useAuth } from "@/providers/AuthContext";
 import { useAlert } from "@/providers/AlertContext";
 import { fontMono } from "@/config/fonts";
-import { HourglassIcon } from "@/utils/animated-icons";
+import { HourglassAnimatedIcon } from "@/utils/animated-icons";
 
 export default function SessionTimer() {
 	const router = useRouter();
@@ -48,13 +48,13 @@ export default function SessionTimer() {
 	return (
 		<div
 			className={clsx(
-				"flex justify-center items-center bg-default-100 px-3 py-1 rounded-lg h-full aspect-[1/1] font-mono font-semibold text-sm",
+				"flex flex-row justify-center items-center bg-default-100 pl-2 pr-4 gap-2 rounded-lg h-full font-mono font-semibold text-sm",
 				fontMono.variable,
 				getTimerColor()
 			)}
 		>
-			<div className="items-center mr-1">
-				<HourglassIcon />
+			<div className="items-center opacity-70">
+				<HourglassAnimatedIcon format="lottie" size={40} />
 			</div>
 
 			<span className="items-center sm:text-l md:text-xl lg:text-2xl">

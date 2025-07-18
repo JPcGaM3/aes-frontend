@@ -12,8 +12,8 @@ export default function FilterModal({
 	title,
 	subtitle,
 	sections,
-	submitLabel,
-	cancelLabel,
+	submitLabel = "ใช้งานตัวกรอง",
+	cancelLabel = "ยกเลิก",
 	onSubmit,
 	values,
 }: FilterModalProps) {

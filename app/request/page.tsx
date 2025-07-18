@@ -355,10 +355,8 @@ export default function RequestPage() {
 				{/* Modal ------------------------------------------------------------- */}
 
 				<FilterModal
-					cancelLabel="Cancel"
 					isOpen={isOpenFilter}
 					sections={filterSections}
-					submitLabel="Apply Filters"
 					title="ฟิลเตอร์รายการใบสั่งงาน"
 					values={filter}
 					onClose={() => onCloseFilter()}
@@ -380,7 +378,7 @@ export default function RequestPage() {
 						variant="flat"
 						onPress={onOpenFilter}
 					>
-						Filter
+						ตัวกรอง
 					</Button>
 
 					<Button
@@ -405,7 +403,7 @@ export default function RequestPage() {
 							handleNewPage({ params: { action: "add" } })
 						}
 					>
-						Add
+						สร้าง
 					</Button>
 
 					<Button

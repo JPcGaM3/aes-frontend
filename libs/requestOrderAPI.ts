@@ -165,7 +165,7 @@ export async function SetStatusRequestOrder({
 }: {
 	token: string;
 	rid: number;
-	paramData: {
+	paramData?: {
 		status?: string;
 		comment?: string;
 	};

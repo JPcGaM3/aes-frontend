@@ -2,7 +2,7 @@ import type { DrawerComponentProps } from "@/interfaces/props";
 
 import { Drawer, DrawerContent, DrawerHeader, Button } from "@heroui/react";
 
-import { ChevronsRight } from "@/utils/icons";
+import { ChevronsRightIcon } from "@/utils/icons";
 
 export default function DrawerComponent({
 	size = "5xl",
@@ -33,7 +33,7 @@ export default function DrawerComponent({
 					{(onClose) => (
 						<div>
 							{placement === "right" && (
-								<DrawerHeader className="inset-x-0 top-0 flex flex-row justify-between gap-2 px-2 py-2 border-b">
+								<DrawerHeader className="top-0 inset-x-0 flex flex-row justify-between gap-2 px-2 py-2 border-b">
 									<Button
 										isIconOnly
 										className="text-default-400"
@@ -41,7 +41,7 @@ export default function DrawerComponent({
 										variant="light"
 										onPress={onClose}
 									>
-										<ChevronsRight />
+										<ChevronsRightIcon />
 									</Button>
 								</DrawerHeader>
 							)}

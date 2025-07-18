@@ -190,7 +190,7 @@ export default function CardComponent<T extends { id: number | string }>({
 							<Divider />
 							<div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
 								<div className="text-sm text-gray-500">
-									More actions.
+									รายละเอียดเพิ่มเติม
 								</div>
 
 								<Popover

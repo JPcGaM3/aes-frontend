@@ -207,8 +207,7 @@ export default function RequestManagementPage({
 		if (commentValues.comment || hasChanges()) {
 			showAlert({
 				title: "ยกเลิกการแก้ไขใบสั่งงาน",
-				description:
-					"ยกเลิกการแก้ไขหรือปฏิเสธใบสั่งงาน, ล้างข้อมูลในฟอร์ม",
+				description: "ยกเลิกการแก้ไขหรือปฏิเสธ, ล้างข้อมูลในฟอร์ม",
 				color: "warning",
 			});
 		}
@@ -388,6 +387,8 @@ export default function RequestManagementPage({
 			setIsSubmitting(false);
 		}
 	};
+
+	const handleClearComment = async () => {};
 
 	const getToolTypeData = (activity_id?: number) => {
 		if (!activity_id) return [];
@@ -730,11 +731,11 @@ export default function RequestManagementPage({
 										onMouseLeave={() =>
 											setIsHoveringComment(false)
 										}
-										onPress={() => {}}
+										onPress={handleClearComment}
 									>
 										{isHoveringComment ? (
 											<span className="whitespace-nowrap">
-												Clear All
+												แก้ไขแล้ว
 											</span>
 										) : (
 											<CheckIcon />

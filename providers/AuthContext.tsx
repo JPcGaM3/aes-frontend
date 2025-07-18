@@ -11,7 +11,7 @@ import React, {
 	useRef,
 } from "react";
 
-import { LoginProps, LoginUser } from "@/libs/userAPI";
+import { getNewToken, LoginProps, LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
 	token: string;
@@ -41,7 +41,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [sessionTimeLeft, setSessionTimeLeft] = useState<number>(0);
 	const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
-	const sessionDuration = 59 * 60 + 59;
+	const refreshInProgress = useRef<boolean>(false);
+	const hasFetch = useRef<boolean>(false);
+	// const sessionDuration = 59 * 60 + 59;
+	const sessionDuration = 12 * 60;
+	const refreshThreshold = 10 * 60;
 
 	const userContext: UserContextType = useMemo(
 		() => ({
@@ -106,6 +110,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		[sessionDuration, calculateTimeLeft]
 	);
 
+	const refreshToken = useCallback(async () => {
+		if (refreshInProgress.current || !token) {
+			return;
+		}
+
+		try {
+			refreshInProgress.current = true;
+
+			const response = await getNewToken({ token });
+
+			if (response.token) {
+				const newUserContext = {
+					...userContext,
+					token: response.token,
+				};
+
+				setUserContext(newUserContext);
+				sessionStorage.setItem(
+					"authUser",
+					JSON.stringify(newUserContext)
+				);
+				startSessionTimer();
+			}
+		} catch {
+			return;
+		} finally {
+			refreshInProgress.current = false;
+			setTimeout(() => {
+				hasFetch.current = false;
+			}, 5000);
+		}
+	}, [token, userContext, setUserContext, setUserContext, startSessionTimer]);
+
 	const stopSessionTimer = useCallback(() => {
 		if (timerRef.current) {
 			clearInterval(timerRef.current);
@@ -115,6 +152,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		setIsSessionExpired(false);
 		sessionStorage.removeItem("sessionExpireTime");
 	}, []);
+
+	useEffect(() => {
+		if (
+			token &&
+			sessionTimeLeft <= refreshThreshold &&
+			sessionTimeLeft > 0 &&
+			!refreshInProgress.current &&
+			!hasFetch.current
+		) {
+			hasFetch.current = true;
+			refreshToken();
+		}
+	}, [sessionTimeLeft, refreshThreshold, token, refreshToken]);
 
 	useEffect(() => {
 		const storedUser = sessionStorage.getItem("authUser");

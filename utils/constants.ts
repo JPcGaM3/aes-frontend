@@ -63,6 +63,7 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
 	ON_HOLD: "warning",
 	COMPLETED: "success",
 	CANCELLED: "danger",
+	REJECTED: "danger",
 };
 
 const RequestOrderTranslation: Record<string, string> = {

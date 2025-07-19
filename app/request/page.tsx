@@ -46,6 +46,7 @@ interface filterInterface {
 	start_year?: string;
 	end_month?: string;
 	end_year?: string;
+	quota_number?: string;
 }
 
 export default function RequestPage() {
@@ -202,6 +203,11 @@ export default function RequestPage() {
 							})
 						),
 					],
+				},
+				{
+					type: "textarea",
+					name: "quota_number",
+					labelTranslator: RequestOrderTranslation,
 				},
 				[
 					{

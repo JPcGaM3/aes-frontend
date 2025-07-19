@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Divider, useDisclosure } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import clsx from "clsx";
 import moment from "moment-timezone";
 import {
@@ -14,7 +14,13 @@ import {
 } from "@internationalized/date";
 
 import { useAuth } from "@/providers/AuthContext";
-import { EditIcon, FilterIcon, InfoIcon, PlusIcon } from "@/utils/icons";
+import {
+	EditIcon,
+	FilterIcon,
+	InfoIcon,
+	PlusIcon,
+	RejectIcon,
+} from "@/utils/icons";
 import {
 	RequestOrderTranslation,
 	TaskOrderStatusColorMap,
@@ -32,8 +38,6 @@ import CardComponent from "@/components/CardComponent";
 import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { TaskOrder } from "@/interfaces/schema";
-import ProtectedRoute from "@/components/HigherOrderComponent";
-import { USERROLE } from "@/utils/enum";
 import { fetchAssignedTask } from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
 
@@ -50,6 +54,7 @@ export default function TaskPage() {
 	const { userContext, isReady } = useAuth();
 	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
+	const hasFetched = useRef(false);
 	const [taskOrders, setTaskOrders] = useState<TaskOrder[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const {
@@ -75,14 +80,17 @@ export default function TaskPage() {
 	});
 
 	useEffect(() => {
-		showLoading();
 		if (
 			isReady &&
 			userContext.id &&
 			userContext.ae_id &&
-			userContext.token
+			userContext.token &&
+			!hasFetched.current
 		) {
-			const fetchData = async (): Promise<any> => {
+			showLoading();
+			hasFetched.current = true;
+
+			const fetchData = async () => {
 				try {
 					const promises = [
 						fetchAssignedTask({
@@ -96,8 +104,9 @@ export default function TaskPage() {
 					await Promise.all(promises);
 				} catch (error: any) {
 					showAlert({
-						title: "Failed to fetch",
-						description: error.message || "Unknown error occurred",
+						title: "ไม่สามารถโหลดข้อมูลได้",
+						description:
+							error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 						color: "danger",
 					});
 				} finally {
@@ -107,7 +116,13 @@ export default function TaskPage() {
 
 			fetchData();
 		}
-	}, [userContext, filterValues, isReady]);
+	}, [
+		filterValues,
+		isReady,
+		userContext.ae_id,
+		userContext.token,
+		userContext.id,
+	]);
 
 	const headerFields: FieldConfig[] = [
 		{
@@ -141,7 +156,7 @@ export default function TaskPage() {
 			labelTranslator: TaskOrderTranslation,
 		},
 		{
-			key: "tool_type_id",
+			key: "tool_types_id",
 			path: "tool_type.tool_type_name",
 			className: "text-gray-500 text-sm",
 			labelTranslator: TaskOrderTranslation,
@@ -195,31 +210,6 @@ export default function TaskPage() {
 	const statusConfig = {
 		colorMap: TaskOrderStatusColorMap,
 		translation: TaskOrderStatusTranslation,
-	};
-
-	const getActions = (item: TaskOrder) => {
-		const actionList: ActionConfig[] = [
-			{
-				key: "view",
-				label: "ดูรายละเอียด",
-				icon: <InfoIcon />,
-				onClick: () =>
-					handleNewPage({
-						params: { id: item.id, action: "view" },
-					}),
-			},
-			{
-				key: "comment",
-				label: "แจ้งปัญหา",
-				icon: <EditIcon />,
-				onClick: () =>
-					handleNewPage({
-						params: { id: item.id, action: "comment" },
-					}),
-			},
-		];
-
-		return actionList;
 	};
 
 	const handleApplyFilters = (values: any) => {
@@ -285,12 +275,17 @@ export default function TaskPage() {
 		showLoading();
 
 		switch (params.action) {
+			case "start":
+				router.push(`task/${params.id}?action=${params.action}`);
+				break;
 			case "view":
 			case "edit":
 			case "comment":
 				router.push(`task/${params.id}?action=${params.action}`);
 				break;
 			case "reject":
+				router.push(`task/${params.id}?action=${params.action}`);
+				break;
 			case "add":
 
 			default:
@@ -299,93 +294,99 @@ export default function TaskPage() {
 		}
 	};
 
+	const actions: ActionConfig[] = [
+		{
+			key: "start",
+			label: "เริ่มงาน",
+			icon: <InfoIcon />,
+			onClick: (item: TaskOrder) =>
+				handleNewPage({ params: { id: item.id, action: "start" } }),
+		},
+		{
+			key: "comment",
+			label: "แจ้งปัญหา",
+			icon: <EditIcon />,
+			onClick: (item: TaskOrder) =>
+				handleNewPage({ params: { id: item.id, action: "comment" } }),
+		},
+		{
+			key: "reject",
+			label: "ปฏิเสธ",
+			icon: <RejectIcon />,
+			className: "text-danger-500",
+			onClick: (item: TaskOrder) =>
+				handleNewPage({ params: { id: item.id, action: "reject" } }),
+		},
+	];
+
 	return (
 		<>
-			<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
-				{/* Modal ------------------------------------------------------------- */}
-				<FilterModal
-					cancelLabel="Cancel"
-					isOpen={isOpenFilter}
-					sections={filterFields}
-					submitLabel="Apply Filters"
-					title="ฟิลเตอร์รายการงานย่อย"
-					values={filterValues}
-					onClose={onCloseFilter}
-					onSubmit={handleApplyFilters}
+			{/* Modal ------------------------------------------------------------- */}
+			<FilterModal
+				cancelLabel="Cancel"
+				isOpen={isOpenFilter}
+				sections={filterFields}
+				submitLabel="Apply Filters"
+				title="ฟิลเตอร์รายการงานย่อย"
+				values={filterValues}
+				onClose={onCloseFilter}
+				onSubmit={handleApplyFilters}
+			/>
+
+			{/* Header ----------------------------------------------------------- */}
+			<Header className="mb-6 w-full text-left" title="รายการปฏิบัติงาน">
+				<Button
+					className="hidden sm:inline-flex font-semibold"
+					color="primary"
+					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
+					onPress={onOpenFilter}
+				>
+					Filter
+				</Button>
+
+				<Button
+					isIconOnly
+					className="sm:hidden"
+					color="primary"
+					endContent={<FilterIcon />}
+					radius="sm"
+					variant="flat"
+					onPress={onOpenFilter}
 				/>
 
-				{/* Header ----------------------------------------------------------- */}
-				<Header className="mb-6 w-full text-left" title="รายการงานย่อย">
-					<Button
-						className="hidden sm:inline-flex font-semibold"
-						color="primary"
-						endContent={<FilterIcon />}
-						radius="sm"
-						variant="flat"
-						onPress={onOpenFilter}
-					>
-						Filter
-					</Button>
+				<Button
+					isIconOnly
+					className="sm:hidden"
+					color="primary"
+					endContent={<PlusIcon />}
+					radius="sm"
+					variant="solid"
+					onPress={() => handleNewPage({ params: { action: "add" } })}
+				/>
+			</Header>
 
-					<Button
-						isIconOnly
-						className="sm:hidden"
-						color="primary"
-						endContent={<FilterIcon />}
-						radius="sm"
-						variant="flat"
-						onPress={onOpenFilter}
-					/>
-
-					<Divider className="w-[1px]" orientation="vertical" />
-
-					<Button
-						className="hidden sm:inline-flex font-semibold"
-						color="primary"
-						endContent={<PlusIcon />}
-						radius="sm"
-						variant="solid"
-						onPress={() =>
-							handleNewPage({ params: { action: "add" } })
-						}
-					>
-						Add
-					</Button>
-
-					<Button
-						isIconOnly
-						className="sm:hidden"
-						color="primary"
-						endContent={<PlusIcon />}
-						radius="sm"
-						variant="solid"
-						onPress={() =>
-							handleNewPage({ params: { action: "add" } })
-						}
-					/>
-				</Header>
-
-				{/* Body ------------------------------------------------------------- */}
-				{error ? (
-					<div className="my-8 font-medium text-gray-500 text-center">
-						{error}
+			{/* Body ------------------------------------------------------------- */}
+			{error ? (
+				<div className="my-8 font-medium text-gray-500 text-center">
+					{error}
+				</div>
+			) : (
+				<div>
+					<div className="mb-4 font-medium text-gray-700 text-right">
+						{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 					</div>
-				) : (
-					<div>
-						<div className="mb-4 font-medium text-gray-700 text-right">
-							{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
-						</div>
 
-						<CardComponent
-							actions={getActions}
-							bodyFields={bodyFields}
-							headerFields={headerFields}
-							items={taskOrders}
-							statusConfig={statusConfig}
-						/>
-					</div>
-				)}
-			</ProtectedRoute>
+					<CardComponent
+						actions={actions}
+						bodyFields={bodyFields}
+						headerFields={headerFields}
+						items={taskOrders}
+						statusConfig={statusConfig}
+					/>
+				</div>
+			)}
 		</>
 	);
 }

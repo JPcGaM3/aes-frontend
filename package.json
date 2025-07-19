@@ -45,6 +45,7 @@
 		"@heroui/system": "2.4.16",
 		"@heroui/table": "^2.2.19",
 		"@heroui/theme": "2.4.16",
+		"@internationalized/date": "^3.8.2",
 		"@react-aria/ssr": "3.9.8",
 		"@react-aria/visually-hidden": "3.8.23",
 		"@types/uuid": "^10.0.0",

@@ -1,3 +1,10 @@
+import {
+	toCalendar,
+	BuddhistCalendar,
+	parseDate,
+} from "@internationalized/date";
+import moment from "moment-timezone";
+
 import { AlertComponentProps } from "@/interfaces/props";
 import {
 	Activity,
@@ -21,6 +28,8 @@ import {
 } from "@/libs/requestOrderAPI";
 import { getAssignedTask, getTaskById } from "@/libs/taskOrderAPI";
 import { getProfile, getUsers } from "@/libs/userAPI";
+
+moment.locale("th");
 
 /**
  * Translates an enum value using a translation map.
@@ -46,6 +55,108 @@ export function translateEnumValue<T extends string>(
  */
 export function getNestedValue(obj: Record<string, any>, path: string): any {
 	return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+}
+
+export function convertToChristianCalendar(
+	dateValue: any,
+	timezone: string = "Asia/Bangkok"
+): string | null {
+	if (!dateValue) return null;
+
+	try {
+		if (typeof dateValue === "object" && dateValue.calendar) {
+			const christianYear =
+				dateValue.calendar.identifier === "buddhist"
+					? dateValue.year - 543
+					: dateValue.year;
+
+			const momentDate = moment.tz(
+				{
+					year: christianYear,
+					month: dateValue.month - 1,
+					day: dateValue.day,
+					hour: dateValue.hour || 0,
+					minute: dateValue.minute || 0,
+					second: dateValue.second || 0,
+					millisecond: dateValue.millisecond || 0,
+				},
+				timezone
+			);
+
+			return momentDate.toISOString();
+		}
+
+		if (typeof dateValue === "string") {
+			return moment.tz(dateValue, timezone).toISOString();
+		}
+
+		if (dateValue instanceof Date) {
+			return moment.tz(dateValue, timezone).toISOString();
+		}
+
+		return null;
+	} catch {
+		return null;
+	}
+}
+
+export function convertToBuddhistCalendar(
+	dateValue: any,
+	timezone: string = "Asia/Bangkok"
+): any | null {
+	if (!dateValue) return null;
+
+	try {
+		if (typeof dateValue === "object" && dateValue.calendar) {
+			if (dateValue.calendar.identifier === "buddhist") {
+				return dateValue;
+			}
+
+			return toCalendar(dateValue, new BuddhistCalendar());
+		}
+
+		if (typeof dateValue === "string") {
+			const parsedDate = parseDate(dateValue);
+
+			return toCalendar(parsedDate, new BuddhistCalendar());
+		}
+
+		if (dateValue instanceof Date) {
+			const dateString = dateValue.toISOString().split("T")[0];
+			const parsedDate = parseDate(dateString);
+
+			return toCalendar(parsedDate, new BuddhistCalendar());
+		}
+
+		return null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Example usage
+ *
+ *  Convert to Christian for database storage
+ *	@const christianDate = convertToChristianCalendar(formData.ap_date);
+ *
+ *	Convert to Buddhist for display
+ *	@const buddhistDate = convertToBuddhistCalendar(someDate);
+ *
+ *	General converter
+ *	@const convertedDate = convertDateCalendar(dateValue, 'christian');
+ */
+
+export function convertDateCalendar(
+	dateValue: any,
+	targetCalendar: "buddhist" | "christian",
+	timezone: string = "Asia/Bangkok"
+): any | null {
+	if (targetCalendar === "christian") {
+		return convertToChristianCalendar(dateValue, timezone);
+	} else {
+		return convertToBuddhistCalendar(dateValue, timezone);
+	}
 }
 
 export async function fetchCustomerTypes({

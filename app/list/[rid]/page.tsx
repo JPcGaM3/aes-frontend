@@ -15,7 +15,7 @@ import { RequestOrder } from "@/interfaces/schema";
 import { useAuth } from "@/providers/AuthContext";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
 import FormComponent from "@/components/FormComponent";
-import { REQUESTORDERSTATUS, USERROLE } from "@/utils/enum";
+import { REQUESTORDERSTATUS } from "@/utils/enum";
 import {
 	RequestOrderTranslation,
 	TaskOrderTranslation,
@@ -25,7 +25,6 @@ import {
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
 import { fetchReqOrderWithTaskData } from "@/utils/functions";
-import ProtectedRoute from "@/components/HigherOrderComponent";
 import { useAlert } from "@/providers/AlertContext";
 
 moment.locale("th");
@@ -334,9 +333,7 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<ProtectedRoute
-			allowedRoles={[USERROLE.Admin, USERROLE.DepartmentHead]}
-		>
+		<>
 			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
@@ -434,6 +431,6 @@ export default function RequestManagementPage({
 					</Tab>
 				</Tabs>
 			</div>
-		</ProtectedRoute>
+		</>
 	);
 }

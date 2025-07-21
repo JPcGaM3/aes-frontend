@@ -2,15 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 
-import TableComponent from "@/app/(demo)/table/page";
-import { FieldConfig } from "@/interfaces/interfaces";
 import { getUsers } from "@/libs/userAPI";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { DeleteIcon, EditIcon } from "@/utils/icons";
+import { RemoveIcon, EditIcon } from "@/utils/icons";
+import CardComponent from "@/components/CardComponent";
 
 export default function ManageCarsPage() {
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { userContext } = useAuth();
 	const [user, setUser] = useState<any[]>([]);
 
@@ -22,12 +21,12 @@ export default function ManageCarsPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
 			case "edit":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			case "reject":
@@ -35,11 +34,11 @@ export default function ManageCarsPage() {
 				break;
 
 			case "delete":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};
@@ -63,27 +62,27 @@ export default function ManageCarsPage() {
 			});
 			setUser(users);
 		} catch (error) {
-			console.error("Error fetching users:", error);
+			alert("Error fetching users : " + error);
 		}
 	};
 
 	useEffect(() => {
 		if (userContext.token) {
 			try {
-				setIsLoading(true);
+				showLoading();
 				fetchData();
 			} finally {
-				setIsLoading(false);
+				hideLoading();
 			}
 		}
 	}, [userContext]);
 
-	const tableHeaderFields: FieldConfig[] = [
-		{ label: "ID", key: "employee_id" },
-		{ label: "Fullname", key: "fullname" },
-		{ label: "Role", key: "role" },
-		{ label: "AE", key: "ae_area" },
-	];
+	// const tableHeaderFields: FieldConfig[] = [
+	// 	{ label: "ID", key: "employee_id" },
+	// 	{ label: "Fullname", key: "fullname" },
+	// 	{ label: "Role", key: "role" },
+	// 	{ label: "AE", key: "ae_area" },
+	// ];
 
 	const actions = [
 		{
@@ -96,7 +95,7 @@ export default function ManageCarsPage() {
 		{
 			key: "delete",
 			label: "ลบ",
-			icon: <DeleteIcon />,
+			icon: <RemoveIcon />,
 			className: "text-danger-500",
 			onClick: (item: any) =>
 				handleActions({ params: { action: "delete", id: item.id } }),
@@ -105,17 +104,12 @@ export default function ManageCarsPage() {
 
 	return (
 		<>
-			<TableComponent
+			<CardComponent
 				actions={actions}
-				datas={user}
-				headers={tableHeaderFields}
+				bodyFields={[]}
+				headerFields={[]}
+				items={user}
 			/>
-			{/* <CardComponent
-				actions={actions}
-				bodyFields={cardBodyFields}
-				headerFields={cardHeaderFields}
-				items={car}
-			/> */}
 		</>
 	);
 }

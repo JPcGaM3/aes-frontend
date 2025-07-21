@@ -47,7 +47,6 @@ import {
 	fetchUsers,
 } from "@/utils/functions";
 import { translateEnumValue } from "@/utils/functions";
-import ProtectedRoute from "@/components/HigherOrderComponent";
 import { taskOrderAPIService } from "@/services/taskOrderAPI";
 import { useAlert } from "@/providers/AlertContext";
 import { CheckIcon } from "@/utils/icons";
@@ -438,7 +437,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "unit_head",
+					name: "unit_head_id",
 					value: requestData?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -516,11 +515,7 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "car_id",
-					value:
-						task.cars?.name ||
-						task.cars?.car_number ||
-						task.cars?.id ||
-						"-",
+					value: task.cars?.car_number || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -530,7 +525,11 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "user_id",
-					value: task.users?.username || "-",
+					value:
+						task.users && task.users.username
+							? task.users.username.charAt(0).toUpperCase() +
+								task.users.username.slice(1).toLowerCase()
+							: "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -630,6 +629,7 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "quota_number",
+					min: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -642,6 +642,7 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "land_number",
+					min: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -664,6 +665,7 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "target_area",
+					min: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -691,10 +693,10 @@ export default function RequestManagementPage({
 
 	return (
 		<>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -702,7 +704,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -784,7 +786,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -834,7 +836,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||

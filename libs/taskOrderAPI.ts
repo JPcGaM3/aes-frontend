@@ -119,18 +119,18 @@ export async function SetActualTaskOrder({
 }: {
 	token: string;
 	tid: number;
-	paramData: {
+	paramData?: {
 		ap_date?: Date;
 		oil_start_mile?: number;
 		start_mile?: number;
 		oil_start?: number;
 		car_start_hour?: string;
-		start_timer?: Date;
+		start_timer?: Date | string;
 		oil_slip?: string;
 		end_mile?: number;
 		oil_end?: number;
 		car_end_hour?: string;
-		end_timer?: Date;
+		end_timer?: Date | string;
 		actual_area?: number;
 	};
 }) {

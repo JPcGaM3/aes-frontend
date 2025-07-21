@@ -2,15 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 
-import TableComponent from "@/app/(demo)/table/page";
-import { FieldConfig } from "@/interfaces/interfaces";
 import { getCars } from "@/libs/carAPI";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
-import { DeleteIcon, EditIcon } from "@/utils/icons";
+import { RemoveIcon, EditIcon } from "@/utils/icons";
+import CardComponent from "@/components/CardComponent";
 
 export default function ManageCarsPage() {
-	const { setIsLoading } = useLoading();
+	const { showLoading, hideLoading } = useLoading();
 	const { userContext } = useAuth();
 	const [car, setCar] = useState<any[]>([]);
 	// const router = useRouter();
@@ -23,12 +22,12 @@ export default function ManageCarsPage() {
 			id?: number;
 		};
 	}) => {
-		setIsLoading(true);
+		showLoading();
 
 		switch (params.action) {
 			case "view":
 			case "edit":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			case "reject":
@@ -36,11 +35,11 @@ export default function ManageCarsPage() {
 				break;
 
 			case "delete":
-				setIsLoading(false);
+				hideLoading();
 				break;
 
 			default:
-				setIsLoading(false);
+				hideLoading();
 				break;
 		}
 	};
@@ -51,33 +50,33 @@ export default function ManageCarsPage() {
 
 			setCar(cars);
 		} catch (error) {
-			console.error("Error fetching cars:", error);
+			alert("Error fetching cars : " + error);
 		}
 	};
 
 	useEffect(() => {
 		if (userContext.token) {
 			try {
-				setIsLoading(true);
+				showLoading();
 				fetchData();
 			} finally {
-				setIsLoading(false);
+				hideLoading();
 			}
 		}
 	}, [userContext]);
 
-	const tableHeaderFields: FieldConfig[] = [
-		{ label: "Asset", key: "asset" },
+	// const tableHeaderFields: FieldConfig[] = [
+	// 	{ label: "Asset", key: "asset" },
+	// 	{ label: "Description", key: "asset_description" },
+	// 	{ label: "HP", key: "hp" },
+	// ];
+
+	const cardHeaderFields = [{ label: "Asset", key: "asset" }];
+
+	const cardBodyFields = [
 		{ label: "Description", key: "asset_description" },
 		{ label: "HP", key: "hp" },
 	];
-
-	// const cardHeaderFields = [{ label: "Asset", key: "asset" }];
-
-	// const cardBodyFields = [
-	//   { label: "Description", key: "asset_description" },
-	//   { label: "HP", key: "hp" },
-	// ];
 
 	const actions = [
 		{
@@ -90,7 +89,7 @@ export default function ManageCarsPage() {
 		{
 			key: "delete",
 			label: "ลบ",
-			icon: <DeleteIcon />,
+			icon: <RemoveIcon />,
 			className: "text-danger-500",
 			onClick: (item: any) =>
 				handleActions({ params: { action: "delete", id: item.id } }),
@@ -99,17 +98,12 @@ export default function ManageCarsPage() {
 
 	return (
 		<>
-			<TableComponent
+			<CardComponent
 				actions={actions}
-				datas={car}
-				headers={tableHeaderFields}
+				bodyFields={cardBodyFields}
+				headerFields={cardHeaderFields}
+				items={car}
 			/>
-			{/* <CardComponent
-        actions={actions}
-        bodyFields={cardBodyFields}
-        headerFields={cardHeaderFields}
-        items={car}
-      /> */}
 		</>
 	);
 }

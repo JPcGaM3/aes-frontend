@@ -22,8 +22,6 @@ import { FormSection, UploadedFile } from "@/interfaces/interfaces";
 import FormComponent from "@/components/FormComponent";
 import UploadComponent from "@/components/UploadComponent";
 import { KeyInRequestOrder, uploadRequestOrder } from "@/libs/requestOrderAPI";
-import ProtectedRoute from "@/components/HigherOrderComponent";
-import { USERROLE } from "@/utils/enum";
 import { useLoading } from "@/providers/LoadingContext";
 import {
 	fetchActivitiesWithToolTypes,
@@ -425,12 +423,14 @@ export default function AddRequestPage() {
 				{
 					type: "number",
 					name: "target_area",
+					min: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "land_number",
+					min: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -496,16 +496,16 @@ export default function AddRequestPage() {
 
 	return (
 		<>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Key-in"
 					>
 						<FormComponent
@@ -521,9 +521,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col justify-center items-center gap-4 w-full">
-								<div className="flex items-center gap-5 w-full">
-									<span className="font-semibold text-gray-700 text-xl">
+							<div className="flex flex-col items-center justify-center w-full gap-4">
+								<div className="flex items-center w-full gap-5">
+									<span className="text-xl font-semibold text-gray-700">
 										กิจกรรม
 									</span>
 
@@ -569,7 +569,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="Upload"
 					>
 						<UploadComponent

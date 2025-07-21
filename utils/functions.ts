@@ -102,7 +102,7 @@ export function convertToChristianCalendar(
 
 export function convertToBuddhistCalendar(
 	dateValue: any,
-	timezone: string = "Asia/Bangkok"
+	_timezone: string = "Asia/Bangkok"
 ): any | null {
 	if (!dateValue) return null;
 

@@ -22,8 +22,6 @@ import {
 import { Button } from "@heroui/button";
 import { clsx } from "clsx";
 
-import SessionTimer from "./SessionTimer";
-
 import { useAuth } from "@/providers/AuthContext";
 import {
 	HomeIcon,

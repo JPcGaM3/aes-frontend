@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDisclosure } from "@heroui/react";
+import clsx from "clsx";
 
 import AlertModal from "@/components/AlertModal";
 import { useAuth } from "@/providers/AuthContext";
@@ -16,7 +17,6 @@ import Header from "@/components/Header";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
 import { fetchProfile } from "@/utils/functions";
-import clsx from "clsx";
 
 export default function ProfilePage() {
 	const router = useRouter();

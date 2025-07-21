@@ -315,6 +315,7 @@ export default function TaskManagementPage({
 		} finally {
 			setTimeout(() => {
 				setIsAdding(false);
+				window.location.reload();
 			}, 500);
 		}
 	};
@@ -356,6 +357,7 @@ export default function TaskManagementPage({
 		} finally {
 			setTimeout(() => {
 				setIsAdding(false);
+				window.location.reload();
 			}, 500);
 		}
 	};
@@ -449,8 +451,6 @@ export default function TaskManagementPage({
 					{taskOrder &&
 						taskOrder.start_mile &&
 						taskOrder.start_timer &&
-						!taskOrder.end_mile &&
-						!taskOrder.end_timer &&
 						!(
 							(taskOrder.actual_area || 0) >=
 							(taskOrder.target_area || 1)

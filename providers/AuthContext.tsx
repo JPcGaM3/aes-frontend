@@ -43,8 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 	const refreshInProgress = useRef<boolean>(false);
 	const hasFetch = useRef<boolean>(false);
-	// const sessionDuration = 59 * 60 + 59;
-	const sessionDuration = 12 * 60;
+	const sessionDuration = 59 * 60 + 59;
 	const refreshThreshold = 10 * 60;
 
 	const userContext: UserContextType = useMemo(
@@ -139,7 +138,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			refreshInProgress.current = false;
 			setTimeout(() => {
 				hasFetch.current = false;
-			}, 5000);
+			}, 1000 * 60);
 		}
 	}, [token, userContext, setUserContext, startSessionTimer]);
 

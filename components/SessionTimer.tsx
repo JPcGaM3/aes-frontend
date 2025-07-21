@@ -48,7 +48,7 @@ export default function SessionTimer() {
 	return (
 		<div
 			className={clsx(
-				"flex flex-row justify-center items-center bg-default-100 pl-2 pr-4 gap-2 rounded-lg h-full font-mono font-semibold text-sm",
+				"flex flex-row justify-center items-center gap-2 bg-default-100 pr-4 pl-2 rounded-lg h-full font-mono font-semibold text-sm",
 				fontMono.variable,
 				getTimerColor()
 			)}

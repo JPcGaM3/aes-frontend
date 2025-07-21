@@ -255,11 +255,11 @@ export default function Navbar() {
 						</Button>
 
 						{/* Session Timer */}
-						{userContext.token && (
+						{/* {userContext.token && (
 							<NavbarItem className="flex justify-start items-center w-full h-full">
 								<SessionTimer />
 							</NavbarItem>
-						)}
+						)} */}
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}

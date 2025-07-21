@@ -10,6 +10,9 @@ import React, {
 	ReactNode,
 	useRef,
 } from "react";
+import { useRouter } from "next/navigation";
+
+import { useAlert } from "./AlertContext";
 
 import { getNewToken, LoginProps, LoginUser } from "@/libs/userAPI";
 
@@ -33,6 +36,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+	const router = useRouter();
+	const { showAlert } = useAlert();
 	const [token, setToken] = useState<string>("");
 	const [id, setId] = useState<number>(NaN);
 	const [role, setRole] = useState<string[]>([]);
@@ -307,6 +312,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		if (isSessionExpired) {
+			showAlert({
+				title: "เซสชันหมดอายุ",
+				description: "เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่",
+				color: "warning",
+			});
+
+			setTimeout(() => {
+				logout();
+				router.push("/login");
+			}, 2000);
+		}
+	}, [isSessionExpired, showAlert, logout, router]);
 
 	const providerValue = useMemo(
 		() => ({

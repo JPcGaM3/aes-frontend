@@ -39,8 +39,9 @@ export interface TextAreaInputConfig extends BaseInputConfig {
 
 export interface NumberInputConfig extends BaseInputConfig {
 	type: "number";
-	min?: number;
-	max?: number;
+	unit?: string;
+	minValue?: number;
+	maxValue?: number;
 }
 
 export interface DropdownOption {
@@ -125,6 +126,7 @@ export interface FieldValue {
 	name: string;
 	labelTranslator?: Record<string, string>;
 	value: React.ReactNode;
+	unit?: string;
 	translator?: Record<string, string>;
 	highlight?: boolean;
 	className?: string;

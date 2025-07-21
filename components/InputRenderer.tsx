@@ -172,6 +172,13 @@ export default function InputRenderer({
 				<NumberInput
 					{...commonProps}
 					aria-label={commonProps.label}
+					endContent={
+						<div className="flex items-center gap-2">
+							<span className="pr-2 text-xs font-medium text-gray-500">
+								{commonProps.unit}
+							</span>
+						</div>
+					}
 					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined

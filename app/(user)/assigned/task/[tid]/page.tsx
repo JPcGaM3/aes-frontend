@@ -154,7 +154,7 @@ export default function TaskManagementPage({
 				{
 					type: "number",
 					name: "start_mile",
-					min: 0,
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: TaskOrderTranslation,
 				},
@@ -183,15 +183,15 @@ export default function TaskManagementPage({
 				{
 					type: "number",
 					name: "end_mile",
-					min: 0,
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "actual_area",
-					min: 0,
-					max: taskOrder.target_area,
+					minValue: 0,
+					maxValue: taskOrder.target_area,
 					isRequired: true,
 					labelTranslator: TaskOrderTranslation,
 				},
@@ -368,10 +368,10 @@ export default function TaskManagementPage({
 				color: "danger",
 			});
 		} finally {
-			// setTimeout(() => {
-			// 	setIsAdding(false);
-			// 	window.location.reload();
-			// }, 500);
+			setTimeout(() => {
+				setIsAdding(false);
+				window.location.reload();
+			}, 500);
 		}
 	};
 

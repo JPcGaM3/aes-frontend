@@ -80,7 +80,8 @@ export default function DynamicTaskOrder({
 		{
 			type: "number",
 			name: "target_area",
-			min: 0,
+			unit: "ไร่",
+			minValue: 0,
 			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 		},

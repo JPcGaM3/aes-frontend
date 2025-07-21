@@ -690,11 +690,11 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
-			<div className="flex flex-col items-center justify-center w-full">
+		<>
+			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -702,7 +702,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col items-center justify-center w-full gap-8"
+						className="flex flex-col justify-center items-center gap-8 w-full"
 						title="รายละเอียด"
 					>
 						<Header
@@ -784,7 +784,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col items-center justify-center w-full gap-8"
+						className="flex flex-col justify-center items-center gap-8 w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -834,7 +834,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						isDisabled={
 							requestData.status ===
 								REQUESTORDERSTATUS.Rejected ||
@@ -865,6 +865,6 @@ export default function RequestManagementPage({
 					</Tab>
 				</Tabs>
 			</div>
-		</ProtectedRoute>
+		</>
 	);
 }

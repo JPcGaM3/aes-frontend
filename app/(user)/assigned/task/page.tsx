@@ -40,6 +40,7 @@ import { fontMono } from "@/config/fonts";
 import { TaskOrder } from "@/interfaces/schema";
 import { fetchAssignedTask } from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
+import { TASKORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
 	start_date?: CalendarDate;
@@ -294,30 +295,47 @@ export default function TaskPage() {
 		}
 	};
 
-	const actions: ActionConfig[] = [
-		{
-			key: "start",
-			label: "เริ่มงาน",
-			icon: <InfoIcon />,
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "start" } }),
-		},
-		{
-			key: "comment",
-			label: "แจ้งปัญหา",
-			icon: <EditIcon />,
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "comment" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
+	const getActions = (item: TaskOrder) => {
+		const actionList: ActionConfig[] = [];
+
+		if (
+			item.status !== TASKORDERSTATUS.Rejected &&
+			item.status !== TASKORDERSTATUS.Completed
+		) {
+			actionList.push(
+				{
+					key: "start",
+					label: "เริ่มงาน",
+					icon: <InfoIcon />,
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "start" },
+						}),
+				},
+				{
+					key: "comment",
+					label: "แจ้งปัญหา",
+					icon: <EditIcon />,
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "comment" },
+						}),
+				},
+				{
+					key: "reject",
+					label: "ปฏิเสธ",
+					icon: <RejectIcon />,
+					className: "text-danger-500",
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "reject" },
+						}),
+				}
+			);
+		}
+
+		return actionList;
+	};
 
 	return (
 		<>
@@ -379,7 +397,7 @@ export default function TaskPage() {
 					</div>
 
 					<CardComponent
-						actions={actions}
+						actions={(item: TaskOrder) => getActions(item)}
 						bodyFields={bodyFields}
 						headerFields={headerFields}
 						items={taskOrders}

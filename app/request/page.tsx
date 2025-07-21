@@ -205,7 +205,7 @@ export default function RequestPage() {
 					],
 				},
 				{
-					type: "textarea",
+					type: "text",
 					name: "quota_number",
 					labelTranslator: RequestOrderTranslation,
 				},

@@ -108,7 +108,11 @@ export default function ListPage() {
 					const params = {
 						...filter,
 						ae_id: userContext?.ae_id,
-						status: REQUESTORDERSTATUS.PendingApproval,
+						status: [
+							REQUESTORDERSTATUS.PendingApproval,
+							REQUESTORDERSTATUS.PendingEdit,
+							REQUESTORDERSTATUS.Rejected,
+						],
 					};
 
 					promises.push(
@@ -271,38 +275,6 @@ export default function ListPage() {
 						label: "ปีสิ้นสุด",
 						options: yearList,
 						className: "w-1/2",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "start_month",
-						label: "เดือนเริ่มต้น",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "start_year",
-						label: "ปีเริ่มต้น",
-						options: yearList,
-						className: "w-1/3",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "end_month",
-						label: "เดือนสิ้นสุด",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "end_year",
-						label: "ปีสิ้นสุด",
-						options: yearList,
-						className: "w-1/3",
 					},
 				],
 			],

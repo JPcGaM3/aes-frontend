@@ -495,7 +495,7 @@ export default function AddRequestPage() {
 	];
 
 	return (
-		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.UnitHead]}>
+		<>
 			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
@@ -584,6 +584,6 @@ export default function AddRequestPage() {
 					</Tab>
 				</Tabs>
 			</div>
-		</ProtectedRoute>
+		</>
 	);
 }

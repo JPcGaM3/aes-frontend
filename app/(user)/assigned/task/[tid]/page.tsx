@@ -292,6 +292,13 @@ export default function TaskManagementPage({
 			};
 
 			const promises = [
+				SetStatusTaskOrder({
+					token: userContext.token,
+					tid: Number(tid),
+					paramData: {
+						status: TASKORDERSTATUS.InProgress,
+					},
+				}),
 				SetActualTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
@@ -357,7 +364,7 @@ export default function TaskManagementPage({
 		} finally {
 			setTimeout(() => {
 				setIsAdding(false);
-				window.location.reload();
+				router.back();
 			}, 500);
 		}
 	};
@@ -436,7 +443,7 @@ export default function TaskManagementPage({
 								isSubmitting={isAdding}
 								sections={startTaskOrderFields}
 								submitLabel="ยืนยัน"
-								subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+								subtitle={`${taskOrder.requestorders?.work_order_number}-${tid}`}
 								subtitleClassName={clsx(
 									"mt-1 font-mono text-gray-600 text-sm",
 									fontMono.variable
@@ -461,7 +468,7 @@ export default function TaskManagementPage({
 								isSubmitting={isAdding}
 								sections={endTaskOrderFields}
 								submitLabel="ยืนยัน"
-								subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+								subtitle={`${taskOrder.requestorders?.work_order_number}-${tid}`}
 								subtitleClassName={clsx(
 									"mt-1 font-mono text-gray-600 text-sm",
 									fontMono.variable
@@ -494,7 +501,7 @@ export default function TaskManagementPage({
 						sections={commentSections}
 						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+						subtitle={`${taskOrder.requestorders?.work_order_number}-${tid}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
@@ -520,7 +527,7 @@ export default function TaskManagementPage({
 						sections={commentSections}
 						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+						subtitle={`${taskOrder.requestorders?.work_order_number}-${tid}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable

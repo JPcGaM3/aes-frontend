@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { clsx } from "clsx";
 import { useDisclosure } from "@heroui/react";
 
-import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
-import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/schema";
-import { fontMono } from "@/config/fonts";
-import { FieldSection } from "@/interfaces/interfaces";
 import FormButtons from "@/components/FormButtons";
 import { useAlert } from "@/providers/AlertContext";
+import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import Header from "@/components/Header";
+import { fontMono } from "@/config/fonts";
+import { FieldSection } from "@/interfaces/interfaces";
 import { fetchProfile } from "@/utils/functions";
-import ProtectedRoute from "@/components/HigherOrderComponent";
-import { USERROLE } from "@/utils/enum";
+import clsx from "clsx";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -124,9 +122,9 @@ export default function ProfilePage() {
 	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] || "-";
 
 	return (
-		<ProtectedRoute allowedRoles={Object.values(USERROLE)}>
-			<div className="flex items-center justify-center pt-3">
-				<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+		<>
+			<div className="flex justify-center items-center pt-3">
+				<div className="flex flex-col justify-center items-center gap-8 w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
 					{isOpen && (
 						<AlertModal
 							cancelText="ยกเลิก"
@@ -138,8 +136,8 @@ export default function ProfilePage() {
 						/>
 					)}
 
-					<div className="flex flex-col items-center justify-center gap-4">
-						<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+					<div className="flex flex-col justify-center items-center gap-4">
+						<div className="flex justify-center items-center bg-gray-200 rounded-full w-24 h-24 font-bold text-gray-700 text-4xl">
 							{profile?.user_result.email
 								?.charAt(0)
 								?.toUpperCase() || "-"}
@@ -167,6 +165,6 @@ export default function ProfilePage() {
 					/>
 				</div>
 			</div>
-		</ProtectedRoute>
+		</>
 	);
 }

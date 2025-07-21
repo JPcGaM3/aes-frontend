@@ -83,6 +83,12 @@ export default function Navbar() {
 			allowedRoles: [USERROLE.Admin, USERROLE.UnitHead],
 		},
 		{
+			name: "งานย่อย",
+			path: "/assigned/task",
+			icon: <CheckFillIcon size={18} />,
+			allowedRoles: [USERROLE.Admin, USERROLE.UnitHead],
+		},
+		{
 			name: "รายการ",
 			path: "/list",
 			icon: <DocumentIcon size={18} />,

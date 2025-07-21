@@ -7,13 +7,14 @@ import {
 	DatePicker,
 	DateRangePicker,
 	NumberInput,
+	TimeInput,
 } from "@heroui/react";
 import clsx from "clsx";
 
 import { PatchedAutocomplete } from "./PatchedAutocomplete";
 
 import { InputRendererProps } from "@/interfaces/props";
-import { EyeIcon, EyeCloseIcon } from "@/utils/icons";
+import { EyeIcon, EyeCloseIcon, ClockIcon } from "@/utils/icons";
 import { DropdownOption } from "@/interfaces/interfaces";
 import { fontMono } from "@/config/fonts";
 
@@ -71,6 +72,11 @@ export default function InputRenderer({
 						onValueChange(commonProps.name, v);
 					}
 
+					break;
+				}
+
+				case "time": {
+					onValueChange(commonProps.name, v);
 					break;
 				}
 
@@ -282,12 +288,14 @@ export default function InputRenderer({
 		}
 
 		case "date": {
+			const dateValue = value || commonProps.defaultValue || null;
+
 			return (
 				<DatePicker
 					{...commonProps}
 					showMonthAndYearPickers
 					aria-label={commonProps.label}
-					value={value || null}
+					value={dateValue}
 					onChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -309,6 +317,24 @@ export default function InputRenderer({
 						}
 					/>
 				</div>
+			);
+		}
+
+		case "time": {
+			const timeValue = value || commonProps.defaultValue || null;
+
+			return (
+				<TimeInput
+					{...commonProps}
+					aria-label={commonProps.label}
+					endContent={<ClockIcon />}
+					granularity={commonProps.granularity || "minute"}
+					hourCycle={commonProps.hourCycle || 12}
+					value={timeValue}
+					onChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
+				/>
 			);
 		}
 	}

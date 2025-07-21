@@ -287,7 +287,7 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "car_id",
-					value: task.cars?.name || "-",
+					value: task.cars?.car_number || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -334,10 +334,10 @@ export default function RequestManagementPage({
 
 	return (
 		<>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 					radius="sm"
 					selectedKey={selectedTab}
 					onSelectionChange={handleTabChange}
@@ -345,7 +345,7 @@ export default function RequestManagementPage({
 					{/* View tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="view"
-						className="flex flex-col justify-center items-center gap-8 w-full"
+						className="flex flex-col items-center justify-center w-full gap-8"
 						title="รายละเอียด"
 					>
 						<Header
@@ -379,7 +379,7 @@ export default function RequestManagementPage({
 					{/* Edit tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="edit"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="แก้ไข"
 					>
 						<FormComponent
@@ -406,7 +406,7 @@ export default function RequestManagementPage({
 					{/* Reject tab ----------------------------------------------------------------------------------------- */}
 					<Tab
 						key="reject"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="ยกเลิก"
 					>
 						<FormComponent

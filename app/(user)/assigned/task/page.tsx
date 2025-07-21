@@ -18,8 +18,8 @@ import {
 	EditIcon,
 	FilterIcon,
 	InfoIcon,
-	PlusIcon,
 	RejectIcon,
+	StartIcon,
 } from "@/utils/icons";
 import {
 	RequestOrderTranslation,
@@ -40,6 +40,7 @@ import { fontMono } from "@/config/fonts";
 import { TaskOrder } from "@/interfaces/schema";
 import { fetchAssignedTask } from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
+import { TASKORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
 	start_date?: CalendarDate;
@@ -56,12 +57,13 @@ export default function TaskPage() {
 	const { showAlert } = useAlert();
 	const hasFetched = useRef(false);
 	const [taskOrders, setTaskOrders] = useState<TaskOrder[]>([]);
-	const [error, setError] = useState<string | null>(null);
+
 	const {
 		isOpen: isOpenFilter,
 		onOpen: onOpenFilter,
 		onClose: onCloseFilter,
 	} = useDisclosure();
+
 	const now = moment.tz("Asia/Bangkok");
 	const startDateStr = now.clone().startOf("month").format("YYYY-MM-DD");
 	const endDateStr = now.clone().endOf("month").format("YYYY-MM-DD");
@@ -174,7 +176,7 @@ export default function TaskPage() {
 		},
 	];
 
-	const filterFields: FormSection[] = [
+	const filterSections: FormSection[] = [
 		{
 			fields: [
 				{
@@ -192,17 +194,22 @@ export default function TaskPage() {
 					],
 				},
 				{
-					type: "date",
-					name: "start_date",
-					label: "วันเริ่มต้น",
-					className: "w-2/3",
+					type: "text",
+					name: "quota_number",
+					labelTranslator: RequestOrderTranslation,
 				},
-				{
-					type: "date",
-					name: "end_date",
-					label: "วันสิ้นสุด",
-					className: "w-2/3",
-				},
+				[
+					{
+						type: "date",
+						name: "start_date",
+						label: "วันเริ่มต้น",
+					},
+					{
+						type: "date",
+						name: "end_date",
+						label: "วันสิ้นสุด",
+					},
+				],
 			],
 		},
 	];
@@ -274,59 +281,67 @@ export default function TaskPage() {
 	}) => {
 		showLoading();
 
-		switch (params.action) {
-			case "start":
-				router.push(`task/${params.id}?action=${params.action}`);
-				break;
-			case "view":
-			case "edit":
-			case "comment":
-				router.push(`task/${params.id}?action=${params.action}`);
-				break;
-			case "reject":
-				router.push(`task/${params.id}?action=${params.action}`);
-				break;
-			case "add":
-
-			default:
-				hideLoading();
-				break;
-		}
+		router.push(`task/${params.id}?action=${params.action}`);
 	};
 
-	const actions: ActionConfig[] = [
-		{
-			key: "start",
-			label: "เริ่มงาน",
-			icon: <InfoIcon />,
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "start" } }),
-		},
-		{
-			key: "comment",
-			label: "แจ้งปัญหา",
-			icon: <EditIcon />,
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "comment" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: (item: TaskOrder) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
+	const getActions = (item: TaskOrder) => {
+		const actionList: ActionConfig[] = [
+			{
+				key: "detail",
+				label: "รายละเอียด",
+				icon: <InfoIcon />,
+				onClick: (item: TaskOrder) =>
+					handleNewPage({
+						params: { id: item.id, action: "detail" },
+					}),
+			},
+		];
+
+		if (
+			item.status !== TASKORDERSTATUS.Rejected &&
+			item.status !== TASKORDERSTATUS.Completed
+		) {
+			actionList.push(
+				{
+					key: "start",
+					label: "เริ่มงาน",
+					icon: <StartIcon />,
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "start" },
+						}),
+				},
+				{
+					key: "comment",
+					label: "แจ้งปัญหา",
+					icon: <EditIcon />,
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "comment" },
+						}),
+				},
+				{
+					key: "reject",
+					label: "ปฏิเสธ",
+					icon: <RejectIcon />,
+					className: "text-danger-500",
+					onClick: (item: TaskOrder) =>
+						handleNewPage({
+							params: { id: item.id, action: "reject" },
+						}),
+				}
+			);
+		}
+
+		return actionList;
+	};
 
 	return (
 		<>
 			{/* Modal ------------------------------------------------------------- */}
 			<FilterModal
-				cancelLabel="Cancel"
 				isOpen={isOpenFilter}
-				sections={filterFields}
-				submitLabel="Apply Filters"
+				sections={filterSections}
 				title="ฟิลเตอร์รายการงานย่อย"
 				values={filterValues}
 				onClose={onCloseFilter}
@@ -334,59 +349,48 @@ export default function TaskPage() {
 			/>
 
 			{/* Header ----------------------------------------------------------- */}
-			<Header className="mb-6 w-full text-left" title="รายการปฏิบัติงาน">
+			<Header
+				className="w-full mb-6 text-left"
+				orientation="horizontal"
+				subtitle="งานย่อยทั้งหมดของคุณ"
+				title="รายการใบงานย่อย"
+			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
-					endContent={<FilterIcon />}
+					endContent={<FilterIcon variant="border" />}
 					radius="sm"
 					variant="flat"
 					onPress={onOpenFilter}
 				>
-					Filter
+					ตัวกรอง
 				</Button>
 
 				<Button
 					isIconOnly
 					className="sm:hidden"
 					color="primary"
-					endContent={<FilterIcon />}
+					endContent={<FilterIcon variant="border" />}
 					radius="sm"
 					variant="flat"
 					onPress={onOpenFilter}
 				/>
-
-				<Button
-					isIconOnly
-					className="sm:hidden"
-					color="primary"
-					endContent={<PlusIcon />}
-					radius="sm"
-					variant="solid"
-					onPress={() => handleNewPage({ params: { action: "add" } })}
-				/>
 			</Header>
 
 			{/* Body ------------------------------------------------------------- */}
-			{error ? (
-				<div className="my-8 font-medium text-gray-500 text-center">
-					{error}
+			<div>
+				<div className="mb-4 font-medium text-right text-gray-700">
+					{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 				</div>
-			) : (
-				<div>
-					<div className="mb-4 font-medium text-gray-700 text-right">
-						{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
-					</div>
 
-					<CardComponent
-						actions={actions}
-						bodyFields={bodyFields}
-						headerFields={headerFields}
-						items={taskOrders}
-						statusConfig={statusConfig}
-					/>
-				</div>
-			)}
+				<CardComponent
+					actions={(item: TaskOrder) => getActions(item)}
+					bodyFields={bodyFields}
+					headerFields={headerFields}
+					items={taskOrders}
+					statusConfig={statusConfig}
+				/>
+			</div>
 		</>
 	);
 }

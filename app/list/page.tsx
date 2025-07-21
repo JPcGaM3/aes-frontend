@@ -108,7 +108,11 @@ export default function ListPage() {
 					const params = {
 						...filter,
 						ae_id: userContext?.ae_id,
-						status: REQUESTORDERSTATUS.PendingApproval,
+						status: [
+							REQUESTORDERSTATUS.PendingApproval,
+							REQUESTORDERSTATUS.PendingEdit,
+							REQUESTORDERSTATUS.Rejected,
+						],
 					};
 
 					promises.push(
@@ -273,38 +277,6 @@ export default function ListPage() {
 						className: "w-1/2",
 					},
 				],
-				[
-					{
-						type: "dropdown",
-						name: "start_month",
-						label: "เดือนเริ่มต้น",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "start_year",
-						label: "ปีเริ่มต้น",
-						options: yearList,
-						className: "w-1/3",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "end_month",
-						label: "เดือนสิ้นสุด",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "end_year",
-						label: "ปีสิ้นสุด",
-						options: yearList,
-						className: "w-1/3",
-					},
-				],
 			],
 		},
 	];
@@ -357,13 +329,13 @@ export default function ListPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="mb-6 w-full text-left"
+				className="w-full mb-6 text-left"
 				orientation="horizontal"
 				subtitle="ใบสั่งงานทั้งหมด"
 				title="รายการใบสั่งงาน"
 			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -386,7 +358,7 @@ export default function ListPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-gray-700 text-right">
+				<div className="mb-4 font-medium text-right text-gray-700">
 					{`จำนวนทั้งหมด: ${reqOrders?.length ?? 0} รายการ`}
 				</div>
 

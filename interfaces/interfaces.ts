@@ -51,7 +51,6 @@ export interface DropdownOption {
 export interface DropdownInputConfig extends BaseInputConfig {
 	type: "dropdown";
 	options: DropdownOption[];
-	selectionMode?: "single" | "multiple";
 }
 
 export interface DateInputConfig extends BaseInputConfig {
@@ -62,13 +61,20 @@ export interface DateRangeInputConfig extends BaseInputConfig {
 	type: "date-range";
 }
 
+export interface TimeInputConfig extends BaseInputConfig {
+	type: "time";
+	granularity?: "hour" | "minute" | "second";
+	hourCycle?: 12 | 24;
+}
+
 type InputConfig =
 	| TextInputConfig
 	| TextAreaInputConfig
 	| NumberInputConfig
 	| DropdownInputConfig
 	| DateInputConfig
-	| DateRangeInputConfig;
+	| DateRangeInputConfig
+	| TimeInputConfig;
 export type { InputConfig };
 
 export type FormField = InputConfig | InputConfig[];

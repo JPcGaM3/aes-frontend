@@ -205,7 +205,7 @@ export default function RequestPage() {
 					],
 				},
 				{
-					type: "textarea",
+					type: "text",
 					name: "quota_number",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -369,13 +369,13 @@ export default function RequestPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="mb-6 w-full text-left"
+				className="w-full mb-6 text-left"
 				orientation="horizontal"
 				subtitle="ใบสั่งงานทั้งหมด"
 				title="รายการใบสั่งงาน"
 			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -398,7 +398,7 @@ export default function RequestPage() {
 				<Divider className="w-[1px] h-10" orientation="vertical" />
 
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<AddIcon />}
 					radius="sm"
@@ -422,7 +422,7 @@ export default function RequestPage() {
 			{/* Body ------------------------------------------------------------- */}
 
 			<div>
-				<div className="mb-4 font-medium text-gray-700 text-right">
+				<div className="mb-4 font-medium text-right text-gray-700">
 					{`จำนวนทั้งหมด: ${reqOrders.length ?? 0} รายการ`}
 				</div>
 

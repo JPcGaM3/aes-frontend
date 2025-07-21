@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Tabs, Tab } from "@heroui/react";
 import clsx from "clsx";
-import { now, getLocalTimeZone } from "@internationalized/date";
+import { now, getLocalTimeZone, today } from "@internationalized/date";
 
 import { TASKORDERSTATUS } from "@/utils/enum";
 import { TaskOrder } from "@/interfaces/schema";
@@ -19,11 +19,14 @@ import { FormSection } from "@/interfaces/interfaces";
 import FormComponent from "@/components/FormComponent";
 import { fontMono } from "@/config/fonts";
 import { TaskOrderTranslation } from "@/utils/constants";
+import Header from "@/components/Header";
 
 moment.locale("th");
 
 interface StartFormType {
 	ap_date?: Date;
+	start_date?: any;
+	start_time?: any;
 	oil_start_mile?: number;
 	start_mile?: number;
 	oil_start?: number;
@@ -32,6 +35,8 @@ interface StartFormType {
 }
 interface EndFormType {
 	oil_slip?: string;
+	end_date?: any;
+	end_time?: any;
 	end_mile?: number;
 	oil_end?: number;
 	car_end_hour?: string;
@@ -60,6 +65,8 @@ export default function TaskManagementPage({
 
 	const defaultStartFormValues: StartFormType = {
 		ap_date: undefined,
+		start_date: today(getLocalTimeZone()),
+		start_time: now(getLocalTimeZone()),
 		oil_start_mile: undefined,
 		start_mile: undefined,
 		oil_start: undefined,
@@ -68,10 +75,13 @@ export default function TaskManagementPage({
 	};
 	const defaultEndFormValues: EndFormType = {
 		oil_slip: undefined,
+		end_date: today(getLocalTimeZone()),
+		end_time: now(getLocalTimeZone()),
 		end_mile: undefined,
 		oil_end: undefined,
 		car_end_hour: undefined,
 		end_timer: undefined,
+		actual_area: undefined,
 	};
 	const [startFormValues, setStartFormValues] = useState<StartFormType>({
 		...defaultStartFormValues,
@@ -119,6 +129,90 @@ export default function TaskManagementPage({
 			fetchData();
 		}
 	}, [isReady, tid]);
+
+	const commentSections: FormSection[] = [
+		{
+			fields: [
+				[
+					{
+						type: "textarea",
+						name: "comment",
+						label: "กรุณาระบุเหตุผล",
+						labelPlacement: "outside",
+						isRequired: true,
+						minRows: 5,
+						maxRows: 8,
+					},
+				],
+			],
+		},
+	];
+
+	const startFormSections: FormSection[] = [
+		{
+			fields: [
+				{
+					type: "number",
+					name: "start_mile",
+					min: 0,
+					isRequired: true,
+					labelTranslator: TaskOrderTranslation,
+				},
+				[
+					{
+						type: "date",
+						name: "start_date",
+						isRequired: true,
+						labelTranslator: TaskOrderTranslation,
+					},
+					{
+						type: "time",
+						name: "start_time",
+						isRequired: true,
+						labelTranslator: TaskOrderTranslation,
+						granularity: "minute",
+					},
+				],
+			],
+		},
+	];
+
+	const endFormSections: FormSection[] = [
+		{
+			fields: [
+				{
+					type: "number",
+					name: "end_mile",
+					min: 0,
+					isRequired: true,
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					type: "number",
+					name: "actual_area",
+					min: 0,
+					max: taskOrder.target_area,
+					isRequired: true,
+					labelTranslator: TaskOrderTranslation,
+				},
+				[
+					{
+						type: "date",
+						name: "end_date",
+						isRequired: true,
+						labelTranslator: TaskOrderTranslation,
+					},
+					{
+						type: "time",
+						name: "end_time",
+						isRequired: true,
+						labelTranslator: TaskOrderTranslation,
+						granularity: "minute",
+					},
+				],
+			],
+		},
+	];
 
 	const handleTabChange = (key: React.Key) => {
 		if (typeof key === "string") {
@@ -213,85 +307,46 @@ export default function TaskManagementPage({
 		}
 	};
 
-	const commentSections: FormSection[] = [
-		{
-			fields: [
-				[
-					{
-						type: "textarea",
-						name: "comment",
-						label: "กรุณาระบุเหตุผล",
-						labelPlacement: "outside",
-						isRequired: true,
-						minRows: 5,
-						maxRows: 8,
-					},
-				],
-			],
-		},
-	];
-
-	const startTaskOrderFields: FormSection[] = [
-		{
-			fields: [
-				{
-					type: "date",
-					name: "start_timer",
-					isRequired: true,
-					labelTranslator: TaskOrderTranslation,
-					defaultValue: now(getLocalTimeZone()),
-				},
-				{
-					type: "number",
-					name: "start_mile",
-					isRequired: true,
-					labelTranslator: TaskOrderTranslation,
-				},
-			],
-		},
-	];
-
-	const endTaskOrderFields: FormSection[] = [
-		{
-			fields: [
-				{
-					type: "date",
-					name: "end_timer",
-					isRequired: true,
-					labelTranslator: TaskOrderTranslation,
-					defaultValue: now(getLocalTimeZone()),
-				},
-				{
-					type: "number",
-					name: "end_mile",
-					isRequired: true,
-					labelTranslator: TaskOrderTranslation,
-				},
-				{
-					type: "number",
-					name: "actual_area",
-					isRequired: true,
-					labelTranslator: TaskOrderTranslation,
-				},
-			],
-		},
-	];
-
-	const handleStartSubmitKeyIn = async (formData: any) => {
+	const handleStartSubmitKeyIn = async (formData: StartFormType) => {
 		setIsAdding(true);
 
 		try {
-			const convertedDate = convertToChristianCalendar(
-				formData.start_timer
-			);
+			let combinedDateTime: Date | undefined = undefined;
+
+			if (formData.start_date && formData.start_time) {
+				const dateValue = formData.start_date;
+				const timeValue = formData.start_time;
+
+				if (dateValue && timeValue) {
+					const date = new Date(dateValue);
+
+					const hours = timeValue.hour || 0;
+					const minutes = timeValue.minute || 0;
+					const seconds = timeValue.second || 0;
+
+					date.setHours(hours, minutes, seconds, 0);
+					combinedDateTime = date;
+				}
+
+				combinedDateTime =
+					new Date(
+						convertToChristianCalendar(combinedDateTime) || ""
+					) || undefined;
+			}
+
 			const paramData = {
-				start_timer: convertedDate
-					? new Date(convertedDate)
-					: undefined,
+				start_timer: combinedDateTime?.toISOString(),
 				start_mile: formData.start_mile || undefined,
 			};
 
 			const promises = [
+				SetStatusTaskOrder({
+					token: userContext.token,
+					tid: Number(tid),
+					paramData: {
+						status: TASKORDERSTATUS.InProgress,
+					},
+				}),
 				SetActualTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
@@ -313,22 +368,42 @@ export default function TaskManagementPage({
 				color: "danger",
 			});
 		} finally {
-			setTimeout(() => {
-				setIsAdding(false);
-				window.location.reload();
-			}, 500);
+			// setTimeout(() => {
+			// 	setIsAdding(false);
+			// 	window.location.reload();
+			// }, 500);
 		}
 	};
 
-	const handleEndSubmitKeyIn = async (formData: any) => {
+	const handleEndSubmitKeyIn = async (formData: EndFormType) => {
 		setIsAdding(true);
 
 		try {
-			const convertedDate = convertToChristianCalendar(
-				formData.end_timer
-			);
+			let combinedDateTime: Date | undefined = undefined;
+
+			if (formData.end_date && formData.end_time) {
+				const dateValue = formData.end_date;
+				const timeValue = formData.end_time;
+
+				if (dateValue && timeValue) {
+					const date = new Date(dateValue);
+
+					const hours = timeValue.hour || 0;
+					const minutes = timeValue.minute || 0;
+					const seconds = timeValue.second || 0;
+
+					date.setHours(hours, minutes, seconds, 0);
+					combinedDateTime = date;
+				}
+
+				combinedDateTime =
+					new Date(
+						convertToChristianCalendar(combinedDateTime) || ""
+					) || undefined;
+			}
+
 			const paramData = {
-				end_timer: convertedDate ? new Date(convertedDate) : undefined,
+				end_timer: combinedDateTime,
 				end_mile: formData.end_mile || undefined,
 				actual_area: formData.actual_area || undefined,
 			};
@@ -357,7 +432,7 @@ export default function TaskManagementPage({
 		} finally {
 			setTimeout(() => {
 				setIsAdding(false);
-				window.location.reload();
+				router.back();
 			}, 500);
 		}
 	};
@@ -413,20 +488,42 @@ export default function TaskManagementPage({
 	};
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full">
+		<div className="flex flex-col items-center justify-center w-full">
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
 			>
+				{/* Detail tab ------------------------------------------------------------------------------------------ */}
+				<Tab
+					key="detail"
+					className="flex flex-col items-center justify-center w-full"
+					title="รายละเอียด"
+				>
+					<Header
+						hasBorder={false}
+						subtitle={`@${taskOrder.requestorders?.work_order_number}-${tid}`}
+						subtitleClassName={clsx(
+							"mt-1 font-mono text-gray-600 text-sm",
+							fontMono.variable
+						)}
+						title="รายละเอียดใบสั่งงาน"
+					/>
+				</Tab>
+
 				{/* Start tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="start"
-					className="flex flex-col justify-center items-center w-full"
-					title="กรอกรายละเอียด"
+					className="flex flex-col items-center justify-center w-full"
+					isDisabled={
+						taskOrder.status === TASKORDERSTATUS.Completed ||
+						taskOrder.status === TASKORDERSTATUS.Rejected
+					}
+					title="กรอกข้อมูล"
 				>
+					{/* Start form */}
 					{taskOrder &&
 						!taskOrder.start_mile &&
 						!taskOrder.start_timer && (
@@ -434,9 +531,9 @@ export default function TaskManagementPage({
 								cancelLabel="ยกเลิก"
 								isCompact={true}
 								isSubmitting={isAdding}
-								sections={startTaskOrderFields}
+								sections={startFormSections}
 								submitLabel="ยืนยัน"
-								subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+								subtitle={`@${taskOrder.requestorders?.work_order_number}-${tid}`}
 								subtitleClassName={clsx(
 									"mt-1 font-mono text-gray-600 text-sm",
 									fontMono.variable
@@ -448,6 +545,8 @@ export default function TaskManagementPage({
 								onSubmit={handleStartSubmitKeyIn}
 							/>
 						)}
+
+					{/* End form */}
 					{taskOrder &&
 						taskOrder.start_mile &&
 						taskOrder.start_timer &&
@@ -459,42 +558,38 @@ export default function TaskManagementPage({
 								cancelLabel="ยกเลิก"
 								isCompact={true}
 								isSubmitting={isAdding}
-								sections={endTaskOrderFields}
+								sections={endFormSections}
 								submitLabel="ยืนยัน"
-								subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+								subtitle={`@${taskOrder.requestorders?.work_order_number}-${tid}`}
 								subtitleClassName={clsx(
 									"mt-1 font-mono text-gray-600 text-sm",
 									fontMono.variable
 								)}
-								title="กรอกข้อมูลก่อนปฎิบัติงาน"
+								title="กรอกข้อมูลหลังปฎิบัติงาน"
 								values={endFormValues}
 								onCancel={handleEndCancelKeyIn}
 								onChange={handleEndTaskOrderChange}
 								onSubmit={handleEndSubmitKeyIn}
 							/>
 						)}
-					{taskOrder &&
-						taskOrder.status === TASKORDERSTATUS.Completed && (
-							<div className="my-8 font-medium text-gray-500 text-center">
-								{`ใบงานย่อยหมายเลข ${tid} ได้ถูกปิดแล้ว`}
-							</div>
-						)}
 				</Tab>
 
-				{/* Edit tab ----------------------------------------------------------------------------------------- */}
+				{/* Edit tab -------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="comment"
-					className="flex flex-col justify-center items-center w-full"
-					isDisabled={taskOrder.status === TASKORDERSTATUS.Completed}
+					className="flex flex-col items-center justify-center w-full"
+					isDisabled={
+						taskOrder.status === TASKORDERSTATUS.Completed ||
+						taskOrder.status === TASKORDERSTATUS.Rejected
+					}
 					title="แจ้งปัญหา"
 				>
 					<FormComponent
 						cancelLabel="ยกเลิก"
 						isSubmitting={isSubmitting}
 						sections={commentSections}
-						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+						subtitle={`@${taskOrder.requestorders?.work_order_number}-${tid}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
@@ -507,20 +602,22 @@ export default function TaskManagementPage({
 					/>
 				</Tab>
 
-				{/* Reject tab ----------------------------------------------------------------------------------------- */}
+				{/* Reject tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="reject"
-					className="flex flex-col justify-center items-center w-full"
-					isDisabled={taskOrder.status === TASKORDERSTATUS.Completed}
+					className="flex flex-col items-center justify-center w-full"
+					isDisabled={
+						taskOrder.status === TASKORDERSTATUS.Completed ||
+						taskOrder.status === TASKORDERSTATUS.Rejected
+					}
 					title="ยกเลิก"
 				>
 					<FormComponent
 						cancelLabel="ยกเลิก"
 						isSubmitting={isSubmitting}
 						sections={commentSections}
-						size="expanded"
 						submitLabel="ส่งความคิดเห็น"
-						subtitle={`หมายเลขใบงานย่อย: ${tid}`}
+						subtitle={`@${taskOrder.requestorders?.work_order_number}-${tid}`}
 						subtitleClassName={clsx(
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable

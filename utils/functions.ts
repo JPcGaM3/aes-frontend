@@ -102,7 +102,7 @@ export function convertToChristianCalendar(
 
 export function convertToBuddhistCalendar(
 	dateValue: any,
-	timezone: string = "Asia/Bangkok"
+	_timezone: string = "Asia/Bangkok"
 ): any | null {
 	if (!dateValue) return null;
 
@@ -547,7 +547,13 @@ export async function fetchTaskOrder({
 				},
 			});
 
-			setTaskOrder(data);
+			setTaskOrder({
+				...data,
+				requestorders: {
+					...data.requestorders,
+					work_order_number: `${data.requestorders.ae_area?.name || ""}${data.requestorders.operation_area?.operation_area || ""}${data.requestorders.ap_year ? Number(data.requestorders.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${data.requestorders.run_number || ""}`,
+				},
+			});
 		} catch (err: any) {
 			if (err.status === 404) {
 				showAlert({

@@ -38,7 +38,10 @@ import CardComponent from "@/components/CardComponent";
 import { useLoading } from "@/providers/LoadingContext";
 import { fontMono } from "@/config/fonts";
 import { TaskOrder } from "@/interfaces/schema";
-import { fetchAssignedTask } from "@/utils/functions";
+import {
+	convertToChristianCalendar,
+	fetchAssignedTask,
+} from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
 import { TASKORDERSTATUS } from "@/utils/enum";
 
@@ -94,10 +97,29 @@ export default function TaskPage() {
 
 			const fetchData = async () => {
 				try {
+					const startDateStr = convertToChristianCalendar(
+						filterValues.start_date
+					);
+					const endDateStr = convertToChristianCalendar(
+						filterValues.end_date
+					);
 					const promises = [
 						fetchAssignedTask({
 							token: userContext.token,
 							user_id: userContext.id,
+							start_date: startDateStr
+								? moment(startDateStr)
+										.tz("Asia/Bangkok")
+										.format("YYYY-MM-DD")
+								: undefined,
+							end_date: endDateStr
+								? moment(endDateStr)
+										.tz("Asia/Bangkok")
+										.format("YYYY-MM-DD")
+								: undefined,
+							status: filterValues.status
+								? filterValues.status
+								: undefined,
 							setTaskOrders,
 							showAlert,
 						}),
@@ -260,6 +282,7 @@ export default function TaskPage() {
 				end_date: endDate,
 				status: status,
 			});
+			hasFetched.current = false;
 		} catch (error: any) {
 			showAlert({
 				title: "Failed to process date values",
@@ -350,13 +373,13 @@ export default function TaskPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="w-full mb-6 text-left"
+				className="mb-6 w-full text-left"
 				orientation="horizontal"
 				subtitle="งานย่อยทั้งหมดของคุณ"
 				title="รายการใบงานย่อย"
 			>
 				<Button
-					className="hidden font-semibold sm:inline-flex"
+					className="hidden sm:inline-flex font-semibold"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -379,7 +402,7 @@ export default function TaskPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-right text-gray-700">
+				<div className="mb-4 font-medium text-gray-700 text-right">
 					{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 				</div>
 

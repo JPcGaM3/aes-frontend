@@ -483,11 +483,17 @@ export async function fetchActivitiesWithToolTypes({
 export async function fetchAssignedTask({
 	token,
 	user_id,
+	start_date,
+	end_date,
+	status,
 	setTaskOrders,
 	showAlert,
 }: {
 	token: string;
 	user_id?: number;
+	start_date?: string;
+	end_date?: string;
+	status?: string;
 	setTaskOrders: (orders: TaskOrder[]) => void;
 	showAlert: (
 		alert: Omit<AlertComponentProps, "isVisible" | "handleClose">
@@ -497,6 +503,9 @@ export async function fetchAssignedTask({
 		try {
 			const paramData = {
 				...(user_id && { user_id }),
+				...(start_date && { start_date }),
+				...(end_date && { end_date }),
+				...(status && { status }),
 			};
 
 			const data = await getAssignedTask({

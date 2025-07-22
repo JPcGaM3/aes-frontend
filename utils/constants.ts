@@ -1,4 +1,3 @@
-import { DropdownOption } from "@/interfaces/interfaces";
 import {
 	REQUESTORDERSTATUS,
 	TASKORDERSTATUS,
@@ -6,6 +5,7 @@ import {
 	USERSTATUS,
 } from "./enum";
 
+import { DropdownOption } from "@/interfaces/interfaces";
 import { ColorType } from "@/types";
 
 const UserRoleTranslation = {

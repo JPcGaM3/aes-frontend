@@ -501,7 +501,7 @@ export default function RequestManagementPage({
 				{
 					name: "target_area",
 					unit: "ไร่",
-					value: requestData?.target_area || "-",
+					value: requestData?.target_area || 0,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -536,7 +536,7 @@ export default function RequestManagementPage({
 				{
 					name: "target_area",
 					unit: "ไร่",
-					value: task.target_area ?? "-",
+					value: task.target_area ?? 0,
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -642,9 +642,8 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "number",
+					type: "text",
 					name: "land_number",
-					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},

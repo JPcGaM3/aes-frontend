@@ -273,7 +273,7 @@ export default function RequestManagementPage({
 				{
 					name: "target_area",
 					unit: "ไร่",
-					value: reqOrder?.target_area || "-",
+					value: reqOrder?.target_area || 0,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -309,7 +309,7 @@ export default function RequestManagementPage({
 				{
 					name: "target_area",
 					unit: "ไร่",
-					value: task.target_area ?? "-",
+					value: task.target_area || 0,
 					labelTranslator: TaskOrderTranslation,
 				},
 			],

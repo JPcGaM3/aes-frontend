@@ -430,9 +430,8 @@ export default function AddRequestPage() {
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "number",
+					type: "text",
 					name: "land_number",
-					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},

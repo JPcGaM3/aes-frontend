@@ -4,6 +4,7 @@ import {
 	parseDate,
 } from "@internationalized/date";
 import moment from "moment-timezone";
+import "moment/locale/th";
 
 import { AlertComponentProps } from "@/interfaces/props";
 import {

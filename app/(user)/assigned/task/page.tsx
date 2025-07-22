@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button, useDisclosure } from "@heroui/react";
 import clsx from "clsx";
 import moment from "moment-timezone";
+import "moment/locale/th";
 import {
 	parseDate,
 	CalendarDate,
@@ -368,13 +369,13 @@ export default function TaskPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="w-full mb-6 text-left"
+				className="mb-6 w-full text-left"
 				orientation="horizontal"
 				subtitle="งานย่อยทั้งหมดของคุณ"
 				title="รายการใบงานย่อย"
 			>
 				<Button
-					className="hidden font-semibold sm:inline-flex"
+					className="hidden sm:inline-flex font-semibold"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -397,7 +398,7 @@ export default function TaskPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-right text-gray-700">
+				<div className="mb-4 font-medium text-gray-700 text-right">
 					{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 				</div>
 

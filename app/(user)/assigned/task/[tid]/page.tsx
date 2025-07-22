@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { use } from "react";
 import moment from "moment-timezone";
+import "moment/locale/th";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Tabs, Tab } from "@heroui/react";
 import clsx from "clsx";
@@ -597,10 +598,10 @@ export default function TaskManagementPage({
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
+		<div className="flex flex-col justify-center items-center w-full">
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
+				className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -608,7 +609,7 @@ export default function TaskManagementPage({
 				{/* Detail tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="detail"
-					className="flex flex-col items-center justify-center w-full gap-8"
+					className="flex flex-col justify-center items-center gap-8 w-full"
 					title="รายละเอียด"
 				>
 					<Header
@@ -635,7 +636,7 @@ export default function TaskManagementPage({
 				{/* Start tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="start"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected
@@ -696,7 +697,7 @@ export default function TaskManagementPage({
 				{/* Edit tab -------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="comment"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected
@@ -724,7 +725,7 @@ export default function TaskManagementPage({
 				{/* Reject tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="reject"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col justify-center items-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected

@@ -209,7 +209,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "unit_head",
+					name: "unit_head_id",
 					value: reqOrder?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -272,6 +272,7 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "target_area",
+					unit: "ไร่",
 					value: reqOrder?.target_area || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -281,7 +282,7 @@ export default function RequestManagementPage({
 			title: `กิจกรรมที่ ${idx + 1}`,
 			fields: [
 				{
-					name: "activity_id",
+					name: "activities_id",
 					value: task.activities?.name || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
@@ -291,7 +292,7 @@ export default function RequestManagementPage({
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
-					name: "tool_type",
+					name: "tool_types_id",
 					value: task.tool_type?.tool_type_name || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
@@ -307,6 +308,7 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "target_area",
+					unit: "ไร่",
 					value: task.target_area ?? "-",
 					labelTranslator: TaskOrderTranslation,
 				},

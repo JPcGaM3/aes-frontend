@@ -69,11 +69,11 @@ export default function FieldValueDisplayer({
 										let displayValue =
 											typeof field.value === "string" &&
 											field.translator
-												? translateEnumValue(
+												? `${translateEnumValue(
 														field.value,
 														field.translator
-													)
-												: field.value;
+													)} ${field.unit}`
+												: `${field.value} ${field.unit}`;
 
 										if (
 											typeof displayValue === "string" &&

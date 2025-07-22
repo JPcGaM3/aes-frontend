@@ -74,7 +74,7 @@ export default function ProfilePage() {
 		{
 			title: "ข้อมูลส่วนตัว",
 			fields: [
-				{ name: "รหัสพนักงาน", value: profile?.user_result?.id || "-" },
+				{ name: "รหัสพนักงาน", value: profile?.profile?.id || "-" },
 				{ name: "อีเมล", value: profile?.user_result?.email || "-" },
 				{
 					name: "ชื่อ-สกุล (TH)",
@@ -84,18 +84,13 @@ export default function ProfilePage() {
 					name: "ชื่อ-สกุล (EN)",
 					value: profile?.profile?.employeeName?.en || "-",
 				},
-				{
-					name: "เบอร์โทรศัพท์",
-					value: profile?.user_result?.phone || "-",
-				},
-				{ name: "ที่อยู่", value: "-" },
 			],
 		},
 		{
 			title: "ข้อมูลการทำงาน",
 			fields: [
 				{
-					name: "ตำแหน่ง",
+					name: "บทบาท",
 					value: profile?.user_result?.role.join(", ") || "-",
 				},
 				{ name: "ระดับ", value: profile?.profile?.level?.name || "-" },

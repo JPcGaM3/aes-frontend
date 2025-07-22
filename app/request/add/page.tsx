@@ -350,6 +350,7 @@ export default function AddRequestPage() {
 	};
 
 	// Field configurations ----------------------------------------------------------------------------------------
+	// TODO: change label for zone and farmer_name following operation_area_id
 	const requestOrderFields: FormSection[] = [
 		{
 			fields: [
@@ -423,14 +424,15 @@ export default function AddRequestPage() {
 				{
 					type: "number",
 					name: "target_area",
-					min: 0,
+					unit: "ไร่",
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
 					type: "number",
 					name: "land_number",
-					min: 0,
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},

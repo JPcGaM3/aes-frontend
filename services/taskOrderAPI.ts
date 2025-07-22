@@ -57,7 +57,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				throw new Error(
-					`Failed to update request order: ${error.response?.status} ${error.response?.statusText || error.message}`
+					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 				);
 			}
 
@@ -90,7 +90,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				throw new Error(
-					`Failed to create task order: ${error.response?.status} ${error.response?.statusText || error.message}`
+					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 				);
 			}
 
@@ -118,7 +118,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				throw new Error(
-					`Failed to update task order: ${error.response?.status} ${error.response?.statusText || error.message}`
+					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 				);
 			}
 
@@ -148,7 +148,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				throw new Error(
-					`Failed to delete task order: ${error.response?.status} ${error.response?.statusText || error.message}`
+					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 				);
 			}
 
@@ -186,7 +186,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 					case "update":
 						if (!operation.data.id) {
 							throw new Error(
-								"Task order ID is required for update"
+								"รหัสใบงานย่อย (task ID) จำเป็นสำหรับการอัปเดต"
 							);
 						}
 						result = await taskOrderAPIService.updateTaskOrder(
@@ -202,7 +202,7 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 					case "delete":
 						if (!operation.data.id) {
 							throw new Error(
-								"Task order ID is required for delete"
+								"รหัสใบงานย่อย (task ID) จำเป็นสำหรับการลบ"
 							);
 						}
 
@@ -279,7 +279,7 @@ export async function updateTaskOrderStatus({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to update task order status: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 
@@ -319,7 +319,7 @@ export async function updateTaskOrderActualArea({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to update task order actual area: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 

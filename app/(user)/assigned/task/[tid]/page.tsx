@@ -15,11 +15,16 @@ import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { convertToChristianCalendar, fetchTaskOrder } from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
-import { FormSection } from "@/interfaces/interfaces";
+import { FieldSection, FormSection } from "@/interfaces/interfaces";
 import FormComponent from "@/components/FormComponent";
 import { fontMono } from "@/config/fonts";
-import { TaskOrderTranslation } from "@/utils/constants";
+import {
+	RequestOrderTranslation,
+	TaskOrderTranslation,
+} from "@/utils/constants";
 import Header from "@/components/Header";
+import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import FormButtons from "@/components/FormButtons";
 
 moment.locale("th");
 
@@ -214,6 +219,119 @@ export default function TaskManagementPage({
 		},
 	];
 
+	const dataSections: FieldSection[] = [
+		{
+			fields: [
+				{
+					name: "customer_type_id",
+					value: taskOrder?.requestorders?.customer_type?.name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "ae_id",
+					value: taskOrder?.requestorders?.ae_area?.name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "unit_head_id",
+					value: taskOrder?.requestorders?.users?.fullname || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "supervisor_name",
+					value: taskOrder?.requestorders?.supervisor_name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "phone",
+					value: taskOrder?.requestorders?.phone || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+			],
+		},
+		{
+			title: "สถานที่ปฏิบัติงาน",
+			fields: [
+				{
+					name: "quota_number",
+					value: taskOrder?.requestorders?.quota_number || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "farmer_name",
+					value: taskOrder?.requestorders?.farmer_name || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "land_number",
+					value: taskOrder?.requestorders?.land_number || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "operation_area_id",
+					value:
+						taskOrder?.requestorders?.operation_area
+							?.operation_area || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					name: "location_xy",
+					value: taskOrder?.requestorders?.location_xy || "-",
+					labelTranslator: RequestOrderTranslation,
+				},
+			],
+		},
+		{
+			title: "รายละเอียดงาน",
+			fields: [
+				{
+					name: "id",
+					value: taskOrder?.id || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "target_area",
+					value: taskOrder?.target_area || 0,
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "actual_area",
+					value: taskOrder?.actual_area || 0,
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "ap_date",
+					value: taskOrder?.ap_date
+						? moment(taskOrder.ap_date)
+								.tz("Asia/Bangkok")
+								.format("LLL")
+						: "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+			],
+		},
+		{
+			title: "กิจกรรมและเครื่องมือ",
+			fields: [
+				{
+					name: "activities_id",
+					value: taskOrder?.activities?.name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "tool_types_id",
+					value: taskOrder?.tool_type?.tool_type_name || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+				{
+					name: "car_id",
+					value: taskOrder?.cars?.car_number || "-",
+					labelTranslator: TaskOrderTranslation,
+				},
+			],
+		},
+	];
+
 	const handleTabChange = (key: React.Key) => {
 		if (typeof key === "string") {
 			setSelectedTab(key);
@@ -235,8 +353,31 @@ export default function TaskManagementPage({
 	};
 
 	const handleCancel = () => {
-		showLoading();
-		setCommentValues({ comment: "" });
+		if (
+			commentValues.comment ||
+			startFormValues.start_mile ||
+			endFormValues.end_mile
+		) {
+			showAlert({
+				title: "ยกเลิก",
+				description:
+					"การกรอกข้อมูล/แจ้งปัญหา/ปฏิเสธ, ล้างข้อมูลในฟอร์ม",
+				color: "warning",
+			});
+		}
+
+		setStartFormValues({
+			...defaultStartFormValues,
+		});
+
+		setEndFormValues({
+			...defaultEndFormValues,
+		});
+
+		setCommentValues({
+			comment: "",
+		});
+
 		router.back();
 	};
 
@@ -437,38 +578,6 @@ export default function TaskManagementPage({
 		}
 	};
 
-	const handleStartCancelKeyIn = () => {
-		showAlert({
-			title: "ยกเลิกบลาๆ",
-			description: "ยกเลิกบลาๆ, ล้างข้อมูลในฟอร์ม",
-			color: "warning",
-		});
-
-		setStartFormValues({
-			...defaultStartFormValues,
-		});
-
-		setTimeout(() => {
-			router.back();
-		}, 2000);
-	};
-
-	const handleEndCancelKeyIn = () => {
-		showAlert({
-			title: "ยกเลิกบลาๆ",
-			description: "ยกเลิกบลาๆ, ล้างข้อมูลในฟอร์ม",
-			color: "warning",
-		});
-
-		setEndFormValues({
-			...defaultEndFormValues,
-		});
-
-		setTimeout(() => {
-			router.back();
-		}, 2000);
-	};
-
 	const handleStartTaskOrderChange = (values: any) => {
 		const updateValues = {
 			...startFormValues,
@@ -499,7 +608,7 @@ export default function TaskManagementPage({
 				{/* Detail tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="detail"
-					className="flex flex-col items-center justify-center w-full"
+					className="flex flex-col items-center justify-center w-full gap-8"
 					title="รายละเอียด"
 				>
 					<Header
@@ -509,7 +618,17 @@ export default function TaskManagementPage({
 							"mt-1 font-mono text-gray-600 text-sm",
 							fontMono.variable
 						)}
-						title="รายละเอียดใบสั่งงาน"
+						title="รายละเอียดใบงานย่อย"
+					/>
+
+					<FieldValueDisplayer sections={dataSections} />
+
+					<FormButtons
+						hasBorder={false}
+						size="compact"
+						submitColor="default"
+						submitLabel="ยกเลิก"
+						onSubmit={handleCancel}
 					/>
 				</Tab>
 
@@ -540,7 +659,7 @@ export default function TaskManagementPage({
 								)}
 								title="กรอกข้อมูลก่อนปฎิบัติงาน"
 								values={startFormValues}
-								onCancel={handleStartCancelKeyIn}
+								onCancel={handleCancel}
 								onChange={handleStartTaskOrderChange}
 								onSubmit={handleStartSubmitKeyIn}
 							/>
@@ -567,7 +686,7 @@ export default function TaskManagementPage({
 								)}
 								title="กรอกข้อมูลหลังปฎิบัติงาน"
 								values={endFormValues}
-								onCancel={handleEndCancelKeyIn}
+								onCancel={handleCancel}
 								onChange={handleEndTaskOrderChange}
 								onSubmit={handleEndSubmitKeyIn}
 							/>

@@ -33,7 +33,7 @@ export async function getAssignedTask({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 
@@ -63,7 +63,7 @@ export async function getTaskById({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 

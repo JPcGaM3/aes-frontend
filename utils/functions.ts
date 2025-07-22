@@ -523,7 +523,7 @@ export async function fetchAssignedTask({
 				});
 			} else {
 				showAlert({
-					title: "Failed to fetch",
+					title: "ไม่สามารถโหลดข้อมูลใบงานย่อยได้",
 					description: err.message,
 					color: "danger",
 				});
@@ -572,7 +572,7 @@ export async function fetchTaskOrder({
 				});
 			} else {
 				showAlert({
-					title: "Failed to fetch",
+					title: "ไม่สามารถโหลดข้อมูลใบงานย่อยได้",
 					description: err.message,
 					color: "danger",
 				});

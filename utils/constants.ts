@@ -98,9 +98,8 @@ const RequestOrderTranslation: Record<string, string> = {
 
 const TaskOrderTranslation: Record<string, string> = {
 	id: "รหัสงานย่อย",
-	area_number: "เลขที่พื้นที่",
 	target_area: "พื้นที่เป้าหมาย",
-	area_actual: "พื้นที่จริง",
+	actual_area: "พื้นที่จริง",
 	price: "ราคา",
 	comment: "หมายเหตุ",
 	ap_date: "วันที่ปฏิบัติงาน",
@@ -118,7 +117,6 @@ const TaskOrderTranslation: Record<string, string> = {
 	car_end_hour: "ชั่วโมงรถสิ้นสุด",
 	start_timer: "เวลาเริ่มต้น",
 	end_timer: "เวลาสิ้นสุด",
-	actual_area: "พื้นที่จริง",
 	status: "สถานะ",
 	request_order_id: "รหัสคำสั่งงานหลัก",
 	car_id: "รถ",

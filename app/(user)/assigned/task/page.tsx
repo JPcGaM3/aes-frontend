@@ -280,8 +280,8 @@ export default function TaskPage() {
 			hasFetched.current = false;
 		} catch (error: any) {
 			showAlert({
-				title: "Failed to process date values",
-				description: error.message || "Unknown error occurred",
+				title: "ตัวกรองล้มเหลว",
+				description: error.message || "ไม่สามารถใช้งานตัวกรองได้",
 				color: "danger",
 			});
 		}
@@ -368,13 +368,13 @@ export default function TaskPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="mb-6 w-full text-left"
+				className="w-full mb-6 text-left"
 				orientation="horizontal"
 				subtitle="งานย่อยทั้งหมดของคุณ"
 				title="รายการใบงานย่อย"
 			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -397,7 +397,7 @@ export default function TaskPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-gray-700 text-right">
+				<div className="mb-4 font-medium text-right text-gray-700">
 					{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 				</div>
 

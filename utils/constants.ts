@@ -162,14 +162,17 @@ const monthList = [
 
 const getYearList = ({
 	range = 5,
+	start_year,
 	canSelectPast = false,
 }: {
 	range?: number;
+	start_year?: number;
 	canSelectPast?: boolean;
 }): DropdownOption[] => {
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const startYear = canSelectPast ? currentYear - range : currentYear;
+	const startYear =
+		start_year || canSelectPast ? currentYear - range : currentYear;
 	const endYear = currentYear + range;
 
 	return Array.from({ length: endYear - startYear + 1 }, (_, i) => ({

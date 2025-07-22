@@ -42,9 +42,9 @@ interface filterInterface {
 	ae_id?: number;
 	customer_type_id?: number;
 	start_month?: string;
-	start_year?: string;
+	start_year?: number;
 	end_month?: string;
-	end_year?: string;
+	end_year?: number;
 	quota_number?: string;
 }
 
@@ -56,7 +56,7 @@ export default function RequestPage() {
 
 	const router = useRouter();
 	const now = new Date();
-	const currentYear = String(now.getFullYear());
+	const currentYear = now.getFullYear();
 	const currentMonth = monthList[now.getMonth()].value;
 
 	const prevAeId = useRef<number | undefined>(undefined);
@@ -64,7 +64,8 @@ export default function RequestPage() {
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
 	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
 
-	const [filter, setFilter] = useState<filterInterface | null>({
+	const [filterTemp, setFilterTemp] = useState<filterInterface | null>(null);
+	const [filterValues, setFilterValues] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
 	});
@@ -73,17 +74,17 @@ export default function RequestPage() {
 		if (
 			isReady &&
 			userContext?.ae_id &&
-			filter !== null &&
+			filterValues !== null &&
 			prevAeId.current !== userContext.ae_id
 		) {
 			prevAeId.current = userContext.ae_id;
 			hasFetched.current = false;
-			setFilter({
+			setFilterValues({
 				start_month: currentMonth,
 				start_year: currentYear,
 			});
 		}
-	}, [userContext?.ae_id, isReady, filter, currentMonth, currentYear]);
+	}, [userContext?.ae_id, isReady, filterValues, currentMonth, currentYear]);
 
 	useEffect(() => {
 		if (isReady && userContext?.ae_id && !hasFetched.current) {
@@ -104,7 +105,7 @@ export default function RequestPage() {
 					}
 
 					const params = {
-						...filter,
+						...filterValues,
 						ae_id: userContext?.ae_id,
 					};
 
@@ -131,7 +132,7 @@ export default function RequestPage() {
 
 			fetchData();
 		}
-	}, [filter, isReady, userContext?.ae_id]);
+	}, [filterValues, isReady, userContext?.ae_id]);
 
 	// useState for modal and drawer visibility ------------------------------
 	const {
@@ -143,8 +144,12 @@ export default function RequestPage() {
 	// Handlers for modal and drawer actions ---------------------------------
 	const handleApplyFilters = (values: any) => {
 		hasFetched.current = false;
-		setFilter(values);
+		setFilterValues(values);
 		onCloseFilter();
+	};
+
+	const handleFilterChange = (values: any) => {
+		const newValues = { ...filterValues, ...values };
 	};
 
 	const handleNewPage = ({
@@ -175,7 +180,7 @@ export default function RequestPage() {
 	};
 
 	// Field configurations --------------------------------------------------
-	const filterSections: FormSection[] = [
+	const getFilterSections = (): FormSection[] => [
 		{
 			fields: [
 				{
@@ -220,7 +225,10 @@ export default function RequestPage() {
 						type: "dropdown",
 						name: "start_year",
 						label: "ปีเริ่มต้น",
-						options: getYearList({ canSelectPast: true }),
+						options: getYearList({
+							canSelectPast: true,
+							start_year: filterValues?.start_year,
+						}),
 						className: "w-1/2",
 					},
 				],
@@ -358,10 +366,11 @@ export default function RequestPage() {
 
 			<FilterModal
 				isOpen={isOpenFilter}
-				sections={filterSections}
+				sections={getFilterSections()}
 				title="ฟิลเตอร์รายการใบสั่งงาน"
-				values={filter}
+				values={filterValues}
 				onClose={() => onCloseFilter()}
+				onChange={handleFilterChange}
 				onSubmit={handleApplyFilters}
 			/>
 

@@ -8,18 +8,19 @@ import FormComponent from "./FormComponent";
 
 export default function FilterModal({
 	isOpen,
-	onClose,
 	title,
 	subtitle,
 	sections,
+	values,
 	submitLabel = "ใช้งานตัวกรอง",
 	cancelLabel = "ยกเลิก",
+	onChange,
+	onClose,
 	onSubmit,
-	values,
 }: FilterModalProps) {
 	return (
 		<Modal
-			className="w-full p-4 pt-6 m-3 shadow-md"
+			className="p-4 pt-6 m-3 shadow-md w-fit"
 			isOpen={isOpen}
 			placement="center"
 			radius="sm"
@@ -37,6 +38,7 @@ export default function FilterModal({
 						title={title}
 						values={values}
 						onCancel={onClose}
+						onChange={onChange}
 						onSubmit={onSubmit}
 					/>
 				)}

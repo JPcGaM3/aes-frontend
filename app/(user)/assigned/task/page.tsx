@@ -193,11 +193,6 @@ export default function TaskPage() {
 						),
 					],
 				},
-				{
-					type: "text",
-					name: "quota_number",
-					labelTranslator: RequestOrderTranslation,
-				},
 				[
 					{
 						type: "date",
@@ -298,8 +293,8 @@ export default function TaskPage() {
 		];
 
 		if (
-			item.status !== TASKORDERSTATUS.Rejected &&
-			item.status !== TASKORDERSTATUS.Completed
+			item.status === TASKORDERSTATUS.InProgress ||
+			item.status === TASKORDERSTATUS.Pending
 		) {
 			actionList.push(
 				{

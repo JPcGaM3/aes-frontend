@@ -128,7 +128,6 @@ export interface FieldValue {
 	value: React.ReactNode;
 	unit?: string;
 	translator?: Record<string, string>;
-	highlight?: boolean;
 	className?: string;
 }
 

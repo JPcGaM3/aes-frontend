@@ -16,7 +16,8 @@ import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import Header from "@/components/Header";
 import { fontMono } from "@/config/fonts";
 import { FieldSection } from "@/interfaces/interfaces";
-import { fetchProfile } from "@/utils/functions";
+import { fetchProfile, translateEnumValue } from "@/utils/functions";
+import { UserRoleTranslation } from "@/utils/constants";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -91,7 +92,12 @@ export default function ProfilePage() {
 			fields: [
 				{
 					name: "บทบาท",
-					value: profile?.user_result?.role.join(", ") || "-",
+					value:
+						profile?.user_result?.role
+							.map((role) =>
+								translateEnumValue(role, UserRoleTranslation)
+							)
+							.join(", ") || "-",
 				},
 				{ name: "ระดับ", value: profile?.profile?.level?.name || "-" },
 				{

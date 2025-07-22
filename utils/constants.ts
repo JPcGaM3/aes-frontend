@@ -11,7 +11,7 @@ const UserRoleTranslation = {
 	[USERROLE.Admin]: "แอดมิน",
 	[USERROLE.DepartmentHead]: "หัวหน้าแผนก",
 	[USERROLE.UnitHead]: "หัวหน้าหน่วย",
-	[USERROLE.Driver]: "พนักขับรถ",
+	[USERROLE.Driver]: "พนักงานขับรถ",
 	[USERROLE.Farmpro]: "farmpro",
 	[USERROLE.CaneMIS]: "canemis",
 	[USERROLE.SongSirm]: "เขตส่งเสริม",
@@ -33,6 +33,7 @@ const RequestOrderStatusTranslation = {
 	[REQUESTORDERSTATUS.PendingConfirm]: "รอการยืนยัน",
 	[REQUESTORDERSTATUS.Completed]: "เสร็จสิ้น",
 	[REQUESTORDERSTATUS.Rejected]: "ถูกปฏิเสธ",
+	[REQUESTORDERSTATUS.Cancelled]: "ถูกยกเลิก",
 };
 
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
@@ -50,9 +51,7 @@ const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
 
 const TaskOrderStatusTranslation = {
 	[TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
-	[TASKORDERSTATUS.Pending]: "รอการดำเนินการ",
 	[TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
-	[TASKORDERSTATUS.OnHold]: "รอการดำเนินการ",
 	[TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
 };
 

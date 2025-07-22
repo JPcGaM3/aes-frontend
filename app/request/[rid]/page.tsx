@@ -617,9 +617,10 @@ export default function RequestManagementPage({
 					options: yearList,
 				},
 				{
-					type: "text",
+					type: "number",
 					name: "count",
 					path: "_count.taskorders",
+					unit: "กิจกรรม",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,
 				},

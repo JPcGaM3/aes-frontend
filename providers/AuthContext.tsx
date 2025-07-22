@@ -275,7 +275,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: props.params.ae_id ?? NaN,
 					};
 
-					setUserContext(newUserContext);
+					await setUserContext(newUserContext);
 					sessionStorage.setItem(
 						"authUser",
 						JSON.stringify(newUserContext)

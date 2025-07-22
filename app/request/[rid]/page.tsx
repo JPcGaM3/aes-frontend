@@ -29,10 +29,9 @@ import {
 import {
 	month,
 	monthList,
-	yearMap,
-	yearList,
-	RequestOrderTranslation,
+	getYearList,
 	TaskOrderTranslation,
+	RequestOrderTranslation,
 	RequestOrderStatusTranslation,
 } from "@/utils/constants";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
@@ -461,7 +460,6 @@ export default function RequestManagementPage({
 					name: "ap_year",
 					value: String(requestData?.ap_year) || "-",
 					labelTranslator: RequestOrderTranslation,
-					translator: yearMap,
 				},
 				{
 					name: "count",
@@ -614,7 +612,7 @@ export default function RequestManagementPage({
 					name: "ap_year",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
-					options: yearList,
+					options: getYearList({}),
 				},
 				{
 					type: "number",

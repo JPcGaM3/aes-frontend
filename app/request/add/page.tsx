@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
-	yearList,
+	getYearList,
 	monthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
@@ -404,7 +404,7 @@ export default function AddRequestPage() {
 						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-1/3",
-						options: yearList,
+						options: getYearList({}),
 					},
 					{
 						type: "dropdown",

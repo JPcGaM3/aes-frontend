@@ -72,8 +72,8 @@ export default function FormFields({
 
 			const placeholder = hasPlaceholder
 				? type === "dropdown"
-					? `เลือก ${labelValue || name}`
-					: `กรอก ${labelValue || name}`
+					? `เลือก${labelValue || name}`
+					: `กรอก${labelValue || name}`
 				: undefined;
 
 			const resolvedLabelPlacement =

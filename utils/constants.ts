@@ -1,3 +1,4 @@
+import { DropdownOption } from "@/interfaces/interfaces";
 import {
 	REQUESTORDERSTATUS,
 	TASKORDERSTATUS,
@@ -152,8 +153,6 @@ const month: Record<string, string> = {
 	December: "ธันวาคม",
 };
 
-const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
-
 const monthList = [
 	...Object.entries(month).map(([value, label]) => ({
 		label: label as string,
@@ -161,17 +160,23 @@ const monthList = [
 	})),
 ];
 
-const yearList = [
-	...years.map((year) => ({
-		label: String(year + 543),
-		value: year,
-	})),
-];
+const getYearList = ({
+	range = 5,
+	canSelectPast = false,
+}: {
+	range?: number;
+	canSelectPast?: boolean;
+}): DropdownOption[] => {
+	const now = new Date();
+	const currentYear = now.getFullYear();
+	const startYear = canSelectPast ? currentYear - range : currentYear;
+	const endYear = currentYear + range;
 
-const yearMap = yearList.reduce(
-	(acc, { value, label }) => ({ ...acc, [value]: label }),
-	{} as Record<number, string>
-);
+	return Array.from({ length: endYear - startYear + 1 }, (_, i) => ({
+		label: (startYear + i).toString(),
+		value: startYear + i,
+	}));
+};
 
 const colorClasses = {
 	default: {
@@ -215,17 +220,15 @@ const colorClasses = {
 export {
 	UserRoleTranslation,
 	UserStatusTranslation,
-	RequestOrderStatusTranslation,
 	TaskOrderStatusTranslation,
-	RequestOrderTranslation,
+	RequestOrderStatusTranslation,
 	TaskOrderTranslation,
+	RequestOrderTranslation,
+	colorClasses,
 	UserStatusColorMap,
-	RequestOrderStatusColorMap,
 	TaskOrderStatusColorMap,
+	RequestOrderStatusColorMap,
 	month,
 	monthList,
-	years,
-	yearList,
-	yearMap,
-	colorClasses,
+	getYearList,
 };

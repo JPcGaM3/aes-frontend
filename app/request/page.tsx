@@ -20,8 +20,7 @@ import {
 	RequestOrderTranslation,
 	month,
 	monthList,
-	yearList,
-	yearMap,
+	getYearList,
 } from "@/utils/constants";
 import {
 	ActionConfig,
@@ -221,7 +220,7 @@ export default function RequestPage() {
 						type: "dropdown",
 						name: "start_year",
 						label: "ปีเริ่มต้น",
-						options: yearList,
+						options: getYearList({ canSelectPast: true }),
 						className: "w-1/2",
 					},
 				],
@@ -237,7 +236,7 @@ export default function RequestPage() {
 						type: "dropdown",
 						name: "end_year",
 						label: "ปีสิ้นสุด",
-						options: yearList,
+						options: getYearList({ canSelectPast: true }),
 						className: "w-1/2",
 					},
 				],
@@ -307,7 +306,6 @@ export default function RequestPage() {
 			key: "ap_year",
 			className: "text-gray-500 text-sm",
 			labelTranslator: RequestOrderTranslation,
-			valueTranslator: yearMap,
 		},
 	];
 

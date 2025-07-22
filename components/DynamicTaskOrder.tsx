@@ -133,8 +133,8 @@ export default function DynamicTaskOrder({
 
 		const placeholder = hasPlaceholder
 			? type === "dropdown"
-				? `โปรดเลือก ${labelValue || name}`
-				: `โปรดกรอก ${labelValue || name}`
+				? `เลือก${labelValue || name}`
+				: `กรอก${labelValue || name}`
 			: undefined;
 
 		const fieldKey = `${taskOrder.uiId}_${name}`;

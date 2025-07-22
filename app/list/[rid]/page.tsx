@@ -20,7 +20,6 @@ import {
 	RequestOrderTranslation,
 	TaskOrderTranslation,
 	month,
-	yearMap,
 } from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
@@ -233,7 +232,6 @@ export default function RequestManagementPage({
 					name: "ap_year",
 					value: String(reqOrder?.ap_year) || "-",
 					labelTranslator: RequestOrderTranslation,
-					translator: yearMap,
 				},
 				{
 					name: "count",

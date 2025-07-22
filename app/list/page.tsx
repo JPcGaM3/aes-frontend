@@ -329,13 +329,13 @@ export default function ListPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="w-full mb-6 text-left"
+				className="mb-6 w-full text-left"
 				orientation="horizontal"
 				subtitle="ใบสั่งงานทั้งหมด"
 				title="รายการใบสั่งงาน"
 			>
 				<Button
-					className="hidden font-semibold sm:inline-flex"
+					className="hidden sm:inline-flex font-semibold"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -358,7 +358,7 @@ export default function ListPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-right text-gray-700">
+				<div className="mb-4 font-medium text-gray-700 text-right">
 					{`จำนวนทั้งหมด: ${reqOrders?.length ?? 0} รายการ`}
 				</div>
 

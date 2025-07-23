@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthContext";
 import {
 	getYearList,
-	monthList,
+	getMonthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
 import { PlusIcon, MinusIcon } from "@/utils/icons";
@@ -48,7 +48,7 @@ export default function AddRequestPage() {
 	const hasFetched = useRef(false);
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const currentMonth = monthList[now.getMonth()].value;
+	const currentMonth = getMonthList({})[now.getMonth()].value;
 
 	const defaultTask: TaskFormType = { activity_name: "", tool_type_name: "" };
 	const defaultFormValues: FormType = {
@@ -412,7 +412,7 @@ export default function AddRequestPage() {
 						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
-						options: monthList,
+						options: getMonthList({}),
 					},
 				],
 				{

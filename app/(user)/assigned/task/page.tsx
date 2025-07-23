@@ -47,9 +47,11 @@ import { useAlert } from "@/providers/AlertContext";
 import { TASKORDERSTATUS } from "@/utils/enum";
 
 interface filterInterface {
-	start_date?: CalendarDate;
-	end_date?: CalendarDate;
 	status?: string;
+	date_range?: {
+		start: CalendarDate;
+		end: CalendarDate;
+	} | null;
 }
 
 moment.locale("th");
@@ -80,9 +82,11 @@ export default function TaskPage() {
 		new BuddhistCalendar()
 	);
 	const [filterValues, setFilterValues] = useState<filterInterface>({
-		start_date: startDateValue,
-		end_date: endDateValue,
 		status: undefined,
+		date_range: {
+			start: startDateValue,
+			end: endDateValue,
+		},
 	});
 
 	useEffect(() => {
@@ -99,10 +103,10 @@ export default function TaskPage() {
 			const fetchData = async () => {
 				try {
 					const startDateStr = convertToChristianCalendar(
-						filterValues.start_date
+						filterValues.date_range?.start
 					);
 					const endDateStr = convertToChristianCalendar(
-						filterValues.end_date
+						filterValues.date_range?.end
 					);
 					const promises = [
 						fetchAssignedTask({
@@ -216,18 +220,11 @@ export default function TaskPage() {
 						),
 					],
 				},
-				[
-					{
-						type: "date",
-						name: "start_date",
-						label: "วันเริ่มต้น",
-					},
-					{
-						type: "date",
-						name: "end_date",
-						label: "วันสิ้นสุด",
-					},
-				],
+				{
+					type: "date-range",
+					name: "date_range",
+					label: "ช่วงวันที่",
+				},
 			],
 		},
 	];
@@ -239,33 +236,18 @@ export default function TaskPage() {
 
 	const handleApplyFilters = (values: any) => {
 		try {
-			let startDate;
-
-			if (!values.start_date) {
-				startDate = startDateValue;
-			} else if (typeof values.start_date === "string") {
-				startDate = toCalendar(
-					parseDate(values.start_date),
-					new BuddhistCalendar()
-				);
-			} else {
-				startDate = values.start_date;
-			}
-
-			let endDate;
-
-			if (!values.end_date) {
-				endDate = endDateValue;
-			} else if (typeof values.end_date === "string") {
-				endDate = toCalendar(
-					parseDate(values.end_date),
-					new BuddhistCalendar()
-				);
-			} else {
-				endDate = values.end_date;
-			}
-
+			let startDate = startDateValue;
+			let endDate = endDateValue;
 			let status;
+
+			if (
+				values.date_range &&
+				values.date_range.start &&
+				values.date_range.end
+			) {
+				startDate = values.date_range.start;
+				endDate = values.date_range.end;
+			}
 
 			if (values.status === "all") {
 				status = undefined;
@@ -274,10 +256,13 @@ export default function TaskPage() {
 			}
 
 			setFilterValues({
-				start_date: startDate,
-				end_date: endDate,
 				status: status,
+				date_range: {
+					start: startDate,
+					end: endDate,
+				},
 			});
+
 			hasFetched.current = false;
 		} catch (error: any) {
 			showAlert({

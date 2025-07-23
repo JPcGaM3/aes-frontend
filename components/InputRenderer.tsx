@@ -47,17 +47,13 @@ export default function InputRenderer({
 	}, []);
 
 	const getVisibleMonths = () => {
-		if (width < 500) {
+		if (width < 400) {
 			return 1;
-		}
-		if (width < 750) {
+		} else if (width < 650) {
 			return 2;
 		}
-		if (width < 1000) {
-			return 3;
-		}
 
-		return 4;
+		return 3;
 	};
 
 	const handleUnifiedValueChange = useCallback(
@@ -81,13 +77,13 @@ export default function InputRenderer({
 				}
 
 				case "date-range": {
-					if (Array.isArray(v) && v[0] && v[1]) {
-						onValueChange(
-							commonProps.name,
-							`${v[0].toISOString()}|${v[1].toISOString()}`
-						);
+					if (v && v.start && v.end) {
+						onValueChange(commonProps.name, {
+							start: v.start,
+							end: v.end,
+						});
 					} else {
-						onValueChange(commonProps.name, "");
+						onValueChange(commonProps.name, null);
 					}
 
 					break;
@@ -99,10 +95,8 @@ export default function InputRenderer({
 							? typeof commonProps.options[0].value
 							: "string";
 
-					// For autocomplete, v is the selected key (single value as string)
 					let selectedValue = v;
 
-					// Convert string back to number if the original options are numbers
 					if (
 						optionType === "number" &&
 						selectedValue !== undefined &&
@@ -311,13 +305,15 @@ export default function InputRenderer({
 		}
 
 		case "date-range": {
+			const rangeValue = value || commonProps.defaultValue || null;
+
 			return (
 				<div ref={containerRef}>
 					<DateRangePicker
 						{...commonProps}
 						showMonthAndYearPickers
 						aria-label={commonProps.label}
-						value={value || null}
+						value={rangeValue}
 						visibleMonths={getVisibleMonths()}
 						onChange={
 							onValueChange ? handleUnifiedValueChange : undefined

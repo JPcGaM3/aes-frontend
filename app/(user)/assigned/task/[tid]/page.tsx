@@ -425,10 +425,10 @@ export default function TaskManagementPage({
 				setTimeout(() => {
 					router.back();
 				}, 2000);
-			} catch (err: any) {
+			} catch (error: any) {
 				showAlert({
 					title: "แจ้งปัญหาใบงานย่อยไม่สำเร็จ",
-					description: err.message || "Unknown error occurred",
+					description: error.message || "Unknown error occurred",
 					color: "danger",
 				});
 			} finally {

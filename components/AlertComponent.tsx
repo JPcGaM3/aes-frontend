@@ -65,7 +65,7 @@ export default function AlertComponent({
 	const zIndex = 45 + (totalAlerts - stackIndex);
 
 	const placementClass =
-		"fixed left-3 mt-3 right-3 sm:left-auto md:right-6 w-96 transition-all duration-300 ease-in-out";
+		"fixed mt-3 mx-3 right-0 max-w-96 md:mx-6 md:w-full transition-all duration-300 ease-in-out";
 
 	const scaleTransform = `scale(${Math.max(1 - stackIndex * 0.05, 0.9)})`;
 	const slideTransform =

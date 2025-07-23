@@ -28,7 +28,7 @@ import {
 } from "@/interfaces/schema";
 import {
 	month,
-	monthList,
+	getMonthList,
 	getYearList,
 	TaskOrderTranslation,
 	RequestOrderTranslation,
@@ -605,7 +605,7 @@ export default function RequestManagementPage({
 					name: "ap_month",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
-					options: monthList,
+					options: getMonthList({}),
 				},
 				{
 					type: "dropdown",

@@ -153,12 +153,25 @@ const month: Record<string, string> = {
 	December: "ธันวาคม",
 };
 
-const monthList = [
-	...Object.entries(month).map(([value, label]) => ({
-		label: label as string,
-		value: value as string,
-	})),
-];
+const getMonthList = ({
+	start_month = "January",
+}: {
+	start_month?: string;
+}) => {
+	const monthEntries = Object.entries(month);
+	const startIndex = monthEntries.findIndex(([key]) => key === start_month);
+
+	if (startIndex === -1) {
+		return monthEntries.map(([value, label]) => ({ label, value }));
+	}
+
+	const rotatedEntries = [...monthEntries.slice(startIndex)];
+
+	return rotatedEntries.map(([value, label]) => ({
+		label,
+		value,
+	}));
+};
 
 const getYearList = ({
 	range = 5,
@@ -171,9 +184,13 @@ const getYearList = ({
 }): DropdownOption[] => {
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const startYear =
-		start_year || canSelectPast ? currentYear - range : currentYear;
+
 	const endYear = currentYear + range;
+	const startYear = start_year
+		? start_year
+		: canSelectPast
+			? currentYear - range
+			: currentYear;
 
 	return Array.from({ length: endYear - startYear + 1 }, (_, i) => ({
 		label: (startYear + i).toString(),
@@ -232,6 +249,6 @@ export {
 	TaskOrderStatusColorMap,
 	RequestOrderStatusColorMap,
 	month,
-	monthList,
+	getMonthList,
 	getYearList,
 };

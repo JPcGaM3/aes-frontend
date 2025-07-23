@@ -19,7 +19,7 @@ import {
 	RequestOrderStatusTranslation,
 	RequestOrderTranslation,
 	month,
-	monthList,
+	getMonthList,
 	getYearList,
 } from "@/utils/constants";
 import {
@@ -57,14 +57,17 @@ export default function RequestPage() {
 	const router = useRouter();
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const currentMonth = monthList[now.getMonth()].value;
+	const currentMonth = getMonthList({})[now.getMonth()].value;
 
 	const prevAeId = useRef<number | undefined>(undefined);
 	const hasFetched = useRef(false);
 	const [reqOrders, setReqOrders] = useState<RequestOrder[]>([]);
 	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
 
-	const [filterTemp, setFilterTemp] = useState<filterInterface | null>(null);
+	const [filterTemp, setFilterTemp] = useState<filterInterface | null>({
+		start_month: currentMonth,
+		start_year: currentYear,
+	});
 	const [filterValues, setFilterValues] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
@@ -83,8 +86,12 @@ export default function RequestPage() {
 				start_month: currentMonth,
 				start_year: currentYear,
 			});
+			setFilterTemp({
+				start_month: currentMonth,
+				start_year: currentYear,
+			});
 		}
-	}, [userContext?.ae_id, isReady, filterValues, currentMonth, currentYear]);
+	}, [userContext?.ae_id, isReady, currentMonth, currentYear]);
 
 	useEffect(() => {
 		if (isReady && userContext?.ae_id && !hasFetched.current) {
@@ -142,14 +149,57 @@ export default function RequestPage() {
 	} = useDisclosure();
 
 	// Handlers for modal and drawer actions ---------------------------------
-	const handleApplyFilters = (values: any) => {
+	const handleFiltersApply = (values: any) => {
 		hasFetched.current = false;
 		setFilterValues(values);
 		onCloseFilter();
 	};
 
 	const handleFilterChange = (values: any) => {
-		const newValues = { ...filterValues, ...values };
+		const newValues: filterInterface = { ...filterTemp, ...values };
+
+		if (!newValues.start_year) {
+			newValues.end_year = undefined;
+			newValues.end_month = undefined;
+			newValues.start_month = undefined;
+		} else {
+			if (newValues.end_year) {
+				if (newValues.start_year > newValues.end_year) {
+					newValues.end_year = newValues.start_year;
+				}
+
+				if (!newValues.start_month) {
+					newValues.end_month = undefined;
+				} else {
+					if (newValues.end_month) {
+						const monthList = getMonthList({});
+						const startMonthIndex = monthList.findIndex(
+							(m) => m.value === newValues.start_month
+						);
+						const endMonthIndex = monthList.findIndex(
+							(m) => m.value === newValues.end_month
+						);
+
+						if (newValues.start_year === newValues.end_year) {
+							if (startMonthIndex > endMonthIndex) {
+								newValues.end_month = newValues.start_month;
+							}
+						}
+					} else {
+						newValues.end_month = newValues.start_month;
+					}
+				}
+			} else {
+				newValues.end_month = undefined;
+			}
+		}
+
+		setFilterTemp(newValues);
+	};
+
+	const handleFilterClose = () => {
+		setFilterTemp(filterValues);
+		onCloseFilter();
 	};
 
 	const handleNewPage = ({
@@ -180,78 +230,6 @@ export default function RequestPage() {
 	};
 
 	// Field configurations --------------------------------------------------
-	const getFilterSections = (): FormSection[] => [
-		{
-			fields: [
-				{
-					type: "dropdown",
-					name: "customer_type_id",
-					labelTranslator: RequestOrderTranslation,
-					options: [
-						...customerTypes.map((option) => ({
-							label: option.name || "-",
-							value: option.id,
-						})),
-					],
-				},
-				{
-					type: "dropdown",
-					name: "status",
-					label: "สถานะ",
-					options: [
-						{ label: "ทั้งหมด", value: "all" },
-						...Object.entries(RequestOrderStatusTranslation).map(
-							([value, label]) => ({
-								label: label as string,
-								value: value as string,
-							})
-						),
-					],
-				},
-				{
-					type: "text",
-					name: "quota_number",
-					labelTranslator: RequestOrderTranslation,
-				},
-				[
-					{
-						type: "dropdown",
-						name: "start_month",
-						label: "เดือนเริ่มต้น",
-						options: monthList,
-						className: "w-1/2",
-					},
-					{
-						type: "dropdown",
-						name: "start_year",
-						label: "ปีเริ่มต้น",
-						options: getYearList({
-							canSelectPast: true,
-							start_year: filterValues?.start_year,
-						}),
-						className: "w-1/2",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "end_month",
-						label: "เดือนสิ้นสุด",
-						options: monthList,
-						className: "w-1/2",
-					},
-					{
-						type: "dropdown",
-						name: "end_year",
-						label: "ปีสิ้นสุด",
-						options: getYearList({ canSelectPast: true }),
-						className: "w-1/2",
-					},
-				],
-			],
-		},
-	];
-
 	const headerFields: FieldConfig[] = [
 		{
 			key: "quota_number",
@@ -360,18 +338,105 @@ export default function RequestPage() {
 		return actionList;
 	};
 
+	const getEndMonthList = () => {
+		if (filterTemp?.start_year === filterTemp?.end_year) {
+			return getMonthList({ start_month: filterTemp?.start_month });
+		}
+
+		return getMonthList({});
+	};
+
+	const getEndYearList = () => {
+		return getYearList({ start_year: filterTemp?.start_year });
+	};
+
+	const getFilterSections = (): FormSection[] => [
+		{
+			fields: [
+				{
+					type: "dropdown",
+					name: "customer_type_id",
+					labelTranslator: RequestOrderTranslation,
+					options: [
+						...customerTypes.map((option) => ({
+							label: option.name || "-",
+							value: option.id,
+						})),
+					],
+				},
+				{
+					type: "dropdown",
+					name: "status",
+					label: "สถานะ",
+					options: [
+						{ label: "ทั้งหมด", value: "all" },
+						...Object.entries(RequestOrderStatusTranslation).map(
+							([value, label]) => ({
+								label: label as string,
+								value: value as string,
+							})
+						),
+					],
+				},
+				{
+					type: "text",
+					name: "quota_number",
+					labelTranslator: RequestOrderTranslation,
+				},
+				[
+					{
+						type: "dropdown",
+						name: "start_year",
+						label: "ปีเริ่มต้น",
+						className: "w-1/2",
+						options: getYearList({}),
+					},
+					{
+						type: "dropdown",
+						name: "start_month",
+						label: "เดือนเริ่มต้น",
+						className: "w-1/2",
+						options: getMonthList({}),
+						isReadOnly: !filterTemp?.start_year,
+					},
+				],
+				[
+					{
+						type: "dropdown",
+						name: "end_year",
+						label: "ปีสิ้นสุด",
+						className: "w-1/2",
+						options: getEndYearList(),
+						isReadOnly: !filterTemp?.start_year,
+					},
+					{
+						type: "dropdown",
+						name: "end_month",
+						label: "เดือนสิ้นสุด",
+						className: "w-1/2",
+						options: getEndMonthList(),
+						isReadOnly:
+							!filterTemp?.start_month ||
+							!filterTemp?.start_year ||
+							!filterTemp?.end_year,
+						isClearable: filterTemp?.start_month !== undefined,
+					},
+				],
+			],
+		},
+	];
+
 	return (
 		<>
 			{/* Modal ------------------------------------------------------------- */}
-
 			<FilterModal
 				isOpen={isOpenFilter}
 				sections={getFilterSections()}
 				title="ฟิลเตอร์รายการใบสั่งงาน"
-				values={filterValues}
-				onClose={() => onCloseFilter()}
+				values={filterTemp}
 				onChange={handleFilterChange}
-				onSubmit={handleApplyFilters}
+				onClose={handleFilterClose}
+				onSubmit={handleFiltersApply}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}

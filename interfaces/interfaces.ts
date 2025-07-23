@@ -51,6 +51,7 @@ export interface DropdownOption {
 
 export interface DropdownInputConfig extends BaseInputConfig {
 	type: "dropdown";
+	isClearable?: boolean;
 	options: DropdownOption[];
 }
 

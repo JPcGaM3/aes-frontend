@@ -1,9 +1,6 @@
-import axios from "axios";
-import qs from "qs";
+import { GET, POST, PATCH } from "./httpClient";
 
 import { UploadedFile } from "@/interfaces/interfaces";
-
-const apiUrl = process.env.API_URL || "http://localhost:8080";
 
 export async function getRequestOrders({
 	token,
@@ -11,44 +8,11 @@ export async function getRequestOrders({
 }: {
 	token: string;
 	paramData?: Record<string, any>;
-}) {
-	const params: Record<string, any> = {};
-
-	Object.entries(paramData || {}).forEach(([key, value]) => {
-		if (
-			value === undefined ||
-			value === null ||
-			value === "" ||
-			value === "all"
-		) {
-			params[key] = null;
-		} else {
-			params[key] = value;
-		}
+}): Promise<any> {
+	return await GET("/request-orders", {
+		token,
+		params: paramData,
 	});
-
-	try {
-		const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
-			params,
-			paramsSerializer: (params) =>
-				qs.stringify(params, { arrayFormat: "repeat" }),
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
 }
 
 export async function getRequestOrderWithTask({
@@ -57,67 +21,10 @@ export async function getRequestOrderWithTask({
 }: {
 	token: string;
 	requestId: number;
-}) {
-	try {
-		const response = await axios.get(
-			`${apiUrl}/api/v1/request-orders/${requestId}/get-task`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
-}
-
-export async function uploadRequestOrder({
-	token,
-	ae_id,
-	uploadedFiles,
-}: {
-	token: string;
-	ae_id: number;
-	uploadedFiles: UploadedFile[];
-}) {
-	const formData = new FormData();
-
-	formData.append("ae_id", ae_id.toString());
-
-	uploadedFiles.forEach((fileData) => {
-		formData.append("files", fileData.file);
+}): Promise<any> {
+	return await GET(`/request-orders/${requestId}/get-task`, {
+		token,
 	});
-
-	try {
-		const response = await axios.post(
-			`${apiUrl}/api/v1/request-orders/create/excel`,
-			formData,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "multipart/form-data",
-				},
-			}
-		);
-
-		return response.data;
-	} catch (error: any) {
-		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-		};
-	}
 }
 
 export async function KeyInRequestOrder({
@@ -126,41 +33,11 @@ export async function KeyInRequestOrder({
 }: {
 	token: string;
 	data: Record<string, any>;
-}) {
-	const body: Record<string, any> = {};
-
-	Object.entries(data).forEach(([key, value]) => {
-		if (
-			value === undefined ||
-			value === null ||
-			value === "" ||
-			value === "all"
-		) {
-			body[key] = null;
-		} else {
-			body[key] = value;
-		}
+}): Promise<any> {
+	return await POST("/request-orders/create/key-in", {
+		token,
+		body: data,
 	});
-
-	try {
-		const response = await axios.post(
-			`${apiUrl}/api/v1/request-orders/create/key-in`,
-			body,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-
-		return response.data.data;
-	} catch (error: any) {
-		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-		};
-	}
 }
 
 export async function SetStatusRequestOrder({
@@ -174,33 +51,48 @@ export async function SetStatusRequestOrder({
 		status?: string;
 		comment?: string;
 	};
+}): Promise<any> {
+	return await PATCH(`/request-orders/${rid}/set/status`, {
+		token,
+		body: paramData,
+	});
+}
+
+// Note: File upload ยังต้องจัดการแยกเพราะใช้ multipart/form-data
+export async function uploadRequestOrder({
+	token,
+	ae_id,
+	uploadedFiles,
+}: {
+	token: string;
+	ae_id: number;
+	uploadedFiles: UploadedFile[];
 }) {
-	const params: Record<string, any> = {};
-	const body: Record<string, any> = {};
+	// This still needs special handling due to file upload
+	const formData = new FormData();
 
-	if (paramData) {
-		if (paramData.status) body.status = paramData.status;
-		if (paramData.comment) body.comment = paramData.comment;
-	}
+	formData.append("ae_id", ae_id.toString());
+	uploadedFiles.forEach((fileData) => {
+		formData.append("files", fileData.file);
+	});
 
-	try {
-		const response = await axios.patch(
-			`${apiUrl}/api/v1/request-orders/${rid}/set/status`,
-			body,
-			{
-				params,
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
+	// Direct axios call for file upload
+	const response = await fetch("/api/proxy/request-orders/create/excel", {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		body: formData,
+	});
 
-		return response.data.data;
-	} catch (error: any) {
+	if (!response.ok) {
+		const errorData = await response.json();
+
 		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			status: response.status,
+			message: errorData.message,
 		};
 	}
+
+	return await response.json();
 }

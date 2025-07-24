@@ -1,5 +1,4 @@
-import axios from "axios";
-import qs from "qs";
+import { GET, POST } from "./httpClient";
 
 export interface LoginProps {
 	params: {
@@ -11,85 +10,22 @@ export interface LoginProps {
 }
 
 export async function LoginUser({ params, body }: LoginProps): Promise<any> {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.post(
-			`${apiUrl}/api/v1/mitr-portal/login`,
-			body,
-			{
-				params: params,
-				headers: {
-					"Content-Type": "application/json",
-				},
-			}
-		);
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
+	return await POST("/mitr-portal/login", {
+		params,
+		body,
+	});
 }
 
 export async function getNewToken({ token }: { token: string }): Promise<any> {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.get(
-			`${apiUrl}/api/v1/mitr-portal/refresh-token`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
+	return await GET("/mitr-portal/refresh-token", {
+		token,
+	});
 }
 
 export async function getProfile({ token }: { token: string }): Promise<any> {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.get(
-			`${apiUrl}/api/v1/mitr-portal/profile`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
+	return await GET("/mitr-portal/profile", {
+		token,
+	});
 }
 
 export async function getUsers({
@@ -98,37 +34,9 @@ export async function getUsers({
 }: {
 	token: string;
 	paramData?: { ae_id?: number; role?: string[] };
-}) {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-	const params: Record<string, any> = {};
-
-	if (paramData) {
-		if (paramData.ae_id) params.ae_id = paramData.ae_id;
-		if (paramData.role && paramData.role.length > 0) {
-			params.role = paramData.role;
-		}
-	}
-
-	try {
-		const response = await axios.get(`${apiUrl}/api/v1/users`, {
-			params,
-			paramsSerializer: (params) =>
-				qs.stringify(params, { arrayFormat: "repeat" }),
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		return response.data.data;
-	} catch (error: any) {
-		if (axios.isAxiosError(error)) {
-			throw {
-				status: error.response?.status,
-				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-			};
-		}
-
-		throw error;
-	}
+}): Promise<any> {
+	return await GET("/users", {
+		token,
+		params: paramData,
+	});
 }

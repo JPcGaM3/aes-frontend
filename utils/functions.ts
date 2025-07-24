@@ -28,7 +28,7 @@ import {
 	getRequestOrderWithTask,
 } from "@/libs/requestOrderAPI";
 import { getAssignedTask, getTaskById } from "@/libs/taskOrderAPI";
-import { getProfile, getUsers } from "@/libs/userAPI";
+import { getUsers, getProfile } from "@/libs/userAPI";
 
 moment.locale("th");
 

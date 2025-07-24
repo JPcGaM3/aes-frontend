@@ -3,17 +3,24 @@ services:
         build:
             context: ./
             dockerfile: dockerfile.app
+            args:
+                NEXT_PUBLIC_API_URL: http://localhost:8081
         container_name: aes-frontend
         environment:
-            - NODE_ENV=PRODUCTION
+            - NODE_ENV=production
             - API_URL=http://aes-backend:8080
+            - NEXT_PUBLIC_API_URL=http://localhost:8081
         ports:
             - "3001:3000"
-        volumes:
-            - ./frontend:/app
         networks:
             - aes-network
 
 networks:
     aes-network:
         driver: bridge
+        external: true
+        ipam:
+            config:
+                - subnet: 172.28.5.0/24
+                  gateway: 172.28.5.1
+                  ip_range: 172.28.5.0/24

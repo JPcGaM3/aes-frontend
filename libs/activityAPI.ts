@@ -1,21 +1,9 @@
-import axios from "axios";
+import { GET } from "./httpClient";
 
-export async function getActivities({ token }: { token: string }) {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.get(`${apiUrl}/api/v1/activities`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		return response.data.data;
-	} catch (error: any) {
-		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-		};
-	}
+export async function getActivities({
+	token,
+}: {
+	token: string;
+}): Promise<any> {
+	return await GET("/activities", { token });
 }

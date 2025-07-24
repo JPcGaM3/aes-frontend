@@ -1,41 +1,9 @@
-import axios from "axios";
+import { GET } from "./httpClient";
 
-export async function getAeAreaAll({ token }: { token: string }) {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.get(`${apiUrl}/api/v1/ae-areas`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		return response.data.data;
-	} catch (error: any) {
-		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-		};
-	}
+export async function getAeAreaAll({ token }: { token: string }): Promise<any> {
+	return await GET("/ae-areas", { token });
 }
 
-export async function getAeArea({ token }: { token: string }) {
-	const apiUrl = process.env.API_URL || "http://localhost:8080";
-
-	try {
-		const response = await axios.get(`${apiUrl}/api/v1/users/ae-area`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		return response.data.data;
-	} catch (error: any) {
-		throw {
-			status: error.response?.status,
-			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
-		};
-	}
+export async function getAeArea({ token }: { token: string }): Promise<any> {
+	return await GET("/users/ae-area", { token });
 }

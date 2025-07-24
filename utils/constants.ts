@@ -5,13 +5,14 @@ import {
 	USERSTATUS,
 } from "./enum";
 
+import { DropdownOption } from "@/interfaces/interfaces";
 import { ColorType } from "@/types";
 
 const UserRoleTranslation = {
 	[USERROLE.Admin]: "แอดมิน",
 	[USERROLE.DepartmentHead]: "หัวหน้าแผนก",
 	[USERROLE.UnitHead]: "หัวหน้าหน่วย",
-	[USERROLE.Driver]: "พนักขับรถ",
+	[USERROLE.Driver]: "พนักงานขับรถ",
 	[USERROLE.Farmpro]: "farmpro",
 	[USERROLE.CaneMIS]: "canemis",
 	[USERROLE.SongSirm]: "เขตส่งเสริม",
@@ -33,6 +34,7 @@ const RequestOrderStatusTranslation = {
 	[REQUESTORDERSTATUS.PendingConfirm]: "รอการยืนยัน",
 	[REQUESTORDERSTATUS.Completed]: "เสร็จสิ้น",
 	[REQUESTORDERSTATUS.Rejected]: "ถูกปฏิเสธ",
+	[REQUESTORDERSTATUS.Cancelled]: "ถูกยกเลิก",
 };
 
 const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
@@ -50,9 +52,7 @@ const RequestOrderStatusColorMap: Record<REQUESTORDERSTATUS, ColorType> = {
 
 const TaskOrderStatusTranslation = {
 	[TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
-	[TASKORDERSTATUS.Pending]: "รอการดำเนินการ",
 	[TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
-	[TASKORDERSTATUS.OnHold]: "รอการดำเนินการ",
 	[TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
 };
 
@@ -63,17 +63,18 @@ const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {
 	ON_HOLD: "warning",
 	COMPLETED: "success",
 	CANCELLED: "danger",
+	REJECTED: "danger",
 };
 
 const RequestOrderTranslation: Record<string, string> = {
 	work_order_number: "เลขที่ใบสั่งงาน",
 	phone: "เบอร์ติดต่อ",
-	customer_type_id: "แหล่งที่มา",
+	customer_type_id: "กลุ่มลูกค้า",
 	operation_area_id: "พื้นที่ปฏิบัติงาน",
 	quota_number: "รหัสโควต้า",
-	farmer_name: "ชื่อไร่",
+	farmer_name: "ชื่อไร่/ชื่อชาวไร่",
 	land_number: "เลขที่แปลง",
-	zone: "รหัสไร่",
+	zone: "รหัสไร่/เขต",
 	ap_month: "เดือนปฏิบัติงาน",
 	ap_year: "ปีปฏิบัติงาน",
 	ae_id: "สังกัด",
@@ -98,12 +99,15 @@ const RequestOrderTranslation: Record<string, string> = {
 
 const TaskOrderTranslation: Record<string, string> = {
 	id: "รหัสงานย่อย",
-	area_number: "เลขที่พื้นที่",
 	target_area: "พื้นที่เป้าหมาย",
-	area_actual: "พื้นที่จริง",
+	actual_area: "พื้นที่จริง",
 	price: "ราคา",
 	comment: "หมายเหตุ",
 	ap_date: "วันที่ปฏิบัติงาน",
+	start_date: "วันที่เริ่มต้น",
+	start_time: "เวลาเริ่มต้น",
+	end_date: "วันที่สิ้นสุด",
+	end_time: "เวลาสิ้นสุด",
 	oil_slip: "สลิปน้ำมัน",
 	oil_start_mile: "เลขไมล์เริ่มต้น (น้ำมัน)",
 	start_mile: "เลขไมล์เริ่มต้น",
@@ -149,26 +153,50 @@ const month: Record<string, string> = {
 	December: "ธันวาคม",
 };
 
-const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
+const getMonthList = ({
+	start_month = "January",
+}: {
+	start_month?: string;
+}) => {
+	const monthEntries = Object.entries(month);
+	const startIndex = monthEntries.findIndex(([key]) => key === start_month);
 
-const monthList = [
-	...Object.entries(month).map(([value, label]) => ({
-		label: label as string,
-		value: value as string,
-	})),
-];
+	if (startIndex === -1) {
+		return monthEntries.map(([value, label]) => ({ label, value }));
+	}
 
-const yearList = [
-	...years.map((year) => ({
-		label: String(year + 543),
-		value: year,
-	})),
-];
+	const rotatedEntries = [...monthEntries.slice(startIndex)];
 
-const yearMap = yearList.reduce(
-	(acc, { value, label }) => ({ ...acc, [value]: label }),
-	{} as Record<number, string>
-);
+	return rotatedEntries.map(([value, label]) => ({
+		label,
+		value,
+	}));
+};
+
+const getYearList = ({
+	range = 5,
+	start_year,
+	canSelectPast = false,
+}: {
+	range?: number;
+	start_year?: number;
+	canSelectPast?: boolean;
+}): DropdownOption[] => {
+	const now = new Date();
+	const currentYear = now.getFullYear();
+
+	const endYear = currentYear + range;
+	const startYear = start_year
+		? start_year
+		: canSelectPast
+			? currentYear - range
+			: currentYear;
+
+	return Array.from({ length: endYear - startYear + 1 }, (_, i) => ({
+		label: (startYear + i).toString(),
+		value: startYear + i,
+	}));
+};
 
 const colorClasses = {
 	default: {
@@ -212,17 +240,15 @@ const colorClasses = {
 export {
 	UserRoleTranslation,
 	UserStatusTranslation,
-	RequestOrderStatusTranslation,
 	TaskOrderStatusTranslation,
-	RequestOrderTranslation,
+	RequestOrderStatusTranslation,
 	TaskOrderTranslation,
-	UserStatusColorMap,
-	RequestOrderStatusColorMap,
-	TaskOrderStatusColorMap,
-	month,
-	monthList,
-	years,
-	yearList,
-	yearMap,
+	RequestOrderTranslation,
 	colorClasses,
+	UserStatusColorMap,
+	TaskOrderStatusColorMap,
+	RequestOrderStatusColorMap,
+	month,
+	getMonthList,
+	getYearList,
 };

@@ -120,7 +120,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
 				>
 					<div
 						style={{
-							background: "rgba(255,255,255,0.85)",
+							background: "rgba(255,255,255,1)",
 							borderRadius: "0.5rem",
 							padding: "2rem 2.5rem",
 							boxShadow: "0 8px 32px rgba(0,0,0,0.1)",

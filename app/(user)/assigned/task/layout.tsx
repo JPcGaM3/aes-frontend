@@ -4,16 +4,16 @@ import ProtectedRoute from "@/components/HigherOrderComponent";
 import { USERROLE } from "@/utils/enum";
 
 export const metadata: Metadata = {
-	title: "หน้าแรก",
+	title: "หน้าใบงานย่อย",
 };
 
-export default function HomeLayout({
+export default function TaskOrderLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
 	return (
-		<ProtectedRoute allowedRoles={Object.values(USERROLE)}>
+		<ProtectedRoute allowedRoles={[USERROLE.Admin, USERROLE.Driver]}>
 			<section className="flex flex-col justify-center gap-4">
 				<div className="justify-center inline-block w-full">
 					{children}

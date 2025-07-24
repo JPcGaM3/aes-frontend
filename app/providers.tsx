@@ -28,15 +28,15 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
 	return (
 		<LoadingProvider>
-			<AuthProvider>
-				<AlertProvider>
+			<AlertProvider>
+				<AuthProvider>
 					<HeroUIProvider navigate={router.push}>
 						<NextThemesProvider {...themeProps}>
 							{children}
 						</NextThemesProvider>
 					</HeroUIProvider>
-				</AlertProvider>
-			</AuthProvider>
+				</AuthProvider>
+			</AlertProvider>
 		</LoadingProvider>
 	);
 }

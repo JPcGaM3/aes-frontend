@@ -6,6 +6,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
 import { Tab, Tabs } from "@heroui/react";
 import moment from "moment-timezone";
+import "moment/locale/th";
 
 import { fontMono } from "@/config/fonts";
 import Header from "@/components/Header";
@@ -20,7 +21,6 @@ import {
 	RequestOrderTranslation,
 	TaskOrderTranslation,
 	month,
-	yearMap,
 } from "@/utils/constants";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
@@ -209,7 +209,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "unit_head",
+					name: "unit_head_id",
 					value: reqOrder?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -233,7 +233,6 @@ export default function RequestManagementPage({
 					name: "ap_year",
 					value: String(reqOrder?.ap_year) || "-",
 					labelTranslator: RequestOrderTranslation,
-					translator: yearMap,
 				},
 				{
 					name: "count",
@@ -272,7 +271,8 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "target_area",
-					value: reqOrder?.target_area || "-",
+					unit: "ไร่",
+					value: reqOrder?.target_area || 0,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -281,17 +281,17 @@ export default function RequestManagementPage({
 			title: `กิจกรรมที่ ${idx + 1}`,
 			fields: [
 				{
-					name: "activity_id",
+					name: "activities_id",
 					value: task.activities?.name || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
 					name: "car_id",
-					value: task.cars?.name || "-",
+					value: task.cars?.car_number || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
-					name: "tool_type",
+					name: "tool_types_id",
 					value: task.tool_type?.tool_type_name || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
@@ -307,7 +307,8 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "target_area",
-					value: task.target_area ?? "-",
+					unit: "ไร่",
+					value: task.target_area || 0,
 					labelTranslator: TaskOrderTranslation,
 				},
 			],
@@ -333,102 +334,104 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
-				radius="sm"
-				selectedKey={selectedTab}
-				onSelectionChange={handleTabChange}
-			>
-				{/* View tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
-					title="รายละเอียด"
+		<>
+			<div className="flex flex-col items-center justify-center w-full">
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
+					radius="sm"
+					selectedKey={selectedTab}
+					onSelectionChange={handleTabChange}
 				>
-					<Header
-						hasBorder={false}
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="รายละเอียดใบสั่งงาน"
-					/>
+					{/* View tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="view"
+						className="flex flex-col items-center justify-center w-full gap-8"
+						title="รายละเอียด"
+					>
+						<Header
+							hasBorder={false}
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="รายละเอียดใบสั่งงาน"
+						/>
 
-					<FieldValueDisplayer
-						sections={dataSections}
-						size="expanded"
-					/>
+						<FieldValueDisplayer
+							sections={dataSections}
+							size="expanded"
+						/>
 
-					<FormButtons
-						cancelLabel="ยกเลิก"
-						hasBorder={false}
-						isSubmitting={isSubmitting}
-						size="expanded"
-						submitLabel="อนุมัติใบสั่งงาน"
-						onCancel={handleCancel}
-						onSubmit={() =>
-							handleStatus(REQUESTORDERSTATUS.Pending)
-						}
-					/>
-				</Tab>
+						<FormButtons
+							cancelLabel="ยกเลิก"
+							hasBorder={false}
+							isSubmitting={isSubmitting}
+							size="expanded"
+							submitLabel="อนุมัติใบสั่งงาน"
+							onCancel={handleCancel}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Pending)
+							}
+						/>
+					</Tab>
 
-				{/* Edit tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="edit"
-					className="flex flex-col items-center justify-center w-full"
-					title="แก้ไข"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="แก้ไขใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() =>
-							handleStatus(REQUESTORDERSTATUS.PendingEdit)
-						}
-					/>
-				</Tab>
+					{/* Edit tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="edit"
+						className="flex flex-col items-center justify-center w-full"
+						title="แก้ไข"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="แก้ไขใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.PendingEdit)
+							}
+						/>
+					</Tab>
 
-				{/* Reject tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="reject"
-					className="flex flex-col items-center justify-center w-full"
-					title="ยกเลิก"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={reqOrder.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="ปฏิเสธใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() =>
-							handleStatus(REQUESTORDERSTATUS.Rejected)
-						}
-					/>
-				</Tab>
-			</Tabs>
-		</div>
+					{/* Reject tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="reject"
+						className="flex flex-col items-center justify-center w-full"
+						title="ยกเลิก"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={reqOrder.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="ปฏิเสธใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Rejected)
+							}
+						/>
+					</Tab>
+				</Tabs>
+			</div>
+		</>
 	);
 }

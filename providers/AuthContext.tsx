@@ -10,8 +10,11 @@ import React, {
 	ReactNode,
 	useRef,
 } from "react";
+import { useRouter } from "next/navigation";
 
-import { LoginProps, LoginUser } from "@/libs/userAPI";
+import { useAlert } from "./AlertContext";
+
+import { getNewToken, LoginProps, LoginUser } from "@/libs/userAPI";
 
 interface UserContextType {
 	token: string;
@@ -33,6 +36,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+	const router = useRouter();
+	const { showAlert } = useAlert();
 	const [token, setToken] = useState<string>("");
 	const [id, setId] = useState<number>(NaN);
 	const [role, setRole] = useState<string[]>([]);
@@ -41,7 +46,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [sessionTimeLeft, setSessionTimeLeft] = useState<number>(0);
 	const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const refreshInProgress = useRef<boolean>(false);
+	const hasFetch = useRef<boolean>(false);
 	const sessionDuration = 59 * 60 + 59;
+	const refreshThreshold = 10 * 60;
 
 	const userContext: UserContextType = useMemo(
 		() => ({
@@ -106,6 +114,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		[sessionDuration, calculateTimeLeft]
 	);
 
+	const refreshToken = useCallback(async () => {
+		if (refreshInProgress.current || !token) {
+			return;
+		}
+
+		try {
+			refreshInProgress.current = true;
+
+			const response = await getNewToken({ token });
+
+			if (response.token) {
+				const newUserContext = {
+					...userContext,
+					token: response.token,
+				};
+
+				setUserContext(newUserContext);
+				sessionStorage.setItem(
+					"authUser",
+					JSON.stringify(newUserContext)
+				);
+				startSessionTimer();
+			}
+		} catch {
+			return;
+		} finally {
+			refreshInProgress.current = false;
+			setTimeout(() => {
+				hasFetch.current = false;
+			}, 1000 * 60);
+		}
+	}, [token, userContext, setUserContext, startSessionTimer]);
+
 	const stopSessionTimer = useCallback(() => {
 		if (timerRef.current) {
 			clearInterval(timerRef.current);
@@ -117,10 +158,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
 	useEffect(() => {
+		if (
+			token &&
+			sessionTimeLeft <= refreshThreshold &&
+			sessionTimeLeft > 0 &&
+			!refreshInProgress.current &&
+			!hasFetch.current
+		) {
+			hasFetch.current = true;
+			refreshToken();
+		}
+	}, [sessionTimeLeft, refreshThreshold, token, refreshToken]);
+
+	useEffect(() => {
 		const storedUser = sessionStorage.getItem("authUser");
 		const storedExpireTime = sessionStorage.getItem("sessionExpireTime");
 
 		if (storedUser && storedExpireTime) {
+			const expirationTime = parseInt(storedExpireTime);
+			const currentTime = Date.now();
+			const timeLeft = Math.floor((expirationTime - currentTime) / 1000);
+
 			try {
 				const parsed = JSON.parse(storedUser);
 				const expirationTime = parseInt(storedExpireTime);
@@ -134,6 +192,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: parsed.ae_id,
 					});
 
+					if (timeLeft <= refreshThreshold && timeLeft > 0) {
+						setTimeout(() => {
+							refreshToken();
+						}, 100);
+					}
+
 					startSessionTimer(expirationTime);
 				} else {
 					sessionStorage.removeItem("authUser");
@@ -146,7 +210,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			}
 		}
 		setIsReady(true);
-	}, [setUserContext, startSessionTimer]);
+	}, []);
+
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (!document.hidden && token) {
+				const storedExpireTime =
+					sessionStorage.getItem("sessionExpireTime");
+
+				if (storedExpireTime) {
+					const expirationTime = parseInt(storedExpireTime);
+					const currentTime = Date.now();
+					const timeLeft = Math.floor(
+						(expirationTime - currentTime) / 1000
+					);
+
+					if (
+						timeLeft <= refreshThreshold &&
+						timeLeft > 0 &&
+						!refreshInProgress.current
+					) {
+						refreshToken();
+					} else if (timeLeft <= 0) {
+						setIsSessionExpired(true);
+						sessionStorage.removeItem("authUser");
+						sessionStorage.removeItem("sessionExpireTime");
+					}
+				}
+			}
+		};
+
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener(
+				"visibilitychange",
+				handleVisibilityChange
+			);
+		};
+	}, [token, refreshThreshold, refreshToken]);
 
 	useEffect(() => {
 		const isValid =
@@ -173,7 +275,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 						ae_id: props.params.ae_id ?? NaN,
 					};
 
-					setUserContext(newUserContext);
+					await setUserContext(newUserContext);
 					sessionStorage.setItem(
 						"authUser",
 						JSON.stringify(newUserContext)
@@ -210,6 +312,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		if (isSessionExpired) {
+			showAlert({
+				title: "เซสชันหมดอายุ",
+				description: "เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่",
+				color: "warning",
+			});
+
+			setTimeout(() => {
+				logout();
+				router.push("/login");
+			}, 2000);
+		}
+	}, [isSessionExpired, showAlert, logout, router]);
 
 	const providerValue = useMemo(
 		() => ({

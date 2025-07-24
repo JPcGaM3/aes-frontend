@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { FormSection } from "@/interfaces/interfaces";
@@ -9,11 +9,12 @@ import FormComponent from "@/components/FormComponent";
 import { RequestOrderTranslation } from "@/utils/constants";
 import { useLoading } from "@/providers/LoadingContext";
 import { useAlert } from "@/providers/AlertContext";
+import { USERROLE } from "@/utils/enum";
 
 export default function LoginPage() {
 	const router = useRouter();
 
-	const { login } = useAuth();
+	const { login, userContext, isReady } = useAuth();
 	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
 
@@ -34,7 +35,6 @@ export default function LoginPage() {
 					...body,
 				},
 			});
-			router.push("/home");
 		} catch (error: any) {
 			showAlert({
 				title: "เข้าสู่ระบบล้มเหลว",
@@ -45,6 +45,31 @@ export default function LoginPage() {
 			hideLoading();
 		}
 	};
+
+	useEffect(() => {
+		if (isReady && userContext.token) {
+			if (
+				userContext.role.find(
+					(role) =>
+						role === USERROLE.Admin || role === USERROLE.UnitHead
+				)
+			) {
+				router.push("/request");
+			} else if (
+				userContext.role.find(
+					(role) => role === USERROLE.DepartmentHead
+				)
+			) {
+				router.push("/list");
+			} else if (
+				userContext.role.find((role) => role === USERROLE.Driver)
+			) {
+				router.push("/assigned/task");
+			} else {
+				router.push("/home");
+			}
+		}
+	}, [userContext, isReady]);
 
 	const sections: FormSection[] = [
 		{
@@ -77,13 +102,13 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex justify-center items-center w-full">
+		<div className="flex items-center justify-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
 				submitLabel="ยืนยัน"
 				subtitle="กรุณาระบุตัวตนเพื่อเข้าใช้งาน"
-				title="ยินดีต้อนรับ"
+				title="ยินดีต้อนรับสู่ AE Service"
 				onSubmit={handleSubmit}
 			/>
 		</div>

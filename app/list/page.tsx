@@ -13,9 +13,8 @@ import {
 	RequestOrderStatusTranslation,
 	RequestOrderTranslation,
 	month,
-	monthList,
-	yearList,
-	yearMap,
+	getMonthList,
+	getYearList,
 } from "@/utils/constants";
 import {
 	ActionConfig,
@@ -33,11 +32,12 @@ import { fetchCustomerTypes, fetchReqOrderData } from "@/utils/functions";
 import { useAlert } from "@/providers/AlertContext";
 
 interface filterInterface {
+	ae_id?: number;
 	customer_type_id?: number;
 	start_month?: string;
-	start_year?: string;
+	start_year?: number;
 	end_month?: string;
-	end_year?: string;
+	end_year?: number;
 }
 
 export default function ListPage() {
@@ -52,16 +52,18 @@ export default function ListPage() {
 	} = useDisclosure();
 
 	const now = new Date();
-	const currentYear = String(now.getFullYear());
-	const currentMonth = monthList[now.getMonth()].value;
+	const currentYear = now.getFullYear();
+	const currentMonth = getMonthList({})[now.getMonth()].value;
 
 	const prevAeId = useRef<number | undefined>(undefined);
 	const hasFetched = useRef(false);
 	const [reqOrders, setReqOrders] = useState<RequestOrder[] | null>(null);
-	const [customerTypes, setCustomerTypes] = useState<CustomerType[] | null>(
-		null
-	);
-	const [filter, setFilter] = useState<filterInterface | null>({
+	const [customerTypes, setCustomerTypes] = useState<CustomerType[]>([]);
+	const [filterTemp, setFilterTemp] = useState<filterInterface | null>({
+		start_month: currentMonth,
+		start_year: currentYear,
+	});
+	const [filterValues, setFilterValues] = useState<filterInterface | null>({
 		start_month: currentMonth,
 		start_year: currentYear,
 	});
@@ -74,7 +76,7 @@ export default function ListPage() {
 		) {
 			prevAeId.current = userContext.ae_id;
 			hasFetched.current = false;
-			setFilter({
+			setFilterValues({
 				start_month: currentMonth,
 				start_year: currentYear,
 			});
@@ -106,9 +108,13 @@ export default function ListPage() {
 					}
 
 					const params = {
-						...filter,
+						...filterValues,
 						ae_id: userContext?.ae_id,
-						status: REQUESTORDERSTATUS.PendingApproval,
+						status: [
+							REQUESTORDERSTATUS.PendingApproval,
+							REQUESTORDERSTATUS.PendingEdit,
+							REQUESTORDERSTATUS.Rejected,
+						],
 					};
 
 					promises.push(
@@ -134,7 +140,7 @@ export default function ListPage() {
 
 			fetchData();
 		}
-	}, [filter, isReady, userContext?.ae_id, userContext?.token]);
+	}, [filterValues, isReady, userContext?.ae_id, userContext?.token]);
 
 	const actions: ActionConfig[] = [
 		{
@@ -223,89 +229,6 @@ export default function ListPage() {
 			key: "ap_year",
 			className: "text-gray-500 text-sm",
 			labelTranslator: RequestOrderTranslation,
-			valueTranslator: yearMap,
-		},
-	];
-
-	const filterSections: FormSection[] = [
-		{
-			fields: [
-				{
-					type: "dropdown",
-					name: "customer_type_id",
-					labelTranslator: RequestOrderTranslation,
-					options: [
-						...(customerTypes?.map((option) => ({
-							label: option.name || "-",
-							value: option.id,
-						})) || []),
-					],
-				},
-				[
-					{
-						type: "dropdown",
-						name: "start_month",
-						label: "เดือนเริ่มต้น",
-						options: monthList,
-						className: "w-1/2",
-					},
-					{
-						type: "dropdown",
-						name: "start_year",
-						label: "ปีเริ่มต้น",
-						options: yearList,
-						className: "w-1/2",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "end_month",
-						label: "เดือนสิ้นสุด",
-						options: monthList,
-						className: "w-1/2",
-					},
-					{
-						type: "dropdown",
-						name: "end_year",
-						label: "ปีสิ้นสุด",
-						options: yearList,
-						className: "w-1/2",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "start_month",
-						label: "เดือนเริ่มต้น",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "start_year",
-						label: "ปีเริ่มต้น",
-						options: yearList,
-						className: "w-1/3",
-					},
-				],
-				[
-					{
-						type: "dropdown",
-						name: "end_month",
-						label: "เดือนสิ้นสุด",
-						options: monthList,
-						className: "w-2/3",
-					},
-					{
-						type: "dropdown",
-						name: "end_year",
-						label: "ปีสิ้นสุด",
-						options: yearList,
-						className: "w-1/3",
-					},
-				],
-			],
 		},
 	];
 
@@ -314,9 +237,125 @@ export default function ListPage() {
 		translation: RequestOrderStatusTranslation,
 	};
 
-	const handleApplyFilters = (values: any) => {
+	const getEndMonthList = () => {
+		if (filterTemp?.start_year === filterTemp?.end_year) {
+			return getMonthList({ start_month: filterTemp?.start_month });
+		}
+
+		return getMonthList({});
+	};
+
+	const getEndYearList = () => {
+		return getYearList({ start_year: filterTemp?.start_year });
+	};
+
+	const getFilterSections = (): FormSection[] => [
+		{
+			fields: [
+				{
+					type: "dropdown",
+					name: "customer_type_id",
+					labelTranslator: RequestOrderTranslation,
+					options: [
+						...customerTypes.map((option) => ({
+							label: option.name || "-",
+							value: option.id,
+						})),
+					],
+				},
+				[
+					{
+						type: "dropdown",
+						name: "start_year",
+						label: "ปีเริ่มต้น",
+						className: "w-1/2",
+						options: getYearList({}),
+					},
+					{
+						type: "dropdown",
+						name: "start_month",
+						label: "เดือนเริ่มต้น",
+						className: "w-1/2",
+						options: getMonthList({}),
+						isReadOnly: !filterTemp?.start_year,
+					},
+				],
+				[
+					{
+						type: "dropdown",
+						name: "end_year",
+						label: "ปีสิ้นสุด",
+						className: "w-1/2",
+						options: getEndYearList(),
+						isReadOnly: !filterTemp?.start_year,
+					},
+					{
+						type: "dropdown",
+						name: "end_month",
+						label: "เดือนสิ้นสุด",
+						className: "w-1/2",
+						options: getEndMonthList(),
+						isReadOnly:
+							!filterTemp?.start_month ||
+							!filterTemp?.start_year ||
+							!filterTemp?.end_year,
+						isClearable: filterTemp?.start_month !== undefined,
+					},
+				],
+			],
+		},
+	];
+
+	const handleFiltersApply = (values: any) => {
 		hasFetched.current = false;
-		setFilter(values);
+		setFilterValues(values);
+		onCloseFilter();
+	};
+
+	const handleFilterChange = (values: any) => {
+		const newValues: filterInterface = { ...filterTemp, ...values };
+
+		if (!newValues.start_year) {
+			newValues.end_year = undefined;
+			newValues.end_month = undefined;
+			newValues.start_month = undefined;
+		} else {
+			if (newValues.end_year) {
+				if (newValues.start_year > newValues.end_year) {
+					newValues.end_year = newValues.start_year;
+				}
+
+				if (!newValues.start_month) {
+					newValues.end_month = undefined;
+				} else {
+					if (newValues.end_month) {
+						const monthList = getMonthList({});
+						const startMonthIndex = monthList.findIndex(
+							(m) => m.value === newValues.start_month
+						);
+						const endMonthIndex = monthList.findIndex(
+							(m) => m.value === newValues.end_month
+						);
+
+						if (newValues.start_year === newValues.end_year) {
+							if (startMonthIndex > endMonthIndex) {
+								newValues.end_month = newValues.start_month;
+							}
+						}
+					} else {
+						newValues.end_month = newValues.start_month;
+					}
+				}
+			} else {
+				newValues.end_month = undefined;
+			}
+		}
+
+		setFilterTemp(newValues);
+	};
+
+	const handleFilterClose = () => {
+		setFilterTemp(filterValues);
 		onCloseFilter();
 	};
 
@@ -348,11 +387,12 @@ export default function ListPage() {
 			{/* Modal ------------------------------------------------------------- */}
 			<FilterModal
 				isOpen={isOpenFilter}
-				sections={filterSections}
+				sections={getFilterSections()}
 				title="ฟิลเตอร์รายการใบสั่งงาน"
-				values={filter}
-				onClose={() => onCloseFilter()}
-				onSubmit={handleApplyFilters}
+				values={filterTemp}
+				onChange={handleFilterChange}
+				onClose={handleFilterClose}
+				onSubmit={handleFiltersApply}
 			/>
 
 			{/* Header ----------------------------------------------------------- */}

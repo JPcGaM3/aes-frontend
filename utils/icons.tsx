@@ -28,6 +28,8 @@ import {
 	Trash2,
 	Check,
 	Timer,
+	PlayCircle,
+	Clock,
 } from "lucide-react";
 
 import { IconSvgProps } from "@/types";
@@ -730,6 +732,27 @@ export const InfoIcon = (props: IconSvgProps) => {
 	);
 };
 
+export const StartIcon = (props: IconSvgProps) => {
+	const {
+		size = 24,
+		strokeWidth = 1.5,
+		color = "currentColor",
+		...rest
+	} = props;
+
+	return (
+		<PlayCircle
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
+			{...rest}
+		/>
+	);
+};
 export const EditIcon = (props: IconSvgProps) => {
 	const {
 		size = 24,
@@ -946,6 +969,28 @@ export const TimerIcon = (props: IconSvgProps) => {
 
 	return (
 		<Timer
+			height={size}
+			stroke={color}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth={strokeWidth}
+			viewBox="0 0 24 24"
+			width={size}
+			{...rest}
+		/>
+	);
+};
+
+export const ClockIcon = (props: IconSvgProps) => {
+	const {
+		size = 24,
+		strokeWidth = 2,
+		color = "currentColor",
+		...rest
+	} = props;
+
+	return (
+		<Clock
 			height={size}
 			stroke={color}
 			strokeLinecap="round"

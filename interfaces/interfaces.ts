@@ -39,8 +39,9 @@ export interface TextAreaInputConfig extends BaseInputConfig {
 
 export interface NumberInputConfig extends BaseInputConfig {
 	type: "number";
-	min?: number;
-	max?: number;
+	unit?: string;
+	minValue?: number;
+	maxValue?: number;
 }
 
 export interface DropdownOption {
@@ -50,8 +51,8 @@ export interface DropdownOption {
 
 export interface DropdownInputConfig extends BaseInputConfig {
 	type: "dropdown";
+	isClearable?: boolean;
 	options: DropdownOption[];
-	selectionMode?: "single" | "multiple";
 }
 
 export interface DateInputConfig extends BaseInputConfig {
@@ -62,13 +63,20 @@ export interface DateRangeInputConfig extends BaseInputConfig {
 	type: "date-range";
 }
 
+export interface TimeInputConfig extends BaseInputConfig {
+	type: "time";
+	granularity?: "hour" | "minute" | "second";
+	hourCycle?: 12 | 24;
+}
+
 type InputConfig =
 	| TextInputConfig
 	| TextAreaInputConfig
 	| NumberInputConfig
 	| DropdownInputConfig
 	| DateInputConfig
-	| DateRangeInputConfig;
+	| DateRangeInputConfig
+	| TimeInputConfig;
 export type { InputConfig };
 
 export type FormField = InputConfig | InputConfig[];
@@ -119,8 +127,8 @@ export interface FieldValue {
 	name: string;
 	labelTranslator?: Record<string, string>;
 	value: React.ReactNode;
+	unit?: string;
 	translator?: Record<string, string>;
-	highlight?: boolean;
 	className?: string;
 }
 

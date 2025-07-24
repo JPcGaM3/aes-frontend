@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 
 import { UploadedFile } from "@/interfaces/interfaces";
 
@@ -29,6 +30,8 @@ export async function getRequestOrders({
 	try {
 		const response = await axios.get(`${apiUrl}/api/v1/request-orders`, {
 			params,
+			paramsSerializer: (params) =>
+				qs.stringify(params, { arrayFormat: "repeat" }),
 			headers: {
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",

@@ -40,14 +40,14 @@ export default function FieldValueDisplayer({
 					)}
 
 					{/* Fields ---------------------------------------------------------------------------------------------------------------------- */}
-					<div className="grid w-full grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-x-1 gap-y-2">
+					<div className="grid w-full grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-2">
 						{section.fields.map((field, i) => (
 							<div
 								key={i}
 								className={`flex items-start gap-2 ${field.className || ""}`}
 							>
 								<span
-									className={`text-sm font-semibold min-w-[100px] ${field.highlight ? "text-blue-600" : ""}`}
+									className={`text-sm font-semibold min-w-[100px]`}
 								>
 									{(() => {
 										let displayLabel =
@@ -63,7 +63,16 @@ export default function FieldValueDisplayer({
 									})()}
 								</span>
 
-								<span className="text-sm text-gray-800 break-all">
+								<span
+									className="text-sm text-gray-800 break-all"
+									style={{
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap",
+										maxWidth: "100%",
+										display: "block",
+									}}
+								>
 									:{" "}
 									{(() => {
 										let displayValue =
@@ -76,13 +85,10 @@ export default function FieldValueDisplayer({
 												: field.value;
 
 										if (
-											typeof displayValue === "string" &&
-											(displayValue.length > 30 ||
-												displayValue.includes("\n"))
+											field.unit &&
+											typeof field.unit === "string"
 										) {
-											displayValue =
-												displayValue.slice(0, 30) +
-												"...";
+											displayValue = `${displayValue} ${field.unit}`;
 										}
 
 										return displayValue;

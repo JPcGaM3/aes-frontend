@@ -1,0 +1,19 @@
+services:
+    frontend:
+        build:
+            context: ./
+            dockerfile: dockerfile.app
+        container_name: aes-frontend
+        environment:
+            - NODE_ENV=PRODUCTION
+            - API_URL=http://aes-backend:8080
+        ports:
+            - "3001:3000"
+        volumes:
+            - ./frontend:/app
+        networks:
+            - aes-network
+
+networks:
+    aes-network:
+        driver: bridge

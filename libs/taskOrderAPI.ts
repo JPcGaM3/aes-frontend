@@ -32,9 +32,10 @@ export async function getAssignedTask({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -62,9 +63,10 @@ export async function getTaskById({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -106,9 +108,10 @@ export async function SetStatusTaskOrder({
 
 		return response.data.data;
 	} catch (error: any) {
-		throw new Error(
-			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-		);
+		throw {
+			status: error.response?.status,
+			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+		};
 	}
 }
 
@@ -169,8 +172,9 @@ export async function SetActualTaskOrder({
 
 		return response.data.data;
 	} catch (error: any) {
-		throw new Error(
-			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-		);
+		throw {
+			status: error.response?.status,
+			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+		};
 	}
 }

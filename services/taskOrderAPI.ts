@@ -56,9 +56,10 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 			return response.data.data;
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
-				throw new Error(
-					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-				);
+				throw {
+					status: error.response?.status,
+					message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+				};
 			}
 
 			throw error;
@@ -89,9 +90,10 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 			return response.data.data;
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
-				throw new Error(
-					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-				);
+				throw {
+					status: error.response?.status,
+					message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+				};
 			}
 
 			throw error;
@@ -117,9 +119,10 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 			return response.data.data;
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
-				throw new Error(
-					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-				);
+				throw {
+					status: error.response?.status,
+					message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+				};
 			}
 
 			throw error;
@@ -147,9 +150,10 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 			return response.data.data;
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
-				throw new Error(
-					`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-				);
+				throw {
+					status: error.response?.status,
+					message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+				};
 			}
 
 			throw error;
@@ -278,9 +282,10 @@ export async function updateTaskOrderStatus({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -318,9 +323,10 @@ export async function updateTaskOrderActualArea({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;

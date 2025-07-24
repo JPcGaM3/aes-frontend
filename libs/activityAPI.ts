@@ -13,8 +13,9 @@ export async function getActivities({ token }: { token: string }) {
 
 		return response.data.data;
 	} catch (error: any) {
-		throw new Error(
-			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-		);
+		throw {
+			status: error.response?.status,
+			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+		};
 	}
 }

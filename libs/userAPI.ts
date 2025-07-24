@@ -28,9 +28,10 @@ export async function LoginUser({ params, body }: LoginProps): Promise<any> {
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -54,9 +55,10 @@ export async function getNewToken({ token }: { token: string }): Promise<any> {
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -80,9 +82,10 @@ export async function getProfile({ token }: { token: string }): Promise<any> {
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;
@@ -120,9 +123,10 @@ export async function getUsers({
 		return response.data.data;
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(
-				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
-			);
+			throw {
+				status: error.response?.status,
+				message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
+			};
 		}
 
 		throw error;

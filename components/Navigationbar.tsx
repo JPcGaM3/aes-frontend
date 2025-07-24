@@ -217,7 +217,7 @@ export default function Navbar() {
 						<Button
 							isIconOnly
 							className="relative opacity-100 mr-4 p-0 h-full aspect-[1/1]"
-							isDisabled={!userContext?.token}
+							isDisabled={true}
 							radius="sm"
 							size="lg"
 							variant="light"
@@ -233,15 +233,6 @@ export default function Navbar() {
 								src="/pictures/logo.png"
 							/>
 						</Button>
-
-						{/* Session Timer */}
-						{/* 
-						{userContext.token && (
-							<NavbarItem className="flex items-center justify-start w-full h-full">
-								<SessionTimer />
-							</NavbarItem>
-						)} 
-						*/}
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}

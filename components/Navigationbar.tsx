@@ -22,11 +22,8 @@ import {
 import { Button } from "@heroui/button";
 import { clsx } from "clsx";
 
-import SessionTimer from "./SessionTimer";
-
 import { useAuth } from "@/providers/AuthContext";
 import {
-	HomeIcon,
 	HamburgerIcon,
 	CancelIcon,
 	ChevronDownIcon,
@@ -65,22 +62,28 @@ export default function Navbar() {
 
 	const menuItems: MenuItem[] = [
 		// * Normal Page --------------------------------------------------
-		{
-			name: "เมนูหลัก",
-			path: "/home",
-			icon: <HomeIcon size={18} />,
-			allowedRoles: [
-				USERROLE.Admin,
-				USERROLE.DepartmentHead,
-				USERROLE.UnitHead,
-				USERROLE.Driver,
-			],
-		},
+		// {
+		// 	name: "เมนูหลัก",
+		// 	path: "/home",
+		// 	icon: <HomeIcon size={18} />,
+		// 	allowedRoles: [
+		// 		USERROLE.Admin,
+		// 		USERROLE.DepartmentHead,
+		// 		USERROLE.UnitHead,
+		// 		USERROLE.Driver,
+		// 	],
+		// },
 		{
 			name: "งาน",
 			path: "/request",
 			icon: <CheckFillIcon size={18} />,
 			allowedRoles: [USERROLE.Admin, USERROLE.UnitHead],
+		},
+		{
+			name: "งานย่อย",
+			path: "/assigned/task",
+			icon: <CheckFillIcon size={18} />,
+			allowedRoles: [USERROLE.Admin, USERROLE.Driver],
 		},
 		{
 			name: "รายการ",
@@ -215,7 +218,7 @@ export default function Navbar() {
 	return (
 		<>
 			<HeroUINavbar
-				className="z-50 flex items-center shadow-md p-0 h-18"
+				className="z-50 flex items-center p-0 shadow-md h-18"
 				classNames={{
 					wrapper: "px-3 md:px-6 py-2",
 				}}
@@ -225,9 +228,9 @@ export default function Navbar() {
 				shouldHideOnScroll={false}
 				onMenuOpenChange={setIsMenuOpen}
 			>
-				<NavbarContent className="justify-start items-center gap-2 w-full">
+				<NavbarContent className="items-center justify-start w-full gap-2">
 					{/* Logo */}
-					<NavbarBrand className="flex justify-start items-center w-full h-full">
+					<NavbarBrand className="flex items-center justify-start w-full h-full">
 						<Button
 							isIconOnly
 							className="relative opacity-100 mr-4 p-0 h-full aspect-[1/1]"
@@ -249,11 +252,13 @@ export default function Navbar() {
 						</Button>
 
 						{/* Session Timer */}
+						{/* 
 						{userContext.token && (
-							<NavbarItem className="flex justify-start items-center w-full h-full">
+							<NavbarItem className="flex items-center justify-start w-full h-full">
 								<SessionTimer />
 							</NavbarItem>
-						)}
+						)} 
+						*/}
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}
@@ -277,7 +282,7 @@ export default function Navbar() {
 								>
 									<PopoverTrigger>
 										<Button
-											className="flex flex-row justify-between gap-3 px-3 w-fit min-w-24 h-full font-bold text-lg"
+											className="flex flex-row justify-between h-full gap-3 px-3 text-lg font-bold w-fit min-w-24"
 											color="default"
 											endContent={
 												isDropdownOpen ? (
@@ -301,13 +306,13 @@ export default function Navbar() {
 										</Button>
 									</PopoverTrigger>
 
-									<PopoverContent className="shadow-lg mt-1 p-1 rounded-lg w-fit min-w-24">
-										<div className="flex flex-col w-full font-semibold text-sm">
+									<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg w-fit min-w-24">
+										<div className="flex flex-col w-full text-sm font-semibold">
 											{aeAreas.length > 0 ? (
 												aeAreas.map((option) => (
 													<Button
 														key={option.ae_area.id}
-														className="justify-between p-2 w-full font-medium text-md text-left"
+														className="justify-between w-full p-2 font-medium text-left text-md"
 														color={
 															userContext.ae_id ===
 															option.ae_area.id
@@ -340,7 +345,7 @@ export default function Navbar() {
 													</Button>
 												))
 											) : (
-												<div className="p-2 text-gray-400 text-center">
+												<div className="p-2 text-center text-gray-400">
 													No options available
 												</div>
 											)}
@@ -351,10 +356,10 @@ export default function Navbar() {
 						)}
 
 					{/* Menu Toggle */}
-					<NavbarItem className="md:hidden flex justify-end items-center h-full">
+					<NavbarItem className="flex items-center justify-end h-full md:hidden">
 						<Button
 							isIconOnly
-							className="p-0 h-full"
+							className="h-full p-0"
 							color={isMenuOpen ? "default" : "primary"}
 							endContent={
 								isMenuOpen ? <CancelIcon /> : <HamburgerIcon />
@@ -367,7 +372,7 @@ export default function Navbar() {
 					</NavbarItem>
 
 					{/* Nav bar desktop */}
-					<NavbarItem className="hidden md:flex flex-row items-center bg-default-100 rounded-lg w-fit h-full">
+					<NavbarItem className="flex-row items-center hidden h-full rounded-lg md:flex bg-default-100 w-fit">
 						<Tabs
 							aria-label="Navigation Tabs"
 							className="h-full"

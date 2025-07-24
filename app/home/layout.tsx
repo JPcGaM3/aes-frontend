@@ -13,14 +13,7 @@ export default function HomeLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<ProtectedRoute
-			allowedRoles={[
-				USERROLE.Admin,
-				USERROLE.DepartmentHead,
-				USERROLE.UnitHead,
-				USERROLE.Driver,
-			]}
-		>
+		<ProtectedRoute allowedRoles={Object.values(USERROLE)}>
 			<section className="flex flex-col justify-center gap-4">
 				<div className="justify-center inline-block w-full">
 					{children}

@@ -40,4 +40,5 @@ export enum TASKORDERSTATUS {
 	OnHold = "ON_HOLD",
 	Completed = "COMPLETED",
 	Cancelled = "CANCELLED",
+	Rejected = "REJECTED",
 }

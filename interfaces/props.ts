@@ -95,7 +95,8 @@ export interface InputRendererProps {
 		| "dropdown"
 		| "date"
 		| "date-range"
-		| "number";
+		| "number"
+		| "time";
 	commonProps: any;
 	onValueChange?: (name: string, value: any) => void;
 }

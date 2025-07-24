@@ -6,6 +6,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import clsx from "clsx";
 import { Alert, Button, Tab, Tabs } from "@heroui/react";
 import moment from "moment-timezone";
+import "moment/locale/th";
 
 import { fontMono } from "@/config/fonts";
 import Header from "@/components/Header";
@@ -28,11 +29,10 @@ import {
 } from "@/interfaces/schema";
 import {
 	month,
-	monthList,
-	yearMap,
-	yearList,
-	RequestOrderTranslation,
+	getMonthList,
+	getYearList,
 	TaskOrderTranslation,
+	RequestOrderTranslation,
 	RequestOrderStatusTranslation,
 } from "@/utils/constants";
 import { SetStatusRequestOrder } from "@/libs/requestOrderAPI";
@@ -437,7 +437,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					name: "unit_head",
+					name: "unit_head_id",
 					value: requestData?.users?.fullname || "-",
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -461,7 +461,6 @@ export default function RequestManagementPage({
 					name: "ap_year",
 					value: String(requestData?.ap_year) || "-",
 					labelTranslator: RequestOrderTranslation,
-					translator: yearMap,
 				},
 				{
 					name: "count",
@@ -500,7 +499,8 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "target_area",
-					value: requestData?.target_area || "-",
+					unit: "ไร่",
+					value: requestData?.target_area || 0,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -515,11 +515,7 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "car_id",
-					value:
-						task.cars?.name ||
-						task.cars?.car_number ||
-						task.cars?.id ||
-						"-",
+					value: task.cars?.car_number || "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -529,12 +525,17 @@ export default function RequestManagementPage({
 				},
 				{
 					name: "user_id",
-					value: task.users?.username || "-",
+					value:
+						task.users && task.users.username
+							? task.users.username.charAt(0).toUpperCase() +
+								task.users.username.slice(1).toLowerCase()
+							: "-",
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
 					name: "target_area",
-					value: task.target_area ?? "-",
+					unit: "ไร่",
+					value: task.target_area ?? 0,
 					labelTranslator: TaskOrderTranslation,
 				},
 				{
@@ -605,19 +606,20 @@ export default function RequestManagementPage({
 					name: "ap_month",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
-					options: monthList,
+					options: getMonthList({}),
 				},
 				{
 					type: "dropdown",
 					name: "ap_year",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
-					options: yearList,
+					options: getYearList({}),
 				},
 				{
-					type: "text",
+					type: "number",
 					name: "count",
 					path: "_count.taskorders",
+					unit: "กิจกรรม",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -627,7 +629,7 @@ export default function RequestManagementPage({
 			title: "สถานที่ปฏิบัติงาน",
 			fields: [
 				{
-					type: "number",
+					type: "text",
 					name: "quota_number",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
@@ -639,7 +641,7 @@ export default function RequestManagementPage({
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "number",
+					type: "text",
 					name: "land_number",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
@@ -663,6 +665,8 @@ export default function RequestManagementPage({
 				{
 					type: "number",
 					name: "target_area",
+					unit: "ไร่",
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
@@ -689,176 +693,181 @@ export default function RequestManagementPage({
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
-				radius="sm"
-				selectedKey={selectedTab}
-				onSelectionChange={handleTabChange}
-			>
-				{/* View tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="view"
-					className="flex flex-col items-center justify-center w-full gap-8"
-					title="รายละเอียด"
+		<>
+			<div className="flex flex-col items-center justify-center w-full">
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					radius="sm"
+					selectedKey={selectedTab}
+					onSelectionChange={handleTabChange}
 				>
-					<Header
-						hasBorder={false}
-						subtitle={`@${requestData.work_order_number}`}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="รายละเอียดใบสั่งงาน"
-					/>
-
-					{requestData.comment && (
-						<Alert
-							className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
-							color={
-								requestData.status ===
-								REQUESTORDERSTATUS.Rejected
-									? "danger"
-									: "warning"
-							}
-							description={requestData.comment || "-"}
-							endContent={
-								requestData.status !==
-									REQUESTORDERSTATUS.Rejected && (
-									<Button
-										className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
-										color="warning"
-										title="mark as done"
-										type="button"
-										variant="flat"
-										onMouseEnter={() =>
-											setIsHoveringComment(true)
-										}
-										onMouseLeave={() =>
-											setIsHoveringComment(false)
-										}
-										onPress={handleClearComment}
-									>
-										{isHoveringComment ? (
-											<span className="whitespace-nowrap">
-												แก้ไขแล้ว
-											</span>
-										) : (
-											<CheckIcon />
-										)}
-									</Button>
-								)
-							}
-							isVisible={true}
-							title="หมายเหตุ"
-							variant="faded"
-						/>
-					)}
-
-					<FieldValueDisplayer
-						sections={dataSections}
-						size="expanded"
-					/>
-
-					<FormButtons
-						cancelLabel="ยกเลิก"
-						hasBorder={false}
-						isSubmitDisabled={
-							requestData.status !== REQUESTORDERSTATUS.Created &&
-							requestData.status !==
-								REQUESTORDERSTATUS.PendingEdit
-						}
-						size="expanded"
-						submitLabel="ส่งคำขออนุมัติ"
-						onCancel={handleCancel}
-						onSubmit={() =>
-							handleStatus(REQUESTORDERSTATUS.PendingApproval)
-						}
-					/>
-				</Tab>
-
-				{/* Edit tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="edit"
-					className="flex flex-col items-center justify-center w-full gap-8"
-					isDisabled={
-						requestData.status === REQUESTORDERSTATUS.Rejected ||
-						requestData.status ===
-							REQUESTORDERSTATUS.PendingApproval
-					}
-					title="แก้ไข"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={requestFormSections}
-						size="expanded"
-						submitLabel="บันทึก"
-						subtitle={`@${requestData.work_order_number}`}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title="แก้ไขใบสั่งงาน"
-						values={{
-							...requestData,
-							...requestOrderChanges,
-						}}
-						onCancel={() => {
-							resetChanges();
-							handleCancel();
-						}}
-						onChange={handleValueChange}
-						onSubmit={handleSubmit}
+					{/* View tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="view"
+						className="flex flex-col items-center justify-center w-full gap-8"
+						title="รายละเอียด"
 					>
-						{/* Dynamic Task Orders */}
-						<DynamicTaskOrder
-							activityData={activityWithToolTypes}
-							carData={carData}
-							driverData={driverData}
-							errors={taskOrderErrors}
-							getToolTypeOptions={getToolTypeData}
-							taskOrders={taskOrderUIItems}
-							onAddTask={addTaskOrder}
-							onRemoveTask={removeTaskOrder}
-							onUpdateTask={updateTaskOrder}
+						<Header
+							hasBorder={false}
+							subtitle={`@${requestData.work_order_number}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="รายละเอียดใบสั่งงาน"
 						/>
-					</FormComponent>
-				</Tab>
 
-				{/* Reject tab ----------------------------------------------------------------------------------------- */}
-				<Tab
-					key="reject"
-					className="flex flex-col items-center justify-center w-full"
-					isDisabled={
-						requestData.status === REQUESTORDERSTATUS.Rejected ||
-						requestData.status ===
-							REQUESTORDERSTATUS.PendingApproval
-					}
-					title="ยกเลิก"
-				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isSubmitting={isSubmitting}
-						sections={commentSections}
-						size="expanded"
-						submitLabel="ส่งความคิดเห็น"
-						subtitle={requestData.work_order_number}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
+						{requestData.comment && (
+							<Alert
+								className="items-center w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl"
+								color={
+									requestData.status ===
+									REQUESTORDERSTATUS.Rejected
+										? "danger"
+										: "warning"
+								}
+								description={requestData.comment || "-"}
+								endContent={
+									requestData.status !==
+										REQUESTORDERSTATUS.Rejected && (
+										<Button
+											className={`flex items-center self-stretch justify-center min-w-0 min-h-full p-0 text-sm font-semibold w-fit transition-all hover:-translate-x-1 ease-out ${isHoveringComment ? "px-4 rounded-xl" : "aspect-square rounded-full"}`}
+											color="warning"
+											title="mark as done"
+											type="button"
+											variant="flat"
+											onMouseEnter={() =>
+												setIsHoveringComment(true)
+											}
+											onMouseLeave={() =>
+												setIsHoveringComment(false)
+											}
+											onPress={handleClearComment}
+										>
+											{isHoveringComment ? (
+												<span className="whitespace-nowrap">
+													แก้ไขแล้ว
+												</span>
+											) : (
+												<CheckIcon />
+											)}
+										</Button>
+									)
+								}
+								isVisible={true}
+								title="หมายเหตุ"
+								variant="faded"
+							/>
 						)}
-						title="ปฏิเสธใบสั่งงาน"
-						values={commentValues}
-						onCancel={handleCancel}
-						onChange={handleCommentChange}
-						onSubmit={() =>
-							handleStatus(REQUESTORDERSTATUS.Rejected)
+
+						<FieldValueDisplayer
+							sections={dataSections}
+							size="expanded"
+						/>
+
+						<FormButtons
+							cancelLabel="ยกเลิก"
+							hasBorder={false}
+							isSubmitDisabled={
+								requestData.status !==
+									REQUESTORDERSTATUS.Created &&
+								requestData.status !==
+									REQUESTORDERSTATUS.PendingEdit
+							}
+							size="expanded"
+							submitLabel="ส่งคำขออนุมัติ"
+							onCancel={handleCancel}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.PendingApproval)
+							}
+						/>
+					</Tab>
+
+					{/* Edit tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="edit"
+						className="flex flex-col items-center justify-center w-full gap-8"
+						isDisabled={
+							requestData.status ===
+								REQUESTORDERSTATUS.Rejected ||
+							requestData.status ===
+								REQUESTORDERSTATUS.PendingApproval
 						}
-					/>
-				</Tab>
-			</Tabs>
-		</div>
+						title="แก้ไข"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={requestFormSections}
+							size="expanded"
+							submitLabel="บันทึก"
+							subtitle={`@${requestData.work_order_number}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="แก้ไขใบสั่งงาน"
+							values={{
+								...requestData,
+								...requestOrderChanges,
+							}}
+							onCancel={() => {
+								resetChanges();
+								handleCancel();
+							}}
+							onChange={handleValueChange}
+							onSubmit={handleSubmit}
+						>
+							{/* Dynamic Task Orders */}
+							<DynamicTaskOrder
+								activityData={activityWithToolTypes}
+								carData={carData}
+								driverData={driverData}
+								errors={taskOrderErrors}
+								getToolTypeOptions={getToolTypeData}
+								taskOrders={taskOrderUIItems}
+								onAddTask={addTaskOrder}
+								onRemoveTask={removeTaskOrder}
+								onUpdateTask={updateTaskOrder}
+							/>
+						</FormComponent>
+					</Tab>
+
+					{/* Reject tab ----------------------------------------------------------------------------------------- */}
+					<Tab
+						key="reject"
+						className="flex flex-col items-center justify-center w-full"
+						isDisabled={
+							requestData.status ===
+								REQUESTORDERSTATUS.Rejected ||
+							requestData.status ===
+								REQUESTORDERSTATUS.PendingApproval
+						}
+						title="ยกเลิก"
+					>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isSubmitting={isSubmitting}
+							sections={commentSections}
+							size="expanded"
+							submitLabel="ส่งความคิดเห็น"
+							subtitle={requestData.work_order_number}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title="ปฏิเสธใบสั่งงาน"
+							values={commentValues}
+							onCancel={handleCancel}
+							onChange={handleCommentChange}
+							onSubmit={() =>
+								handleStatus(REQUESTORDERSTATUS.Rejected)
+							}
+						/>
+					</Tab>
+				</Tabs>
+			</div>
+		</>
 	);
 }

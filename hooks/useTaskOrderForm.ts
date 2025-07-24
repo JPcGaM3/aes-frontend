@@ -60,8 +60,24 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 
 	const convertDateForAPI = (date: any): string | undefined => {
 		if (!date) return undefined;
-		if (typeof date === "string") return date;
-		if (typeof date === "object" && date.toString) {
+
+		if (typeof date === "object" && date.year && date.month && date.day) {
+			const year = date.year;
+			const month = date.month.toString().padStart(2, "0");
+			const day = date.day.toString().padStart(2, "0");
+
+			return `${year}-${month}-${day}`;
+		}
+
+		if (typeof date === "string") {
+			return date;
+		}
+
+		if (date instanceof Date) {
+			return date.toISOString().split("T")[0];
+		}
+
+		if (date.toString) {
 			return date.toString();
 		}
 
@@ -72,8 +88,18 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 		dateString: string | undefined
 	): CalendarDate | undefined => {
 		if (!dateString || typeof dateString !== "string") return undefined;
+
 		try {
-			return parseDate(dateString);
+			const dateOnly = dateString.split("T")[0];
+			const [year, month, day] = dateOnly.split("-").map(Number);
+
+			if (year && month && day) {
+				return parseDate(
+					`${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
+				);
+			}
+
+			return undefined;
 		} catch {
 			return undefined;
 		}

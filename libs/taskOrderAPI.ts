@@ -33,7 +33,7 @@ export async function getAssignedTask({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 
@@ -63,7 +63,7 @@ export async function getTaskById({
 	} catch (error: any) {
 		if (axios.isAxiosError(error)) {
 			throw new Error(
-				`Failed to fetch cars: ${error.response?.status} ${error.response?.statusText || error.message}`
+				`${error.response?.statusText}: ${error.response?.data.message || error.message}`
 			);
 		}
 
@@ -94,6 +94,69 @@ export async function SetStatusTaskOrder({
 	try {
 		const response = await axios.patch(
 			`${apiUrl}/api/v1/task-orders/${tid}/set/status`,
+			body,
+			{
+				params,
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return response.data.data;
+	} catch (error: any) {
+		throw new Error(
+			`${error.response?.statusText}: ${error.response?.data.message || error.message}`
+		);
+	}
+}
+
+export async function SetActualTaskOrder({
+	token,
+	tid,
+	paramData,
+}: {
+	token: string;
+	tid: number;
+	paramData?: {
+		ap_date?: Date;
+		oil_start_mile?: number;
+		start_mile?: number;
+		oil_start?: number;
+		car_start_hour?: string;
+		start_timer?: Date | string;
+		oil_slip?: string;
+		end_mile?: number;
+		oil_end?: number;
+		car_end_hour?: string;
+		end_timer?: Date | string;
+		actual_area?: number;
+	};
+}) {
+	const params: Record<string, any> = {};
+	const body: Record<string, any> = {};
+
+	if (paramData) {
+		if (paramData.ap_date) body.ap_date = paramData.ap_date;
+		if (paramData.oil_start_mile)
+			body.oil_start_mile = paramData.oil_start_mile;
+		if (paramData.start_mile) body.start_mile = paramData.start_mile;
+		if (paramData.oil_start) body.oil_start = paramData.oil_start;
+		if (paramData.car_start_hour)
+			body.car_start_hour = paramData.car_start_hour;
+		if (paramData.start_timer) body.start_timer = paramData.start_timer;
+		if (paramData.oil_slip) body.oil_slip = paramData.oil_slip;
+		if (paramData.end_mile) body.end_mile = paramData.end_mile;
+		if (paramData.oil_end) body.oil_end = paramData.oil_end;
+		if (paramData.car_end_hour) body.car_end_hour = paramData.car_end_hour;
+		if (paramData.end_timer) body.end_timer = paramData.end_timer;
+		if (paramData.actual_area) body.actual_area = paramData.actual_area;
+	}
+
+	try {
+		const response = await axios.patch(
+			`${apiUrl}/api/v1/task-orders/${tid}/set/actual-area`,
 			body,
 			{
 				params,

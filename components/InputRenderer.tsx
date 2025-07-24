@@ -7,13 +7,14 @@ import {
 	DatePicker,
 	DateRangePicker,
 	NumberInput,
+	TimeInput,
 } from "@heroui/react";
 import clsx from "clsx";
 
 import { PatchedAutocomplete } from "./PatchedAutocomplete";
 
 import { InputRendererProps } from "@/interfaces/props";
-import { EyeIcon, EyeCloseIcon } from "@/utils/icons";
+import { EyeIcon, EyeCloseIcon, ClockIcon } from "@/utils/icons";
 import { DropdownOption } from "@/interfaces/interfaces";
 import { fontMono } from "@/config/fonts";
 
@@ -46,17 +47,13 @@ export default function InputRenderer({
 	}, []);
 
 	const getVisibleMonths = () => {
-		if (width < 500) {
+		if (width < 400) {
 			return 1;
-		}
-		if (width < 750) {
+		} else if (width < 650) {
 			return 2;
 		}
-		if (width < 1000) {
-			return 3;
-		}
 
-		return 4;
+		return 3;
 	};
 
 	const handleUnifiedValueChange = useCallback(
@@ -74,14 +71,19 @@ export default function InputRenderer({
 					break;
 				}
 
+				case "time": {
+					onValueChange(commonProps.name, v);
+					break;
+				}
+
 				case "date-range": {
-					if (Array.isArray(v) && v[0] && v[1]) {
-						onValueChange(
-							commonProps.name,
-							`${v[0].toISOString()}|${v[1].toISOString()}`
-						);
+					if (v && v.start && v.end) {
+						onValueChange(commonProps.name, {
+							start: v.start,
+							end: v.end,
+						});
 					} else {
-						onValueChange(commonProps.name, "");
+						onValueChange(commonProps.name, null);
 					}
 
 					break;
@@ -93,10 +95,8 @@ export default function InputRenderer({
 							? typeof commonProps.options[0].value
 							: "string";
 
-					// For autocomplete, v is the selected key (single value as string)
 					let selectedValue = v;
 
-					// Convert string back to number if the original options are numbers
 					if (
 						optionType === "number" &&
 						selectedValue !== undefined &&
@@ -166,6 +166,13 @@ export default function InputRenderer({
 				<NumberInput
 					{...commonProps}
 					aria-label={commonProps.label}
+					endContent={
+						<div className="flex items-center gap-2">
+							<span className="pr-2 text-xs font-medium text-gray-500">
+								{commonProps.unit}
+							</span>
+						</div>
+					}
 					value={value || ""}
 					onValueChange={
 						onValueChange ? handleUnifiedValueChange : undefined
@@ -282,12 +289,14 @@ export default function InputRenderer({
 		}
 
 		case "date": {
+			const dateValue = value || commonProps.defaultValue || null;
+
 			return (
 				<DatePicker
 					{...commonProps}
 					showMonthAndYearPickers
 					aria-label={commonProps.label}
-					value={value || null}
+					value={dateValue}
 					onChange={
 						onValueChange ? handleUnifiedValueChange : undefined
 					}
@@ -296,19 +305,39 @@ export default function InputRenderer({
 		}
 
 		case "date-range": {
+			const rangeValue = value || commonProps.defaultValue || null;
+
 			return (
 				<div ref={containerRef}>
 					<DateRangePicker
 						{...commonProps}
 						showMonthAndYearPickers
 						aria-label={commonProps.label}
-						value={value || null}
+						value={rangeValue}
 						visibleMonths={getVisibleMonths()}
 						onChange={
 							onValueChange ? handleUnifiedValueChange : undefined
 						}
 					/>
 				</div>
+			);
+		}
+
+		case "time": {
+			const timeValue = value || commonProps.defaultValue || null;
+
+			return (
+				<TimeInput
+					{...commonProps}
+					aria-label={commonProps.label}
+					endContent={<ClockIcon />}
+					granularity={commonProps.granularity || "minute"}
+					hourCycle={commonProps.hourCycle || 12}
+					value={timeValue}
+					onChange={
+						onValueChange ? handleUnifiedValueChange : undefined
+					}
+				/>
 			);
 		}
 	}

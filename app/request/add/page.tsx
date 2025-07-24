@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/providers/AuthContext";
 import {
-	yearList,
-	monthList,
+	getYearList,
+	getMonthList,
 	RequestOrderTranslation,
 } from "@/utils/constants";
 import { PlusIcon, MinusIcon } from "@/utils/icons";
@@ -48,7 +48,7 @@ export default function AddRequestPage() {
 	const hasFetched = useRef(false);
 	const now = new Date();
 	const currentYear = now.getFullYear();
-	const currentMonth = monthList[now.getMonth()].value;
+	const currentMonth = getMonthList({})[now.getMonth()].value;
 
 	const defaultTask: TaskFormType = { activity_name: "", tool_type_name: "" };
 	const defaultFormValues: FormType = {
@@ -350,6 +350,7 @@ export default function AddRequestPage() {
 	};
 
 	// Field configurations ----------------------------------------------------------------------------------------
+	// TODO: change label for zone and farmer_name following operation_area_id
 	const requestOrderFields: FormSection[] = [
 		{
 			fields: [
@@ -403,7 +404,7 @@ export default function AddRequestPage() {
 						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-1/3",
-						options: yearList,
+						options: getYearList({}),
 					},
 					{
 						type: "dropdown",
@@ -411,7 +412,7 @@ export default function AddRequestPage() {
 						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
-						options: monthList,
+						options: getMonthList({}),
 					},
 				],
 				{
@@ -423,11 +424,13 @@ export default function AddRequestPage() {
 				{
 					type: "number",
 					name: "target_area",
+					unit: "ไร่",
+					minValue: 0,
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "number",
+					type: "text",
 					name: "land_number",
 					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
@@ -493,36 +496,38 @@ export default function AddRequestPage() {
 	];
 
 	return (
-		<div className="flex flex-col items-center justify-center w-full">
-			<Tabs
-				aria-label="TabOptions"
-				className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
-				radius="sm"
-			>
-				{/* Key-in tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="key-in"
-					className="flex flex-col items-center justify-center w-full"
-					title="Key-in"
+		<>
+			<div className="flex flex-col items-center justify-center w-full">
+				<Tabs
+					aria-label="TabOptions"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					radius="sm"
 				>
-					<FormComponent
-						cancelLabel="ยกเลิก"
-						isCompact={true}
-						isSubmitting={isAdding}
-						sections={requestOrderFields}
-						submitLabel="ยืนยัน"
-						subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
-						title="สร้างใบสั่งงาน"
-						values={formValues}
-						onCancel={handleCancelKeyIn}
-						onChange={handleRequestOrderChange}
-						onSubmit={handleSubmitKeyIn}
+					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="key-in"
+						className="flex flex-col items-center justify-center w-full"
+						title="กรอกข้อมูล"
 					>
-						<div className="flex flex-col items-center justify-center w-full gap-4">
-							<div className="flex items-center w-full gap-5">
-								<span className="text-xl font-semibold text-gray-700">
-									กิจกรรม
-								</span>
+						<FormComponent
+							cancelLabel="ยกเลิก"
+							isCompact={true}
+							isSubmitting={isAdding}
+							sections={requestOrderFields}
+							submitLabel="ยืนยัน"
+							subtitle="กรุณากรอกข้อมูลใบสั่งงานลงในฟอร์มด้านล่าง"
+							title="สร้างใบสั่งงาน"
+							values={formValues}
+							onCancel={handleCancelKeyIn}
+							onChange={handleRequestOrderChange}
+							onSubmit={handleSubmitKeyIn}
+						>
+							<div className="flex flex-col items-center justify-center w-full gap-4">
+								<div className="flex items-center w-full gap-5">
+									<span className="text-xl font-semibold text-gray-700">
+										กิจกรรม
+									</span>
+								</div>
 
 								<Divider className="flex-1" />
 
@@ -549,37 +554,27 @@ export default function AddRequestPage() {
 									/>
 								</div>
 							</div>
+						</FormComponent>
+					</Tab>
 
-							<FormComponent
-								errors={taskErrors}
-								hasBorder={false}
-								hasHeader={false}
-								isCompact={true}
-								sections={getTaskFormSection()}
-								values={getTaskFormValues()}
-								onChange={handleTaskFormChange}
-							/>
-						</div>
-					</FormComponent>
-				</Tab>
-
-				{/* Upload tab ------------------------------------------------------------------------------------------- */}
-				<Tab
-					key="upload"
-					className="flex flex-col items-center justify-center w-full"
-					title="Upload"
-				>
-					<UploadComponent
-						isUploading={isAdding}
-						maxFiles={5}
-						setUploadedFiles={setUploadedFiles}
-						uploadedFiles={uploadedFiles}
-						onCancel={handleCancelUpload}
-						onDownloadTemplate={handleDownloadTemplate}
-						onSubmit={handleSubmitUpload}
-					/>
-				</Tab>
-			</Tabs>
-		</div>
+					{/* Upload tab ------------------------------------------------------------------------------------------- */}
+					<Tab
+						key="upload"
+						className="flex flex-col items-center justify-center w-full"
+						title="อัปโหลด"
+					>
+						<UploadComponent
+							isUploading={isAdding}
+							maxFiles={5}
+							setUploadedFiles={setUploadedFiles}
+							uploadedFiles={uploadedFiles}
+							onCancel={handleCancelUpload}
+							onDownloadTemplate={handleDownloadTemplate}
+							onSubmit={handleSubmitUpload}
+						/>
+					</Tab>
+				</Tabs>
+			</div>
+		</>
 	);
 }

@@ -61,7 +61,7 @@ export default function DynamicTaskOrder({
 			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 			options: carData.map((car) => ({
-				label: car.name || car.car_number || car.id.toString(),
+				label: car.car_number || car.id.toString(),
 				value: car.id,
 			})),
 		},
@@ -80,6 +80,8 @@ export default function DynamicTaskOrder({
 		{
 			type: "number",
 			name: "target_area",
+			unit: "ไร่",
+			minValue: 0,
 			isRequired: true,
 			labelTranslator: TaskOrderTranslation,
 		},
@@ -96,19 +98,7 @@ export default function DynamicTaskOrder({
 		name: string,
 		value: any
 	) => {
-		// For ap_date, we need to handle CalendarDate objects and strings differently
-		if (name === "ap_date") {
-			if (value && typeof value === "object" && value.toString) {
-				// This is a CalendarDate object from the DatePicker
-				// Store the CalendarDate object for UI, but we'll convert to string when sending to API
-				onUpdateTask(taskOrder.uiId, { [name]: value });
-			} else {
-				// This might be a string or null/undefined
-				onUpdateTask(taskOrder.uiId, { [name]: value });
-			}
-		} else {
-			onUpdateTask(taskOrder.uiId, { [name]: value });
-		}
+		onUpdateTask(taskOrder.uiId, { [name]: value });
 
 		if (name === "activities_id") {
 			onUpdateTask(taskOrder.uiId, { tool_types_id: undefined });
@@ -143,11 +133,10 @@ export default function DynamicTaskOrder({
 
 		const placeholder = hasPlaceholder
 			? type === "dropdown"
-				? `โปรดเลือก ${labelValue || name}`
-				: `โปรดกรอก ${labelValue || name}`
+				? `เลือก${labelValue || name}`
+				: `กรอก${labelValue || name}`
 			: undefined;
 
-		// Create field key with task order ID for unique error identification
 		const fieldKey = `${taskOrder.uiId}_${name}`;
 		const defaultErrorMessage =
 			type === "dropdown"

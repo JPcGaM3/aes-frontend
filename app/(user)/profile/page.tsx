@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { clsx } from "clsx";
 import { useDisclosure } from "@heroui/react";
+import clsx from "clsx";
 
-import Header from "@/components/Header";
 import AlertModal from "@/components/AlertModal";
-import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { UserProfileResponse } from "@/interfaces/schema";
-import { fontMono } from "@/config/fonts";
-import { FieldSection } from "@/interfaces/interfaces";
 import FormButtons from "@/components/FormButtons";
 import { useAlert } from "@/providers/AlertContext";
-import { fetchProfile } from "@/utils/functions";
+import FieldValueDisplayer from "@/components/FieldValueDisplayer";
+import Header from "@/components/Header";
+import { fontMono } from "@/config/fonts";
+import { FieldSection } from "@/interfaces/interfaces";
+import { fetchProfile, translateEnumValue } from "@/utils/functions";
+import { UserRoleTranslation } from "@/utils/constants";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -74,7 +75,7 @@ export default function ProfilePage() {
 		{
 			title: "ข้อมูลส่วนตัว",
 			fields: [
-				{ name: "รหัสพนักงาน", value: profile?.user_result?.id || "-" },
+				{ name: "รหัสพนักงาน", value: profile?.profile?.id || "-" },
 				{ name: "อีเมล", value: profile?.user_result?.email || "-" },
 				{
 					name: "ชื่อ-สกุล (TH)",
@@ -84,25 +85,25 @@ export default function ProfilePage() {
 					name: "ชื่อ-สกุล (EN)",
 					value: profile?.profile?.employeeName?.en || "-",
 				},
-				{
-					name: "เบอร์โทรศัพท์",
-					value: profile?.user_result?.phone || "-",
-				},
-				{ name: "ที่อยู่", value: "-" },
 			],
 		},
 		{
 			title: "ข้อมูลการทำงาน",
 			fields: [
 				{
-					name: "ตำแหน่ง",
-					value: profile?.user_result?.role.join(", ") || "-",
+					name: "บทบาท",
+					value:
+						profile?.user_result?.role
+							.map((role) =>
+								translateEnumValue(role, UserRoleTranslation)
+							)
+							.join(", ") || "-",
 				},
-				{ name: "ระดับ", value: profile?.profile.level?.name || "-" },
+				{ name: "ระดับ", value: profile?.profile?.level?.name || "-" },
 				{
 					name: "แผนก",
 					value:
-						profile?.profile.department?.name?.en?.replace(
+						profile?.profile?.department?.name?.en?.replace(
 							/ Section$/i,
 							""
 						) || "-",
@@ -119,49 +120,52 @@ export default function ProfilePage() {
 		},
 	];
 
-	const firstname = profile?.profile.employeeName?.en?.split(" ")[1] || "-";
+	const firstname = profile?.profile?.employeeName?.en?.split(" ")[1] || "-";
 
 	return (
-		<div className="flex items-center justify-center pt-3">
-			<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
-				{isOpen && (
-					<AlertModal
-						cancelText="ยกเลิก"
-						confirmText="ยืนยัน"
-						description="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
-						title="ออกจากระบบ"
-						onClose={onClose}
-						onConfirm={handleConfirmLogout}
-					/>
-				)}
+		<>
+			<div className="flex items-center justify-center pt-3">
+				<div className="flex flex-col items-center justify-center w-full max-w-sm gap-8 sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+					{isOpen && (
+						<AlertModal
+							cancelText="ยกเลิก"
+							confirmText="ยืนยัน"
+							description="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ ?"
+							title="ออกจากระบบ"
+							onClose={onClose}
+							onConfirm={handleConfirmLogout}
+						/>
+					)}
 
-				<div className="flex flex-col items-center justify-center gap-4">
-					<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
-						{profile?.user_result.email?.charAt(0)?.toUpperCase() ||
-							"-"}
+					<div className="flex flex-col items-center justify-center gap-4">
+						<div className="flex items-center justify-center w-24 h-24 text-4xl font-bold text-gray-700 bg-gray-200 rounded-full">
+							{profile?.user_result?.email
+								?.charAt(0)
+								?.toUpperCase() || "-"}
+						</div>
+
+						<Header
+							hasBorder={false}
+							subtitle={`employee_id: @${profile?.profile?.id || "-"}`}
+							subtitleClassName={clsx(
+								"mt-1 font-mono text-gray-600 text-sm",
+								fontMono.variable
+							)}
+							title={firstname}
+						/>
 					</div>
 
-					<Header
+					<FieldValueDisplayer sections={profileSections} />
+
+					<FormButtons
 						hasBorder={false}
-						subtitle={`employee_id: ${`@${profile?.profile.id || "-"}`}`}
-						subtitleClassName={clsx(
-							"mt-1 font-mono text-gray-600 text-sm",
-							fontMono.variable
-						)}
-						title={firstname}
+						size="compact"
+						submitColor="danger"
+						submitLabel="ออกจากระบบ"
+						onSubmit={handleLogout}
 					/>
 				</div>
-
-				<FieldValueDisplayer sections={profileSections} />
-
-				<FormButtons
-					hasBorder={false}
-					size="compact"
-					submitColor="danger"
-					submitLabel="ออกจากระบบ"
-					onSubmit={handleLogout}
-				/>
 			</div>
-		</div>
+		</>
 	);
 }

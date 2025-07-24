@@ -5,7 +5,7 @@ export async function getCars({
 	paramData,
 }: {
 	token: string;
-	paramData: {
+	paramData?: {
 		ae_id?: number;
 	};
 }) {

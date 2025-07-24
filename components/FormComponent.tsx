@@ -32,7 +32,6 @@ export default function FormComponent({
 		Record<string, string | null>
 	>({});
 
-	// Merge external errors with internal validation errors
 	const mergedErrors = { ...externalErrors, ...internalErrors };
 
 	useEffect(() => {
@@ -86,17 +85,6 @@ export default function FormComponent({
 					newErrors[field.name] = null;
 				}
 			}
-
-			// Add custom validation logic here
-			// For password validation EX.
-			// if (field.type === "password" && field.name === "passwordField") {
-			// 	const password = formValues[field.name];
-
-			// 	if (password && password.length > 0 && password.length < 8) {
-			// 		newErrors[field.name] =
-			// 			"รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
-			// 	}
-			// }
 		});
 
 		setInternalErrors(newErrors);

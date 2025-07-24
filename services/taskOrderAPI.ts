@@ -31,9 +31,7 @@ export interface TaskOrderAPIService {
 	}>;
 }
 
-// Implementation of the service
 export const taskOrderAPIService: TaskOrderAPIService = {
-	// Update request order
 	updateRequestOrder: async (
 		token: string,
 		requestId: number,
@@ -66,7 +64,6 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		}
 	},
 
-	// Create new task order
 	createTaskOrder: async (token: string, requestId: number, data: any) => {
 		const apiUrl = process.env.API_URL || "http://localhost:8080";
 
@@ -100,7 +97,6 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		}
 	},
 
-	// Update existing task order
 	updateTaskOrder: async (token: string, taskId: number, data: any) => {
 		const apiUrl = process.env.API_URL || "http://localhost:8080";
 
@@ -129,7 +125,6 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		}
 	},
 
-	// Delete task order (set active to false)
 	deleteTaskOrder: async (token: string, taskId: number) => {
 		const apiUrl = process.env.API_URL || "http://localhost:8080";
 
@@ -160,7 +155,6 @@ export const taskOrderAPIService: TaskOrderAPIService = {
 		}
 	},
 
-	// Process all task order operations
 	processTaskOrderOperations: async (
 		token: string,
 		requestId: number,

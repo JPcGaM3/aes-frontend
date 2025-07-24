@@ -6,7 +6,6 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 	variant?: "fill" | "border";
 };
 
-// export type UserStatus = "active" | "paused" | "vacation";
 export type ColorType =
 	| "default"
 	| "primary"

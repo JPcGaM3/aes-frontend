@@ -33,7 +33,7 @@ export interface RequestOrderFormData {
 export interface TaskOrderOperation {
 	type: "create" | "update" | "delete";
 	data: TaskOrderFormData;
-	originalIndex?: number; // for tracking position in UI
+	originalIndex?: number;
 }
 
 export interface FormChangeState {
@@ -41,9 +41,8 @@ export interface FormChangeState {
 	taskOrders: TaskOrderOperation[];
 }
 
-// Helper types for UI operations
 export interface TaskOrderUIItem extends TaskOrderFormData {
-	uiId: string; // unique ID for React keys
-	isNew: boolean; // true if this is a new task order
-	isDeleted: boolean; // true if marked for deletion
+	uiId: string;
+	isNew: boolean;
+	isDeleted: boolean;
 }

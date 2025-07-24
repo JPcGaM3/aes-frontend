@@ -61,18 +61,6 @@ export default function Navbar() {
 	}
 
 	const menuItems: MenuItem[] = [
-		// * Normal Page --------------------------------------------------
-		// {
-		// 	name: "เมนูหลัก",
-		// 	path: "/home",
-		// 	icon: <HomeIcon size={18} />,
-		// 	allowedRoles: [
-		// 		USERROLE.Admin,
-		// 		USERROLE.DepartmentHead,
-		// 		USERROLE.UnitHead,
-		// 		USERROLE.Driver,
-		// 	],
-		// },
 		{
 			name: "งาน",
 			path: "/request",
@@ -96,11 +84,6 @@ export default function Navbar() {
 			path: "/login",
 			icon: <UserIcon size={18} />,
 		},
-
-		// * Componenent Page ---------------------------------------------
-		// { name: "Form", path: "/form", icon: <HomeIcon /> },
-		// { name: "Card", path: "/card", icon: <HomeIcon /> },
-		// { name: "Drawer", path: "/drawer", icon: <HomeIcon /> },
 	];
 
 	// Fetch data ---------------------------------------------------------------------------------------------------

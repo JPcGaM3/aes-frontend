@@ -220,7 +220,6 @@ export default function AddRequestPage() {
 	const handleSubmitKeyIn = async (formData: any) => {
 		setIsAdding(true);
 
-		// Validate tasks first
 		if (!validateTasks()) {
 			showAlert({
 				title: "ข้อมูลไม่ครบถ้วน",
@@ -305,7 +304,6 @@ export default function AddRequestPage() {
 	const handleTaskFormChange = (values: Record<string, string>) => {
 		const newTasks: TaskFormType[] = [];
 
-		// Clear task errors when values change
 		const newErrors = { ...taskErrors };
 
 		for (let i = 0; i < tasks.length; i++) {
@@ -318,7 +316,6 @@ export default function AddRequestPage() {
 				toolType = "";
 			}
 
-			// Clear errors for this task when values change
 			delete newErrors[`activity_name_${i}`];
 			delete newErrors[`tool_type_name_${i}`];
 
@@ -337,10 +334,10 @@ export default function AddRequestPage() {
 
 		tasks.forEach((task, index) => {
 			if (!task.activity_name) {
-				newErrors[`activity_name_${index}`] = null; // Use default error message
+				newErrors[`activity_name_${index}`] = null;
 			}
 			if (!task.tool_type_name) {
-				newErrors[`tool_type_name_${index}`] = null; // Use default error message
+				newErrors[`tool_type_name_${index}`] = null;
 			}
 		});
 
@@ -350,7 +347,6 @@ export default function AddRequestPage() {
 	};
 
 	// Field configurations ----------------------------------------------------------------------------------------
-	// TODO: change label for zone and farmer_name following operation_area_id
 	const requestOrderFields: FormSection[] = [
 		{
 			fields: [

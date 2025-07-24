@@ -507,7 +507,7 @@ export default function AddRequestPage() {
 					<Tab
 						key="key-in"
 						className="flex flex-col items-center justify-center w-full"
-						title="Key-in"
+						title="กรอกข้อมูล"
 					>
 						<FormComponent
 							cancelLabel="ยกเลิก"
@@ -571,7 +571,7 @@ export default function AddRequestPage() {
 					<Tab
 						key="upload"
 						className="flex flex-col items-center justify-center w-full"
-						title="Upload"
+						title="อัปโหลด"
 					>
 						<UploadComponent
 							isUploading={isAdding}

@@ -34,7 +34,7 @@ export default function FormFields({
 			}
 
 			if (config.type === "date" || config.type === "date-range") {
-				return value !== undefined && value !== null && value !== ""
+				return value !== undefined && value !== null
 					? value
 					: (config.defaultValue ?? null);
 			} else {
@@ -101,7 +101,7 @@ export default function FormFields({
 				isDisabled: isReadOnly || false,
 				isRequired: isRequired || false,
 				labelPlacement: resolvedLabelPlacement,
-				className: clsx("min-w-[100px] p-0", className),
+				className: clsx(className),
 				...restProps,
 			};
 		},

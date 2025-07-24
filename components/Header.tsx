@@ -30,8 +30,8 @@ export default function Header({
 	);
 
 	const titleContainerClasses = clsx("flex flex-col", {
-		"w-full": orientation === "horizontal",
-		"items-center": orientation === "vertical",
+		"w-full text-start": orientation === "horizontal",
+		"items-center text-center": orientation === "vertical",
 	});
 
 	const childrenContainerClasses = clsx(

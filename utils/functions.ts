@@ -209,17 +209,18 @@ export async function fetchReqOrderData({
 			});
 
 			setReqOrders(data);
-		} catch (err: any) {
-			if (err.status === 404) {
+		} catch (error: any) {
+			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-					description: err.message,
+					description: error.message,
 					color: "default",
 				});
 			} else {
 				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลใบสั่งงานได้",
-					description: err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+					description:
+						error.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล",
 					color: "danger",
 				});
 			}
@@ -515,17 +516,17 @@ export async function fetchAssignedTask({
 			});
 
 			setTaskOrders(data);
-		} catch (err: any) {
-			if (err.status === 404) {
+		} catch (error: any) {
+			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
-					description: err.message,
+					description: error.message,
 					color: "default",
 				});
 			} else {
 				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลใบงานย่อยได้",
-					description: err.message,
+					description: error.message,
 					color: "danger",
 				});
 			}
@@ -564,17 +565,17 @@ export async function fetchTaskOrder({
 					work_order_number: `${data.requestorders.ae_area?.name || ""}${data.requestorders.operation_area?.operation_area || ""}${data.requestorders.ap_year ? Number(data.requestorders.created_at?.toLocaleString().slice(0, 4)) + 543 : ""}/${data.requestorders.run_number || ""}`,
 				},
 			});
-		} catch (err: any) {
-			if (err.status === 404) {
+		} catch (error: any) {
+			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
-					description: err.message,
+					description: error.message,
 					color: "default",
 				});
 			} else {
 				showAlert({
 					title: "ไม่สามารถโหลดข้อมูลใบงานย่อยได้",
-					description: err.message,
+					description: error.message,
 					color: "danger",
 				});
 			}

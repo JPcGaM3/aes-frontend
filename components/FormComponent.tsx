@@ -147,7 +147,7 @@ export default function FormComponent({
 
 					<FormFields
 						errors={mergedErrors}
-						isCompact={size === "compact"}
+						isCompact={size !== "expanded"}
 						sections={sections}
 						values={formValues}
 						onValueChange={handleValueChange}

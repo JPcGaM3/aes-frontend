@@ -3,7 +3,7 @@ import axios from "axios";
 import qs from "qs";
 
 // Add fallback logic for different environments
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
 	// Container environment
 	if (process.env.API_URL) {
 		return process.env.API_URL;
@@ -11,11 +11,11 @@ const getApiBaseUrl = () => {
 
 	// Local development fallback
 	if (process.env.NODE_ENV === "development") {
-		return "http://localhost:8081";
+		return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
 	}
 
 	// Production fallback
-	return "http://aes-backend:8080";
+	return process.env.API_URL || "http://aes-backend:8080";
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -29,13 +29,13 @@ async function handleRequest(
 		const token = request.headers.get("authorization");
 		const url = new URL(request.url);
 
-		// Build API URL
 		const apiPath = `/${path.join("/")}`;
 		const fullApiUrl = `${API_BASE_URL}/api/v1${apiPath}`;
 
 		console.log(`${method} ${fullApiUrl}`);
 		console.log(`API_BASE_URL: ${API_BASE_URL}`);
 		console.log(`Environment: ${process.env.NODE_ENV}`);
+		console.log(`body: ${request}`);
 
 		let requestData: any = {};
 		let queryParams: Record<string, any> = {};
@@ -58,7 +58,15 @@ async function handleRequest(
 
 		// Handle URL search params
 		url.searchParams.forEach((value, key) => {
-			queryParams[key] = value;
+			if (queryParams[key]) {
+				if (Array.isArray(queryParams[key])) {
+					queryParams[key].push(value);
+				} else {
+					queryParams[key] = [queryParams[key], value];
+				}
+			} else {
+				queryParams[key] = value;
+			}
 		});
 
 		// Build headers

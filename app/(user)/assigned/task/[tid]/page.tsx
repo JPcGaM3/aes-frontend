@@ -11,7 +11,6 @@ import { now, getLocalTimeZone, today } from "@internationalized/date";
 
 import { TASKORDERSTATUS } from "@/utils/enum";
 import { TaskOrder } from "@/interfaces/schema";
-import { SetActualTaskOrder, SetStatusTaskOrder } from "@/libs/taskOrderAPI";
 import { useAuth } from "@/providers/AuthContext";
 import { useLoading } from "@/providers/LoadingContext";
 import { convertToChristianCalendar, fetchTaskOrder } from "@/utils/functions";
@@ -26,6 +25,10 @@ import {
 import Header from "@/components/Header";
 import FieldValueDisplayer from "@/components/FieldValueDisplayer";
 import FormButtons from "@/components/FormButtons";
+import {
+	SetStatusTaskOrder,
+	SetActualTaskOrder,
+} from "@/services/taskOrderAPI";
 
 moment.locale("th");
 
@@ -414,7 +417,7 @@ export default function TaskManagementPage({
 				await SetStatusTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
-					paramData: paramData,
+					body: paramData,
 				});
 
 				showAlert({
@@ -485,14 +488,14 @@ export default function TaskManagementPage({
 				SetStatusTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
-					paramData: {
+					body: {
 						status: TASKORDERSTATUS.InProgress,
 					},
 				}),
 				SetActualTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
-					paramData: paramData || {},
+					body: paramData || {},
 				}),
 			];
 
@@ -554,7 +557,7 @@ export default function TaskManagementPage({
 				SetActualTaskOrder({
 					token: userContext.token,
 					tid: Number(tid),
-					paramData: paramData || {},
+					body: paramData || {},
 				}),
 			];
 

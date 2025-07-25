@@ -27,8 +27,8 @@ import {
 	getRequestOrders,
 	getRequestOrderWithTask,
 } from "@/libs/requestOrderAPI";
-import { getAssignedTask, getTaskById } from "@/libs/taskOrderAPI";
 import { getUsers, getProfile } from "@/libs/userAPI";
+import { getAssignedTask, getTaskById } from "@/services/taskOrderAPI";
 
 moment.locale("th");
 
@@ -512,7 +512,7 @@ export async function fetchAssignedTask({
 
 			const data = await getAssignedTask({
 				token,
-				paramData,
+				params: paramData,
 			});
 
 			setTaskOrders(data);
@@ -553,7 +553,7 @@ export async function fetchTaskOrder({
 		try {
 			const data = await getTaskById({
 				token,
-				paramData: {
+				params: {
 					taskId,
 				},
 			});

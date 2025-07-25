@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 
 interface HttpClientOptions {
 	token?: string;
@@ -36,6 +37,8 @@ class HttpClient {
 		try {
 			const response = await axios.get(`${this.baseURL}${path}`, {
 				params,
+				paramsSerializer: (params) =>
+					qs.stringify(params, { arrayFormat: "repeat" }),
 				headers: this.buildHeaders(token, additionalHeaders),
 			});
 

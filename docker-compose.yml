@@ -13,7 +13,8 @@ services:
         ports:
             - "3001:3000"
         networks:
-            - aes-network
+            aes-network:
+                ipv4_address: 172.28.5.3
 
 networks:
     aes-network:

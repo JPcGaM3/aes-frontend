@@ -1,6 +1,9 @@
+import axios from "axios";
+
 import { GET, POST, PATCH } from "./httpClient";
 
 import { UploadedFile } from "@/interfaces/interfaces";
+import { getApiBaseUrl } from "@/app/api/proxy/[...path]/route";
 
 export async function getRequestOrders({
 	token,
@@ -58,7 +61,6 @@ export async function SetStatusRequestOrder({
 	});
 }
 
-// Note: File upload ยังต้องจัดการแยกเพราะใช้ multipart/form-data
 export async function uploadRequestOrder({
 	token,
 	ae_id,
@@ -68,31 +70,33 @@ export async function uploadRequestOrder({
 	ae_id: number;
 	uploadedFiles: UploadedFile[];
 }) {
-	// This still needs special handling due to file upload
+	const apiUrl = getApiBaseUrl();
+
 	const formData = new FormData();
 
 	formData.append("ae_id", ae_id.toString());
+
 	uploadedFiles.forEach((fileData) => {
 		formData.append("files", fileData.file);
 	});
 
-	// Direct axios call for file upload
-	const response = await fetch("/api/proxy/request-orders/create/excel", {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		body: formData,
-	});
+	try {
+		const response = await axios.post(
+			`${apiUrl}/api/v1/request-orders/create/excel`,
+			formData,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "multipart/form-data",
+				},
+			}
+		);
 
-	if (!response.ok) {
-		const errorData = await response.json();
-
+		return response.data;
+	} catch (error: any) {
 		throw {
-			status: response.status,
-			message: errorData.message,
+			status: error.response?.status,
+			message: `${error.response?.statusText}: ${error.response?.data.message || error.message}`,
 		};
 	}
-
-	return await response.json();
 }

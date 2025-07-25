@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { FormSection } from "@/interfaces/interfaces";
@@ -17,11 +17,6 @@ export default function LoginPage() {
 	const { login, userContext, isReady } = useAuth();
 	const { showLoading, hideLoading } = useLoading();
 	const { showAlert } = useAlert();
-	const [env, setENV] = useState<string | undefined>(undefined);
-
-	useEffect(() => {
-		setENV(process.env.NEXT_PUBLIC_API_URL as string);
-	}, []);
 
 	const handleSubmit = async (values: any) => {
 		showLoading();
@@ -107,7 +102,7 @@ export default function LoginPage() {
 	];
 
 	return (
-		<div className="flex justify-center items-center w-full">
+		<div className="flex items-center justify-center w-full">
 			<FormComponent
 				isCompact={true}
 				sections={sections}
@@ -116,9 +111,6 @@ export default function LoginPage() {
 				title="ยินดีต้อนรับสู่ AE Service"
 				onSubmit={handleSubmit}
 			/>
-			<div>
-				<p>{`API_URL = ${env}`}</p>
-			</div>
 		</div>
 	);
 }

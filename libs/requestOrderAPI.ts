@@ -3,7 +3,7 @@ import axios from "axios";
 import { GET, POST, PATCH } from "./httpClient";
 
 import { UploadedFile } from "@/interfaces/interfaces";
-import { getApiBaseUrl } from "@/app/api/proxy/[...path]/route";
+import { getApiBaseUrl } from "@/utils/functions";
 
 export async function getRequestOrders({
 	token,

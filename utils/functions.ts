@@ -32,6 +32,21 @@ import { getAssignedTask, getTaskById } from "@/services/taskOrderAPI";
 
 moment.locale("th");
 
+export function getApiBaseUrl() {
+	// Container environment
+	if (process.env.API_URL) {
+		return process.env.API_URL;
+	}
+
+	// Local development fallback
+	if (process.env.NODE_ENV === "development") {
+		return process.env.NEXT_PUBLIC_API_URL;
+	}
+
+	// Production fallback
+	return process.env.API_URL;
+}
+
 /**
  * Translates an enum value using a translation map.
  *

@@ -2,21 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import qs from "qs";
 
-// Add fallback logic for different environments
-export const getApiBaseUrl = () => {
-	// Container environment
-	if (process.env.API_URL) {
-		return process.env.API_URL;
-	}
-
-	// Local development fallback
-	if (process.env.NODE_ENV === "development") {
-		return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
-	}
-
-	// Production fallback
-	return process.env.API_URL || "http://aes-backend:8080";
-};
+import { getApiBaseUrl } from "@/utils/functions";
 
 const API_BASE_URL = getApiBaseUrl();
 
@@ -32,31 +18,24 @@ async function handleRequest(
 		const apiPath = `/${path.join("/")}`;
 		const fullApiUrl = `${API_BASE_URL}/api/v1${apiPath}`;
 
-		console.log(`${method} ${fullApiUrl}`);
-		console.log(`API_BASE_URL: ${API_BASE_URL}`);
-		console.log(`Environment: ${process.env.NODE_ENV}`);
-		console.log(`body: ${request}`);
-
 		let requestData: any = {};
 		let queryParams: Record<string, any> = {};
 
-		// Handle request body for POST/PATCH/PUT
 		if (["POST", "PATCH", "PUT"].includes(method)) {
 			try {
 				const requestBody = await request.json();
 
 				requestData = requestBody.body || {};
 
-				// Handle params from request body
 				if (requestBody.params) {
 					queryParams = { ...queryParams, ...requestBody.params };
 				}
-			} catch (error) {
-				console.log("No request body or invalid JSON");
+			} catch (error: any) {
+				error.status = 400;
+				throw error;
 			}
 		}
 
-		// Handle URL search params
 		url.searchParams.forEach((value, key) => {
 			if (queryParams[key]) {
 				if (Array.isArray(queryParams[key])) {
@@ -69,7 +48,6 @@ async function handleRequest(
 			}
 		});
 
-		// Build headers
 		const headers: Record<string, string> = {
 			"Content-Type": "application/json",
 		};
@@ -78,13 +56,11 @@ async function handleRequest(
 			headers.Authorization = token;
 		}
 
-		// Add timeout and better error handling
 		const axiosConfig = {
-			timeout: 10000, // 10 seconds timeout
+			timeout: 10000,
 			headers,
 		};
 
-		// Make request to backend
 		let response;
 
 		switch (method) {
@@ -142,11 +118,7 @@ async function handleRequest(
 
 		return NextResponse.json(response.data.data || response.data);
 	} catch (error: any) {
-		console.error(`Error in ${method} ${path.join("/")}:`, error.message);
-		console.error(`Full error:`, error);
-
 		if (axios.isAxiosError(error)) {
-			// Network error (like ENOTFOUND)
 			if (error.code === "ENOTFOUND" || error.code === "ECONNREFUSED") {
 				return NextResponse.json(
 					{
@@ -176,6 +148,7 @@ async function handleRequest(
 		);
 	}
 }
+
 export async function GET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ path: string[] }> }

@@ -21,21 +21,6 @@ async function handleRequest(
 		let requestData: any = {};
 		let queryParams: Record<string, any> = {};
 
-		if (["POST", "PATCH", "PUT"].includes(method)) {
-			try {
-				const requestBody = await request.json();
-
-				requestData = requestBody.body || {};
-
-				if (requestBody.params) {
-					queryParams = { ...queryParams, ...requestBody.params };
-				}
-			} catch (error: any) {
-				error.status = 400;
-				throw error;
-			}
-		}
-
 		url.searchParams.forEach((value, key) => {
 			if (queryParams[key]) {
 				if (Array.isArray(queryParams[key])) {
@@ -48,67 +33,94 @@ async function handleRequest(
 			}
 		});
 
-		const headers: Record<string, string> = {
-			"Content-Type": "application/json",
-		};
+		const headers: Record<string, string> = {};
 
 		if (token) {
 			headers.Authorization = token;
 		}
 
+		const contentType = request.headers.get("content-type") || "";
+
+		if (
+			["POST", "PATCH", "PUT"].includes(method) &&
+			contentType.includes("multipart/form-data")
+		) {
+			const body = await request.arrayBuffer();
+			const axiosConfig = {
+				timeout: 10000,
+				headers: {
+					...headers,
+					"Content-Type": contentType,
+				},
+				params: queryParams,
+				paramsSerializer: (params: any) =>
+					qs.stringify(params, { arrayFormat: "repeat" }),
+			};
+
+			const response = await axios.post(
+				fullApiUrl,
+				Buffer.from(body),
+				axiosConfig
+			);
+
+			return NextResponse.json(response.data.data || response.data);
+		}
+
+		if (["POST", "PATCH", "PUT"].includes(method)) {
+			try {
+				const requestBody = await request.json();
+
+				requestData = requestBody.body || {};
+				if (requestBody.params) {
+					queryParams = { ...queryParams, ...requestBody.params };
+				}
+			} catch (error: any) {
+				error.status = 400;
+				throw error;
+			}
+		}
+
 		const axiosConfig = {
 			timeout: 10000,
-			headers,
+			headers: {
+				...headers,
+				"Content-Type": "application/json",
+			},
+			params: queryParams,
+			paramsSerializer: (params: any) =>
+				qs.stringify(params, { arrayFormat: "repeat" }),
 		};
 
 		let response;
 
 		switch (method) {
 			case "GET":
-				response = await axios.get(fullApiUrl, {
-					...axiosConfig,
-					params: queryParams,
-					paramsSerializer: (params) =>
-						qs.stringify(params, { arrayFormat: "repeat" }),
-				});
+				response = await axios.get(fullApiUrl, axiosConfig);
 				break;
-
 			case "POST":
-				response = await axios.post(fullApiUrl, requestData, {
-					...axiosConfig,
-					params: queryParams,
-					paramsSerializer: (params) =>
-						qs.stringify(params, { arrayFormat: "repeat" }),
-				});
+				response = await axios.post(
+					fullApiUrl,
+					requestData,
+					axiosConfig
+				);
 				break;
-
 			case "PATCH":
-				response = await axios.patch(fullApiUrl, requestData, {
-					...axiosConfig,
-					params: queryParams,
-					paramsSerializer: (params) =>
-						qs.stringify(params, { arrayFormat: "repeat" }),
-				});
+				response = await axios.patch(
+					fullApiUrl,
+					requestData,
+					axiosConfig
+				);
 				break;
-
 			case "PUT":
-				response = await axios.put(fullApiUrl, requestData, {
-					...axiosConfig,
-					params: queryParams,
-					paramsSerializer: (params) =>
-						qs.stringify(params, { arrayFormat: "repeat" }),
-				});
+				response = await axios.put(
+					fullApiUrl,
+					requestData,
+					axiosConfig
+				);
 				break;
-
 			case "DELETE":
-				response = await axios.delete(fullApiUrl, {
-					...axiosConfig,
-					params: queryParams,
-					paramsSerializer: (params) =>
-						qs.stringify(params, { arrayFormat: "repeat" }),
-				});
+				response = await axios.delete(fullApiUrl, axiosConfig);
 				break;
-
 			default:
 				return NextResponse.json(
 					{ message: `Method ${method} not allowed` },

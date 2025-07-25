@@ -153,8 +153,8 @@ export default function AddRequestPage() {
 			let validRows = 0;
 			let errorRows = 0;
 
-			if (response && response.data && Array.isArray(response.data)) {
-				response.data.forEach((file: any) => {
+			if (Array.isArray(response)) {
+				response.forEach((file: any) => {
 					totalRows += file.totalRows || 0;
 					validRows += file.validRows || 0;
 					errorRows += file.errorRows || 0;
@@ -493,16 +493,16 @@ export default function AddRequestPage() {
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center w-full">
+			<div className="flex flex-col justify-center items-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
+					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="กรอกข้อมูล"
 					>
 						<FormComponent
@@ -518,9 +518,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col items-center justify-center w-full gap-4">
-								<div className="flex items-center w-full gap-5">
-									<span className="text-xl font-semibold text-gray-700">
+							<div className="flex flex-col justify-center items-center gap-4 w-full">
+								<div className="flex items-center gap-5 w-full">
+									<span className="font-semibold text-gray-700 text-xl">
 										กิจกรรม
 									</span>
 
@@ -566,7 +566,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col items-center justify-center w-full"
+						className="flex flex-col justify-center items-center w-full"
 						title="อัปโหลด"
 					>
 						<UploadComponent

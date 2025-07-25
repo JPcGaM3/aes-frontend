@@ -12,7 +12,7 @@ class HttpClient {
 	private baseURL: string;
 
 	constructor() {
-		this.baseURL = "/api/proxy"; // เรียกผ่าน Next.js API route
+		this.baseURL = "/api/proxy";
 	}
 
 	private buildHeaders(
@@ -150,7 +150,6 @@ class HttpClient {
 
 export const httpClient = new HttpClient();
 
-// Export individual functions for convenience
 export const GET = (path: string, options?: HttpClientOptions) =>
 	httpClient.GET(path, options);
 export const POST = (path: string, options?: HttpClientOptions) =>

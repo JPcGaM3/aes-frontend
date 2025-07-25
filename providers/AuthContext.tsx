@@ -105,7 +105,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				}
 			};
 
-			// Initial update
 			updateTimer();
 			setIsSessionExpired(false);
 

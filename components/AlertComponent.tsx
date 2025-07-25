@@ -39,7 +39,6 @@ export default function AlertComponent({
 	};
 
 	useEffect(() => {
-		// Only start timer for the first visible alert (stackIndex === 0)
 		if (isMounted && !effectiveIsClosing && stackIndex === 0) {
 			const timer = setTimeout(
 				performClose,

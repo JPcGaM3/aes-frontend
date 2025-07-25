@@ -66,7 +66,6 @@ export const HourglassAnimatedIcon: React.FC<AnimatedIconProps> = ({
 		...style,
 	};
 
-	// If using Lottie format with animation data
 	if (format === "lottie" && animationData) {
 		return (
 			<div className={className} style={baseStyle}>
@@ -87,7 +86,6 @@ export const HourglassAnimatedIcon: React.FC<AnimatedIconProps> = ({
 		);
 	}
 
-	// For GIF format
 	if (format === "gif") {
 		return (
 			<Image
@@ -108,7 +106,6 @@ export const HourglassAnimatedIcon: React.FC<AnimatedIconProps> = ({
 		);
 	}
 
-	// For MP4 format
 	if (format === "mp4") {
 		return (
 			<video
@@ -130,7 +127,6 @@ export const HourglassAnimatedIcon: React.FC<AnimatedIconProps> = ({
 		);
 	}
 
-	// Fallback to GIF if format is not recognized
 	return (
 		<Image
 			unoptimized

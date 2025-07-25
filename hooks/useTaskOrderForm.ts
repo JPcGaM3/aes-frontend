@@ -13,15 +13,10 @@ import { TaskOrder } from "@/interfaces/schema";
 import { useAlert } from "@/providers/AlertContext";
 
 interface UseTaskOrderFormReturn {
-	// UI Items for rendering
 	taskOrderUIItems: TaskOrderUIItem[];
-	// Form change state
 	formChanges: FormChangeState;
-	// Request order changes
 	requestOrderChanges: Partial<RequestOrderFormData>;
-	// Validation errors
 	taskOrderErrors: Record<string, string | null>;
-	// Operations
 	addTaskOrder: () => void;
 	removeTaskOrder: (uiId: string) => void;
 	updateTaskOrder: (
@@ -29,16 +24,11 @@ interface UseTaskOrderFormReturn {
 		changes: Partial<TaskOrderFormData>
 	) => void;
 	updateRequestOrder: (changes: Partial<RequestOrderFormData>) => void;
-	// Validation
 	validateTaskOrders: () => boolean;
 	clearTaskOrderError: (uiId: string, fieldName: string) => void;
-	// Reset
 	resetChanges: () => void;
-	// Get operations for API calls
 	getTaskOrderOperations: () => TaskOrderOperation[];
-	// Initialize from existing data
 	initializeFromData: (requestOrder: any) => void;
-	// Check if there are changes
 	hasChanges: () => boolean;
 }
 
@@ -105,7 +95,6 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 		}
 	};
 
-	// Initialize from existing data
 	const initializeFromData = useCallback(
 		(requestOrder: any) => {
 			const taskOrders = requestOrder?.taskorders || [];
@@ -176,7 +165,6 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 				)
 			);
 
-			// Clear errors for the fields that changed
 			Object.keys(changes).forEach((fieldName) => {
 				const fieldKey = `${uiId}_${fieldName}`;
 
@@ -222,7 +210,6 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 
 		taskOrderUIItems.forEach((item) => {
 			if (item.isNew && !item.isDeleted) {
-				// New task (create)
 				operations.push({
 					type: "create",
 					data: {
@@ -238,7 +225,6 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 					},
 				});
 			} else if (!item.isNew && item.isDeleted && item.id) {
-				// Existing task (delete)
 				operations.push({
 					type: "delete",
 					data: { id: item.id },
@@ -279,14 +265,12 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 		return hasRequestOrderChanges || hasTaskOrderChanges;
 	}, [requestOrderChanges, getTaskOrderOperations]);
 
-	// Validation functions
 	const validateTaskOrders = useCallback((): boolean => {
 		const newErrors: Record<string, string | null> = {};
 
 		taskOrderUIItems
 			.filter((item) => !item.isDeleted)
 			.forEach((taskOrder) => {
-				// Required field validation
 				const requiredFields = [
 					"activities_id",
 					"tool_types_id",
@@ -307,12 +291,10 @@ export function useTaskOrderForm(): UseTaskOrderFormReturn {
 					if (isEmpty) {
 						const fieldKey = `${taskOrder.uiId}_${field}`;
 
-						newErrors[fieldKey] = null; // Use null for required field validation
+						newErrors[fieldKey] = null;
 					}
 				});
 
-				// Custom validation logic can be added here
-				// For example, target_area must be greater than 0
 				if (
 					taskOrder.target_area !== undefined &&
 					taskOrder.target_area !== null &&

@@ -121,25 +121,16 @@ export interface FilterModalProps extends FormComponentProps {
 }
 
 export interface HeaderProps {
-	// Text Props
 	title?: string;
 	subtitle?: string;
-
-	// Boolean Props
 	hasBorder?: boolean;
-
-	// Style Props
 	orientation?: "horizontal" | "vertical";
-
-	// Class Props
 	className?: ClassValue;
 	titleClassName?: ClassValue;
 	subtitleClassName?: ClassValue;
 	headerContainerClassName?: ClassValue;
 	childrenContainerClassName?: ClassValue;
 	borderClassName?: string;
-
-	// Children Props
 	children?: React.ReactNode;
 }
 

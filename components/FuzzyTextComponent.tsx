@@ -28,7 +28,6 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
 	const intensityRef = useRef(baseIntensity);
 	const animationFrameRef = useRef<number>(0);
 
-	// Update intensity when hovering changes
 	useEffect(() => {
 		intensityRef.current = isHovering ? hoverIntensity : baseIntensity;
 	}, [isHovering, baseIntensity, hoverIntensity]);
@@ -46,42 +45,35 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
 		let isActive = true;
 
 		const initCanvas = async () => {
-			// Wait for fonts to load if available
 			if (document.fonts?.ready) {
 				await document.fonts.ready;
 			}
 			if (!isActive) return;
 
-			// Determine actual font family
 			const computedFontFamily =
 				fontFamily === "inherit"
 					? window.getComputedStyle(canvas).fontFamily || "sans-serif"
 					: fontFamily;
 
-			// Create offscreen canvas for text measurement
 			const offscreen = document.createElement("canvas");
 			const offCtx = offscreen.getContext("2d");
 
 			if (!offCtx) return;
 
-			// Set font and measure text
 			offCtx.font = `${fontWeight} ${fontSize} ${computedFontFamily}`;
 			const metrics = offCtx.measureText(text);
 
-			// Calculate dimensions
 			const width = Math.ceil(metrics.width);
 			const height = Math.ceil(
 				(metrics.actualBoundingBoxAscent || 0) +
 					(metrics.actualBoundingBoxDescent || 0)
 			);
 
-			// Set canvas dimensions
 			const padding = 30;
 
 			canvas.width = width + padding * 2;
 			canvas.height = height + padding;
 
-			// Draw text on offscreen canvas
 			offscreen.width = width;
 			offscreen.height = height;
 			offCtx.fillStyle = color;
@@ -92,7 +84,6 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
 				metrics.actualBoundingBoxAscent || height * 0.8
 			);
 
-			// Animation loop
 			const render = () => {
 				if (!isActive) return;
 
@@ -103,7 +94,6 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
 				const intensity = intensityRef.current;
 				const fuzzRange = 30;
 
-				// Apply fuzzy effect by shifting horizontal lines
 				for (let y = 0; y < height; y++) {
 					const dx = Math.floor(
 						intensity * (Math.random() - 0.5) * fuzzRange
@@ -127,7 +117,6 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
 		};
 	}, [children, fontSize, fontWeight, fontFamily, color]);
 
-	// Handle hover events
 	const handleHover = (state: boolean) => {
 		if (enableHover) setIsHovering(state);
 	};

@@ -61,18 +61,6 @@ export default function Navbar() {
 	}
 
 	const menuItems: MenuItem[] = [
-		// * Normal Page --------------------------------------------------
-		// {
-		// 	name: "เมนูหลัก",
-		// 	path: "/home",
-		// 	icon: <HomeIcon size={18} />,
-		// 	allowedRoles: [
-		// 		USERROLE.Admin,
-		// 		USERROLE.DepartmentHead,
-		// 		USERROLE.UnitHead,
-		// 		USERROLE.Driver,
-		// 	],
-		// },
 		{
 			name: "งาน",
 			path: "/request",
@@ -96,11 +84,6 @@ export default function Navbar() {
 			path: "/login",
 			icon: <UserIcon size={18} />,
 		},
-
-		// * Componenent Page ---------------------------------------------
-		// { name: "Form", path: "/form", icon: <HomeIcon /> },
-		// { name: "Card", path: "/card", icon: <HomeIcon /> },
-		// { name: "Drawer", path: "/drawer", icon: <HomeIcon /> },
 	];
 
 	// Fetch data ---------------------------------------------------------------------------------------------------
@@ -234,7 +217,7 @@ export default function Navbar() {
 						<Button
 							isIconOnly
 							className="relative opacity-100 mr-4 p-0 h-full aspect-[1/1]"
-							isDisabled={!userContext?.token}
+							isDisabled={true}
 							radius="sm"
 							size="lg"
 							variant="light"
@@ -250,15 +233,6 @@ export default function Navbar() {
 								src="/pictures/logo.png"
 							/>
 						</Button>
-
-						{/* Session Timer */}
-						{/* 
-						{userContext.token && (
-							<NavbarItem className="flex items-center justify-start w-full h-full">
-								<SessionTimer />
-							</NavbarItem>
-						)} 
-						*/}
 					</NavbarBrand>
 
 					{/* Operation Dropdown */}

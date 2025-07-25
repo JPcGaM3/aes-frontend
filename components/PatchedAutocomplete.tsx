@@ -1,7 +1,6 @@
 import React from "react";
 import { Autocomplete, AutocompleteProps } from "@heroui/react";
 
-// Extended classNames interface that includes Input slots
 interface ExtendedClassNames {
 	base?: string;
 	listboxWrapper?: string;
@@ -10,7 +9,6 @@ interface ExtendedClassNames {
 	endContentWrapper?: string;
 	clearButton?: string;
 	selectorButton?: string;
-	// Additional Input component slots
 	label?: string;
 	mainWrapper?: string;
 	inputWrapper?: string;
@@ -36,7 +34,6 @@ export const PatchedAutocomplete = <T extends object>({
 	inputProps,
 	...props
 }: PatchedAutocompleteProps<T>) => {
-	// Extract Input-specific classNames
 	const {
 		label,
 		mainWrapper,
@@ -49,7 +46,6 @@ export const PatchedAutocomplete = <T extends object>({
 		...autocompleteClassNames
 	} = classNames || {};
 
-	// Create inputProps with the Input-specific classNames
 	const enhancedInputProps = {
 		...inputProps,
 		classNames: {

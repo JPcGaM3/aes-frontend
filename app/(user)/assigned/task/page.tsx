@@ -308,7 +308,10 @@ export default function TaskPage() {
 			actionList.push(
 				{
 					key: "start",
-					label: "เริ่มงาน",
+					label:
+						item.status === TASKORDERSTATUS.InProgress
+							? "จบงาน"
+							: "เริ่มงาน",
 					icon: <StartIcon />,
 					onClick: (item: TaskOrder) =>
 						handleNewPage({

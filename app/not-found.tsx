@@ -67,17 +67,6 @@ export default function NotFoundPage() {
 					>
 						ย้อนกลับ
 					</Button>
-
-					<Button
-						className="w-full px-8 py-3 font-semibold transition-all duration-200 transform hover:scale-105"
-						color="default"
-						radius="sm"
-						size="lg"
-						variant="solid"
-						onPress={() => router.push("/home")}
-					>
-						กลับหน้าหลัก
-					</Button>
 				</div>
 			</div>
 

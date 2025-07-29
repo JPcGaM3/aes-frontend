@@ -302,8 +302,8 @@ export default function TaskPage() {
 		];
 
 		if (
-			item.status === TASKORDERSTATUS.InProgress ||
-			item.status === TASKORDERSTATUS.Pending
+			item.status !== TASKORDERSTATUS.Completed &&
+			item.status !== TASKORDERSTATUS.Rejected
 		) {
 			actionList.push(
 				{
@@ -354,13 +354,13 @@ export default function TaskPage() {
 
 			{/* Header ----------------------------------------------------------- */}
 			<Header
-				className="mb-6 w-full text-left"
+				className="w-full mb-6 text-left"
 				orientation="horizontal"
 				subtitle="งานย่อยทั้งหมดของคุณ"
 				title="รายการใบงานย่อย"
 			>
 				<Button
-					className="hidden sm:inline-flex font-semibold"
+					className="hidden font-semibold sm:inline-flex"
 					color="primary"
 					endContent={<FilterIcon variant="border" />}
 					radius="sm"
@@ -383,7 +383,7 @@ export default function TaskPage() {
 
 			{/* Body ------------------------------------------------------------- */}
 			<div>
-				<div className="mb-4 font-medium text-gray-700 text-right">
+				<div className="mb-4 font-medium text-right text-gray-700">
 					{`จำนวนทั้งหมด: ${taskOrders.length ?? 0} รายการ`}
 				</div>
 

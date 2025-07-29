@@ -142,30 +142,44 @@ export default function ListPage() {
 		}
 	}, [filterValues, isReady, userContext?.ae_id, userContext?.token]);
 
-	const actions: ActionConfig[] = [
-		{
-			key: "view",
-			label: "ดูรายละเอียด",
-			icon: <InfoIcon />,
-			onClick: (item: RequestOrder) =>
-				handleNewPage({ params: { id: item.id, action: "view" } }),
-		},
-		{
-			key: "edit",
-			label: "แจ้งแก้ไข",
-			icon: <EditIcon />,
-			onClick: (item: RequestOrder) =>
-				handleNewPage({ params: { id: item.id, action: "edit" } }),
-		},
-		{
-			key: "reject",
-			label: "ปฏิเสธ",
-			icon: <RejectIcon />,
-			className: "text-danger-500",
-			onClick: (item: RequestOrder) =>
-				handleNewPage({ params: { id: item.id, action: "reject" } }),
-		},
-	];
+	const getActions = (item: RequestOrder) => {
+		const actionList: ActionConfig[] = [
+			{
+				key: "view",
+				label: "ดูรายละเอียด",
+				icon: <InfoIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "view" } }),
+			},
+		];
+
+		if (
+			item.status !== REQUESTORDERSTATUS.Rejected &&
+			item.status !== REQUESTORDERSTATUS.PendingApproval &&
+			item.status !== REQUESTORDERSTATUS.PendingEdit
+		) {
+			actionList.push({
+				key: "edit",
+				label: "แก้ไข",
+				icon: <EditIcon />,
+				onClick: () =>
+					handleNewPage({ params: { id: item.id, action: "edit" } }),
+			});
+
+			actionList.push({
+				key: "reject",
+				label: "ปฏิเสธ",
+				icon: <RejectIcon />,
+				className: "text-danger-500",
+				onClick: () =>
+					handleNewPage({
+						params: { id: item.id, action: "reject" },
+					}),
+			});
+		}
+
+		return actionList;
+	};
 
 	const headerFields: FieldConfig[] = [
 		{
@@ -431,7 +445,7 @@ export default function ListPage() {
 				</div>
 
 				<CardComponent
-					actions={actions}
+					actions={(item: RequestOrder) => getActions(item)}
 					bodyFields={bodyFields}
 					headerFields={headerFields}
 					items={reqOrders || []}

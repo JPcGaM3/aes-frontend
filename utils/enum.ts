@@ -1,54 +1,44 @@
 export enum USERROLE {
-  Admin = "admin",
-  DepartmentHead = "department_head",
-  UnitHead = "unit_head",
-  Driver = "driver",
-  Farmpro = "farmpro",
-  CaneMIS = "canemis",
-  SongSirm = "song_sirm",
+	Admin = "ADMIN",
+	DepartmentHead = "DEPARTMENT_HEAD",
+	UnitHead = "UNIT_HEAD",
+	Driver = "DRIVER",
+	Farmpro = "FARMPRO",
+	CaneMIS = "CANEMIS",
+	SongSirm = "SONG_SIRM",
+	Manager = "MANAGER",
+	SubManager = "SUB_MANAGER",
+	Commander = "COMMANDER",
+	SubCommander = "SUB_COMMANDER",
+	Accountant = "ACCOUNTANT",
+	Maintenance = "MAINTENANCE",
 }
 
 export enum USERSTATUS {
-  Working = "working",
-  Inactive = "inactive",
-  OnLeave = "on_leave",
+	Working = "WORKING",
+	Inactive = "INACTIVE",
+	OnLeave = "ON_LEAVE",
 }
 
 export enum REQUESTORDERSTATUS {
-  Created = "created",
-  PendingApproval = "pending_approval",
-  PendingEdit = "pending_edit",
-  Pending = "pending",
-  InProgress = "in_progress",
-  PendingReview = "pending_review",
-  PendingConfirm = "pending_confirm",
-  Completed = "completed",
-  Rejected = "rejected",
+	Created = "CREATED",
+	PendingApproval = "PENDING_APPROVAL",
+	PendingEdit = "PENDING_EDIT",
+	Pending = "PENDING",
+	InProgress = "IN_PROGRESS",
+	PendingReview = "PENDING_REVIEW",
+	PendingConfirm = "PENDING_CONFIRM",
+	Completed = "COMPLETED",
+	Rejected = "REJECTED",
+	Cancelled = "CANCELLED",
 }
 
 export enum TASKORDERSTATUS {
-  Created = "created",
-  Pending = "pending",
-  InProgress = "in_progress",
-  OnHold = "on_hold",
-  Completed = "completed",
-}
-
-export enum RequestOrderInputField {
-  CustomerType = "customer_type",
-  Affiliation = "affiliation",
-  Unit = "unit",
-  Quota = "quota",
-  Name = "name",
-  LandNumber = "land_number",
-  LocationName = "location_name",
-  Lattitude = "lattitude",
-  Longitude = "longitude",
-  Supervisor = "supervisor",
-}
-
-export enum TaskOrderInputField {
-  Activity = "activity",
-  Tool = "tool",
-  StartTime = "start_time",
+	Created = "CREATED",
+	Pending = "PENDING",
+	InProgress = "IN_PROGRESS",
+	OnHold = "ON_HOLD",
+	Completed = "COMPLETED",
+	Cancelled = "CANCELLED",
+	Rejected = "REJECTED",
 }

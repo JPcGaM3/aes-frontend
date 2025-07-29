@@ -1,0 +1,20 @@
+services:
+    frontend:
+        build:
+            context: ./
+            dockerfile: dockerfile.app
+            args:
+                NEXT_PUBLIC_API_URL: http://aes-backend:8080/aesback
+        container_name: aes-frontend
+        environment:
+            - NODE_ENV=production
+        ports:
+            - "3001:3000"
+        networks:
+            aes-network:
+                ipv4_address: 172.28.5.3
+
+networks:
+    aes-network:
+        driver: bridge
+        external: true

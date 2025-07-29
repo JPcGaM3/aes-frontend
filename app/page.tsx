@@ -1,9 +1,21 @@
-import React from "react";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/providers/AuthContext";
 
 export default function Home() {
-  return (
-    <section className="flex flex-col justify-center items-center gap-4 py-8 md:py-10">
-      <>HomePage</>
-    </section>
-  );
+	const router = useRouter();
+	const { userContext } = useAuth();
+
+	useEffect(() => {
+		{
+			userContext.token
+				? router.replace("/home")
+				: router.replace("/login");
+		}
+	}, [userContext, router]);
+
+	return null;
 }

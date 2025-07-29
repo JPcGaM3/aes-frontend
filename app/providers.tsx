@@ -7,28 +7,36 @@ import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 import { LoadingProvider } from "@/providers/LoadingContext";
+import { AuthProvider } from "@/providers/AuthContext";
+import { AlertProvider } from "@/providers/AlertContext";
 
 export interface ProvidersProps {
-  children: React.ReactNode;
-  themeProps?: ThemeProviderProps;
+	children: React.ReactNode;
+	themeProps?: ThemeProviderProps;
 }
 
 declare module "@react-types/shared" {
-  interface RouterConfig {
-    routerOptions: NonNullable<
-      Parameters<ReturnType<typeof useRouter>["push"]>[1]
-    >;
-  }
+	interface RouterConfig {
+		routerOptions: NonNullable<
+			Parameters<ReturnType<typeof useRouter>["push"]>[1]
+		>;
+	}
 }
 
 export function Providers({ children, themeProps }: ProvidersProps) {
-  const router = useRouter();
+	const router = useRouter();
 
-  return (
-    <HeroUIProvider navigate={router.push}>
-      <NextThemesProvider {...themeProps}>
-        <LoadingProvider>{children}</LoadingProvider>
-      </NextThemesProvider>
-    </HeroUIProvider>
-  );
+	return (
+		<LoadingProvider>
+			<AlertProvider>
+				<AuthProvider>
+					<HeroUIProvider navigate={router.push}>
+						<NextThemesProvider {...themeProps}>
+							{children}
+						</NextThemesProvider>
+					</HeroUIProvider>
+				</AuthProvider>
+			</AlertProvider>
+		</LoadingProvider>
+	);
 }

@@ -1,184 +1,262 @@
 "use client";
 
-import React, { useCallback } from "react";
+import type { CardComponentProps } from "@/interfaces/props";
+
+import React, { useCallback, useState } from "react";
 import {
-  Button,
-  Chip,
-  Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
+	Button,
+	Chip,
+	Divider,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
 } from "@heroui/react";
-import NextLink from "next/link";
+import { clsx } from "clsx";
 
-import { translateEnumValue } from "@/utils/functions";
-import { GoToPageIcon, VerticalDotsIcon } from "@/utils/icons";
-import { CardComponentProps } from "@/interfaces/interfaces";
+import SpotlightCard from "./SplotlightCardComponent";
 
-export const CardComponent = <T extends { id: number | string }>({
-  items,
-  statusConfig,
-  headerFields,
-  bodyFields,
-  actions,
-  isActionsPage = false,
-  cardClassName = "flex flex-col gap-2 bg-white shadow-md rounded-lg min-w-64 h-full",
-}: CardComponentProps<T>) => {
-  const renderCell = useCallback(
-    (item: T) => (
-      <div key={item.id} className={cardClassName}>
-        {/* header */}
-        <div className="px-4 py-2 text-left">
-          {statusConfig && (item as any)[statusConfig.key] && (
-            <Chip
-              className="w-fit capitalize p-3 my-3"
-              color={
-                statusConfig.colorMap[
-                  ((item as any)[statusConfig.key] ||
-                    statusConfig.defaultValue) as string
-                ]
-              }
-              size="sm"
-              variant="flat"
-            >
-              {statusConfig.translation
-                ? translateEnumValue(
-                    (item as any)[statusConfig.key] ||
-                      statusConfig.defaultValue ||
-                      "",
-                    statusConfig.translation
-                  )
-                : (item as any)[statusConfig.key] || statusConfig.defaultValue}
-            </Chip>
-          )}
+import { VerticalDotsIcon } from "@/utils/icons";
+import { getNestedValue, translateEnumValue } from "@/utils/functions";
+import { FieldConfig } from "@/interfaces/interfaces";
 
-          {headerFields?.map((field) => {
-            const value = (item as any)[field.key];
-            // Use translation
-            const label =
-              field.translation && field.translation[field.key]
-                ? field.translation[field.key]
-                : field.label;
-            let translatedValue;
+export default function CardComponent<T extends { id: number | string }>({
+	items,
+	statusConfig,
+	headerFields,
+	bodyFields,
+	actions,
+	cardClassName = "flex flex-col gap-3 bg-white shadow-md rounded-lg min-w-64 h-full",
+}: CardComponentProps<T>) {
+	const [openPopoverId, setOpenPopoverId] = useState<string | number | null>(
+		null
+	);
 
-            if (field.translation && field.translation[value]) {
-              translatedValue = field.translation[value];
-            } else if (field.formatter) {
-              translatedValue = field.formatter(value);
-            } else {
-              translatedValue = value;
-            }
+	const getFieldValue = useCallback((item: any, config: FieldConfig) => {
+		if (config.path) {
+			return getNestedValue(item, config.path);
+		}
+		if (config.key) {
+			return item[config.key];
+		}
 
-            return (
-              <div key={field.key} className={field.className || "w-fit"}>
-                {label && <span className="font-medium">{label}: </span>}
-                {translatedValue}
-              </div>
-            );
-          })}
-        </div>
+		return undefined;
+	}, []);
 
-        {/* body */}
-        <div className="flex flex-col px-4 pb-4">
-          {bodyFields.map((field) => {
-            const value = (item as any)[field.key];
+	const renderCell = useCallback(
+		(item: T) => {
+			const resolvedActions =
+				typeof actions === "function" ? actions(item) : actions;
 
-            if (value === undefined || value === null) return null;
+			const getSpotlightColor = (
+				_status: string
+			): `rgba(${number}, ${number}, ${number}, ${number})` => {
+				const colorMap: Record<
+					string,
+					`rgba(${number}, ${number}, ${number}, ${number})`
+				> = {
+					default: "rgba(156, 163, 175, 0.1)",
+					primary: "rgba(59, 130, 246, 0.1)",
+					secondary: "rgba(107, 114, 128, 0.1)",
+					success: "rgba(34, 197, 94, 0.1)",
+					warning: "rgba(245, 158, 11, 0.1)",
+					danger: "rgba(239, 68, 68, 0.1)",
+				};
 
-            // Use translation
-            const label =
-              field.translation && field.translation[field.key]
-                ? field.translation[field.key]
-                : field.label;
-            let translatedValue;
+				const statusColor =
+					statusConfig?.colorMap?.[(item as any).status];
 
-            if (field.translation && field.translation[value]) {
-              translatedValue = field.translation[value];
-            } else if (field.formatter) {
-              translatedValue = field.formatter(value);
-            } else {
-              translatedValue = value;
-            }
+				return statusColor && colorMap[statusColor]
+					? colorMap[statusColor]
+					: colorMap.default;
+			};
 
-            return (
-              <div
-                key={field.key}
-                className={field.className || "text-gray-600"}
-              >
-                {label && <span className="font-medium">{label}: </span>}
-                {translatedValue}
-              </div>
-            );
-          })}
-        </div>
+			return (
+				<SpotlightCard
+					key={item.id}
+					className="flex flex-col h-full gap-3 bg-white rounded-lg shadow-md min-w-64"
+					spotlightColor={getSpotlightColor((item as any).status)}
+				>
+					{/* header */}
+					<div className="gap-1 px-4 text-left">
+						{(item as any).status && (
+							<Chip
+								className="p-3 mt-4 mb-2 tracking-wide w-fit"
+								color={
+									statusConfig?.colorMap?.[
+										(item as any).status
+									] || "default"
+								}
+								radius="sm"
+								size="sm"
+								variant="flat"
+							>
+								<span className="font-semibold">
+									{translateEnumValue(
+										(item as any).status,
+										statusConfig?.translation || {}
+									)}
+								</span>
+							</Chip>
+						)}
 
-        {/* footer */}
-        {actions && actions.length > 0 && (
-          <div>
-            <Divider />
-            <div className="flex justify-between items-center gap-2 py-2 px-3">
-              <div className="text-gray-500 text-sm">More actions.</div>
+						{headerFields?.map((field) => {
+							const label = field.label
+								? field.label
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
 
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <div className="text-default-300">
-                      <VerticalDotsIcon />
-                    </div>
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  {actions.map((action) => (
-                    <DropdownItem
-                      key={action.key}
-                      onClick={() => action.onClick && action.onClick(item)}
-                    >
-                      {action.label}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          </div>
-        )}
+							const rawValue = getFieldValue(item, field);
+							let value =
+								rawValue == null
+									? "N/A"
+									: translateEnumValue(
+											rawValue,
+											field.valueTranslator || {}
+										);
 
-        {/* footer */}
-        {isActionsPage && (
-          <div>
-            <Divider />
-            <NextLink
-              href={{
-                pathname: `/order/${item.id}`,
-                query: { data: JSON.stringify(item) },
-              }}
-            >
-              <div className="flex justify-between items-center gap-2 p-3 text-gray-500">
-                <div className=" text-sm">Click here to view more.</div>
-                <GoToPageIcon />
-              </div>
-            </NextLink>
-          </div>
-        )}
-      </div>
-    ),
-    [
-      statusConfig,
-      headerFields,
-      bodyFields,
-      actions,
-      isActionsPage,
-      cardClassName,
-    ]
-  );
+							if (
+								typeof value === "string" &&
+								(value.length > 20 || value.includes("\n"))
+							) {
+								value = value.slice(0, 20) + "...";
+							}
 
-  return (
-    <div className="items-center gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full h-full">
-      {items && items.length > 0 ? (
-        items.map((item) => renderCell(item))
-      ) : (
-        <></>
-      )}
-    </div>
-  );
-};
+							return (
+								<div
+									key={field.key}
+									className={field.className || "w-fit"}
+								>
+									{label} : {value}
+								</div>
+							);
+						})}
+					</div>
+					{/* body */}
+					<div className="flex flex-col px-4 pb-1">
+						{bodyFields.map((field) => {
+							const label = field.label
+								? field.label
+								: translateEnumValue(
+										field.key,
+										field.labelTranslator || {}
+									);
+
+							let value;
+
+							if (field.valueFunction) {
+								value = field.valueFunction(item);
+							} else {
+								const rawValue = getFieldValue(item, field);
+
+								value =
+									rawValue == null
+										? "N/A"
+										: translateEnumValue(
+												rawValue,
+												field.valueTranslator || {}
+											);
+							}
+							if (
+								typeof value === "string" &&
+								(value.length > 20 || value.includes("\n"))
+							) {
+								value = value.slice(0, 20) + "...";
+							}
+
+							return (
+								<div
+									key={field.key}
+									className={`flex flex-row items-center gap-2 ${
+										field.className || "text-gray-600"
+									}`}
+								>
+									<div className="w-2/5">{label}</div>
+									<div
+										className={clsx(
+											`${field.valueClassName} w-3/5`
+										)}
+									>
+										{value}
+									</div>
+								</div>
+							);
+						})}
+					</div>
+					{/* footer */}
+					{resolvedActions && resolvedActions.length > 0 && (
+						<div>
+							<Divider />
+							<div className="flex items-center justify-between gap-2 py-1 pl-4 pr-1">
+								<div className="text-sm text-gray-500">
+									รายละเอียดเพิ่มเติม
+								</div>
+
+								<Popover
+									isOpen={openPopoverId === item.id}
+									placement="bottom-end"
+									onOpenChange={(isOpen) =>
+										setOpenPopoverId(
+											isOpen ? item.id : null
+										)
+									}
+								>
+									<PopoverTrigger>
+										<Button
+											isIconOnly
+											size="sm"
+											variant="light"
+										>
+											<div className="text-default-300">
+												<VerticalDotsIcon />
+											</div>
+										</Button>
+									</PopoverTrigger>
+
+									<PopoverContent className="p-1 mt-1 rounded-lg shadow-lg min-w-40">
+										<div className="flex flex-col w-full text-sm">
+											{resolvedActions.map((action) => (
+												<Button
+													key={action.key}
+													className={`w-full justify-start text-left p-2 ${
+														action.className || ""
+													}`}
+													radius="sm"
+													size="md"
+													startContent={action.icon}
+													variant="light"
+													onPress={() => {
+														action.onClick?.(item);
+														setOpenPopoverId(null);
+													}}
+												>
+													{action.label}
+												</Button>
+											))}
+										</div>
+									</PopoverContent>
+								</Popover>
+							</div>
+						</div>
+					)}
+				</SpotlightCard>
+			);
+		},
+		[
+			statusConfig,
+			headerFields,
+			bodyFields,
+			actions,
+			cardClassName,
+			openPopoverId,
+			getFieldValue,
+		]
+	);
+
+	return (
+		<div className="grid items-center w-full h-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			{items.map((item) => renderCell(item))}
+		</div>
+	);
+}

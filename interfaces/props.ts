@@ -1,0 +1,165 @@
+import type {
+	FieldSection,
+	UploadedFile,
+	StatusConfig,
+	FieldConfig,
+	ActionConfig,
+	FormSection,
+} from "@/interfaces/interfaces";
+import type { PressEvent } from "@react-types/shared";
+import type { ColorType } from "../types";
+import type { ClassValue } from "clsx";
+import type { RequestOrder, TaskOrder } from "@/interfaces/schema";
+import type { SwitchProps } from "@heroui/switch";
+
+export interface AlertComponentProps {
+	title: string;
+	description: string;
+	color?:
+		| "default"
+		| "primary"
+		| "secondary"
+		| "success"
+		| "warning"
+		| "danger";
+	variant?: "solid" | "bordered" | "flat" | "faded";
+	stackIndex?: number;
+	handleClose?: () => void;
+	totalAlerts?: number;
+	hideAllAlerts?: () => void;
+	isClosing?: boolean;
+}
+
+export interface AlertModalProps {
+	title: string;
+	description: string;
+	color?:
+		| "default"
+		| "primary"
+		| "secondary"
+		| "success"
+		| "warning"
+		| "danger";
+	cancelText?: string;
+	confirmText?: string;
+	onClose: () => void;
+	onConfirm?: () => void;
+}
+
+export interface DrawerComponentProps {
+	size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
+	placement?: "left" | "right" | "top" | "bottom";
+	isOpen: boolean;
+	onClose: () => void;
+	children: React.ReactNode;
+}
+
+export interface FieldValueDisplayerProps {
+	size?: "compact" | "expanded" | "full";
+	className?: string;
+	sections: FieldSection[];
+}
+
+export interface FormButtonsProps {
+	onSubmit?: (e: PressEvent) => void;
+	onCancel?: (e: PressEvent) => void;
+	size?: "compact" | "expanded" | "full";
+	buttonSize?: "sm" | "md" | "lg";
+	hasBorder?: boolean;
+	submitLabel?: string;
+	cancelLabel?: string;
+	submitColor?: ColorType;
+	cancelColor?: ColorType;
+	isSubmitting?: boolean;
+	isCanceling?: boolean;
+	isSubmitDisabled?: boolean;
+	isCancelDisabled?: boolean;
+	className?: string;
+}
+
+export interface FormFieldsProps {
+	sections: FormSection[];
+	onValueChange?: (name: string, value: any) => void;
+	values?: any;
+	errors?: Record<string, string | null>;
+	isCompact?: boolean;
+}
+
+export interface InputRendererProps {
+	value?: any;
+	type:
+		| "text"
+		| "email"
+		| "textarea"
+		| "password"
+		| "dropdown"
+		| "date"
+		| "date-range"
+		| "number"
+		| "time";
+	commonProps: any;
+	onValueChange?: (name: string, value: any) => void;
+}
+
+export interface FormComponentProps
+	extends HeaderProps,
+		FormFieldsProps,
+		FormButtonsProps {
+	size?: "compact" | "expanded" | "full";
+	hasHeader?: boolean;
+	className?: string;
+	children?: React.ReactNode;
+	errors?: Record<string, string | null>;
+	onCancel?: () => void;
+	onSubmit?: (values: any) => void;
+	onChange?: (values: any) => void;
+}
+
+export interface FilterModalProps extends FormComponentProps {
+	isOpen: boolean;
+	onClose: () => void;
+}
+
+export interface HeaderProps {
+	title?: string;
+	subtitle?: string;
+	hasBorder?: boolean;
+	orientation?: "horizontal" | "vertical";
+	className?: ClassValue;
+	titleClassName?: ClassValue;
+	subtitleClassName?: ClassValue;
+	headerContainerClassName?: ClassValue;
+	childrenContainerClassName?: ClassValue;
+	borderClassName?: string;
+	children?: React.ReactNode;
+}
+
+export interface AccordionComponentProps {
+	requestOrder: RequestOrder;
+	taskOrders?: TaskOrder[];
+}
+
+export interface UploadComponentProps {
+	maxFiles?: number;
+	isUploading?: boolean;
+	uploadedFiles: UploadedFile[];
+	setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
+	onDownloadTemplate?: () => void;
+	onSubmit?: () => void;
+	onCancel?: () => void;
+}
+
+export interface CardComponentProps<T> {
+	items: T[];
+	statusConfig?: StatusConfig;
+	headerFields?: FieldConfig[];
+	bodyFields: FieldConfig[];
+	actions?: ((item: T) => ActionConfig[]) | ActionConfig[];
+	isActionsPage?: boolean;
+	cardClassName?: string;
+}
+
+export interface ThemeSwitchProps {
+	className?: string;
+	classNames?: SwitchProps["classNames"];
+}

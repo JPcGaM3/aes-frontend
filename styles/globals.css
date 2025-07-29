@@ -1,3 +1,107 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.font-sans {
+	font-family:
+		var(--font-sans),
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		"Noto Sans",
+		sans-serif,
+		"Apple Color Emoji",
+		"Segoe UI Emoji",
+		"Segoe UI Symbol",
+		"Noto Color Emoji";
+}
+.font-kanit {
+	font-family:
+		var(--font-kanit),
+		"Kanit",
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		"Noto Sans",
+		sans-serif,
+		"Apple Color Emoji",
+		"Segoe UI Emoji",
+		"Segoe UI Symbol",
+		"Noto Color Emoji";
+}
+
+.alert-stack-enter {
+	opacity: 0;
+	transform: translateX(100%) translateY(-10px) scale(0.95);
+}
+
+.alert-stack-enter-active {
+	opacity: 1;
+	transform: translateX(0) translateY(0) scale(1);
+	transition: all 300ms ease-out;
+}
+
+.alert-stack-exit {
+	opacity: 1;
+	transform: translateX(0) translateY(0) scale(1);
+}
+
+.alert-stack-exit-active {
+	opacity: 0;
+	transform: translateX(100%) translateY(-10px) scale(0.95);
+	transition: all 300ms ease-in;
+}
+
+/* Mobile animations */
+@media (max-width: 640px) {
+	.alert-stack-enter {
+		opacity: 0;
+		transform: translateX(-100%) translateY(-10px) scale(0.95);
+	}
+
+	.alert-stack-enter-active {
+		opacity: 1;
+		transform: translateX(0) translateY(0) scale(1);
+		transition: all 300ms ease-out;
+	}
+
+	.alert-stack-exit-active {
+		opacity: 0;
+		transform: translateX(-100%) translateY(-10px) scale(0.95);
+		transition: all 300ms ease-in;
+	}
+}
+
+.alert-stacked {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 640px) {
+	.alert-container {
+		position: fixed;
+		top: 64px;
+		right: 8px;
+		width: 384px;
+		max-width: 90vw;
+	}
+}
+
+@media (max-width: 639px) {
+	.alert-container {
+		position: fixed;
+		top: 64px;
+		left: 16px;
+		right: 16px;
+		max-width: calc(100vw - 32px);
+	}
+}

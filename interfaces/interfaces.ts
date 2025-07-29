@@ -1,170 +1,138 @@
+import { ClassValue } from "clsx";
+
 import { ColorType } from "@/types";
-import {
-  REQUESTORDERSTATUS,
-  TASKORDERSTATUS,
-  USERROLE,
-  USERSTATUS,
-} from "@/utils/enum";
 
-interface User {
-  id: number;
-  quota_number?: string;
-  fullname: string;
-  email: string;
-  phone: string;
-  unit: number;
-  zone: string;
-  ae: string;
-  role: USERROLE;
-  leader_id?: number;
-  status?: USERSTATUS | string;
-  active: boolean;
-  created_at: Date;
-  updated_at: Date;
-  created_by: number;
-  updated_by: number;
+export interface BaseInputConfig {
+	/** Field name (used as key in values object) */
+	name: string;
+	/** Dot-separated path for nested value, e.g. "user.address.city" */
+	path?: string;
+	/** Optional default value for the field */
+	defaultValue?: any;
+	/** Pass extra props to the input component */
+	props?: Record<string, any>;
+
+	/** Label configuration */
+	hasLabel?: boolean;
+	/** Custom label for the field (overrides name/translation) */
+	label?: string;
+	hasPlaceholder?: boolean;
+	labelTranslator?: Record<string, string>;
+	labelPlacement?: "inside" | "outside" | "outside-left";
+
+	/** Common input properties */
+	isReadOnly?: boolean;
+	isRequired?: boolean;
+	size?: "sm" | "md" | "lg";
+	className?: ClassValue;
 }
 
-interface RequestOrder {
-  id: number;
-  customer_type: string;
-  affiliation: string;
-  quota_number?: string;
-  farm_name?: string;
-  land_number?: number;
-  activity_describe: string;
-  tool_describe: string;
-  ap_month_year: string;
-  supervisor_fullname?: string;
-  unit: number;
-  zone: number;
-  ae: string;
-  target_area?: number;
-  actual_area?: number;
-  on_live: boolean;
-  evidence?: string;
-  sale?: number;
-  status?: REQUESTORDERSTATUS | string;
-  supervisor_id?: number;
-  location_id?: number;
-  comment?: string;
-  created_at: Date;
-  updated_at: Date;
-  created_by: number;
-  updated_by: number;
+export interface TextInputConfig extends BaseInputConfig {
+	type: "text" | "email" | "password";
 }
 
-interface TaskOrder {
-  id: number;
-  area_number: string;
-  area_target?: number;
-  area_actual?: number;
-  price?: number;
-  comment?: string;
-  ap_date: Date;
-  oil_slip?: string;
-  oil_start_mile?: number;
-  start_mile?: number;
-  end_mile?: number;
-  oil_start?: number;
-  oil_end?: number;
-  car_start_hour: string;
-  car_end_hour: string;
-  start_timer: string;
-  end_timer: string;
-  status?: TASKORDERSTATUS | string;
-  request_order_id: number;
-  car_id: number;
-  tool_id: number;
-  assigned_user_id: number;
-  created_at: Date;
-  updated_at: Date;
-  created_by: number;
-  updated_by: number;
+export interface TextAreaInputConfig extends BaseInputConfig {
+	type: "textarea";
+	minRows?: number;
+	maxRows?: number;
 }
 
-interface BaseInputConfig {
-  name: string;
-  label: string;
-  labelPlacement?: "inside" | "outside" | "outside-left";
-  placeholder?: string;
-  description?: React.ReactNode;
-  startContent?: React.ReactNode;
-  endContent?: React.ReactNode;
-  isRequired?: boolean;
-  isInvalid?: boolean;
-  errorMessage?: React.ReactNode;
-  className?: string;
+export interface NumberInputConfig extends BaseInputConfig {
+	type: "number";
+	unit?: string;
+	minValue?: number;
+	maxValue?: number;
 }
 
-interface TextInputConfig extends BaseInputConfig {
-  type: "text" | "email" | "password";
+export interface DropdownOption {
+	value: string | number;
+	label: string;
 }
 
-interface NumberInputConfig extends BaseInputConfig {
-  type: "number";
-  min?: number;
-  max?: number;
+export interface DropdownInputConfig extends BaseInputConfig {
+	type: "dropdown";
+	isClearable?: boolean;
+	options: DropdownOption[];
 }
 
-interface DropdownOption {
-  value: string;
-  label: string;
+export interface DateInputConfig extends BaseInputConfig {
+	type: "date";
 }
 
-interface DropdownInputConfig extends BaseInputConfig {
-  type: "dropdown";
-  options: DropdownOption[];
-  selectionMode?: "single" | "multiple";
+export interface DateRangeInputConfig extends BaseInputConfig {
+	type: "date-range";
 }
 
-type InputConfig = TextInputConfig | NumberInputConfig | DropdownInputConfig;
-type FormField = InputConfig | InputConfig[];
-
-interface StatusConfig {
-  key: string;
-  defaultValue?: string;
-  colorMap: Record<string, ColorType>;
-  translation?: Record<string, string>;
+export interface TimeInputConfig extends BaseInputConfig {
+	type: "time";
+	granularity?: "hour" | "minute" | "second";
+	hourCycle?: 12 | 24;
 }
 
-interface FieldConfig {
-  key: string;
-  label?: string;
-  formatter?: (value: any) => string;
-  className?: string;
-  translation?: Record<string, string>;
-}
+type InputConfig =
+	| TextInputConfig
+	| TextAreaInputConfig
+	| NumberInputConfig
+	| DropdownInputConfig
+	| DateInputConfig
+	| DateRangeInputConfig
+	| TimeInputConfig;
+export type { InputConfig };
 
-interface ActionConfig {
-  key: string;
-  label: string;
-  onClick?: (item: any) => void;
-}
+export type FormField = InputConfig | InputConfig[];
 
-interface CardComponentProps<T> {
-  items: T[];
-  statusConfig?: StatusConfig;
-  headerFields?: FieldConfig[];
-  bodyFields: FieldConfig[];
-  actions?: ActionConfig[];
-  isActionsPage?: boolean;
-  cardClassName?: string;
-}
-
-export type {
-  User,
-  RequestOrder,
-  TaskOrder,
-  BaseInputConfig,
-  TextInputConfig,
-  NumberInputConfig,
-  DropdownOption,
-  DropdownInputConfig,
-  InputConfig,
-  FormField,
-  StatusConfig,
-  FieldConfig,
-  ActionConfig,
-  CardComponentProps,
+export type FormSection = {
+	title?: string;
+	fields: FormField[];
 };
+
+export interface StatusConfig {
+	colorMap: Record<string, ColorType>;
+	translation?: Record<string, string>;
+}
+
+export interface FieldConfig {
+	key: string;
+	path?: string;
+	label?: string;
+	formatter?: (value: any) => string;
+	className?: string;
+	labelTranslator?: Record<string, string>;
+	valueTranslator?: Record<string, string>;
+	valueFunction?: (item: any) => string;
+	valueClassName?: ClassValue;
+}
+
+export interface ActionConfig {
+	key: string;
+	label?: string;
+	icon?: React.ReactNode;
+	className?: string;
+	onClick?: (item: any) => void;
+}
+
+export interface UploadedFile {
+	name: string;
+	size: number;
+	type: string;
+	file: File;
+}
+
+export interface TableHeader {
+	label: string;
+	keyword: string;
+}
+
+export interface FieldValue {
+	name: string;
+	labelTranslator?: Record<string, string>;
+	value: React.ReactNode;
+	unit?: string;
+	translator?: Record<string, string>;
+	className?: string;
+}
+
+export interface FieldSection {
+	title?: string;
+	fields: FieldValue[];
+}

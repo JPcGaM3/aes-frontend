@@ -111,13 +111,16 @@ export async function uploadRequestOrder({
 	});
 
 	try {
-		const response = await fetch("/api/proxy/request-orders/create/excel", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			body: formData,
-		});
+		const response = await fetch(
+			"/aes/api/proxy/request-orders/create/excel",
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				body: formData,
+			}
+		);
 
 		const data = await response.json();
 

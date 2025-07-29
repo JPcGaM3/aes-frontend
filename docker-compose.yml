@@ -4,7 +4,7 @@ services:
             context: ./
             dockerfile: dockerfile.app
             args:
-                NEXT_PUBLIC_API_URL: http://aes-backend:8080/aesback
+                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         container_name: aes-frontend
         environment:
             - NODE_ENV=production

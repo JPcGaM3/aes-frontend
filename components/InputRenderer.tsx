@@ -24,11 +24,18 @@ export default function InputRenderer({
 	commonProps,
 	onValueChange,
 }: InputRendererProps) {
-	const [isVisible, setIsVisible] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [width, setWidth] = useState(0);
+	const [isMobile, setIsMobile] = useState(false);
+	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
+		const checkIsMobile = /iPhone|iPad|iPod|Android/i.test(
+			navigator.userAgent
+		);
+
+		setIsMobile(checkIsMobile);
+
 		const observer = new ResizeObserver((entries) => {
 			if (entries && entries.length > 0) {
 				setWidth(entries[0].contentRect.width);
@@ -56,6 +63,27 @@ export default function InputRenderer({
 		return 3;
 	};
 
+	const formatTimeValue = (timeValue: any) => {
+		if (!timeValue) return "";
+
+		if (typeof timeValue === "string") {
+			return timeValue;
+		}
+
+		if (
+			timeValue &&
+			timeValue.hour !== undefined &&
+			timeValue.minute !== undefined
+		) {
+			const hour = String(timeValue.hour).padStart(2, "0");
+			const minute = String(timeValue.minute).padStart(2, "0");
+
+			return `${hour}:${minute}`;
+		}
+
+		return "";
+	};
+
 	const handleUnifiedValueChange = useCallback(
 		(v: any) => {
 			if (!onValueChange) return;
@@ -72,7 +100,18 @@ export default function InputRenderer({
 				}
 
 				case "time": {
-					onValueChange(commonProps.name, v);
+					if (typeof v === "string") {
+						const [hour, minute] = v.split(":").map(Number);
+
+						if (!isNaN(hour) && !isNaN(minute)) {
+							onValueChange(commonProps.name, { hour, minute });
+						} else {
+							onValueChange(commonProps.name, v);
+						}
+					} else {
+						onValueChange(commonProps.name, v);
+					}
+
 					break;
 				}
 
@@ -193,9 +232,9 @@ export default function InputRenderer({
 							className="p-0 -mx-2 text-2xl text-default-400"
 							endContent={
 								isVisible ? (
-									<EyeCloseIcon size={18} />
+									<EyeCloseIcon size={20} />
 								) : (
-									<EyeIcon size={18} />
+									<EyeIcon size={20} />
 								)
 							}
 							radius="full"
@@ -232,6 +271,10 @@ export default function InputRenderer({
 				selectedKey: stringValue || stringDefaultValue || "",
 			};
 
+			const inputProps = {
+				disabled: isMobile,
+			};
+
 			return (
 				<PatchedAutocomplete
 					{...commonProps}
@@ -241,6 +284,7 @@ export default function InputRenderer({
 						...commonProps.classNames,
 						popoverContent: "rounded-lg p-0",
 					}}
+					inputProps={inputProps}
 					placement="bottom"
 					shouldCloseOnBlur={true}
 					shouldCloseOnInteractOutside={true}
@@ -330,9 +374,38 @@ export default function InputRenderer({
 				<TimeInput
 					{...commonProps}
 					aria-label={commonProps.label}
-					endContent={<ClockIcon />}
+					endContent={
+						<div className="relative">
+							<Button
+								isIconOnly
+								aria-label="Time Picker"
+								className="p-0 -mx-2 text-2xl text-default-400"
+								endContent={<ClockIcon size={20} />}
+								radius="full"
+								size="sm"
+								variant="light"
+							/>
+
+							<input
+								aria-label={commonProps.label}
+								className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+								style={{ zIndex: 10 }}
+								tabIndex={0}
+								type="time"
+								value={formatTimeValue(timeValue)}
+								onChange={(e) => {
+									const value = e.target.value;
+
+									handleUnifiedValueChange(value);
+								}}
+							/>
+						</div>
+					}
 					granularity={commonProps.granularity || "minute"}
 					hourCycle={commonProps.hourCycle || 12}
+					id="time"
+					name="time"
+					type="time"
 					value={timeValue}
 					onChange={
 						onValueChange ? handleUnifiedValueChange : undefined

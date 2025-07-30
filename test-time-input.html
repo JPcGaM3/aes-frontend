@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Time Input Test</title>
+		<style>
+			.time-input-container {
+				margin: 20px;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+			}
+
+			.relative {
+				position: relative;
+			}
+
+			.absolute {
+				position: absolute;
+			}
+
+			.inset-0 {
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			}
+
+			.opacity-0 {
+				opacity: 0;
+			}
+
+			.w-full {
+				width: 100%;
+			}
+
+			.h-full {
+				height: 100%;
+			}
+
+			.cursor-pointer {
+				cursor: pointer;
+			}
+
+			.clock-button {
+				width: 32px;
+				height: 32px;
+				border: none;
+				background: transparent;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+			}
+
+			.clock-button:hover {
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="time-input-container">
+			<h3>Time Input with Native Picker</h3>
+			<p>
+				This demonstrates the time input with a clock button overlay
+				that opens the device's native time picker.
+			</p>
+
+			<div
+				style="
+					display: flex;
+					align-items: center;
+					gap: 10px;
+					padding: 8px;
+					border: 1px solid #ddd;
+					border-radius: 4px;
+					background: #f5f5f5;
+				"
+			>
+				<span>Selected Time: <span id="timeDisplay">--:--</span></span>
+
+				<div class="relative" style="margin-left: auto">
+					<button class="clock-button" type="button">
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<circle cx="12" cy="12" r="10"></circle>
+							<path d="M12 6v6l4 2"></path>
+						</svg>
+					</button>
+					<input
+						id="timeInput"
+						type="time"
+						class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+						style="z-index: 10"
+						onchange="updateTimeDisplay(this.value)"
+					/>
+				</div>
+			</div>
+
+			<p style="margin-top: 10px; font-size: 14px; color: #666">
+				Click the clock icon to open the native time picker. The time
+				input is overlaid invisibly on top of the button.
+			</p>
+		</div>
+
+		<script>
+			function updateTimeDisplay(value) {
+				const timeDisplay = document.getElementById("timeDisplay");
+				timeDisplay.textContent = value || "--:--";
+				console.log("Time selected:", value);
+			}
+
+			// Set default time for demonstration
+			document.getElementById("timeInput").value = "09:30";
+			updateTimeDisplay("09:30");
+		</script>
+	</body>
+</html>

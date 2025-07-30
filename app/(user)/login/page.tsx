@@ -19,31 +19,33 @@ export default function LoginPage() {
 	const { showAlert } = useAlert();
 
 	const handleSubmit = async (values: any) => {
-		showLoading();
-		const isEmail = values.username.includes("@mitrphol.com");
+		console.log("Submitting login form:", values);
 
-		const body = isEmail
-			? { email: values.username, password: values.password }
-			: { username: values.username, password: values.password };
+		// showLoading();
+		// const isEmail = values.username.includes("@mitrphol.com");
 
-		try {
-			await login({
-				params: {
-					ae_id: values.ae_id,
-				},
-				body: {
-					...body,
-				},
-			});
-		} catch (error: any) {
-			showAlert({
-				title: "เข้าสู่ระบบล้มเหลว",
-				description: error.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
-				color: "danger",
-			});
-		} finally {
-			hideLoading();
-		}
+		// const body = isEmail
+		// 	? { email: values.username, password: values.password }
+		// 	: { username: values.username, password: values.password };
+
+		// try {
+		// 	await login({
+		// 		params: {
+		// 			ae_id: values.ae_id,
+		// 		},
+		// 		body: {
+		// 			...body,
+		// 		},
+		// 	});
+		// } catch (error: any) {
+		// 	showAlert({
+		// 		title: "เข้าสู่ระบบล้มเหลว",
+		// 		description: error.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
+		// 		color: "danger",
+		// 	});
+		// } finally {
+		// 	hideLoading();
+		// }
 	};
 
 	useEffect(() => {
@@ -96,6 +98,12 @@ export default function LoginPage() {
 						{ label: "NE1", value: 2 },
 						{ label: "NE2", value: 3 },
 					],
+				},
+				{
+					type: "time",
+					name: "login_time",
+					label: "เวลาที่เข้าสู่ระบบ",
+					isRequired: true,
 				},
 			],
 		},

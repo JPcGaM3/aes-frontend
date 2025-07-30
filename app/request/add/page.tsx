@@ -121,7 +121,7 @@ export default function AddRequestPage() {
 	const handleDownloadTemplate = (): void => {
 		const link = document.createElement("a");
 
-		link.href = "/aes/excel/request_orders_template.xlsx";
+		link.href = "/excel/request_orders_template.xlsx";
 		link.download = "request_orders_template.xlsx";
 		document.body.appendChild(link);
 

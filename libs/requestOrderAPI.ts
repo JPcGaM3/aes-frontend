@@ -112,7 +112,7 @@ export async function uploadRequestOrder({
 
 	try {
 		const response = await fetch(
-			"/aes/api/proxy/request-orders/create/excel",
+			"/api/proxy/request-orders/create/excel",
 			{
 				method: "POST",
 				headers: {

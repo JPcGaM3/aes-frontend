@@ -33,7 +33,8 @@ import { getAssignedTask, getTaskById } from "@/services/taskOrderAPI";
 moment.locale("th");
 
 export function getApiBaseUrl() {
-	return process.env.NEXT_PUBLIC_API_URL;
+	// return process.env.NEXT_PUBLIC_API_URL;
+	return process.env.NEXT_PUBLIC_API_SERVER_URL;
 }
 
 /**

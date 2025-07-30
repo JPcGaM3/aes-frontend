@@ -1,20 +1,29 @@
 services:
-    frontend:
-        build:
-            context: ./
-            dockerfile: dockerfile.app
-            args:
-                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-        container_name: aes-frontend
-        environment:
-            - NODE_ENV=production
-        ports:
-            - "3001:3000"
-        networks:
-            aes-network:
-                ipv4_address: 172.28.5.3
+ app:
+  restart: always
+  image: aes:latest
+  container_name: aes
+  build:
+   context: ./
+   dockerfile: dockerfile.app
+   args:
+    NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+  networks:
+   project_network:
+    ipv4_address: 172.28.5.3
+  environment:
+   - NODE_ENV=production
+  env_file:
+   - .env
+  expose:
+   - "3000"
+  logging:
+   driver: "json-file"
+   options:
+    max-size: "100m"
 
 networks:
-    aes-network:
-        driver: bridge
-        external: true
+  project_network:
+    external: true
+  proxy_network:
+    external: true

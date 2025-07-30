@@ -12,7 +12,7 @@ class HttpClient {
 	private baseURL: string;
 
 	constructor() {
-		this.baseURL = `/aes/api/proxy`;
+		this.baseURL = `/api/proxy`;
 	}
 
 	private buildHeaders(

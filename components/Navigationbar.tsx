@@ -181,7 +181,7 @@ export default function Navbar() {
 
 			return;
 		}
-		
+
 		router.push(path);
 	};
 

@@ -8,6 +8,7 @@ import { useAuth } from "@/providers/AuthContext";
 export default function Home() {
 	const router = useRouter();
 	const { userContext } = useAuth();
+
 	useEffect(() => {
 		{
 			userContext.token

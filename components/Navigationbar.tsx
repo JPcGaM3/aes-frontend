@@ -231,7 +231,7 @@ export default function Navbar() {
 								className="object-contain"
 								quality={100}
 								sizes="(max-height: 4828px) 48px"
-								src="/aes/pictures/logo.png"
+								src="/pictures/logo.png"
 							/>
 						</Button>
 					</NavbarBrand>

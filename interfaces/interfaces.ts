@@ -1,4 +1,5 @@
 import { ClassValue } from "clsx";
+import { TimeInputValue } from "@heroui/react";
 
 import { ColorType } from "@/types";
 
@@ -55,18 +56,36 @@ export interface DropdownInputConfig extends BaseInputConfig {
 	options: DropdownOption[];
 }
 
+export interface CalendarProps {
+	minValue?: Date | any;
+	maxValue?: Date | any;
+	isDisabled?: boolean;
+	isReadOnly?: boolean;
+	visibleDuration?: { months: number };
+	focusedValue?: Date | any;
+	defaultFocusedValue?: Date | any;
+	showMonthAndYearPickers?: boolean;
+	[key: string]: any;
+}
+
 export interface DateInputConfig extends BaseInputConfig {
 	type: "date";
+	calendarProps?: CalendarProps;
+	showMonthAndYearPickers?: boolean;
 }
 
 export interface DateRangeInputConfig extends BaseInputConfig {
 	type: "date-range";
+	calendarProps?: CalendarProps;
+	showMonthAndYearPickers?: boolean;
 }
 
 export interface TimeInputConfig extends BaseInputConfig {
 	type: "time";
 	granularity?: "hour" | "minute" | "second";
 	hourCycle?: 12 | 24;
+	minValue?: TimeInputValue;
+	maxValue?: TimeInputValue;
 }
 
 type InputConfig =

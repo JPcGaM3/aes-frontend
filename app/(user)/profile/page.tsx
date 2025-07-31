@@ -71,6 +71,8 @@ export default function ProfilePage() {
 		router.push("/login");
 	};
 
+	// TODO: Remove or hide some private data
+	// EX: role
 	const profileSections: FieldSection[] = [
 		{
 			title: "ข้อมูลส่วนตัว",

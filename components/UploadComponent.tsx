@@ -127,8 +127,10 @@ export default function UploadComponent({
 		document.body.removeChild(link);
 	};
 
+	// TODO: Translate "DownloadTemplate" -> "ดาวน์โหลดเทมเพลต" [DONE]
+
 	return (
-		<div className="flex flex-col justify-center items-center gap-6 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
+		<div className="flex flex-col items-center justify-center w-full max-w-sm gap-6 sm:max-w-md md:max-w-lg lg:max-w-xl">
 			{/* Header ------------------------------------------------------------------------------------------------------- */}
 			<Header
 				subtitle="กรุณาอัปโหลดไฟล์ที่รองรับ (.xlsx, .csv)"
@@ -136,7 +138,7 @@ export default function UploadComponent({
 			/>
 
 			{/* Upload Component --------------------------------------------------------------------------------------------- */}
-			<div className="flex flex-col gap-2 w-full">
+			<div className="flex flex-col w-full gap-2">
 				{/* Download Template Button -------------------------------------------------------------------------------------- */}
 				<div className="flex justify-end">
 					<Button
@@ -148,7 +150,7 @@ export default function UploadComponent({
 						variant="flat"
 						onPress={onDownloadTemplate}
 					>
-						Download Template
+						ดาวน์โหลดเทมเพลต
 					</Button>
 				</div>
 
@@ -189,11 +191,11 @@ export default function UploadComponent({
 							onChange={handleFileInputChange}
 						/>
 
-						<div className="flex flex-col justify-center items-center py-8 h-full">
-							<div className="flex justify-center items-center bg-blue-100 mb-2 rounded-full w-24 h-24">
+						<div className="flex flex-col items-center justify-center h-full py-8">
+							<div className="flex items-center justify-center w-24 h-24 mb-2 bg-blue-100 rounded-full">
 								<UploadFileIcon size={54} />
 							</div>
-							<p className="mt-2 font-medium text-gray-600 text-sm">
+							<p className="mt-2 text-sm font-medium text-gray-600">
 								คลิกที่นี่หรือลากวางไฟล์เพื่ออัปโหลด
 							</p>
 						</div>
@@ -213,7 +215,7 @@ export default function UploadComponent({
 								<div
 									key={file.name}
 									aria-disabled={isUploading}
-									className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 p-2 pl-4 border border-gray-200 rounded-xl cursor-pointer"
+									className="flex items-center justify-between p-2 pl-4 border border-gray-200 cursor-pointer bg-gray-50 hover:bg-gray-100 rounded-xl"
 									role="button"
 									tabIndex={0}
 									onClick={() =>

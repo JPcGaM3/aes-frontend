@@ -108,6 +108,7 @@ export default function RequestManagementPage({
 	} = useTaskOrderForm();
 
 	// Fetch data ------------------------------------------------------------------------------------------------
+	// TODO: Fetch user with ae_id [Wait for test]
 	useEffect(() => {
 		if (rid && isReady && userContext && !hasFetched.current) {
 			showLoading();
@@ -116,12 +117,14 @@ export default function RequestManagementPage({
 				try {
 					const promises = [
 						fetchUsers({
+							ae_id: userContext.ae_id,
 							token: userContext.token,
 							role: [USERROLE.UnitHead],
 							setUsers: setUnitHeadData,
 							showAlert: showAlert,
 						}),
 						fetchUsers({
+							ae_id: userContext.ae_id,
 							token: userContext.token,
 							role: [USERROLE.Driver],
 							setUsers: setDriverData,
@@ -308,7 +311,6 @@ export default function RequestManagementPage({
 		try {
 			setIsSubmitting(true);
 
-			// Validate task orders first
 			if (!validateTaskOrders()) {
 				showAlert({
 					title: "ข้อมูลไม่ถูกต้อง",
@@ -414,6 +416,7 @@ export default function RequestManagementPage({
 	};
 
 	// Field config ----------------------------------------------------------------------------------------------
+	// TODO: Show target_area, actual_area, status, and comment
 	const dataSections: FieldSection[] = [
 		{
 			fields: [
@@ -549,6 +552,7 @@ export default function RequestManagementPage({
 		})),
 	];
 
+	// TODO: Change created_at from text to date [Wait for test]
 	const requestFormSections: FormSection[] = [
 		{
 			fields: [
@@ -563,7 +567,7 @@ export default function RequestManagementPage({
 					})),
 				},
 				{
-					type: "text",
+					type: "date",
 					name: "created_at",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,

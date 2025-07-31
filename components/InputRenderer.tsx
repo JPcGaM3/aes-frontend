@@ -272,7 +272,10 @@ export default function InputRenderer({
 				selectedKey: stringValue || stringDefaultValue || "",
 			};
 
+			// TODO: Improve text color for mobile [Wait for test]
+			// TODO: Fix error value disappear
 			const inputProps = {
+				className: "text-black",
 				disabled: isMobile,
 			};
 
@@ -333,14 +336,24 @@ export default function InputRenderer({
 			);
 		}
 
+		// TODO: improve format for date -> "DD/MM/YYYY"
 		case "date": {
 			const dateValue = value || commonProps.defaultValue || null;
+
+			const calendarProps = {
+				...commonProps.calendarProps,
+			};
 
 			return (
 				<DatePicker
 					{...commonProps}
-					showMonthAndYearPickers
 					aria-label={commonProps.label}
+					calendarProps={calendarProps}
+					showMonthAndYearPickers={
+						commonProps.showMonthAndYearPickers ??
+						commonProps.calendarProps?.showMonthAndYearPickers ??
+						true
+					}
 					value={dateValue}
 					onChange={
 						onValueChange ? handleUnifiedValueChange : undefined
@@ -349,6 +362,8 @@ export default function InputRenderer({
 			);
 		}
 
+		// TODO: improve format for date -> "DD/MM/YYYY"
+		// TODO: implement disable date range picker
 		case "date-range": {
 			const rangeValue = value || commonProps.defaultValue || null;
 
@@ -368,6 +383,8 @@ export default function InputRenderer({
 			);
 		}
 
+		// TODO: improve error timepicker popover can't click in mobile
+		// TODO: Change to 24 hour cycle [Wait for test]
 		case "time": {
 			const timeValue = value || commonProps.defaultValue || null;
 
@@ -403,7 +420,7 @@ export default function InputRenderer({
 						</div>
 					}
 					granularity={commonProps.granularity || "minute"}
-					hourCycle={commonProps.hourCycle || 12}
+					hourCycle={commonProps.hourCycle || 24}
 					id="time"
 					name="time"
 					type="time"

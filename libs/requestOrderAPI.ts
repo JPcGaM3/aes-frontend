@@ -58,42 +58,6 @@ export async function SetStatusRequestOrder({
 	});
 }
 
-// export async function uploadRequestOrder({
-// 	token,
-// 	ae_id,
-// 	uploadedFiles,
-// }: {
-// 	token: string;
-// 	ae_id: number;
-// 	uploadedFiles: UploadedFile[];
-// }) {
-// 	const formData = new FormData();
-
-// 	formData.append("ae_id", ae_id.toString());
-// 	uploadedFiles.forEach((fileData) => {
-// 		formData.append("files", fileData.file);
-// 	});
-
-// 	const response = await fetch("/api/proxy/request-orders/create/excel", {
-// 		method: "POST",
-// 		headers: {
-// 			Authorization: `Bearer ${token}`,
-// 		},
-// 		body: formData,
-// 	});
-
-// 	if (!response.ok) {
-// 		const errorData = await response.json();
-
-// 		throw {
-// 			status: response.status,
-// 			message: errorData.message,
-// 		};
-// 	}
-
-// 	return await response.json();
-// }
-
 export async function uploadRequestOrder({
 	token,
 	ae_id,

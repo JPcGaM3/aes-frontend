@@ -97,6 +97,18 @@ export default function LoginPage() {
 						{ label: "NE2", value: 3 },
 					],
 				},
+				{
+					type: "date",
+					name: "end_date",
+					label: "วันที่สิ้นสุด",
+					calendarProps: {
+						minValue: new Date(),
+						maxValue: new Date(
+							Date.now() + 365 * 24 * 60 * 60 * 1000
+						),
+					},
+					isRequired: true,
+				},
 			],
 		},
 	];

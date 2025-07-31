@@ -347,6 +347,8 @@ export default function AddRequestPage() {
 	};
 
 	// Field configurations ----------------------------------------------------------------------------------------
+	// TODO: Land number before target area [Wait for test]
+	// TODO: Remove zone [DONE]
 	const requestOrderFields: FormSection[] = [
 		{
 			fields: [
@@ -371,28 +373,18 @@ export default function AddRequestPage() {
 					},
 					{
 						type: "text",
-						name: "zone",
-						isRequired: true,
-						labelTranslator: RequestOrderTranslation,
-						className: "w-2/3",
-					},
-				],
-				[
-					{
-						type: "text",
 						name: "quota_number",
 						isRequired: true,
 						labelTranslator: RequestOrderTranslation,
-						className: "w-1/3",
-					},
-					{
-						type: "text",
-						name: "farmer_name",
-						isRequired: true,
-						labelTranslator: RequestOrderTranslation,
 						className: "w-2/3",
 					},
 				],
+				{
+					type: "text",
+					name: "farmer_name",
+					isRequired: true,
+					labelTranslator: RequestOrderTranslation,
+				},
 				[
 					{
 						type: "dropdown",
@@ -418,14 +410,6 @@ export default function AddRequestPage() {
 					labelTranslator: RequestOrderTranslation,
 				},
 				{
-					type: "number",
-					name: "target_area",
-					unit: "ไร่",
-					minValue: 0,
-					isRequired: true,
-					labelTranslator: RequestOrderTranslation,
-				},
-				{
 					type: "text",
 					name: "land_number",
 					isRequired: true,
@@ -434,6 +418,14 @@ export default function AddRequestPage() {
 				{
 					type: "textarea",
 					name: "location_xy",
+					labelTranslator: RequestOrderTranslation,
+				},
+				{
+					type: "number",
+					name: "target_area",
+					unit: "ไร่",
+					minValue: 0,
+					isRequired: true,
 					labelTranslator: RequestOrderTranslation,
 				},
 			],
@@ -493,16 +485,16 @@ export default function AddRequestPage() {
 
 	return (
 		<>
-			<div className="flex flex-col justify-center items-center w-full">
+			<div className="flex flex-col items-center justify-center w-full">
 				<Tabs
 					aria-label="TabOptions"
-					className="flex flex-col justify-center items-center pb-4 w-full font-semibold"
+					className="flex flex-col items-center justify-center w-full pb-4 font-semibold"
 					radius="sm"
 				>
 					{/* Key-in tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="key-in"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="กรอกข้อมูล"
 					>
 						<FormComponent
@@ -518,9 +510,9 @@ export default function AddRequestPage() {
 							onChange={handleRequestOrderChange}
 							onSubmit={handleSubmitKeyIn}
 						>
-							<div className="flex flex-col justify-center items-center gap-4 w-full">
-								<div className="flex items-center gap-5 w-full">
-									<span className="font-semibold text-gray-700 text-xl">
+							<div className="flex flex-col items-center justify-center w-full gap-4">
+								<div className="flex items-center w-full gap-5">
+									<span className="text-xl font-semibold text-gray-700">
 										กิจกรรม
 									</span>
 
@@ -566,7 +558,7 @@ export default function AddRequestPage() {
 					{/* Upload tab ------------------------------------------------------------------------------------------- */}
 					<Tab
 						key="upload"
-						className="flex flex-col justify-center items-center w-full"
+						className="flex flex-col items-center justify-center w-full"
 						title="อัปโหลด"
 					>
 						<UploadComponent

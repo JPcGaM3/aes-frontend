@@ -322,8 +322,8 @@ export default function RequestManagementPage({
 					{
 						type: "textarea",
 						name: "comment",
-						label: "กรุณาระบุเหตุผล",
 						labelPlacement: "outside",
+						labelTranslator: RequestOrderTranslation,
 						isRequired: true,
 						minRows: 5,
 						maxRows: 8,
@@ -347,7 +347,7 @@ export default function RequestManagementPage({
 					<Tab
 						key="view"
 						className="flex flex-col items-center justify-center w-full gap-8"
-						title="รายละเอียด"
+						title="ดูรายละเอียด"
 					>
 						<Header
 							hasBorder={false}
@@ -408,7 +408,7 @@ export default function RequestManagementPage({
 					<Tab
 						key="reject"
 						className="flex flex-col items-center justify-center w-full"
-						title="ยกเลิก"
+						title="ปฏิเสธ"
 					>
 						<FormComponent
 							cancelLabel="ยกเลิก"

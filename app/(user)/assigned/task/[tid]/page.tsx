@@ -146,8 +146,8 @@ export default function TaskManagementPage({
 					{
 						type: "textarea",
 						name: "comment",
-						label: "กรุณาระบุเหตุผล",
 						labelPlacement: "outside",
+						labelTranslator: TaskOrderTranslation,
 						isRequired: true,
 						minRows: 5,
 						maxRows: 8,
@@ -601,10 +601,10 @@ export default function TaskManagementPage({
 	};
 
 	return (
-		<div className="flex flex-col justify-center items-center w-full">
+		<div className="flex flex-col items-center justify-center w-full">
 			<Tabs
 				aria-label="TabOptions"
-				className="flex flex-col justify-center items-center p-0 pb-4 w-full font-semibold"
+				className="flex flex-col items-center justify-center w-full p-0 pb-4 font-semibold"
 				radius="sm"
 				selectedKey={selectedTab}
 				onSelectionChange={handleTabChange}
@@ -612,8 +612,8 @@ export default function TaskManagementPage({
 				{/* Detail tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="detail"
-					className="flex flex-col justify-center items-center gap-8 w-full"
-					title="รายละเอียด"
+					className="flex flex-col items-center justify-center w-full gap-8"
+					title="ดูรายละเอียด"
 				>
 					<Header
 						hasBorder={false}
@@ -639,7 +639,7 @@ export default function TaskManagementPage({
 				{/* Start tab ------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="start"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected
@@ -700,7 +700,7 @@ export default function TaskManagementPage({
 				{/* Edit tab -------------------------------------------------------------------------------------------- */}
 				<Tab
 					key="comment"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected
@@ -728,12 +728,12 @@ export default function TaskManagementPage({
 				{/* Reject tab ------------------------------------------------------------------------------------------ */}
 				<Tab
 					key="reject"
-					className="flex flex-col justify-center items-center w-full"
+					className="flex flex-col items-center justify-center w-full"
 					isDisabled={
 						taskOrder.status === TASKORDERSTATUS.Completed ||
 						taskOrder.status === TASKORDERSTATUS.Rejected
 					}
-					title="ยกเลิก"
+					title="ปฏิเสธ"
 				>
 					<FormComponent
 						cancelLabel="ยกเลิก"

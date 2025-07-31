@@ -292,7 +292,7 @@ export default function TaskPage() {
 		const actionList: ActionConfig[] = [
 			{
 				key: "detail",
-				label: "รายละเอียด",
+				label: "ดูรายละเอียด",
 				icon: <InfoIcon />,
 				onClick: (item: TaskOrder) =>
 					handleNewPage({

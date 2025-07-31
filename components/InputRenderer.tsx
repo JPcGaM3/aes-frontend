@@ -67,21 +67,22 @@ export default function InputRenderer({
 		if (!timeValue) return "";
 
 		if (typeof timeValue === "string") {
-			return timeValue;
+			const match = timeValue.match(/T(\d{2}):(\d{2})/);
+			const date = new Date(timeValue);
+
+			if (match) {
+				return `${match[1]}:${match[2]}`;
+			}
+			if (!isNaN(date.getTime())) {
+				return date.toTimeString().slice(0, 5);
+			}
 		}
 
-		if (
-			timeValue &&
-			timeValue.hour !== undefined &&
-			timeValue.minute !== undefined
-		) {
-			const hour = String(timeValue.hour).padStart(2, "0");
-			const minute = String(timeValue.minute).padStart(2, "0");
-
-			return `${hour}:${minute}`;
+		if (timeValue instanceof Date) {
+			return timeValue.toTimeString().slice(0, 5);
 		}
 
-		return "";
+		return timeValue;
 	};
 
 	const handleUnifiedValueChange = useCallback(
@@ -374,6 +375,7 @@ export default function InputRenderer({
 				<TimeInput
 					{...commonProps}
 					aria-label={commonProps.label}
+					className={clsx("font-mono", fontMono.variable)}
 					endContent={
 						<div className="relative">
 							<Button
@@ -388,7 +390,7 @@ export default function InputRenderer({
 
 							<input
 								aria-label={commonProps.label}
-								className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+								className="absolute inset-0 w-8 h-8 -mx-2 rounded-full opacity-0 cursor-pointer"
 								style={{ zIndex: 10 }}
 								tabIndex={0}
 								type="time"

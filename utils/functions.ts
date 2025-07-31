@@ -217,7 +217,7 @@ export async function fetchReqOrderData({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-					description: error.message,
+					description: "No request orders found.",
 					color: "default",
 				});
 			} else {
@@ -262,7 +262,7 @@ export async function fetchReqOrderWithTaskData({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบสั่งงานในขณะนี้",
-					description: error.message,
+					description: "No request orders found.",
 					color: "default",
 				});
 			} else {
@@ -311,7 +311,7 @@ export async function fetchUsers({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลผู้ใช้ในขณะนี้",
-					description: error.message,
+					description: "No users found.",
 					color: "default",
 				});
 			} else {
@@ -350,7 +350,7 @@ export async function fetchAE({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลสังกัดในขณะนี้",
-					description: error.message,
+					description: "No AE areas found.",
 					color: "default",
 				});
 			} else {
@@ -389,7 +389,7 @@ export async function fetchOperationAreas({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลพื้นที่ปฏิบัติงานในขณะนี้",
-					description: error.message,
+					description: "No operation areas found.",
 					color: "default",
 				});
 			} else {
@@ -431,7 +431,7 @@ export async function fetchCars({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลรถในขณะนี้",
-					description: error.message,
+					description: "No cars found.",
 					color: "default",
 				});
 			} else {
@@ -469,7 +469,7 @@ export async function fetchActivitiesWithToolTypes({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลกิจกรรมในขณะนี้",
-					description: error.message,
+					description: "No activities found.",
 					color: "default",
 				});
 			} else {
@@ -524,7 +524,7 @@ export async function fetchAssignedTask({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
-					description: error.message,
+					description: "No task orders found.",
 					color: "default",
 				});
 			} else {
@@ -573,7 +573,7 @@ export async function fetchTaskOrder({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบรายการใบงานย่อยในขณะนี้",
-					description: error.message,
+					description: "No task orders found.",
 					color: "default",
 				});
 			} else {
@@ -608,7 +608,7 @@ export async function fetchProfile({
 			if (error.status === 404) {
 				showAlert({
 					title: "ไม่พบข้อมูลผู้ใช้ในขณะนี้",
-					description: error.message,
+					description: "No user profile found.",
 					color: "default",
 				});
 			} else {

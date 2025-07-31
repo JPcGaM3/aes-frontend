@@ -17,8 +17,6 @@ services:
             - .env
         expose:
             - "3000"
-        ports:
-            - "3000:3000"
         logging:
             driver: "json-file"
             options:

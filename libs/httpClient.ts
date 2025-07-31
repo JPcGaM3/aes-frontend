@@ -45,6 +45,7 @@ class HttpClient {
 			return response.data;
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
+				console.log(error);
 				throw {
 					status: error.response?.status,
 					message: error.response?.data?.message || error.message,

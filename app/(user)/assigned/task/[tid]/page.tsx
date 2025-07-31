@@ -421,8 +421,8 @@ export default function TaskManagementPage({
 				});
 
 				showAlert({
-					title: "แจ้งปัญหาใบงานย่อยสำเร็จ",
-					description: `แจ้งปัญหาใบงานย่อยเลขที่ ${taskOrder.id} แล้ว`,
+					title: "อัพเดตงานย่อยสำเร็จ",
+					description: `อัพเดตงานย่อยเลขที่ ${taskOrder.id} สำเร็จแล้ว`,
 					color: "success",
 				});
 

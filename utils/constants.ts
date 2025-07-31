@@ -54,6 +54,7 @@ const TaskOrderStatusTranslation = {
 	[TASKORDERSTATUS.Created]: "สร้างคำสั่งงาน",
 	[TASKORDERSTATUS.InProgress]: "กำลังดำเนินการ",
 	[TASKORDERSTATUS.Completed]: "เสร็จสิ้น",
+	[TASKORDERSTATUS.Rejected]: "ถูกปฏิเสธ",
 };
 
 const TaskOrderStatusColorMap: Record<TASKORDERSTATUS, ColorType> = {

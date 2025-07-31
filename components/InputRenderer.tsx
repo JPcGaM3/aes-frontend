@@ -375,7 +375,6 @@ export default function InputRenderer({
 				<TimeInput
 					{...commonProps}
 					aria-label={commonProps.label}
-					className={clsx("font-mono", fontMono.variable)}
 					endContent={
 						<div className="relative">
 							<Button

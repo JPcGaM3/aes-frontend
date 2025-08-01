@@ -26,7 +26,7 @@ export default function FormComponent({
 	onCancel,
 	onSubmit,
 	onChange,
-}: FormComponentProps & { isCompact?: boolean }) {
+}: FormComponentProps) {
 	const [formValues, setFormValues] = useState<any>(values || {});
 	const [internalErrors, setInternalErrors] = useState<
 		Record<string, string | null>

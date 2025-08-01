@@ -163,7 +163,7 @@ export default function TaskManagementPage({
 		},
 	];
 
-	// TODO: implement disable date [Wait for test]
+	// TODO: implement disable date [Wait for test in Prod.]
 	const startFormSections: FormSection[] = [
 		{
 			fields: [
@@ -193,7 +193,7 @@ export default function TaskManagementPage({
 		},
 	];
 
-	// TODO: implement disable date [Wait for test]
+	// TODO: implement disable date [Wait for test in Prod.]
 	const endFormSections: FormSection[] = [
 		{
 			fields: [

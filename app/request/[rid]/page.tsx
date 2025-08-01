@@ -553,7 +553,7 @@ export default function RequestManagementPage({
 		})),
 	];
 
-	// TODO: Change created_at from text to date [Wait for test]
+	// TODO: Change created_at from text to date
 	const requestFormSections: FormSection[] = [
 		{
 			fields: [
@@ -568,7 +568,7 @@ export default function RequestManagementPage({
 					})),
 				},
 				{
-					type: "date",
+					type: "text",
 					name: "created_at",
 					isReadOnly: true,
 					labelTranslator: RequestOrderTranslation,

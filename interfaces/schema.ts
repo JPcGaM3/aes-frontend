@@ -92,6 +92,9 @@ export interface User {
 export interface Car {
 	id: number;
 	car_number?: string;
+	car_brand?: string;
+	car_code?: string;
+	car_model?: string;
 	asset?: string;
 	asset_class?: number;
 	asset_description?: string;
@@ -231,7 +234,7 @@ export interface RequestOrder {
 	company_farm_id?: number;
 	zone?: string;
 	farmer_name?: string;
-	land_number?: number;
+	land_number?: number | string;
 	ap_month?: string;
 	ap_year?: number;
 	ae_id?: number;

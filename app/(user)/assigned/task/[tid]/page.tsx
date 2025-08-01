@@ -7,7 +7,13 @@ import "moment/locale/th";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Tabs, Tab } from "@heroui/react";
 import clsx from "clsx";
-import { now, getLocalTimeZone, today } from "@internationalized/date";
+import {
+	now,
+	getLocalTimeZone,
+	today,
+	toCalendarDate,
+	fromDate,
+} from "@internationalized/date";
 
 import { TASKORDERSTATUS } from "@/utils/enum";
 import { TaskOrder } from "@/interfaces/schema";
@@ -211,7 +217,14 @@ export default function TaskManagementPage({
 						type: "date",
 						name: "end_date",
 						calendarProps: {
-							minValue: taskOrder.start_timer,
+							minValue: taskOrder.start_timer
+								? toCalendarDate(
+										fromDate(
+											new Date(taskOrder.start_timer),
+											getLocalTimeZone()
+										)
+									)
+								: undefined,
 						},
 						isRequired: true,
 						labelTranslator: TaskOrderTranslation,

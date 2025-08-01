@@ -417,6 +417,7 @@ export default function RequestManagementPage({
 
 	// Field config ----------------------------------------------------------------------------------------------
 	// TODO: Show target_area, actual_area, status, and comment
+	// Priority: Comment first!! -> แจ้งปัญหา หรือ ปฏิเสธ
 	const dataSections: FieldSection[] = [
 		{
 			fields: [

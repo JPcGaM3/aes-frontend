@@ -337,6 +337,7 @@ export default function InputRenderer({
 		}
 
 		// TODO: improve format for date -> "DD/MM/YYYY"
+		// TODO: implement disable date [Wait for test]
 		case "date": {
 			const dateValue = value || commonProps.defaultValue || null;
 
@@ -363,9 +364,13 @@ export default function InputRenderer({
 		}
 
 		// TODO: improve format for date -> "DD/MM/YYYY"
-		// TODO: implement disable date range picker
+		// TODO: implement disable date range [Wait for test]
 		case "date-range": {
 			const rangeValue = value || commonProps.defaultValue || null;
+
+			const calendarProps = {
+				...commonProps.calendarProps,
+			};
 
 			return (
 				<div ref={containerRef}>
@@ -373,6 +378,7 @@ export default function InputRenderer({
 						{...commonProps}
 						showMonthAndYearPickers
 						aria-label={commonProps.label}
+						calendarProps={calendarProps}
 						value={rangeValue}
 						visibleMonths={getVisibleMonths()}
 						onChange={

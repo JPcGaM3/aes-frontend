@@ -157,7 +157,7 @@ export default function TaskManagementPage({
 		},
 	];
 
-	// TODO: implement disable date range picker
+	// TODO: implement disable date [Wait for test]
 	const startFormSections: FormSection[] = [
 		{
 			fields: [
@@ -187,7 +187,7 @@ export default function TaskManagementPage({
 		},
 	];
 
-	// TODO: implement disable date range picker
+	// TODO: implement disable date [Wait for test]
 	const endFormSections: FormSection[] = [
 		{
 			fields: [
@@ -210,6 +210,9 @@ export default function TaskManagementPage({
 					{
 						type: "date",
 						name: "end_date",
+						calendarProps: {
+							minValue: taskOrder.start_timer,
+						},
 						isRequired: true,
 						labelTranslator: TaskOrderTranslation,
 					},
